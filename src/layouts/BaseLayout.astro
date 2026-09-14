@@ -1,0 +1,73 @@
+---
+/**
+ * Shared page shell: SEO head, skip link, header, breadcrumbs, main, footer.
+ *
+ * Registry pages pass `pageId`; the canonical URL, noindex flag, and
+ * breadcrumbs then come from src/config/pages.ts. Pages outside the registry
+ * (only the 404 page) omit `pageId` and are always noindexed with no canonical.
+ */
+import "@/styles/global.css";
+import SeoHead from "@/components/seo/SeoHead.astro";
+import SiteHeader from "@/components/layout/SiteHeader.astro";
+import SiteFooter from "@/components/layout/SiteFooter.astro";
+import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
+import { SITE } from "@/config/site";
+import { getPage, type PageId } from "@/config/pages";
+import { breadcrumbSchema, getBreadcrumbs, type JsonLd } from "@/lib/seo";
+
+interface Props {
+  title: string;
+  description: string;
+  pageId?: PageId;
+  /** Forces noindex. Registry pages marked `noindex` are always noindexed. */
+  noindex?: boolean;
+  ogType?: "website" | "article";
+  jsonLd?: readonly JsonLd[];
+}
+
+const { title, description, pageId, noindex = false, ogType, jsonLd = [] } = Astro.props;
+
+const page = pageId ? getPage(pageId) : undefined;
+const currentPath = Astro.url.pathname;
+
+if (page && page.path !== currentPath) {
+  throw new Error(`Layout pageId "${pageId}" expects ${page.path} but is rendering ${currentPath}`);
+}
+
+const breadcrumbs = page ? getBreadcrumbs(page) : [];
+const schemas = breadcrumbs.length > 1 ? [...jsonLd, breadcrumbSchema(breadcrumbs)] : jsonLd;
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalPath={page?.path}
+      noindex={noindex || page?.noindex === true || !page}
+      ogType={ogType}
+      jsonLd={schemas}
+    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body class="flex min-h-screen flex-col bg-white text-slate-900 antialiased">
+    <a
+      href="#main-content"
+      class="sr-only rounded-md bg-indigo-700 px-4 py-2 font-semibold text-white focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50"
+    >
+      Skip to main content
+    </a>
+
+    <SiteHeader currentPath={currentPath} />
+    <Breadcrumbs items={breadcrumbs} />
+
+    <main id="main-content" tabindex="-1" class="flex-1 focus:outline-none">
+      <slot />
+    </main>
+
+    <SiteFooter />
+  </body>
+</html>

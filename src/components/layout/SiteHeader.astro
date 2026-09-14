@@ -1,0 +1,50 @@
+---
+/**
+ * Site header. Three Phase 1 pillar links only, rendered as plain HTML
+ * links (no JS): on small screens the nav wraps onto its own row.
+ */
+import { PRIMARY_NAV } from "@/config/navigation";
+import { SITE } from "@/config/site";
+
+interface Props {
+  /** Pathname of the current page, used to mark the active nav item. */
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+---
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">
+    <a
+      href="/"
+      class="self-start text-lg font-extrabold tracking-tight text-slate-900 hover:text-indigo-700"
+      aria-current={currentPath === "/" ? "page" : undefined}
+    >
+      {SITE.name}
+    </a>
+
+    <nav aria-label="Main">
+      <ul class="-mx-3 flex flex-wrap gap-x-1 gap-y-1 text-sm font-medium">
+        {PRIMARY_NAV.map(({ label, href }) => {
+          const isCurrent = currentPath === href;
+          const inSection = currentPath.startsWith(href);
+          return (
+            <li>
+              <a
+                href={href}
+                aria-current={isCurrent ? "page" : undefined}
+                class:list={[
+                  "inline-block rounded-md px-3 py-2 hover:bg-slate-100 hover:text-indigo-700",
+                  inSection ? "text-indigo-700" : "text-slate-700",
+                ]}
+              >
+                {label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  </div>
+</header>

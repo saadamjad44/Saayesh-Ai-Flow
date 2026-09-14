@@ -1,0 +1,41 @@
+---
+/**
+ * Visible breadcrumb trail. The matching BreadcrumbList JSON-LD is emitted
+ * in <head> by the layout from the same items.
+ */
+import type { BreadcrumbItem } from "@/lib/seo";
+
+interface Props {
+  items: readonly BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 1 && (
+  <nav aria-label="Breadcrumb" class="mx-auto max-w-6xl px-4 pt-6 text-sm sm:px-6">
+    <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-slate-600">
+      {items.map((item, index) => {
+        const isLast = index === items.length - 1;
+        return (
+          <li class="flex items-center gap-2">
+            {isLast ? (
+              <span aria-current="page" class="font-medium text-slate-900">
+                {item.label}
+              </span>
+            ) : (
+              <>
+                <a href={item.path} class="hover:text-indigo-700 hover:underline">
+                  {item.label}
+                </a>
+                <span aria-hidden="true" class="text-slate-400">
+                  /
+                </span>
+              </>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  </nav>
+)}

@@ -1,0 +1,38 @@
+---
+/** Quick verdict near the top of a page: summary slot plus optional best-for / not-for lines. */
+interface Props {
+  heading?: string;
+  bestFor?: string;
+  notFor?: string;
+}
+
+const { heading = "Quick verdict", bestFor, notFor } = Astro.props;
+---
+
+<section
+  aria-labelledby="verdict-heading"
+  class="not-prose my-8 rounded-lg border border-indigo-200 bg-indigo-50 px-5 py-4 text-slate-800"
+>
+  <h2 id="verdict-heading" class="text-lg font-bold text-indigo-900">
+    {heading}
+  </h2>
+  <div class="mt-2 space-y-2">
+    <slot />
+  </div>
+  {(bestFor || notFor) && (
+    <dl class="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+      {bestFor && (
+        <div>
+          <dt class="font-semibold text-slate-900">Best for</dt>
+          <dd>{bestFor}</dd>
+        </div>
+      )}
+      {notFor && (
+        <div>
+          <dt class="font-semibold text-slate-900">Not for</dt>
+          <dd>{notFor}</dd>
+        </div>
+      )}
+    </dl>
+  )}
+</section>

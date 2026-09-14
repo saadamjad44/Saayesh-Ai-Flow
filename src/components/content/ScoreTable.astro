@@ -1,0 +1,56 @@
+---
+/**
+ * Review-template score table: the same five categories for every tool.
+ * Scores are first-hand claims, so the build fails unless the page is hands-on tested.
+ */
+import ComparisonTable from "./ComparisonTable.astro";
+import {
+  SCORE_CATEGORIES,
+  SCORE_RANGE,
+  type ScoreCategoryId,
+  type TestingStatus,
+} from "@/config/editorial";
+
+export interface ScoredTool {
+  name: string;
+  scores: Record<ScoreCategoryId, number>;
+}
+
+interface Props {
+  caption: string;
+  tools: readonly ScoredTool[];
+  /** Pass the page's frontmatter testingStatus. */
+  testingStatus: TestingStatus;
+}
+
+const { caption, tools, testingStatus } = Astro.props;
+
+if (testingStatus !== "hands-on") {
+  throw new Error(
+    `ScoreTable "${caption}": scores require hands-on testing evidence (testingStatus is "${testingStatus}")`,
+  );
+}
+
+for (const tool of tools) {
+  for (const { id } of SCORE_CATEGORIES) {
+    const score = tool.scores[id];
+    if (!Number.isFinite(score) || score < SCORE_RANGE.min || score > SCORE_RANGE.max) {
+      throw new Error(
+        `ScoreTable "${caption}": ${tool.name} ${id} must be ${SCORE_RANGE.min}–${SCORE_RANGE.max}`,
+      );
+    }
+  }
+}
+
+const rows = SCORE_CATEGORIES.map(({ id, label }) => ({
+  label,
+  cells: tools.map((tool) => String(tool.scores[id])),
+}));
+---
+
+<ComparisonTable
+  caption={`${caption} (scores out of ${SCORE_RANGE.max})`}
+  rowHeader="Category"
+  columns={tools.map((tool) => tool.name)}
+  rows={rows}
+/>

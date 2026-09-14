@@ -269,7 +269,7 @@ const PHASES = [
     goal: "Launch 17 pages. Establish 3 category pillars, rank for 7 validated low-competition keywords, and apply for Ezoic ad network.",
     pages: "6 core/utility + 3 pillar pages + 8 articles = 17 pages",
     milestones: [
-      "Domain + hosting + WordPress/headless CMS set up",
+      "Domain + Netlify hosting + Astro site (MDX + Tailwind) set up",
       "All 6 core/utility pages live (homepage, about, contact, privacy, terms, disclosure)",
       "3 pillar pages published with full original content (not thin indexes)",
       "8 cluster articles published (2–3 per pillar)",

@@ -1,21 +1,20 @@
 ---
-// Step 1 placeholder so the build has a route. Replaced by the real homepage
-// (with the shared layout and SEO head) in Steps 2 and 4.
-import "@/styles/global.css";
+// Placeholder homepage on the shared layout. The real homepage is built in
+// Step 4; remove `noindex` then so the page matches its sitemap entry.
+import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SITE } from "@/config/site";
+import { websiteSchema } from "@/lib/seo";
 ---
 
-<html lang={SITE.lang}>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <title>{SITE.name}</title>
-  </head>
-  <body class="bg-white text-slate-900">
-    <main class="prose mx-auto px-4 py-16">
-      <h1>{SITE.name}</h1>
-      <p>Project setup placeholder.</p>
-    </main>
-  </body>
-</html>
+<BaseLayout
+  pageId="home"
+  title={SITE.name}
+  description={SITE.tagline}
+  noindex
+  jsonLd={[websiteSchema()]}
+>
+  <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">{SITE.name}</h1>
+    <p class="mt-4 text-lg text-slate-600">{SITE.tagline}</p>
+  </div>
+</BaseLayout>

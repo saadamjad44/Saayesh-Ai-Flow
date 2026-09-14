@@ -1,0 +1,56 @@
+---
+/**
+ * All SEO-critical <head> tags: title, description, canonical, robots,
+ * Open Graph, Twitter card, JSON-LD, and Search Console verification.
+ */
+import { INTEGRATIONS, SITE } from "@/config/site";
+import { absoluteUrl, formatTitle, serializeJsonLd, type JsonLd } from "@/lib/seo";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Trailing-slash path of the canonical URL. Omit for pages without one (e.g. 404). */
+  canonicalPath?: string;
+  noindex?: boolean;
+  ogType?: "website" | "article";
+  jsonLd?: readonly JsonLd[];
+}
+
+const {
+  title,
+  description,
+  canonicalPath,
+  noindex = false,
+  ogType = "website",
+  jsonLd = [],
+} = Astro.props;
+
+const fullTitle = formatTitle(title);
+const canonicalUrl = canonicalPath ? absoluteUrl(canonicalPath) : undefined;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+{canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+<meta
+  name="robots"
+  content={noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
+/>
+
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:locale" content={SITE.locale} />
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+{canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+
+{INTEGRATIONS.searchConsoleVerification && (
+  <meta name="google-site-verification" content={INTEGRATIONS.searchConsoleVerification} />
+)}
+
+{jsonLd.map((data) => (
+  <script is:inline type="application/ld+json" set:html={serializeJsonLd(data)}></script>
+))}

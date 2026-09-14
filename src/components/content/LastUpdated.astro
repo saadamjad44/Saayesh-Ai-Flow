@@ -1,0 +1,23 @@
+---
+/** Visible "Last updated" stamp, plus the optional date pricing was verified. */
+import { formatDate, isoDate } from "@/lib/format";
+
+interface Props {
+  updated: Date;
+  pricingVerified?: Date;
+}
+
+const { updated, pricingVerified } = Astro.props;
+---
+
+<p class="not-prose flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600">
+  <span>
+    Last updated: <time datetime={isoDate(updated)}>{formatDate(updated)}</time>
+  </span>
+  {pricingVerified && (
+    <span>
+      Pricing verified:{" "}
+      <time datetime={isoDate(pricingVerified)}>{formatDate(pricingVerified)}</time>
+    </span>
+  )}
+</p>

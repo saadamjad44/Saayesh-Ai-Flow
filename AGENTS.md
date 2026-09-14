@@ -18,7 +18,7 @@ Build and grow Saayesh Automate Stack as a trustworthy, SEO-first AI tools, auto
 - Testing: Phase 1 content is research-based. Do not invent hands-on testing, scores, screenshots, or first-hand claims unless the owner provides testing evidence.
 - SEO data: the owner's validated Semrush data is for internal prioritization only. Never publish search volume, KD, CPC, or competition claims on the website.
 - Legal pages (privacy policy, terms, affiliate disclosure) are noindexed and excluded from the XML sitemap.
-- Stack: Astro + TypeScript (strict) + MDX + Tailwind CSS + @astrojs/sitemap, hosted on Netlify, with GA4 and Google Search Console at launch.
+- Stack: Astro + TypeScript (strict) + MDX + Tailwind CSS + @astrojs/sitemap, hosted on Netlify, with GA4 and Google Search Console at launch. Content lives in the repo (Astro pages + MDX). Do not use WordPress or any headless CMS.
 
 ## Working method
 1. Inspect the current project before changing anything.

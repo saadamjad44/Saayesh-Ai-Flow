@@ -1,0 +1,44 @@
+---
+/**
+ * States how a page was produced, so researched facts are never presented as
+ * first-hand testing. `hands-on` requires a summary of the testing evidence.
+ */
+import { getPage } from "@/config/pages";
+import { TESTING_STATUS_LABELS, type TestingStatus } from "@/config/editorial";
+
+interface Props {
+  status: TestingStatus;
+  summary?: string;
+}
+
+const { status, summary } = Astro.props;
+
+if (status === "hands-on" && !summary) {
+  throw new Error("TestingStatus: hands-on status requires a summary of the testing evidence");
+}
+
+const aboutPath = getPage("about").path;
+const isHandsOn = status === "hands-on";
+---
+
+<aside
+  aria-label="How this page was researched"
+  class:list={[
+    "not-prose rounded-md border px-4 py-3 text-sm",
+    isHandsOn
+      ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+      : "border-slate-200 bg-slate-50 text-slate-700",
+  ]}
+>
+  <p>
+    <strong class="font-semibold">{TESTING_STATUS_LABELS[status]}:</strong>{" "}
+    {isHandsOn
+      ? summary
+      : "based on publicly available information, such as official documentation and pricing pages. We have not tested these tools hands-on for this page."}
+  </p>
+  <p class="mt-1">
+    <a href={aboutPath} class="font-medium underline hover:text-indigo-700">
+      How we research and review
+    </a>
+  </p>
+</aside>
