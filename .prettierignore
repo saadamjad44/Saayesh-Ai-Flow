@@ -1,0 +1,9 @@
+dist/
+.astro/
+package-lock.json
+
+# Owner-maintained source-of-truth documents — do not reformat.
+AGENTS.md
+skills/
+website-blueprint.jsx
+revised-blueprint-phase1.jsx
