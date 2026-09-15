@@ -1,0 +1,52 @@
+---
+/** Pillar hubs from the `pillars` collection; paths come from the page registry. */
+import { render } from "astro:content";
+import EntryLayout from "@/layouts/EntryLayout.astro";
+import { getPublishedEntries, pathSegments } from "@/lib/content";
+import { collectionPageSchema } from "@/lib/seo";
+
+export async function getStaticPaths() {
+  const [pillars, articles] = await Promise.all([
+    getPublishedEntries("pillars"),
+    getPublishedEntries("articles"),
+  ]);
+
+  return pillars.map(({ entry, page }) => {
+    const [pillar] = pathSegments(page);
+    return {
+      params: { pillar },
+      props: {
+        entry,
+        articles: articles
+          .filter((article) => article.page.pillar === page.id)
+          .map(({ entry: article, page: articlePage }) => ({
+            title: article.data.title,
+            path: articlePage.path,
+            description: article.data.description,
+          })),
+      },
+    };
+  });
+}
+
+type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
+
+const { entry, articles } = Astro.props;
+const { Content } = await render(entry);
+const path = Astro.url.pathname;
+---
+
+<EntryLayout
+  entry={entry}
+  ogType="website"
+  jsonLd={[
+    collectionPageSchema(
+      { name: entry.data.title, description: entry.data.description, path },
+      articles.map((article) => ({ label: article.title, path: article.path })),
+    ),
+  ]}
+  relatedHeading={`${entry.data.title} guides`}
+  related={articles}
+>
+  <Content />
+</EntryLayout>

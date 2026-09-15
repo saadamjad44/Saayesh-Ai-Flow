@@ -17,7 +17,7 @@ export function absoluteUrl(path: string): string {
   return new URL(path, `${SITE.url}/`).href;
 }
 
-/** "Page title | Saayesh Automate Stack", unless the title already carries the brand. */
+/** "Page title | Saayesh AI Flow", unless the title already carries the brand. */
 export function formatTitle(title: string): string {
   return title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 }
@@ -58,6 +58,56 @@ export function websiteSchema(): JsonLd {
     name: SITE.name,
     url: absoluteUrl("/"),
     inLanguage: SITE.lang,
+  };
+}
+
+const publisher = () => ({ "@type": "Organization", name: SITE.name, url: absoluteUrl("/") });
+
+export interface ArticleSchemaInput {
+  headline: string;
+  description: string;
+  path: string;
+  datePublished: Date;
+  dateModified: Date;
+}
+
+export function articleSchema(input: ArticleSchemaInput): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.headline,
+    description: input.description,
+    mainEntityOfPage: absoluteUrl(input.path),
+    datePublished: input.datePublished.toISOString(),
+    dateModified: input.dateModified.toISOString(),
+    inLanguage: SITE.lang,
+    author: publisher(),
+    publisher: publisher(),
+  };
+}
+
+/** Pillar hub: a CollectionPage whose main entity lists its published articles. */
+export function collectionPageSchema(
+  input: { name: string; description: string; path: string },
+  items: readonly BreadcrumbItem[],
+): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    inLanguage: SITE.lang,
+    publisher: publisher(),
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.label,
+        url: absoluteUrl(item.path),
+      })),
+    },
   };
 }
 

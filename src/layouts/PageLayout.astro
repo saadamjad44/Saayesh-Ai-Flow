@@ -1,0 +1,75 @@
+---
+/**
+ * Single-column page on BaseLayout for core, legal, pillar, and article pages:
+ * heading, optional intro, optional legal-draft notice, and a prose body.
+ * Slots: default (prose body), "meta" (end of the header), "after" (below the prose).
+ */
+import BaseLayout from "./BaseLayout.astro";
+import ContentGap from "@/components/content/ContentGap.astro";
+import type { PageId } from "@/config/pages";
+import type { JsonLd } from "@/lib/seo";
+
+interface Props {
+  pageId: PageId;
+  title: string;
+  description: string;
+  /** Visible <h1>; defaults to `title`. */
+  heading?: string;
+  intro?: string;
+  /** Legal pages: shows the draft notice and effective-date placeholder. */
+  legalDraft?: boolean;
+  ogType?: "website" | "article";
+  jsonLd?: readonly JsonLd[];
+}
+
+const {
+  pageId,
+  title,
+  description,
+  heading = title,
+  intro,
+  legalDraft = false,
+  ogType,
+  jsonLd,
+} = Astro.props;
+---
+
+<BaseLayout pageId={pageId} title={title} description={description} ogType={ogType} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+    <header>
+      <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">{heading}</h1>
+      {intro && <p class="mt-4 text-lg text-slate-600">{intro}</p>}
+
+      {legalDraft && (
+        <>
+          <div
+            role="note"
+            data-content-gap
+            class="mt-6 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-yellow-900"
+          >
+            <p class="font-semibold">Draft template — not final</p>
+            <p class="mt-1">
+              This page is a draft and requires final legal review before launch. It is not legal
+              advice.
+            </p>
+          </div>
+          <p class="mt-4 text-sm text-slate-600">
+            Effective date: <ContentGap label="Effective date" />
+          </p>
+        </>
+      )}
+
+      {Astro.slots.has("meta") && (
+        <div class="mt-6 space-y-3">
+          <slot name="meta" />
+        </div>
+      )}
+    </header>
+
+    <div class="prose mt-8 max-w-none prose-slate prose-headings:tracking-tight prose-a:text-indigo-700">
+      <slot />
+    </div>
+
+    <slot name="after" />
+  </article>
+</BaseLayout>

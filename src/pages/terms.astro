@@ -1,0 +1,81 @@
+---
+/** Terms of Service — draft template, noindexed via the page registry. Needs legal review. */
+import PageLayout from "@/layouts/PageLayout.astro";
+import ContentGap from "@/components/content/ContentGap.astro";
+import OwnerDetail from "@/components/content/OwnerDetail.astro";
+import { SITE } from "@/config/site";
+import { getPage } from "@/config/pages";
+
+const contactPath = getPage("contact").path;
+const disclosurePath = getPage("affiliate-disclosure").path;
+const privacyPath = getPage("privacy-policy").path;
+---
+
+<PageLayout
+  pageId="terms"
+  title="Terms of Service"
+  description="The terms that apply when you use the Saayesh AI Flow website, including disclaimers and affiliate links."
+  legalDraft
+>
+  <h2>Agreement to these terms</h2>
+  <p>
+    These terms apply to your use of the {SITE.name} website, operated by{" "}
+    <OwnerDetail field="name" />. By using the site, you agree to them. If you do not agree, please
+    do not use the site. Our <a href={privacyPath}>privacy policy</a> explains how we handle
+    personal information.
+  </p>
+
+  <h2>Informational content only</h2>
+  <p>
+    Content on this site is for general information. It is not professional, legal, financial, or
+    tax advice. Decide for yourself whether a tool or workflow is right for your situation.
+  </p>
+
+  <h2>Accuracy and pricing</h2>
+  <p>
+    We aim to keep content accurate and dated, but AI tools change their features, pricing, and
+    terms often. Information may be incomplete or out of date. Always confirm details with the
+    vendor before you buy or rely on a tool.
+  </p>
+
+  <h2>Affiliate links</h2>
+  <p>
+    Some pages contain affiliate links, which means we may earn a commission if you buy through
+    them. See our <a href={disclosurePath}>affiliate disclosure</a> for details.
+  </p>
+
+  <h2>Third-party websites and tools</h2>
+  <p>
+    The site links to third-party websites and products that we do not control. Your use of them is
+    governed by their own terms and privacy policies.
+  </p>
+
+  <h2>Intellectual property</h2>
+  <p>
+    Unless otherwise noted, the content on this site is owned by <OwnerDetail field="name" />.
+    Product names and trademarks belong to their respective owners. Permitted use of site content:{" "}
+    <ContentGap label="Permitted use of site content (e.g. quoting with attribution)" />
+  </p>
+
+  <h2>Limitation of liability</h2>
+  <p>
+    <ContentGap label="Limitation of liability and warranty disclaimer wording (legal review)" />
+  </p>
+
+  <h2>Governing law</h2>
+  <p>
+    These terms are governed by the laws of <OwnerDetail field="jurisdiction" />.
+  </p>
+
+  <h2>Changes to these terms</h2>
+  <p>
+    We may update these terms from time to time. The effective date at the top of this page shows
+    when they were last changed.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about these terms? Email <OwnerDetail field="contactEmail" /> or use our{" "}
+    <a href={contactPath}>contact page</a>.
+  </p>
+</PageLayout>

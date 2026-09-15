@@ -1,0 +1,47 @@
+---
+/**
+ * Pillar and article pages rendered from MDX entries, on PageLayout.
+ * Header: last updated, testing status, affiliate note. After the body:
+ * related internal pages, then the FAQ (with its own FAQPage schema).
+ */
+import type { CollectionEntry } from "astro:content";
+import PageLayout from "./PageLayout.astro";
+import AffiliateNote from "@/components/content/AffiliateNote.astro";
+import FaqSection from "@/components/content/FaqSection.astro";
+import LastUpdated from "@/components/content/LastUpdated.astro";
+import RelatedPages, { type RelatedPage } from "@/components/content/RelatedPages.astro";
+import TestingStatus from "@/components/content/TestingStatus.astro";
+import type { JsonLd } from "@/lib/seo";
+
+interface Props {
+  entry: CollectionEntry<"pillars" | "articles">;
+  ogType: "website" | "article";
+  jsonLd: readonly JsonLd[];
+  relatedHeading: string;
+  related: readonly RelatedPage[];
+}
+
+const { entry, ogType, jsonLd, relatedHeading, related } = Astro.props;
+const { data } = entry;
+---
+
+<PageLayout
+  pageId={data.pageId}
+  title={data.title}
+  description={data.description}
+  ogType={ogType}
+  jsonLd={jsonLd}
+>
+  <Fragment slot="meta">
+    <LastUpdated updated={data.updatedDate} pricingVerified={data.pricingVerifiedDate} />
+    <TestingStatus status={data.testingStatus} summary={data.testingSummary} />
+    {data.hasAffiliateLinks && <AffiliateNote />}
+  </Fragment>
+
+  <slot />
+
+  <Fragment slot="after">
+    <RelatedPages id="related-pages" heading={relatedHeading} items={related} />
+    {data.faq && <FaqSection items={data.faq} />}
+  </Fragment>
+</PageLayout>

@@ -1,0 +1,44 @@
+---
+/** Card list of related internal pages (pillar ↔ cluster navigation). */
+export interface RelatedPage {
+  title: string;
+  path: string;
+  description: string;
+  /** Small label above the title, e.g. "Category hub". */
+  kicker?: string;
+}
+
+interface Props {
+  heading: string;
+  items: readonly RelatedPage[];
+  /** Unique per page, for aria-labelledby. */
+  id: string;
+}
+
+const { heading, items, id } = Astro.props;
+---
+
+{items.length > 0 && (
+  <section aria-labelledby={id} class="not-prose my-10">
+    <h2 id={id} class="text-2xl font-bold tracking-tight text-slate-900">
+      {heading}
+    </h2>
+    <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+      {items.map((item) => (
+        <li class="relative rounded-lg border border-slate-200 p-5 hover:border-indigo-300 hover:shadow-sm">
+          {item.kicker && (
+            <p class="text-xs font-semibold tracking-wide text-indigo-700 uppercase">
+              {item.kicker}
+            </p>
+          )}
+          <h3 class="mt-1 font-semibold text-slate-900">
+            <a href={item.path} class="after:absolute after:inset-0 hover:text-indigo-700">
+              {item.title}
+            </a>
+          </h3>
+          <p class="mt-2 text-sm text-slate-600">{item.description}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

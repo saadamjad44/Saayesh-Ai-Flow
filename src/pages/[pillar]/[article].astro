@@ -1,0 +1,70 @@
+---
+/** Cluster articles from the `articles` collection, nested under their pillar. */
+import { render } from "astro:content";
+import EntryLayout from "@/layouts/EntryLayout.astro";
+import { getPublishedEntries, pathSegments } from "@/lib/content";
+import { articleSchema } from "@/lib/seo";
+
+export async function getStaticPaths() {
+  const [pillars, articles] = await Promise.all([
+    getPublishedEntries("pillars"),
+    getPublishedEntries("articles"),
+  ]);
+
+  return articles.map(({ entry, page }) => {
+    const parent = pillars.find((pillar) => pillar.page.id === page.pillar);
+    if (!parent) {
+      throw new Error(`Article "${page.id}" needs its pillar "${page.pillar}" to be published`);
+    }
+
+    const siblings = articles
+      .filter((article) => article.page.pillar === page.pillar && article.page.id !== page.id)
+      .map(({ entry: sibling, page: siblingPage }) => ({
+        title: sibling.data.title,
+        path: siblingPage.path,
+        description: sibling.data.description,
+        kicker: "In this category",
+      }));
+
+    const [pillar, article] = pathSegments(page);
+    return {
+      params: { pillar, article },
+      props: {
+        entry,
+        related: [
+          {
+            title: parent.entry.data.title,
+            path: parent.page.path,
+            description: parent.entry.data.description,
+            kicker: "Category hub",
+          },
+          ...siblings,
+        ],
+      },
+    };
+  });
+}
+
+type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
+
+const { entry, related } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<EntryLayout
+  entry={entry}
+  ogType="article"
+  jsonLd={[
+    articleSchema({
+      headline: entry.data.title,
+      description: entry.data.description,
+      path: Astro.url.pathname,
+      datePublished: entry.data.publishedDate,
+      dateModified: entry.data.updatedDate,
+    }),
+  ]}
+  relatedHeading="Keep reading"
+  related={related}
+>
+  <Content />
+</EntryLayout>

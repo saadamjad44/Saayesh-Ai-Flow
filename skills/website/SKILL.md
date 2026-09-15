@@ -1,6 +1,6 @@
 # Website Engineering Skill
 
-Use for building and modifying the Saayesh Automate Stack website.
+Use for building and modifying the Saayesh AI Flow website.
 
 ## Before coding
 - Inspect the existing project.

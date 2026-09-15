@@ -1,20 +1,133 @@
 ---
-// Placeholder homepage on the shared layout. The real homepage is built in
-// Step 4; remove `noindex` then so the page matches its sitemap entry.
+/**
+ * Homepage: positioning, the three Phase 1 pillars, and how the site works.
+ * Phase 1 omits the latest-articles row (no articles yet), the email opt-in,
+ * "Popular Comparisons", and unverified trust claims.
+ */
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SITE } from "@/config/site";
+import { getPage, type PageId } from "@/config/pages";
 import { websiteSchema } from "@/lib/seo";
+
+const PILLARS: readonly { id: PageId; summary: string }[] = [
+  {
+    id: "ai-writing-tools",
+    summary:
+      "Roundups and head-to-head comparisons to help you choose an AI writing tool for your work.",
+  },
+  {
+    id: "ai-business-tools",
+    summary:
+      "AI tools for solopreneurs and small business owners, including what they cost and what they can take off your plate.",
+  },
+  {
+    id: "ai-automation",
+    summary:
+      "Step-by-step automation examples and workflows for email, scheduling, and other repeat tasks.",
+  },
+];
+
+const PRINCIPLES = [
+  {
+    title: "Clear about our research",
+    body: "Every guide says whether it is based on public information or hands-on testing. We don't publish scores for tools we haven't tested.",
+    link: { label: "How we research and review", id: "about" },
+  },
+  {
+    title: "Affiliate links disclosed",
+    body: "Some pages earn a commission through affiliate links. Commissions don't decide what we recommend.",
+    link: { label: "Read our affiliate disclosure", id: "affiliate-disclosure" },
+  },
+  {
+    title: "Dated and correctable",
+    body: "Guides show when they were last updated and when pricing was checked. Spot something wrong? Tell us.",
+    link: { label: "Send a correction", id: "contact" },
+  },
+] as const satisfies readonly {
+  title: string;
+  body: string;
+  link: { label: string; id: PageId };
+}[];
 ---
 
 <BaseLayout
   pageId="home"
-  title={SITE.name}
-  description={SITE.tagline}
-  noindex
+  title={`${SITE.name}: AI Tools, Automation & Workflow Guides`}
+  description="Research-based guides to AI writing tools, AI business tools, and AI automation workflows for solopreneurs and small business owners."
   jsonLd={[websiteSchema()]}
 >
-  <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-    <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">{SITE.name}</h1>
-    <p class="mt-4 text-lg text-slate-600">{SITE.tagline}</p>
-  </div>
+  <section class="border-b border-slate-200 bg-slate-50">
+    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+      <p class="text-sm font-semibold tracking-wide text-indigo-700 uppercase">{SITE.name}</p>
+      <h1 class="mt-3 max-w-3xl text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+        {SITE.tagline}
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-slate-600">
+        Practical guides to AI writing tools, AI business tools, and AI automation for solopreneurs
+        and small business owners, written to help you choose with less guesswork.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href="#categories"
+          class="rounded-md bg-indigo-700 px-5 py-2.5 font-semibold text-white hover:bg-indigo-800"
+        >
+          Browse categories
+        </a>
+        <a
+          href={getPage("about").path}
+          class="rounded-md border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-900 hover:border-indigo-300 hover:text-indigo-700"
+        >
+          How we work
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="categories" aria-labelledby="categories-heading" class="scroll-mt-4">
+    <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+      <h2 id="categories-heading" class="text-2xl font-bold tracking-tight text-slate-900">
+        Explore by category
+      </h2>
+      <ul class="mt-6 grid gap-4 md:grid-cols-3">
+        {PILLARS.map(({ id, summary }) => {
+          const pillar = getPage(id);
+          return (
+            <li class="relative flex flex-col rounded-lg border border-slate-200 p-6 hover:border-indigo-300 hover:shadow-sm">
+              <h3 class="text-lg font-semibold text-slate-900">
+                <a href={pillar.path} class="after:absolute after:inset-0 hover:text-indigo-700">
+                  {pillar.title}
+                </a>
+              </h3>
+              <p class="mt-2 flex-1 text-slate-600">{summary}</p>
+              <span aria-hidden="true" class="mt-4 text-sm font-semibold text-indigo-700">
+                Explore &rarr;
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="principles-heading" class="border-t border-slate-200">
+    <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+      <h2 id="principles-heading" class="text-2xl font-bold tracking-tight text-slate-900">
+        How we work
+      </h2>
+      <ul class="mt-6 grid gap-6 md:grid-cols-3">
+        {PRINCIPLES.map(({ title, body, link }) => (
+          <li>
+            <h3 class="font-semibold text-slate-900">{title}</h3>
+            <p class="mt-2 text-slate-600">{body}</p>
+            <a
+              href={getPage(link.id).path}
+              class="mt-3 inline-block text-sm font-semibold text-indigo-700 underline hover:text-indigo-900"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
 </BaseLayout>

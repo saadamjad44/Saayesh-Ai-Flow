@@ -1,0 +1,103 @@
+---
+/** Privacy Policy — draft template, noindexed via the page registry. Needs legal review. */
+import PageLayout from "@/layouts/PageLayout.astro";
+import ContentGap from "@/components/content/ContentGap.astro";
+import OwnerDetail from "@/components/content/OwnerDetail.astro";
+import { SITE } from "@/config/site";
+import { getPage } from "@/config/pages";
+
+const contactPath = getPage("contact").path;
+const disclosurePath = getPage("affiliate-disclosure").path;
+---
+
+<PageLayout
+  pageId="privacy-policy"
+  title="Privacy Policy"
+  description="How Saayesh AI Flow collects, uses, and protects information when you visit the site or contact us."
+  legalDraft
+>
+  <h2>Who we are</h2>
+  <p>
+    This privacy policy explains how {SITE.name} (“we”, “us”) handles information when you use this
+    website. The site is operated by <OwnerDetail field="name" />. You can contact us about privacy
+    at <OwnerDetail field="contactEmail" /> or through our <a href={contactPath}>contact page</a>.
+  </p>
+
+  <h2>Information we collect</h2>
+  <h3>Information you give us</h3>
+  <p>
+    When you use our contact form, we receive the name, email address, subject, and message you
+    submit.
+  </p>
+  <h3>Information collected automatically</h3>
+  <p>
+    Our hosting provider may process technical information needed to deliver the site, such as your
+    IP address, browser type, and the pages you request.
+  </p>
+  <p>
+    Analytics:{" "}
+    <ContentGap label="Confirm analytics tools, what they collect, and how consent is requested before launch" />
+  </p>
+
+  <h2>How we use information</h2>
+  <ul>
+    <li>To reply to messages sent through the contact form.</li>
+    <li>To operate, secure, and maintain the website.</li>
+    <li>To understand how the site is used so we can improve it, where analytics are enabled.</li>
+  </ul>
+  <p>
+    Legal basis for processing: <ContentGap label="Legal basis for each purpose (e.g. GDPR)" />
+  </p>
+
+  <h2>Cookies</h2>
+  <p>
+    <ContentGap label="List of cookies used (essential, analytics, advertising), their purpose, and how visitors can manage consent" />
+  </p>
+
+  <h2>Third-party services</h2>
+  <ul>
+    <li>
+      <strong>Netlify</strong> hosts the website and processes contact form submissions.
+    </li>
+    <li>
+      <strong>Analytics:</strong> <ContentGap label="Analytics provider(s), if enabled at launch" />
+    </li>
+    <li>
+      <strong>Affiliate partners:</strong> when you click an affiliate link, the partner may use
+      cookies to attribute a purchase. See our <a href={disclosurePath}>affiliate disclosure</a>.{" "}
+      <ContentGap label="Affiliate programs in use" />
+    </li>
+    <li>
+      <strong>Advertising:</strong> <ContentGap label="Ad networks, if any are added" />
+    </li>
+  </ul>
+  <p>These services handle data under their own privacy policies.</p>
+
+  <h2>How long we keep information</h2>
+  <p>
+    <ContentGap label="Retention period for contact form submissions and other data" />
+  </p>
+
+  <h2>Your rights</h2>
+  <p>
+    Depending on where you live, you may have rights over your personal information, such as the
+    right to access, correct, delete, or restrict the use of it, to object to processing, or to opt
+    out of the sale or sharing of personal information. To make a request, contact us using the
+    details above.
+  </p>
+  <p>
+    Applicable laws and region-specific rights:{" "}
+    <ContentGap label="Applicable privacy laws (e.g. GDPR, UK GDPR, CCPA/CPRA) and how each is addressed" />
+  </p>
+
+  <h2>Children’s privacy</h2>
+  <p>
+    This website is not directed at children, and we do not knowingly collect their information.
+  </p>
+
+  <h2>Changes to this policy</h2>
+  <p>
+    We may update this policy from time to time. The effective date at the top of this page shows
+    when it was last changed.
+  </p>
+</PageLayout>

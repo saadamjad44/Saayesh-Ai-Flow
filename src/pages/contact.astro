@@ -1,0 +1,26 @@
+---
+/** Contact page (indexed). Response time and email are owner placeholders. */
+import PageLayout from "@/layouts/PageLayout.astro";
+import ContactForm from "@/components/forms/ContactForm.astro";
+import ContentGap from "@/components/content/ContentGap.astro";
+import OwnerDetail from "@/components/content/OwnerDetail.astro";
+---
+
+<PageLayout
+  pageId="contact"
+  title="Contact Us"
+  heading="Contact"
+  description="Contact Saayesh AI Flow with general questions, tool submissions, corrections, or business inquiries."
+  intro="Use the form below for general questions, tool submissions, corrections, or business inquiries."
+>
+  <ContactForm />
+
+  <h2>What to expect</h2>
+  <p>
+    Expected response time: <ContentGap label="Expected response time" />
+  </p>
+  <p>
+    You can also email us at <OwnerDetail field="contactEmail" />.
+  </p>
+  <p>Submitting a tool doesn't guarantee that we will cover it.</p>
+</PageLayout>

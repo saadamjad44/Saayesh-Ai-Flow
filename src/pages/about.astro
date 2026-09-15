@@ -1,0 +1,78 @@
+---
+/**
+ * About + Editorial Process (E-E-A-T). Owner identity and background are
+ * placeholders until the owner provides them; no credentials are invented.
+ */
+import PageLayout from "@/layouts/PageLayout.astro";
+import ContentGap from "@/components/content/ContentGap.astro";
+import OwnerDetail from "@/components/content/OwnerDetail.astro";
+import { SITE } from "@/config/site";
+import { getPage } from "@/config/pages";
+import { SCORE_CATEGORIES } from "@/config/editorial";
+
+const contactPath = getPage("contact").path;
+const disclosurePath = getPage("affiliate-disclosure").path;
+---
+
+<PageLayout
+  pageId="about"
+  title="About Us and Our Editorial Process"
+  heading={`About ${SITE.name}`}
+  description="Who runs Saayesh AI Flow, how we research AI tools, how we label testing, and how the site makes money."
+  intro={SITE.tagline}
+>
+  <h2>Why this site exists</h2>
+  <p>
+    {SITE.name} publishes guides, comparisons, and workflows about AI writing tools, AI business
+    tools, and AI automation. It is written for solopreneurs, freelancers, and small business owners
+    who need to pick tools and set up workflows without a team to test everything for them.
+  </p>
+
+  <h2>Who runs the site</h2>
+  <p>
+    {SITE.name} is run by <OwnerDetail field="name" />.
+  </p>
+  <p>
+    <ContentGap label="Owner background and relevant experience (factual only)" />
+  </p>
+
+  <h2>How we research</h2>
+  <p>
+    Our current guides are research-based. We work from publicly available information, such as
+    official product documentation, pricing pages, and product announcements, and we summarize it in
+    our own words rather than copying marketing copy.
+  </p>
+  <ul>
+    <li>
+      <strong>Testing is labeled.</strong> Every guide states whether it is research-based or based
+      on hands-on testing. We only call a tool tested when we have actually tested it.
+    </li>
+    <li>
+      <strong>No scores without testing.</strong> We only publish scores for tools we have tested
+      hands-on, using the same categories for every tool:
+      {SCORE_CATEGORIES.map((category) => category.label).join(", ")}.
+    </li>
+    <li>
+      <strong>Dates are visible.</strong> Guides show when they were last updated and, where prices
+      are mentioned, when pricing was last checked. Prices and features change often, so confirm
+      details with the vendor before you buy.
+    </li>
+    <li>
+      <strong>Facts and opinions are separated.</strong> Where we give a recommendation, we explain
+      who a tool suits, where it falls short, and which alternatives to consider.
+    </li>
+  </ul>
+
+  <h2>How the site makes money</h2>
+  <p>
+    Some pages contain affiliate links. If you buy through one, we may earn a commission at no extra
+    cost to you. Commissions don't decide which tools we recommend or how we rank them. Read our{" "}
+    <a href={disclosurePath}>affiliate disclosure</a> for details.
+  </p>
+
+  <h2>Corrections and contact</h2>
+  <p>
+    If you find an error or outdated information, please let us know through the{" "}
+    <a href={contactPath}>contact page</a> and choose “Correction” as the subject.
+  </p>
+</PageLayout>

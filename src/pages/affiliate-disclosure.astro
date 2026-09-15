@@ -1,0 +1,47 @@
+---
+/** Affiliate Disclosure — draft template, noindexed via the page registry. Needs legal review. */
+import PageLayout from "@/layouts/PageLayout.astro";
+import ContentGap from "@/components/content/ContentGap.astro";
+import { SITE } from "@/config/site";
+import { getPage } from "@/config/pages";
+
+const aboutPath = getPage("about").path;
+const contactPath = getPage("contact").path;
+---
+
+<PageLayout
+  pageId="affiliate-disclosure"
+  title="Affiliate Disclosure"
+  description="How Saayesh AI Flow earns money through affiliate links, and why commissions don't decide our recommendations."
+  legalDraft
+>
+  <h2>How we make money</h2>
+  <p>
+    {SITE.name} is free to read. Some pages contain affiliate links: if you click one and buy a
+    product or subscription, we may earn a commission. This comes at no extra cost to you.
+  </p>
+
+  <h2>Our recommendations are not for sale</h2>
+  <p>
+    Commissions don't decide which tools we recommend or how we rank them. Our guides label whether
+    they are research-based or based on hands-on testing. Read more about{" "}
+    <a href={aboutPath}>how we research and review</a>.
+  </p>
+
+  <h2>Where you’ll see this disclosure</h2>
+  <p>
+    Pages with affiliate links show a short disclosure near the top that links here, and a summary
+    of this disclosure appears in the footer of every page.
+  </p>
+
+  <h2>Affiliate programs we participate in</h2>
+  <p>
+    <ContentGap label="List of affiliate programs actually in use" />
+  </p>
+
+  <h2>Questions</h2>
+  <p>
+    If you have questions about this disclosure, please reach us through our{" "}
+    <a href={contactPath}>contact page</a>.
+  </p>
+</PageLayout>

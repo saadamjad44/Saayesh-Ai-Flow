@@ -1,7 +1,7 @@
-# Saayesh Automate Stack — Agent Rules
+# Saayesh AI Flow — Agent Rules
 
 ## Mission
-Build and grow Saayesh Automate Stack as a trustworthy, SEO-first AI tools, automation, workflows, comparisons, reviews, prompts, and guides website.
+Build and grow Saayesh AI Flow as a trustworthy, SEO-first AI tools, automation, workflows, comparisons, reviews, prompts, and guides website.
 
 ## Source of truth
 - `revised-blueprint-phase1.jsx` is the source of truth for approved site architecture, Phase 1 scope, URLs, page map, and internal-linking structure.
@@ -10,7 +10,7 @@ Build and grow Saayesh Automate Stack as a trustworthy, SEO-first AI tools, auto
 - When a task depends on the blueprint, read `revised-blueprint-phase1.jsx` first.
 
 ## Approved project decisions
-- Brand name: **Saayesh Automate Stack**.
+- Brand name: **Saayesh AI Flow**.
 - Domain: not purchased yet. Use the `SITE_DOMAIN` placeholder in `src/config/site.ts` until the owner provides the final domain.
 - Phase 1 scope: exactly 17 pages (6 core/utility + 3 pillars + 8 keyword-targeted articles).
 - `/blog/` is deferred to Phase 2. Do not build or link it in Phase 1.

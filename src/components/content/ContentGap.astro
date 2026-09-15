@@ -1,0 +1,19 @@
+---
+/**
+ * Visible placeholder for information only the owner can provide.
+ * Find every remaining gap before launch with: grep -r "data-content-gap" dist
+ */
+interface Props {
+  /** What is missing, e.g. "Owner or business name". */
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<span
+  data-content-gap
+  class="rounded bg-yellow-100 px-1.5 py-0.5 text-[0.9em] font-semibold text-yellow-900 ring-1 ring-yellow-300"
+>
+  [To be provided: {label}]
+</span>

@@ -1,0 +1,130 @@
+---
+pageId: ai-automation
+title: AI Automation & Workflows
+description: What AI automation is, how AI steps fit into everyday workflows, common use cases for small businesses, and how to choose tools and build safely.
+publishedDate: 2026-09-14
+updatedDate: 2026-09-15
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What is AI automation?
+    answer: AI automation combines ordinary automation, where a trigger in one app causes actions in others, with AI steps that read, summarize, classify, or draft text. For example, a new customer email can trigger an AI step that labels its topic and drafts a reply for you to review.
+  - question: What is the difference between automation and AI automation?
+    answer: Traditional automation follows fixed rules, such as copying every form entry into a spreadsheet. AI automation adds steps that handle unstructured information, such as deciding whether a message is a sales enquiry or a complaint. The AI part is more flexible but less predictable, so it needs checks.
+  - question: Do I need to code to automate my business with AI?
+    answer: No. No-code automation platforms such as Zapier let you build workflows by choosing apps, triggers, and actions, and they include AI steps. Coding helps for complex or custom workflows, but most small business automations do not need it.
+  - question: What should I automate first?
+    answer: Choose a frequent, rules-based task that causes little harm if a mistake is caught, such as saving form submissions to a spreadsheet or summarizing meeting notes. Have the AI create drafts or notifications for you to review before letting any automation act on its own.
+---
+
+import { ComparisonTable } from "@/components/content";
+
+Automation used to mean rigid rules: when X happens, do Y. AI adds the ability to handle the messy part, such as reading an email, working out what it is about, and drafting a sensible response. For a solo business, that combination can remove hours of copy-and-paste and first-draft work. It can also create new problems if it is set up carelessly. This guide explains how AI automation works, where it helps, and how to build workflows you can trust.
+
+## What AI automation is
+
+Every automation has the same basic shape: something happens, and in response a series of steps runs without you. AI automation adds one or more steps where an AI model interprets or generates content along the way.
+
+<ComparisonTable
+  caption="The parts of an AI automation"
+  rowHeader="Part"
+  columns={["What it does", "Example"]}
+  rows={[
+    {
+      label: "Trigger",
+      cells: ["The event that starts the workflow", "A new email arrives, or a form is submitted"],
+    },
+    {
+      label: "Data steps",
+      cells: ["Find, format, or filter information", "Look up the sender in a spreadsheet"],
+    },
+    {
+      label: "AI step",
+      cells: [
+        "Read, classify, summarize, extract, or draft",
+        "Label the email as a sales enquiry and draft a reply",
+      ],
+    },
+    {
+      label: "Logic",
+      cells: ["Choose a path based on conditions", "Only continue if the email is a sales enquiry"],
+    },
+    {
+      label: "Action",
+      cells: ["Do something in another app", "Save the draft in your email and notify you"],
+    },
+    {
+      label: "Human check",
+      cells: [
+        "You approve before anything important happens",
+        "You review and send the drafted reply",
+      ],
+    },
+  ]}
+/>
+
+### Automations, AI steps, and agents
+
+You will see three related ideas on automation platforms:
+
+- **Rule-based automations** follow exactly the steps you define. They are predictable and ideal for moving structured data.
+- **AI steps** sit inside those automations to handle unstructured text: sorting messages, pulling details out of emails, or writing drafts.
+- **AI agents** are given a goal, instructions, and access to tools, and decide the steps themselves. They are more flexible and harder to predict, so they need clearer limits and more monitoring.
+
+For most small businesses, the best starting point is a rule-based automation with a single AI step and a human review at the end.
+
+## Common AI automation use cases
+
+These are the kinds of workflows that tend to suit solo businesses, because they are frequent, text-heavy, and easy to check:
+
+- **Email triage:** label incoming emails by topic or urgency and notify you about the ones that matter.
+- **Lead capture:** turn form submissions into organized records, with an AI summary of what the person needs.
+- **Draft replies:** prepare responses to common questions as drafts you edit and send.
+- **Meeting follow-ups:** extract action items from meeting notes and add them to your task list.
+- **Content repurposing:** turn a new blog post into draft social posts or a newsletter section for review.
+- **Feedback analysis:** tag customer feedback by theme so patterns are easier to spot.
+- **Research digests:** collect saved links or notes and send yourself a weekly summary.
+
+Our [Zapier AI automation examples](/ai-automation/zapier-ai-automation-examples/) break down eight workflows like these step by step, including the trigger, actions, and tools involved. For email specifically, our tutorial on [how to automate email responses with AI](/ai-automation/how-to-automate-email-with-ai/) compares three methods.
+
+## Choosing tools for AI automation
+
+### Automation platforms
+
+Automation platforms connect your apps and run workflows between them. **Zapier** is a widely used no-code option. Its pricing page lists a free plan limited to two-step workflows and 100 tasks per month, with multi-step workflows and AI by Zapier on paid plans. Alternatives such as Make and n8n take different approaches to building and running workflows, and n8n can be self-hosted. Compare platforms on:
+
+- **App coverage:** does it connect to the apps you actually use?
+- **AI features:** does it include AI steps, or do you need your own AI account?
+- **Pricing model:** how tasks, operations, or runs are counted, and what a busy month would cost.
+- **Ease of building:** visual builders, templates, and AI help for setting up workflows.
+- **Error handling:** alerts and logs when something fails.
+
+### AI built into your apps
+
+Before building a workflow, check whether the app already does the job. Email suites, workspace tools, meeting recorders, and support platforms increasingly include AI features. A built-in feature is often simpler and more reliable than a custom automation.
+
+### General AI assistants
+
+Tools like ChatGPT and Claude are useful for designing workflows too. You can describe a process and ask for suggested steps, prompts, and edge cases before you build anything. See our [AI writing tools guide](/ai-writing-tools/) for how these assistants compare.
+
+## How to build AI workflows safely
+
+1. **Map the process by hand first.** Write each step down. If you cannot describe it clearly, an automation will not fix it.
+2. **Start with drafts, not actions.** Have AI steps create drafts, labels, or notifications. Move to automatic actions only after you trust the results.
+3. **Give precise instructions.** Tell the AI step exactly what to output, in what format, and what to do when it is unsure.
+4. **Test with real examples.** Run the workflow on a range of past emails or forms, including unusual ones.
+5. **Add filters.** Stop the workflow when information is missing or the AI output does not match the expected format.
+6. **Limit data.** Send only the information each step needs, and check the data terms of every connected service.
+7. **Monitor and review.** Check run history regularly. Automations often fail quietly when an app changes.
+8. **Watch usage.** AI steps and busy triggers can use up plan allowances faster than you expect.
+
+## Guides in this category
+
+- **[Zapier AI automation examples](/ai-automation/zapier-ai-automation-examples/):** eight practical workflows, each broken down into trigger, tools, steps, action, and expected benefit.
+- **[Best AI workflows for solopreneurs](/ai-automation/best-ai-workflows-for-solopreneurs/):** seven end-to-end workflows covering email, content, invoicing, scheduling, research, social media, and customer support.
+- **[How to automate email responses with AI](/ai-automation/how-to-automate-email-with-ai/):** a step-by-step tutorial covering Gmail with Zapier, Outlook with Power Automate, and dedicated AI email tools.
+
+## Related categories
+
+- Not sure which tasks to automate and which to hand to a person? Read [AI tools vs a virtual assistant](/ai-business-tools/ai-tools-vs-virtual-assistant/).
+- For individual tools to plug into your workflows, see the [best AI tools for small business](/ai-business-tools/best-ai-tools-for-small-business/) and our [AI business and productivity guide](/ai-business-tools/).

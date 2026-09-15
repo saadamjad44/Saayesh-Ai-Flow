@@ -8,12 +8,12 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
-import { PAGES, type PageType, type SitePage } from "@/config/pages";
+import { PAGES, type PageId, type PageType } from "@/config/pages";
 import { TESTING_STATUSES } from "@/config/editorial";
 
 function pageIdOfType(type: PageType) {
-  const ids = (PAGES as readonly SitePage[]).filter((page) => page.type === type).map((p) => p.id);
-  return z.enum(ids as [string, ...string[]], {
+  const ids = PAGES.filter((page) => page.type === type).map((page): PageId => page.id);
+  return z.enum(ids as [PageId, ...PageId[]], {
     error: `pageId must be an approved Phase 1 ${type} page: ${ids.join(", ")}`,
   });
 }
@@ -38,7 +38,7 @@ const entrySchema = (type: PageType) =>
       testingStatus: z.enum(TESTING_STATUSES),
       /** Required for `hands-on`: what was actually tested, and how. */
       testingSummary: z.string().trim().min(1).optional(),
-      /** Explicit per page; `true` shows the affiliate note near the top. */
+      /** Explicit per page: `true` if the page has or will carry affiliate links; shows the affiliate note. */
       hasAffiliateLinks: z.boolean(),
       /** Date prices on the page were last checked, if the page states prices. */
       pricingVerifiedDate: z.coerce.date().optional(),
