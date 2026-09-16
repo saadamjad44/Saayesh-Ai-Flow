@@ -25,6 +25,8 @@ export interface OwnerDetails {
   /** Owner or business name. */
   name: string | null;
   contactEmail: string | null;
+  /** Where the owner is based, e.g. "City, Region, Country". */
+  location: string | null;
   /** Governing law / jurisdiction for the legal pages. */
   jurisdiction: string | null;
 }
@@ -34,8 +36,9 @@ export interface OwnerDetails {
  * `null` renders a visible "To be provided" placeholder on the page.
  */
 export const OWNER: OwnerDetails = {
-  name: null,
-  contactEmail: null,
+  name: "Saad Amjad",
+  contactEmail: "saadamjad.mah@gmail.com",
+  location: "Pattoki, Punjab, Pakistan",
   jurisdiction: null,
 };
 

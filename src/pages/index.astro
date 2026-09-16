@@ -1,6 +1,7 @@
 ---
 /**
- * Homepage: positioning, the three Phase 1 pillars, and how the site works.
+ * Homepage: positioning and the three Phase 1 pillars. Editorial methodology
+ * lives on the About + Editorial Process page, not here.
  * Phase 1 omits the latest-articles row (no articles yet), the email opt-in,
  * "Popular Comparisons", and unverified trust claims.
  */
@@ -26,28 +27,6 @@ const PILLARS: readonly { id: PageId; summary: string }[] = [
       "Step-by-step automation examples and workflows for email, scheduling, and other repeat tasks.",
   },
 ];
-
-const PRINCIPLES = [
-  {
-    title: "Clear about our research",
-    body: "Every guide says whether it is based on public information or hands-on testing. We don't publish scores for tools we haven't tested.",
-    link: { label: "How we research and review", id: "about" },
-  },
-  {
-    title: "Affiliate links disclosed",
-    body: "Some pages earn a commission through affiliate links. Commissions don't decide what we recommend.",
-    link: { label: "Read our affiliate disclosure", id: "affiliate-disclosure" },
-  },
-  {
-    title: "Dated and correctable",
-    body: "Guides show when they were last updated and when pricing was checked. Spot something wrong? Tell us.",
-    link: { label: "Send a correction", id: "contact" },
-  },
-] as const satisfies readonly {
-  title: string;
-  body: string;
-  link: { label: string; id: PageId };
-}[];
 ---
 
 <BaseLayout
@@ -105,28 +84,6 @@ const PRINCIPLES = [
             </li>
           );
         })}
-      </ul>
-    </div>
-  </section>
-
-  <section aria-labelledby="principles-heading" class="border-t border-slate-200">
-    <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-      <h2 id="principles-heading" class="text-2xl font-bold tracking-tight text-slate-900">
-        How we work
-      </h2>
-      <ul class="mt-6 grid gap-6 md:grid-cols-3">
-        {PRINCIPLES.map(({ title, body, link }) => (
-          <li>
-            <h3 class="font-semibold text-slate-900">{title}</h3>
-            <p class="mt-2 text-slate-600">{body}</p>
-            <a
-              href={getPage(link.id).path}
-              class="mt-3 inline-block text-sm font-semibold text-indigo-700 underline hover:text-indigo-900"
-            >
-              {link.label}
-            </a>
-          </li>
-        ))}
       </ul>
     </div>
   </section>

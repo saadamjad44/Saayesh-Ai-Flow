@@ -1,10 +1,14 @@
 ---
 /**
- * Site header. Three Phase 1 pillar links only, rendered as plain HTML
- * links (no JS): on small screens the nav wraps onto its own row.
+ * Site header. Three Phase 1 pillar links, each with a disclosure dropdown
+ * listing that pillar's built articles. Pillar links stay plain, crawlable
+ * links; a small script only toggles the dropdowns (hover and keyboard focus
+ * on desktop, tap/click everywhere, Escape to close). On small screens the
+ * nav wraps onto its own row and dropdowns open full-width below it.
  */
-import { PRIMARY_NAV } from "@/config/navigation";
+import { PRIMARY_NAV, getSectionLinks } from "@/config/navigation";
 import { SITE } from "@/config/site";
+import { getPublishedEntries } from "@/lib/content";
 
 interface Props {
   /** Pathname of the current page, used to mark the active nav item. */
@@ -12,35 +16,107 @@ interface Props {
 }
 
 const { currentPath } = Astro.props;
+
+const builtPageIds = new Set((await getPublishedEntries("articles")).map(({ page }) => page.id));
+const sections = PRIMARY_NAV.map((section) => ({
+  ...section,
+  links: getSectionLinks(section.pillar, builtPageIds),
+}));
 ---
 
 <header class="border-b border-slate-200 bg-white">
   <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">
     <a
       href="/"
-      class="self-start text-lg font-extrabold tracking-tight text-slate-900 hover:text-indigo-700"
+      class="self-start text-lg font-extrabold tracking-tight text-slate-900 hover:text-indigo-700 md:self-auto"
       aria-current={currentPath === "/" ? "page" : undefined}
     >
       {SITE.name}
     </a>
 
-    <nav aria-label="Main">
+    <nav aria-label="Main" class="relative">
       <ul class="-mx-3 flex flex-wrap gap-x-1 gap-y-1 text-sm font-medium">
-        {PRIMARY_NAV.map(({ label, href }) => {
+        {sections.map(({ label, href, pillar, links }, index) => {
           const isCurrent = currentPath === href;
           const inSection = currentPath.startsWith(href);
+          const menuId = `nav-menu-${pillar}`;
+          const isLast = index === sections.length - 1;
           return (
-            <li>
-              <a
-                href={href}
-                aria-current={isCurrent ? "page" : undefined}
+            <li class="md:relative" data-nav-item>
+              <div
                 class:list={[
-                  "inline-block rounded-md px-3 py-2 hover:bg-slate-100 hover:text-indigo-700",
+                  "flex items-center rounded-md hover:bg-slate-100 has-[[aria-expanded=true]]:bg-slate-100",
                   inSection ? "text-indigo-700" : "text-slate-700",
                 ]}
               >
-                {label}
-              </a>
+                <a
+                  href={href}
+                  aria-current={isCurrent ? "page" : undefined}
+                  class:list={[
+                    "inline-block rounded-md py-2 hover:text-indigo-700",
+                    links.length > 0 ? "pr-1 pl-3" : "px-3",
+                  ]}
+                >
+                  {label}
+                </a>
+                {links.length > 0 && (
+                  <button
+                    type="button"
+                    class="group rounded-md py-2 pr-2 pl-1 hover:text-indigo-700"
+                    aria-expanded="false"
+                    aria-controls={menuId}
+                    data-nav-toggle
+                  >
+                    <span class="sr-only">{label} articles</span>
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      class="size-4 transition-transform group-aria-expanded:rotate-180 motion-reduce:transition-none"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
+
+              {links.length > 0 && (
+                <div
+                  id={menuId}
+                  hidden
+                  data-nav-menu
+                  class:list={[
+                    "absolute inset-x-0 top-full z-40 pt-2 md:inset-x-auto md:w-80",
+                    isLast ? "md:right-0" : "md:left-0",
+                  ]}
+                >
+                  <ul class="rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg shadow-slate-900/5">
+                    {links.map((item) => {
+                      const isCurrentItem = currentPath === item.href;
+                      return (
+                        <li>
+                          <a
+                            href={item.href}
+                            aria-current={isCurrentItem ? "page" : undefined}
+                            class:list={[
+                              "block rounded-lg px-3 py-2 leading-snug",
+                              isCurrentItem
+                                ? "bg-indigo-50 font-semibold text-indigo-700"
+                                : "text-slate-700 hover:bg-slate-100 hover:text-indigo-700",
+                            ]}
+                          >
+                            {item.label}
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
             </li>
           );
         })}
@@ -48,3 +124,82 @@ const { currentPath } = Astro.props;
     </nav>
   </div>
 </header>
+
+<script>
+  // Disclosure dropdowns for the main nav. Without JS, pillar links still work.
+  const items = [...document.querySelectorAll<HTMLElement>("[data-nav-item]")].flatMap((item) => {
+    const toggle = item.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+    const menu = item.querySelector<HTMLElement>("[data-nav-menu]");
+    return toggle && menu ? [{ item, toggle, menu }] : [];
+  });
+  type NavItem = (typeof items)[number];
+
+  // Hover and focus-to-open apply only to pointer devices at the desktop breakpoint.
+  const desktop = window.matchMedia("(hover: hover) and (min-width: 48rem)");
+  const HOVER_CLOSE_DELAY_MS = 150;
+  let hoverTimer: number | undefined;
+
+  const isOpen = ({ toggle }: NavItem) => toggle.getAttribute("aria-expanded") === "true";
+
+  /** Opens or closes `target`; every other dropdown is always closed. */
+  function setOpen(target: NavItem | null, open: boolean) {
+    for (const entry of items) {
+      const next = entry === target && open;
+      entry.toggle.setAttribute("aria-expanded", String(next));
+      entry.menu.hidden = !next;
+    }
+  }
+
+  const closeAll = () => setOpen(null, false);
+
+  for (const entry of items) {
+    const { item, toggle, menu } = entry;
+
+    toggle.addEventListener("click", () => setOpen(entry, !isOpen(entry)));
+
+    item.addEventListener("mouseenter", () => {
+      if (!desktop.matches) return;
+      window.clearTimeout(hoverTimer);
+      setOpen(entry, true);
+    });
+
+    item.addEventListener("mouseleave", () => {
+      if (!desktop.matches) return;
+      window.clearTimeout(hoverTimer);
+      hoverTimer = window.setTimeout(() => setOpen(entry, false), HOVER_CLOSE_DELAY_MS);
+    });
+
+    // Keyboard focus entering the item opens it on desktop; moves within it don't re-open.
+    item.addEventListener("focusin", (event) => {
+      const from = event.relatedTarget as Node | null;
+      const target = event.target as HTMLElement;
+      if (desktop.matches && !item.contains(from) && target.matches(":focus-visible")) {
+        setOpen(entry, true);
+      }
+    });
+
+    item.addEventListener("focusout", (event) => {
+      if (!item.contains(event.relatedTarget as Node | null)) setOpen(entry, false);
+    });
+
+    menu.addEventListener("click", (event) => {
+      if ((event.target as HTMLElement).closest("a")) closeAll();
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    const open = items.find(isOpen);
+    if (!open) return;
+    const hadFocus = open.item.contains(document.activeElement);
+    setOpen(open, false);
+    if (hadFocus) open.toggle.focus();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!items.some(({ item }) => item.contains(event.target as Node))) closeAll();
+  });
+
+  // Pages restored from the back/forward cache must not reappear with a menu open.
+  window.addEventListener("pageshow", closeAll);
+</script>

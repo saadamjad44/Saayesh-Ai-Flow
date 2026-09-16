@@ -1,10 +1,9 @@
 ---
 /**
- * About + Editorial Process (E-E-A-T). Owner identity and background are
- * placeholders until the owner provides them; no credentials are invented.
+ * About + Editorial Process (E-E-A-T). Owner identity comes from OWNER in
+ * src/config/site.ts; the background below is owner-supplied and factual only.
  */
 import PageLayout from "@/layouts/PageLayout.astro";
-import ContentGap from "@/components/content/ContentGap.astro";
 import OwnerDetail from "@/components/content/OwnerDetail.astro";
 import { SITE } from "@/config/site";
 import { getPage } from "@/config/pages";
@@ -30,10 +29,18 @@ const disclosurePath = getPage("affiliate-disclosure").path;
 
   <h2>Who runs the site</h2>
   <p>
-    {SITE.name} is run by <OwnerDetail field="name" />.
+    {SITE.name} is run by <OwnerDetail field="name" />, based in <OwnerDetail field="location" />.
   </p>
   <p>
-    <ContentGap label="Owner background and relevant experience (factual only)" />
+    Saad Amjad is a Full Stack Web Developer specializing in React.js, Node.js, and AI tools
+    integration. He has hands-on experience building web applications, including e-commerce
+    platforms, task management systems, and AI-powered developer tools.
+  </p>
+  <p>
+    His work combines modern web development with practical AI integration, including REST APIs,
+    authentication, prompt engineering, and AI-powered workflows. He also has experience with SEO
+    basics, responsive web design, and modern development tools such as Git, GitHub, Postman, and VS
+    Code.
   </p>
 
   <h2>How we research</h2>
