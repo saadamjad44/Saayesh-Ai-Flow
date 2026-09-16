@@ -11,20 +11,23 @@ const year = new Date().getFullYear();
 const disclosurePath = getPage("affiliate-disclosure").path;
 ---
 
-<footer class="mt-auto border-t border-slate-200 bg-slate-50 text-sm text-slate-600">
-  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3">
-    <div>
-      <p class="text-base font-bold text-slate-900">{SITE.name}</p>
-      <p class="mt-2">{SITE.tagline}</p>
+<footer class="mt-auto border-t border-ink-200 bg-ink-50 text-sm text-ink-600">
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3 md:gap-8">
+    <div class="max-w-xs">
+      <p class="text-base font-extrabold tracking-display text-ink-900">{SITE.name}</p>
+      <p class="mt-2.5 leading-relaxed">{SITE.tagline}</p>
     </div>
 
     {FOOTER_NAV.map(({ heading, links }) => (
       <nav aria-label={heading}>
-        <h2 class="font-semibold text-slate-900">{heading}</h2>
-        <ul class="mt-3 space-y-2">
+        <h2 class="text-xs font-bold tracking-[0.08em] text-ink-900 uppercase">{heading}</h2>
+        <ul class="mt-4 space-y-1">
           {links.map(({ label, href }) => (
             <li>
-              <a href={href} class="hover:text-indigo-700 hover:underline">
+              <a
+                href={href}
+                class="-mx-2 inline-block rounded px-2 py-1.5 hover:text-brand-700 hover:underline"
+              >
                 {label}
               </a>
             </li>
@@ -34,16 +37,16 @@ const disclosurePath = getPage("affiliate-disclosure").path;
     ))}
   </div>
 
-  <div class="border-t border-slate-200">
-    <div class="mx-auto max-w-6xl space-y-2 px-4 py-6 sm:px-6">
-      <p>
+  <div class="border-t border-ink-200">
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 sm:px-6 md:flex-row-reverse md:items-center md:justify-between">
+      <p class="text-ink-500">
         Some links on this site may be affiliate links. If you buy through them, we may earn a
         commission at no extra cost to you.{" "}
-        <a href={disclosurePath} class="text-indigo-700 underline hover:text-indigo-900">
+        <a href={disclosurePath} class="font-medium text-brand-700 underline hover:text-brand-800">
           Read our affiliate disclosure
         </a>
       </p>
-      <p>
+      <p class="shrink-0 text-ink-500">
         &copy; {year} {SITE.name}
       </p>
     </div>

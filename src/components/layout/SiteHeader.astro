@@ -17,6 +17,9 @@ interface Props {
 
 const { currentPath } = Astro.props;
 
+/** Wordmark: first word plain, the rest in the brand colour. */
+const [brandLead, ...brandTail] = SITE.name.split(" ");
+
 const builtPageIds = new Set((await getPublishedEntries("articles")).map(({ page }) => page.id));
 const sections = PRIMARY_NAV.map((section) => ({
   ...section,
@@ -24,18 +27,36 @@ const sections = PRIMARY_NAV.map((section) => ({
 }));
 ---
 
-<header class="border-b border-slate-200 bg-white">
-  <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">
+<header class="sticky top-0 z-50 border-b border-ink-200 bg-paper/90 backdrop-blur supports-[backdrop-filter]:bg-paper/75">
+  <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6">
     <a
       href="/"
-      class="self-start text-lg font-extrabold tracking-tight text-slate-900 hover:text-indigo-700 md:self-auto"
+      class="group flex items-center gap-2.5 self-start md:self-auto"
       aria-current={currentPath === "/" ? "page" : undefined}
     >
-      {SITE.name}
+      <span
+        aria-hidden="true"
+        class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-700 text-white shadow-card"
+      >
+        <svg viewBox="0 0 24 24" fill="none" class="size-5">
+          <path
+            d="M5 7h6a4 4 0 0 1 4 4v2a4 4 0 0 0 4 4"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          ></path>
+          <circle cx="5" cy="7" r="2" fill="currentColor"></circle>
+          <circle cx="19" cy="17" r="2" fill="currentColor"></circle>
+        </svg>
+      </span>
+      <span class="text-lg font-extrabold tracking-display text-ink-900 group-hover:text-brand-700">
+        {brandLead}{" "}
+        <span class="text-brand-700 group-hover:text-brand-800">{brandTail.join(" ")}</span>
+      </span>
     </a>
 
     <nav aria-label="Main" class="relative">
-      <ul class="-mx-3 flex flex-wrap gap-x-1 gap-y-1 text-sm font-medium">
+      <ul class="-mx-2.5 flex flex-wrap items-center gap-x-0.5 gap-y-0.5 text-sm font-medium">
         {sections.map(({ label, href, pillar, links }, index) => {
           const isCurrent = currentPath === href;
           const inSection = currentPath.startsWith(href);
@@ -45,16 +66,18 @@ const sections = PRIMARY_NAV.map((section) => ({
             <li class="md:relative" data-nav-item>
               <div
                 class:list={[
-                  "flex items-center rounded-md hover:bg-slate-100 has-[[aria-expanded=true]]:bg-slate-100",
-                  inSection ? "text-indigo-700" : "text-slate-700",
+                  "flex items-center rounded-lg hover:bg-ink-100 has-[[aria-expanded=true]]:bg-ink-100",
+                  inSection ? "text-brand-700" : "text-ink-700",
                 ]}
               >
                 <a
                   href={href}
                   aria-current={isCurrent ? "page" : undefined}
                   class:list={[
-                    "inline-block rounded-md py-2 hover:text-indigo-700",
-                    links.length > 0 ? "pr-1 pl-3" : "px-3",
+                    "relative inline-flex min-h-11 items-center rounded-lg hover:text-brand-700",
+                    links.length > 0 ? "pr-1 pl-2.5" : "px-2.5",
+                    inSection &&
+                      "after:absolute after:inset-x-2.5 after:bottom-1.5 after:h-0.5 after:rounded-full after:bg-brand-600",
                   ]}
                 >
                   {label}
@@ -62,7 +85,7 @@ const sections = PRIMARY_NAV.map((section) => ({
                 {links.length > 0 && (
                   <button
                     type="button"
-                    class="group rounded-md py-2 pr-2 pl-1 hover:text-indigo-700"
+                    class="group inline-flex min-h-11 items-center rounded-lg pr-2 pl-1 hover:text-brand-700"
                     aria-expanded="false"
                     aria-controls={menuId}
                     data-nav-toggle
@@ -94,7 +117,10 @@ const sections = PRIMARY_NAV.map((section) => ({
                     isLast ? "md:right-0" : "md:left-0",
                   ]}
                 >
-                  <ul class="rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg shadow-slate-900/5">
+                  <ul
+                    class="rounded-xl border border-ink-200 bg-surface p-1.5"
+                    style="box-shadow: var(--shadow-menu)"
+                  >
                     {links.map((item) => {
                       const isCurrentItem = currentPath === item.href;
                       return (
@@ -103,10 +129,10 @@ const sections = PRIMARY_NAV.map((section) => ({
                             href={item.href}
                             aria-current={isCurrentItem ? "page" : undefined}
                             class:list={[
-                              "block rounded-lg px-3 py-2 leading-snug",
+                              "flex min-h-11 items-center rounded-lg px-3 py-2 leading-snug",
                               isCurrentItem
-                                ? "bg-indigo-50 font-semibold text-indigo-700"
-                                : "text-slate-700 hover:bg-slate-100 hover:text-indigo-700",
+                                ? "bg-brand-50 font-semibold text-brand-700"
+                                : "text-ink-700 hover:bg-ink-100 hover:text-brand-700",
                             ]}
                           >
                             {item.label}

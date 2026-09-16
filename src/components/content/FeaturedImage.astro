@@ -1,0 +1,54 @@
+---
+/**
+ * Responsive image from the media registry, in the site's 16:9 frame.
+ *
+ * astro:assets emits webp at several widths and sets intrinsic width/height,
+ * so the box is reserved before the file loads (no layout shift). Images are
+ * lazy and async by default; pass `priority` for an above-the-fold hero.
+ *
+ * No visible credit line: every image is Pexels-licensed, which does not
+ * require attribution. Photographer, source, and licence stay recorded in
+ * src/config/media.ts, so provenance remains auditable.
+ */
+import { Image } from "astro:assets";
+import { getMedia, type MediaId } from "@/config/media";
+
+interface Props {
+  id: MediaId;
+  /** Loads eagerly and skips lazy decoding. Use only for an LCP hero. */
+  priority?: boolean;
+  /** Overrides the registry alt text; pass "" only for decorative use. */
+  alt?: string;
+  /** Rendered widths, for the `sizes` attribute. */
+  sizes?: string;
+  class?: string;
+}
+
+const {
+  id,
+  priority = false,
+  alt,
+  sizes = "(min-width: 768px) 768px, 100vw",
+  class: className,
+} = Astro.props;
+
+const { src, alt: defaultAlt } = getMedia(id);
+---
+
+<div
+  class:list={[
+    "not-prose overflow-hidden rounded-card border border-ink-200 bg-ink-100",
+    className,
+  ]}
+>
+  <Image
+    src={src}
+    alt={alt ?? defaultAlt}
+    widths={[480, 768, 1024, 1600]}
+    sizes={sizes}
+    loading={priority ? "eager" : "lazy"}
+    decoding={priority ? "sync" : "async"}
+    fetchpriority={priority ? "high" : "auto"}
+    class="aspect-video w-full object-cover"
+  />
+</div>

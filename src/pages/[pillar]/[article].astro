@@ -31,6 +31,8 @@ export async function getStaticPaths() {
       params: { pillar, article },
       props: {
         entry,
+        /** Category label above the <h1>, from the parent pillar. */
+        eyebrow: parent.entry.data.title,
         related: [
           {
             title: parent.entry.data.title,
@@ -47,12 +49,13 @@ export async function getStaticPaths() {
 
 type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
 
-const { entry, related } = Astro.props;
+const { entry, related, eyebrow } = Astro.props;
 const { Content } = await render(entry);
 ---
 
 <EntryLayout
   entry={entry}
+  eyebrow={eyebrow}
   ogType="article"
   jsonLd={[
     articleSchema({

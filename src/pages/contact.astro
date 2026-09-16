@@ -1,15 +1,16 @@
 ---
-/** Contact page (indexed). Response time and email are owner placeholders. */
+/** Contact page (indexed). Owner details come from OWNER in src/config/site.ts. */
 import PageLayout from "@/layouts/PageLayout.astro";
 import ContactForm from "@/components/forms/ContactForm.astro";
-import ContentGap from "@/components/content/ContentGap.astro";
 import OwnerDetail from "@/components/content/OwnerDetail.astro";
+import { SUPPORT } from "@/config/site";
 ---
 
 <PageLayout
   pageId="contact"
   title="Contact Us"
   heading="Contact"
+  eyebrow="Get in touch"
   description="Contact Saayesh AI Flow with general questions, tool submissions, corrections, or business inquiries."
   intro="Use the form below for general questions, tool submissions, corrections, or business inquiries."
 >
@@ -17,7 +18,8 @@ import OwnerDetail from "@/components/content/OwnerDetail.astro";
 
   <h2>What to expect</h2>
   <p>
-    Expected response time: <ContentGap label="Expected response time" />
+    Expected response time: <strong>{SUPPORT.responseTarget}</strong>. That is the target we aim
+    for, not a guarantee — replies can take longer at weekends or during busy periods.
   </p>
   <p>
     You can also email us at <OwnerDetail field="contactEmail" />.

@@ -1,7 +1,8 @@
 ---
 /**
  * Accessible, horizontally scrollable comparison table. The scroll container
- * is focusable so keyboard users can scroll wide tables on small screens.
+ * is focusable so keyboard users can scroll wide tables on small screens, and
+ * the row-label column stays pinned to the left edge while the rest scrolls.
  */
 export interface ComparisonRow {
   label: string;
@@ -18,6 +19,17 @@ interface Props {
 
 const { caption, rowHeader, columns, rows } = Astro.props;
 
+/**
+ * The visible title sits outside the scroll container so it wraps at viewport
+ * width instead of stretching to the table's width on small screens. The table
+ * keeps a screen-reader-only <caption> so its accessible name is unchanged.
+ */
+const captionId = `table-${caption
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/^-|-$/g, "")
+  .slice(0, 48)}`;
+
 for (const row of rows) {
   if (row.cells.length !== columns.length) {
     throw new Error(
@@ -27,39 +39,53 @@ for (const row of rows) {
 }
 ---
 
-<div
-  role="region"
-  aria-label={caption}
-  tabindex="0"
-  class="not-prose my-8 overflow-x-auto rounded-lg border border-slate-200"
->
-  <table class="w-full min-w-max border-collapse text-left text-sm">
-    <caption class="border-b border-slate-200 px-4 py-3 text-left font-semibold text-slate-900">
+<figure class="not-prose my-9 overflow-hidden rounded-card border border-ink-200 bg-surface shadow-card">
+  <figcaption class="border-b border-ink-200 bg-ink-50 px-4 py-3">
+    <span id={captionId} class="block text-[0.9375rem] font-semibold text-balance text-ink-900">
       {caption}
-    </caption>
-    <thead class="bg-slate-50 text-slate-900">
-      <tr>
-        <th scope="col" class="px-4 py-3 font-semibold">
-          {rowHeader}
-        </th>
-        {columns.map((column) => (
-          <th scope="col" class="px-4 py-3 font-semibold">
-            {column}
+    </span>
+    <span class="mt-0.5 block text-xs text-ink-500 sm:hidden">
+      Scroll sideways to see every column.
+    </span>
+  </figcaption>
+
+  <div role="region" aria-labelledby={captionId} tabindex="0" class="overflow-x-auto">
+    <table class="w-full min-w-max border-collapse text-left text-sm">
+      <caption class="sr-only">{caption}</caption>
+      <thead class="text-ink-900">
+        <tr class="border-b border-ink-200">
+          <th
+            scope="col"
+            class="sticky left-0 z-10 bg-surface px-4 py-3 align-bottom text-xs font-bold tracking-[0.06em] uppercase"
+          >
+            {rowHeader}
           </th>
-        ))}
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-slate-200 text-slate-700">
-      {rows.map((row) => (
-        <tr>
-          <th scope="row" class="px-4 py-3 font-medium text-slate-900">
-            {row.label}
-          </th>
-          {row.cells.map((cell) => (
-            <td class="px-4 py-3">{cell}</td>
+          {columns.map((column) => (
+            <th
+              scope="col"
+              class="px-4 py-3 align-bottom text-xs font-bold tracking-[0.06em] text-ink-700 uppercase"
+            >
+              {column}
+            </th>
           ))}
         </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+      </thead>
+      {/* Rows carry an opaque background so the sticky label column stays readable. */}
+      <tbody class="divide-y divide-ink-200 text-ink-600">
+        {rows.map((row) => (
+          <tr class="bg-surface even:bg-ink-50">
+            <th
+              scope="row"
+              class="sticky left-0 z-10 bg-inherit px-4 py-3.5 font-semibold text-ink-900 after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-ink-200"
+            >
+              {row.label}
+            </th>
+            {row.cells.map((cell) => (
+              <td class="px-4 py-3.5 align-top leading-relaxed">{cell}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</figure>

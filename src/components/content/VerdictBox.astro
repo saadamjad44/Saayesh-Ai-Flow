@@ -11,26 +11,36 @@ const { heading = "Quick verdict", bestFor, notFor } = Astro.props;
 
 <section
   aria-labelledby="verdict-heading"
-  class="not-prose my-8 rounded-lg border border-indigo-200 bg-indigo-50 px-5 py-4 text-slate-800"
+  class="callout not-prose my-9 border-brand-200 border-l-brand-600 bg-brand-50 px-5 py-5 text-ink-700 sm:px-6"
 >
-  <h2 id="verdict-heading" class="text-lg font-bold text-indigo-900">
+  <h2
+    id="verdict-heading"
+    class="flex items-center gap-2 text-base font-bold tracking-[0.04em] text-brand-900 uppercase"
+  >
+    <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-brand-600">
+      <path
+        fill-rule="evenodd"
+        d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+        clip-rule="evenodd"
+      />
+    </svg>
     {heading}
   </h2>
-  <div class="mt-2 space-y-2">
+  <div class="mt-3 space-y-2 leading-relaxed">
     <slot />
   </div>
   {(bestFor || notFor) && (
-    <dl class="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+    <dl class="mt-4 grid gap-3 border-t border-brand-200 pt-4 text-sm sm:grid-cols-2">
       {bestFor && (
         <div>
-          <dt class="font-semibold text-slate-900">Best for</dt>
-          <dd>{bestFor}</dd>
+          <dt class="text-xs font-bold tracking-[0.06em] text-brand-800 uppercase">Best for</dt>
+          <dd class="mt-1 text-ink-700">{bestFor}</dd>
         </div>
       )}
       {notFor && (
         <div>
-          <dt class="font-semibold text-slate-900">Not for</dt>
-          <dd>{notFor}</dd>
+          <dt class="text-xs font-bold tracking-[0.06em] text-brand-800 uppercase">Not for</dt>
+          <dd class="mt-1 text-ink-700">{notFor}</dd>
         </div>
       )}
     </dl>

@@ -1,16 +1,21 @@
 ---
 /**
  * Pillar and article pages rendered from MDX entries, on PageLayout.
- * Header: last updated, testing status, affiliate note. After the body:
- * related internal pages, then the FAQ (with its own FAQPage schema).
+ * Header: category eyebrow, last updated, affiliate note, and an optional
+ * category image. After the body: related internal pages, then the FAQ (with
+ * its own FAQPage schema).
+ *
+ * `testingStatus` stays in frontmatter and is still validated (see
+ * content.config.ts and ScoreTable); it is simply not surfaced as a badge.
  */
 import type { CollectionEntry } from "astro:content";
 import PageLayout from "./PageLayout.astro";
 import AffiliateNote from "@/components/content/AffiliateNote.astro";
 import FaqSection from "@/components/content/FaqSection.astro";
+import FeaturedImage from "@/components/content/FeaturedImage.astro";
 import LastUpdated from "@/components/content/LastUpdated.astro";
 import RelatedPages, { type RelatedPage } from "@/components/content/RelatedPages.astro";
-import TestingStatus from "@/components/content/TestingStatus.astro";
+import type { MediaId } from "@/config/media";
 import type { JsonLd } from "@/lib/seo";
 
 interface Props {
@@ -19,9 +24,13 @@ interface Props {
   jsonLd: readonly JsonLd[];
   relatedHeading: string;
   related: readonly RelatedPage[];
+  /** Small label above the <h1>, e.g. the parent category. */
+  eyebrow?: string;
+  /** Category image shown below the header. Omit where a picture adds nothing. */
+  mediaId?: MediaId;
 }
 
-const { entry, ogType, jsonLd, relatedHeading, related } = Astro.props;
+const { entry, ogType, jsonLd, relatedHeading, related, eyebrow, mediaId } = Astro.props;
 const { data } = entry;
 ---
 
@@ -29,14 +38,23 @@ const { data } = entry;
   pageId={data.pageId}
   title={data.title}
   description={data.description}
+  eyebrow={eyebrow}
+  intro={data.description}
   ogType={ogType}
   jsonLd={jsonLd}
 >
   <Fragment slot="meta">
     <LastUpdated updated={data.updatedDate} pricingVerified={data.pricingVerifiedDate} />
-    <TestingStatus status={data.testingStatus} summary={data.testingSummary} />
     {data.hasAffiliateLinks && <AffiliateNote />}
   </Fragment>
+
+  {mediaId && (
+    <Fragment slot="hero">
+      <div class="mx-auto max-w-3xl px-4 pb-10 sm:px-6">
+        <FeaturedImage id={mediaId} priority />
+      </div>
+    </Fragment>
+  )}
 
   <slot />
 

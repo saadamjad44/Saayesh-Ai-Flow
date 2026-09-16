@@ -42,6 +42,14 @@ export const OWNER: OwnerDetails = {
   jurisdiction: null,
 };
 
+/**
+ * Owner-supplied service commitments shown on the contact page.
+ * `responseTarget` is the reply time the site aims for, not a guarantee.
+ */
+export const SUPPORT = {
+  responseTarget: "2 hours",
+} as const;
+
 /** Filled in at launch (Step 9). Empty values mean the integration is off. */
 export const INTEGRATIONS = {
   ga4MeasurementId: "",

@@ -1,8 +1,9 @@
 ---
 /**
  * Single-column page on BaseLayout for core, legal, pillar, and article pages:
- * heading, optional intro, optional legal-draft notice, and a prose body.
- * Slots: default (prose body), "meta" (end of the header), "after" (below the prose).
+ * eyebrow, heading, optional intro, optional legal-draft notice, and a prose body.
+ * Slots: default (prose body), "meta" (end of the header), "hero" (full-width,
+ * below the header), "after" (below the prose).
  */
 import BaseLayout from "./BaseLayout.astro";
 import ContentGap from "@/components/content/ContentGap.astro";
@@ -15,6 +16,8 @@ interface Props {
   description: string;
   /** Visible <h1>; defaults to `title`. */
   heading?: string;
+  /** Small uppercase label above the <h1>, e.g. the parent category. */
+  eyebrow?: string;
   intro?: string;
   /** Legal pages: shows the draft notice and effective-date placeholder. */
   legalDraft?: boolean;
@@ -27,6 +30,7 @@ const {
   title,
   description,
   heading = title,
+  eyebrow,
   intro,
   legalDraft = false,
   ogType,
@@ -35,17 +39,27 @@ const {
 ---
 
 <BaseLayout pageId={pageId} title={title} description={description} ogType={ogType} jsonLd={jsonLd}>
-  <article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-    <header>
-      <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">{heading}</h1>
-      {intro && <p class="mt-4 text-lg text-slate-600">{intro}</p>}
+  <article class="pb-16 sm:pb-20">
+    <header class="mx-auto max-w-3xl px-4 pt-8 pb-8 sm:px-6 sm:pt-12 sm:pb-10">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1
+        class:list={[
+          "text-3xl font-extrabold tracking-display text-balance text-ink-900 sm:text-[2.75rem] sm:leading-[1.1]",
+          eyebrow && "mt-3",
+        ]}
+      >
+        {heading}
+      </h1>
+      {intro && (
+        <p class="mt-5 text-lg leading-relaxed text-pretty text-ink-600 sm:text-xl">{intro}</p>
+      )}
 
       {legalDraft && (
         <>
           <div
             role="note"
             data-content-gap
-            class="mt-6 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-yellow-900"
+            class="callout mt-7 border-yellow-300 bg-yellow-50 text-sm text-yellow-900"
           >
             <p class="font-semibold">Draft template — not final</p>
             <p class="mt-1">
@@ -53,23 +67,27 @@ const {
               advice.
             </p>
           </div>
-          <p class="mt-4 text-sm text-slate-600">
+          <p class="mt-4 text-sm text-ink-500">
             Effective date: <ContentGap label="Effective date" />
           </p>
         </>
       )}
 
       {Astro.slots.has("meta") && (
-        <div class="mt-6 space-y-3">
+        <div class="mt-8 space-y-3 border-t border-ink-200 pt-6">
           <slot name="meta" />
         </div>
       )}
     </header>
 
-    <div class="prose mt-8 max-w-none prose-slate prose-headings:tracking-tight prose-a:text-indigo-700">
-      <slot />
-    </div>
+    <slot name="hero" />
 
-    <slot name="after" />
+    <div class="mx-auto max-w-3xl px-4 sm:px-6">
+      <div class="prose max-w-none">
+        <slot />
+      </div>
+
+      <slot name="after" />
+    </div>
   </article>
 </BaseLayout>
