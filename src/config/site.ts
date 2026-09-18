@@ -4,11 +4,12 @@
  */
 
 /**
- * Placeholder until the domain is purchased. Replace with the bare domain
- * (no protocol, no trailing slash), e.g. "example.com".
- * `.invalid` is a reserved TLD, so placeholder URLs can never resolve.
+ * Canonical bare domain (no protocol, no trailing slash), e.g. "example.com".
+ * Currently the Netlify production host; swap it here once the custom domain
+ * is purchased. A `.invalid` value marks an unset placeholder — `.invalid` is
+ * a reserved TLD, so placeholder URLs can never resolve.
  */
-export const SITE_DOMAIN = "site-domain.invalid";
+export const SITE_DOMAIN = "peppy-seahorse-9d05e3.netlify.app";
 
 export const isPlaceholderDomain = SITE_DOMAIN.endsWith(".invalid");
 
