@@ -53,6 +53,7 @@ export const SUPPORT = {
 
 /** Filled in at launch (Step 9). Empty values mean the integration is off. */
 export const INTEGRATIONS = {
-  ga4MeasurementId: "",
+  /** GA4 Measurement ID ("G-XXXXXXXXXX"). Loaded once per page by SeoHead. */
+  ga4MeasurementId: "G-VFBKW7YSWG",
   searchConsoleVerification: "",
 } as const;

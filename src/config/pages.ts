@@ -10,7 +10,11 @@ export type SearchIntent = "Commercial" | "Informational" | "Transactional" | "I
 
 export interface SitePage {
   id: string;
-  /** Working title from the blueprint; final <title> is set per page. */
+  /**
+   * User-facing page title, shown in breadcrumbs, nav, and BreadcrumbList schema.
+   * For pillar and article pages the MDX `title` frontmatter is authoritative and
+   * this must match it exactly — getPublishedEntries() fails the build otherwise.
+   */
   title: string;
   path: `/${string}/` | "/";
   type: PageType;
@@ -94,7 +98,7 @@ export const PAGES = [
   },
   {
     id: "best-ai-tools-for-small-business",
-    title: "Best AI Tools for Small Business Owners",
+    title: "Best AI Tools for Small Business",
     path: "/ai-business-tools/best-ai-tools-for-small-business/",
     type: "article",
     week: "4–5",
@@ -104,7 +108,7 @@ export const PAGES = [
   },
   {
     id: "ai-tools-vs-virtual-assistant",
-    title: "AI Tools vs Hiring a Virtual Assistant",
+    title: "AI Tools vs Virtual Assistant",
     path: "/ai-business-tools/ai-tools-vs-virtual-assistant/",
     type: "article",
     week: "4–5",
@@ -133,7 +137,7 @@ export const PAGES = [
   },
   {
     id: "best-ai-workflows-for-solopreneurs",
-    title: "Best AI Workflows for Solopreneurs",
+    title: "AI Workflows for Solopreneurs",
     path: "/ai-automation/best-ai-workflows-for-solopreneurs/",
     type: "article",
     week: "6–7",

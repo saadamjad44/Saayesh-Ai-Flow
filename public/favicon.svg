@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Saayesh AI Flow">
+  <!--
+    The Saayesh AI Flow mark, identical in geometry to the header wordmark icon
+    in src/components/layout/SiteHeader.astro: a brand-700 tile carrying the
+    two-node flow glyph. Strokes and node radii are nudged up slightly so the
+    mark stays legible at 16px. favicon.ico and apple-touch-icon.png are
+    rasterizations of this file.
+  -->
+  <rect width="32" height="32" rx="8" fill="#24409f" />
+  <g transform="translate(4 4)" fill="none" stroke="#ffffff">
+    <path d="M5 7h6a4 4 0 0 1 4 4v2a4 4 0 0 0 4 4" stroke-width="2.5" stroke-linecap="round" />
+    <circle cx="5" cy="7" r="2.25" fill="#ffffff" stroke="none" />
+    <circle cx="19" cy="17" r="2.25" fill="#ffffff" stroke="none" />
+  </g>
+</svg>

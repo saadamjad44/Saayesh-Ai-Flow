@@ -3,7 +3,8 @@
 import { render } from "astro:content";
 import EntryLayout from "@/layouts/EntryLayout.astro";
 import { getPublishedEntries, pathSegments } from "@/lib/content";
-import { articleSchema } from "@/lib/seo";
+import { getPage } from "@/config/pages";
+import { articleSchema, getSocialImage } from "@/lib/seo";
 
 export async function getStaticPaths() {
   const [pillars, articles] = await Promise.all([
@@ -51,6 +52,8 @@ type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
 
 const { entry, related, eyebrow } = Astro.props;
 const { Content } = await render(entry);
+// Same image the page shares socially, so the Article schema can't drift from it.
+const socialImage = await getSocialImage(getPage(entry.data.pageId));
 ---
 
 <EntryLayout
@@ -64,6 +67,7 @@ const { Content } = await render(entry);
       path: Astro.url.pathname,
       datePublished: entry.data.publishedDate,
       dateModified: entry.data.updatedDate,
+      image: socialImage.url,
     }),
   ]}
   relatedHeading="Keep reading"

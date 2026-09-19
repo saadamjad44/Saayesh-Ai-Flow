@@ -26,12 +26,13 @@ export const PRIMARY_NAV: readonly NavSection[] = [
   section("Automation", "ai-automation"),
 ];
 
-/** Shorter dropdown labels where the registry working title is too long for the menu. */
+/**
+ * Shorter dropdown labels where the page title is too long for the menu.
+ * Only genuine overrides belong here: a label identical to the registry title
+ * is dead weight now that registry titles track the frontmatter titles.
+ */
 const MENU_LABELS: Partial<Record<PageId, string>> = {
   "best-ai-writing-tools": "Best AI Writing Tools",
-  "best-ai-tools-for-small-business": "Best AI Tools for Small Business",
-  "ai-tools-vs-virtual-assistant": "AI Tools vs Virtual Assistant",
-  "best-ai-workflows-for-solopreneurs": "AI Workflows for Solopreneurs",
 };
 
 /**

@@ -16,7 +16,7 @@ import SiteFooter from "@/components/layout/SiteFooter.astro";
 import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
 import { SITE } from "@/config/site";
 import { getPage, type PageId } from "@/config/pages";
-import { breadcrumbSchema, getBreadcrumbs, type JsonLd } from "@/lib/seo";
+import { breadcrumbSchema, getBreadcrumbs, getSocialImage, type JsonLd } from "@/lib/seo";
 
 interface Props {
   title: string;
@@ -39,6 +39,9 @@ if (page && page.path !== currentPath) {
 
 const breadcrumbs = page ? getBreadcrumbs(page) : [];
 const schemas = breadcrumbs.length > 1 ? [...jsonLd, breadcrumbSchema(breadcrumbs)] : jsonLd;
+
+// Every page gets a social image: its own, its pillar's, or the site default.
+const socialImage = await getSocialImage(page);
 ---
 
 <!doctype html>
@@ -52,8 +55,13 @@ const schemas = breadcrumbs.length > 1 ? [...jsonLd, breadcrumbSchema(breadcrumb
       canonicalPath={page?.path}
       noindex={noindex || page?.noindex === true || !page}
       ogType={ogType}
+      image={socialImage}
       jsonLd={schemas}
     />
+    {/* Brand mark from public/; .ico keeps legacy clients off a 404 fallback. */}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body class="flex min-h-screen flex-col overflow-x-clip bg-paper text-ink-700 antialiased">

@@ -1,20 +1,25 @@
 ---
 /** Quick verdict near the top of a page: summary slot plus optional best-for / not-for lines. */
+import { headingId } from "@/lib/ids";
+
 interface Props {
   heading?: string;
   bestFor?: string;
   notFor?: string;
+  /** Overrides the generated heading id, for deep links. Must be unique per page. */
+  id?: string;
 }
 
-const { heading = "Quick verdict", bestFor, notFor } = Astro.props;
+const { heading = "Quick verdict", bestFor, notFor, id } = Astro.props;
+const labelId = id ?? headingId(heading, "verdict");
 ---
 
 <section
-  aria-labelledby="verdict-heading"
+  aria-labelledby={labelId}
   class="callout not-prose my-9 border-brand-200 border-l-brand-600 bg-brand-50 px-5 py-5 text-ink-700 sm:px-6"
 >
   <h2
-    id="verdict-heading"
+    id={labelId}
     class="flex items-center gap-2 text-base font-bold tracking-[0.04em] text-brand-900 uppercase"
   >
     <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-brand-600">

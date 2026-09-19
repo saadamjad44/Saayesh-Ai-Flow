@@ -4,19 +4,23 @@
  * Render it once per page and do not also pass faqSchema() to the layout.
  */
 import { faqSchema, serializeJsonLd, type FaqItem } from "@/lib/seo";
+import { headingId } from "@/lib/ids";
 
 interface Props {
   items: readonly FaqItem[];
   heading?: string;
+  /** Overrides the generated heading id, for deep links. Must be unique per page. */
+  id?: string;
 }
 
-const { items, heading = "Frequently asked questions" } = Astro.props;
+const { items, heading = "Frequently asked questions", id } = Astro.props;
+const labelId = id ?? headingId(heading, "faq");
 ---
 
 {items.length > 0 && (
-  <section aria-labelledby="faq-heading" class="not-prose my-12">
+  <section aria-labelledby={labelId} class="not-prose my-12">
     <p class="eyebrow">Questions</p>
-    <h2 id="faq-heading" class="mt-2 text-2xl font-bold tracking-display text-ink-900 sm:text-3xl">
+    <h2 id={labelId} class="mt-2 text-2xl font-bold tracking-display text-ink-900 sm:text-3xl">
       {heading}
     </h2>
     {/* Questions stay real headings so they show up in the screen-reader outline. */}

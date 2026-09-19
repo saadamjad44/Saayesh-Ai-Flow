@@ -79,6 +79,13 @@ export const MEDIA = {
 
 export type MediaId = keyof typeof MEDIA;
 
+/**
+ * Social preview fallback for pages with no image of their own — home, about,
+ * contact, the legal pages, and 404. Pillars and articles resolve to their own
+ * category image first; see getSocialImage() in src/lib/seo.ts.
+ */
+export const DEFAULT_SOCIAL_MEDIA_ID: MediaId = "ai-writing-tools";
+
 export function getMedia(id: MediaId): MediaAsset {
   return MEDIA[id];
 }

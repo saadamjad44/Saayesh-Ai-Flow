@@ -16,7 +16,8 @@ export interface PublishedEntry<C extends EntryCollection> {
 
 /**
  * Non-draft entries paired with their registry page, in registry order.
- * Fails the build if two entries (drafts included) claim the same pageId.
+ * Fails the build if two entries (drafts included) claim the same pageId, or if
+ * an entry's title has drifted from its registry title.
  */
 export async function getPublishedEntries<C extends EntryCollection>(
   collection: C,
@@ -32,6 +33,18 @@ export async function getPublishedEntries<C extends EntryCollection>(
       );
     }
     owners.set(entry.data.pageId, entry.id);
+
+    // Frontmatter is the authority for the user-facing title; the registry
+    // feeds breadcrumbs, nav, and BreadcrumbList schema, so the two must agree.
+    const page = getPage(entry.data.pageId);
+    if (page.title !== entry.data.title) {
+      throw new Error(
+        `Title mismatch for "${entry.data.pageId}": ` +
+          `${entry.id} frontmatter has "${entry.data.title}" but ` +
+          `src/config/pages.ts has "${page.title}". ` +
+          "The frontmatter title is authoritative — update the registry title to match.",
+      );
+    }
   }
 
   return entries
