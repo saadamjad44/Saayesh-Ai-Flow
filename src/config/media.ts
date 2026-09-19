@@ -23,6 +23,7 @@ import type { ImageMetadata } from "astro";
 import aiAutomation from "@/assets/images/ai-automation.jpg";
 import aiBusinessTools from "@/assets/images/ai-business-tools.jpg";
 import aiByIndustry from "@/assets/images/ai-by-industry.jpg";
+import aiPrompts from "@/assets/images/ai-prompts.jpg";
 import aiWritingTools from "@/assets/images/ai-writing-tools.jpg";
 import gettingStarted from "@/assets/images/getting-started.jpg";
 
@@ -81,6 +82,14 @@ export const MEDIA = {
     src: aiByIndustry,
     alt: "Three people working separately on laptops at shared desks in an open coworking space.",
     credit: pexels("Kindel Media", "https://www.pexels.com/photo/people-busy-working-7651637/"),
+  },
+  "ai-prompts": {
+    src: aiPrompts,
+    alt: "A computer monitor showing an AI chat assistant's start screen, with example questions listed under headings for examples, capabilities, and limitations.",
+    credit: pexels(
+      "Matheus Bertelli",
+      "https://www.pexels.com/photo/chat-gpt-welcome-screen-on-computer-16027824/",
+    ),
   },
   "getting-started": {
     src: gettingStarted,

@@ -25,6 +25,7 @@ export const PILLAR_IDS = [
   "ai-automation",
   "getting-started",
   "ai-by-industry",
+  "ai-prompts",
 ] as const;
 
 export type PillarId = (typeof PILLAR_IDS)[number];
@@ -81,7 +82,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 2,
+  2: 3,
 };
 
 export const PAGES = [
@@ -258,6 +259,16 @@ export const PAGES = [
     id: "ai-by-industry",
     title: "AI by Industry",
     path: "/ai-by-industry/",
+    type: "pillar",
+    phase: 2,
+  },
+
+  // Phase 2B — AI Prompts pillar (skills hub; its cluster and the Prompt
+  // Library at /prompt-library/ are not built yet)
+  {
+    id: "ai-prompts",
+    title: "AI Prompts",
+    path: "/ai-prompts/",
     type: "pillar",
     phase: 2,
   },

@@ -1,0 +1,258 @@
+---
+pageId: ai-prompts
+title: AI Prompts
+description: How to write AI prompts that get usable results - what a prompt is, a structure you can reuse, worked examples by task, and the mistakes that waste time.
+publishedDate: 2026-09-19
+updatedDate: 2026-09-19
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What is an AI prompt?
+    answer: A prompt is the instruction you give an AI tool - the message you type describing what you want, along with any information and rules it needs to produce it. Everything the tool knows about your task comes from that message and the conversation around it, so the prompt is where most of the quality is decided.
+  - question: Is there a correct way to structure a prompt?
+    answer: "No single structure works for everything, and anyone claiming otherwise is overselling. What consistently helps is making sure five things are present when they matter: who the output is for, the situation, the specific task, the constraints, and the shape you want the answer in. How you arrange those is far less important than whether they are there at all."
+  - question: Do longer prompts always produce better results?
+    answer: No. Length helps only when the extra words carry information the tool did not already have, such as your source material, your audience, or a rule it keeps breaking. Padding a prompt with adjectives, flattery, or restated instructions adds nothing and can bury the parts that matter.
+  - question: Why does the same prompt give me a different answer each time?
+    answer: Most AI text tools generate responses with an element of randomness, so repeated runs of the same prompt vary. That is normal rather than a fault. If you need consistency, give the tool a worked example of the output you want, constrain the format tightly, and expect to review each result rather than assuming it matches the last one.
+  - question: Should I pay for a prompt pack or a library of prompts?
+    answer: That is your call, but it is worth knowing that a prompt written for someone else's business carries none of your context, which is usually the part that makes a prompt work. Most people get further by keeping their own file of instructions that have worked on their real tasks, and editing those over time.
+  - question: When is a prompt not the right tool?
+    answer: When the task needs to happen without you, needs to touch other systems, or must produce the same result every time. Prompting is manual and variable by nature. Once a task is repetitive, predictable, and well understood, connecting tools together is usually a better fit than retyping instructions.
+---
+
+import { ComparisonTable } from "@/components/content";
+
+Most complaints about AI tools are really complaints about prompts. The tool produced something bland, generic, or subtly wrong, and the obvious conclusion is that the tool is not very good. Often the real problem is that it was asked to do a job nobody had described properly.
+
+This section is about closing that gap. It covers what a prompt actually is, what separates one that works from one that does not, a structure you can reuse across most tasks, worked examples for common kinds of work, and how to repair a prompt that keeps disappointing you.
+
+If you are completely new to AI tools, read [getting started with AI](/getting-started/) first. It explains what these tools do and where they fail, which is the groundwork everything here sits on.
+
+## What an AI prompt actually is
+
+A prompt is the instruction you give an AI tool: the message you type telling it what you want, together with whatever information and rules it needs to produce that.
+
+The important thing to understand is how little the tool brings to the exchange on its own. It has no idea who your customers are, what you sell, what you already tried last week, or what "on brand" means for you. It cannot see the document on your desk. Unless the tool has been given memory, files, or a search connection, everything it knows about your task arrives in the prompt.
+
+That makes prompting less like searching and more like briefing. A search engine matches your words against pages that already exist. An AI assistant generates something new from your description, which means a vague description produces a vague result and there is no page to blame.
+
+It also explains the single most common disappointment. Ask for "a social post about our new service" and you will get a competent, forgettable social post about a generic new service, because that is genuinely all you asked for.
+
+## What makes a prompt useful
+
+Across very different tasks, the prompts that work tend to share four qualities.
+
+**They are specific about the outcome.** "Make this better" gives the tool nothing to aim at. "Cut this to 120 words and remove the jargon" does. Specificity is not about being polite or elaborate; it is about naming what a good result looks like.
+
+**They supply the context the tool cannot have.** Your audience, your constraints, the background to the situation, and above all the source material. Pasting the actual email you are replying to does more for the result than any amount of clever phrasing.
+
+**They set boundaries.** Length, tone, what to avoid, what must be included, what to do when information is missing. Boundaries are what stop output drifting toward the generic middle.
+
+**They ask for a usable shape.** A table, five options, a numbered list, a draft email with a subject line. If you do not say, you get paragraphs, which are rarely the form you actually wanted.
+
+Notice that none of this is a trick. There is no magic phrase, and the widely shared "secret" prompt formulas mostly work because they happen to force you to include these four things.
+
+## A structure you can reuse
+
+Most useful prompts contain some combination of five parts. Not every prompt needs all five, and the order matters less than the presence.
+
+<ComparisonTable
+  caption="The five parts of a prompt"
+  rowHeader="Part"
+  columns={["What it does", "Example"]}
+  rows={[
+    {
+      label: "Role",
+      cells: [
+        "Sets the perspective and vocabulary the answer is written from",
+        "You are helping a solo bookkeeper explain a technical point to a non-technical client.",
+      ],
+    },
+    {
+      label: "Context",
+      cells: [
+        "Supplies the background and source material the tool cannot know",
+        "The client asked why their VAT figure changed. Here is the previous quarter's summary: [paste].",
+      ],
+    },
+    {
+      label: "Task",
+      cells: [
+        "States the one thing you want done, as plainly as possible",
+        "Write a reply explaining the change in plain English.",
+      ],
+    },
+    {
+      label: "Constraints",
+      cells: [
+        "Sets the limits: length, tone, what to include, what to avoid",
+        "Under 150 words, friendly but precise, no accounting jargon, do not restate the figures.",
+      ],
+    },
+    {
+      label: "Output format",
+      cells: [
+        "Describes the shape the answer should arrive in",
+        "A short email with a subject line, then two or three sentences.",
+      ],
+    },
+  ]}
+/>
+
+A sixth part is worth adding whenever accuracy matters: tell the tool what to do when it does not know. Something as simple as "if the source material does not say, write UNKNOWN rather than guessing" changes behaviour noticeably, because the default behaviour of a language model is to produce a plausible answer rather than to stop.
+
+### The same request, twice
+
+Here is a thin prompt:
+
+> Write a product description for our candle.
+
+And here is the same request with the five parts present:
+
+> You are writing for a small online shop that sells hand-poured candles to people buying gifts. Write a product description for the item below. Keep it to 70 words, warm and concrete rather than luxurious or poetic, mention the scent and burn time, and do not make any claim that is not in the details I have given. End with one short line suggesting who it suits as a gift. Details: [paste specification].
+
+The second is longer, but almost every extra word is information the tool did not otherwise have. That is the test for whether length is helping.
+
+## Prompt patterns for common work
+
+These are illustrative starting points, not templates to use unchanged. The context is the part you have to supply, and it is the part that makes the difference.
+
+### Writing and content
+
+The most reliable writing prompts give the tool something to work from rather than asking it to invent. Rough notes, a transcript, an outline, or an earlier piece in your own voice all work better than a blank request.
+
+> Here are my notes from a client call: [paste]. Turn them into a follow-up email confirming what we agreed. Keep it under 200 words, plain and businesslike, use a bulleted list for the agreed actions, and flag anything in my notes that is ambiguous instead of smoothing it over.
+
+The flagging instruction matters more than it looks. Without it, gaps in your notes get quietly filled in with invented detail. [AI writing tools](/ai-writing-tools/) covers how the tools themselves differ for this kind of work.
+
+### Research and summarising
+
+Summarising is where these tools are genuinely strong, provided you give them the material rather than asking them to recall it.
+
+> Summarise the document below for someone who has ten minutes and needs to decide whether to read it in full. Give me: three bullet points on what it argues, two on what it asks the reader to do, and one line on anything it leaves unclear. Use only what is in the text. Document: [paste].
+
+Asking a model to summarise something you have not supplied is a different and riskier request, because it will produce a summary either way.
+
+### Business and productivity
+
+Admin work is a good fit for prompting because the output is internal, the stakes are low, and you can judge it instantly.
+
+> Here is a messy list of everything I need to do this week: [paste]. Group it into no more than four themes, put the items that unblock other people first, and mark anything that looks like it will take more than an hour. Do not add tasks I did not write.
+
+That last sentence is there because helpfully invented extras are common. [AI business and productivity tools](/ai-business-tools/) covers the software side of this work.
+
+### Customer support
+
+Support prompts should draw on your existing answers rather than inventing policy.
+
+> A customer has sent the message below. Draft a reply using only the help-centre text I have pasted underneath it. Be warm, answer the actual question first, and keep it under 120 words. If the help-centre text does not cover something they asked, leave a clearly marked gap for me to fill rather than guessing. Message: [paste]. Help-centre text: [paste].
+
+The gap instruction is what keeps a drafted reply safe to send after a quick read.
+
+### Marketing
+
+Marketing is one of the clearest cases for asking for variations rather than a single answer, because choosing between options is faster than editing one draft you do not like.
+
+> Write eight subject lines for the email below. Vary the approach: some direct, some curiosity-led, some naming the specific benefit. Under 50 characters each, no exclamation marks, no emoji, and nothing that promises a result we have not stated. Email: [paste].
+
+Anything the output claims about your product still needs checking against what is actually true, however persuasive it sounds.
+
+### Coding and development
+
+For technical work, describing the surrounding situation matters as much as describing the task.
+
+> I have the function below in a TypeScript file. It works, but it fails when the input array is empty. Explain what causes that, then show a corrected version. Do not restructure anything unrelated, and tell me what you would test to confirm the fix. Code: [paste].
+
+Asking for the explanation before the code is a useful habit: it makes a wrong assumption visible before you paste the result into a file.
+
+## How to improve a prompt that is not working
+
+When the result disappoints, resist the urge to rewrite the whole prompt. Work out which part failed, because each failure points at a different fix.
+
+<ComparisonTable
+  caption="Diagnosing a weak result"
+  rowHeader="What went wrong"
+  columns={["Likely cause", "What to change"]}
+  rows={[
+    {
+      label: "Generic and forgettable",
+      cells: [
+        "No audience, no voice, and nothing specific to work from",
+        "Add who it is for, and paste an example of how you actually sound",
+      ],
+    },
+    {
+      label: "Confidently wrong",
+      cells: [
+        "It was asked to recall rather than to use supplied material",
+        "Paste the source, and say what to do when the source is silent",
+      ],
+    },
+    {
+      label: "Wrong length or shape",
+      cells: [
+        "The format was implied rather than stated",
+        "Name the format and the limit explicitly, in words and numbers",
+      ],
+    },
+    {
+      label: "Ignores one of your rules",
+      cells: [
+        "The rule is buried in a long paragraph of instructions",
+        "Move the rule onto its own line, or state it last",
+      ],
+    },
+    {
+      label: "Nearly right, every time",
+      cells: [
+        "The tool cannot see the standard you are judging against",
+        "Show a worked example of a good answer alongside the request",
+      ],
+    },
+    {
+      label: "Fine once, unusable in bulk",
+      cells: [
+        "The task depends on judgement that varies case by case",
+        "Narrow the task, or keep a person in the loop rather than scaling it",
+      ],
+    },
+  ]}
+/>
+
+Two habits are worth more than any individual fix. Change one thing at a time, so you learn what actually made the difference. And keep the instructions that worked in a file of your own, because a prompt that reliably handles your weekly client update is a small, genuinely reusable asset — and it moves with you if you change tools.
+
+## When a prompt is enough, and when it is not
+
+Prompting is manual, flexible, and variable. That combination makes it ideal for some work and a poor fit for other work, and knowing which is which saves a great deal of wasted effort.
+
+A prompt is usually enough when the task is occasional or one-off, when it needs your judgement anyway, when each instance is different, or when you are still learning what a good result looks like. Most people never need to go further than this, and there is nothing second-rate about stopping here.
+
+You have probably outgrown prompting when you notice yourself pasting the same instruction for the fifth time this week, when the task needs to happen while you are not at your desk, when it has to pull information from another system, or when the same steps must run identically every time. Those are the signals to look at [AI automation and workflows](/ai-automation/), where the task is connected to your tools and runs without being started by hand.
+
+The order matters. Automation multiplies whatever it is given, mistakes included, so the sensible sequence is to do the task by hand with a prompt until it is boring and predictable, and only then automate it. A prompt you have not yet got right is not ready to be run a hundred times unattended.
+
+Between the two sits a middle ground worth knowing about: saved instructions, custom assistants, and reusable templates inside the tools you already use. These keep a prompt manual but stop you retyping it, which is often all the improvement a task needs.
+
+## Common prompting mistakes
+
+- **Asking for facts instead of supplying them.** The most expensive errors come from treating a language model as a reference source. Give it the material and ask it to work with that.
+- **Leaving out the audience.** Who the output is for shapes vocabulary, length, and tone more than any other instruction, and it is the detail most often missed.
+- **Stacking several tasks into one request.** Research, draft, and edit in a single prompt usually produces a mediocre version of all three. Split them.
+- **Padding instead of informing.** Elaborate phrasing and flattery do not improve results. Information does.
+- **Accepting the first answer.** The first output is a draft to react to. Saying what was wrong with it is often the fastest route to a usable second version.
+- **Starting over instead of adjusting.** Rewriting from scratch throws away the context you have already built. Correcting one element is usually quicker.
+- **Reusing someone else's prompt unchanged.** A prompt carries the assumptions of the business it was written for. Without your context, it inherits theirs.
+- **Pasting confidential material without checking.** Before client or customer information goes into any prompt, check the vendor's data-use terms and your own obligations. What is appropriate varies sharply by sector, which [AI by industry](/ai-by-industry/) looks at in more detail.
+
+## Where to go next
+
+- **You are still deciding whether AI is worth your time.** [Getting started with AI](/getting-started/) covers what these tools do, a realistic first month, and what to avoid.
+- **Your prompts are mostly about writing.** [AI writing tools](/ai-writing-tools/) explains the categories of tool and how to evaluate them for your own work.
+- **You want less admin.** [AI business and productivity tools](/ai-business-tools/) covers meetings, scheduling, bookkeeping, and support.
+- **You are retyping the same prompt repeatedly.** [AI automation and workflows](/ai-automation/) is the hub for connecting tools so the task runs without you.
+- **Your sector has particular constraints.** [AI by industry](/ai-by-industry/) covers what changes between industries, including what you may do with client data.
+
+## Coming to this section
+
+A Prompt Library is planned, collecting prompts by task so you can adapt a working starting point rather than build one from nothing. It is not published yet, and we would rather leave a gap here than fill it with prompts nobody has put to real use. Deeper guides on individual prompting techniques are planned for this hub too. How we research and label what we publish is set out on our [about and editorial process](/about/) page.
