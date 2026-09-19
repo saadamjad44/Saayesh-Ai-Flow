@@ -1,10 +1,15 @@
 ---
 /**
- * Site header. Three Phase 1 pillar links, each with a disclosure dropdown
- * listing that pillar's built articles. Pillar links stay plain, crawlable
- * links; a small script only toggles the dropdowns (hover and keyboard focus
- * on desktop, tap/click everywhere, Escape to close). On small screens the
- * nav wraps onto its own row and dropdowns open full-width below it.
+ * Site header. One link per pillar, each with a disclosure dropdown listing
+ * that pillar's built articles. Pillar links stay plain, crawlable links; a
+ * small script only toggles the dropdowns (hover and keyboard focus on
+ * desktop, tap/click everywhere, Escape to close).
+ *
+ * Below `md` the nav collapses behind a menu button and the dropdowns expand
+ * inline as an accordion, so the header keeps working as pillars are added.
+ * The markup is the same list at every width — there is no second copy of the
+ * links for mobile. A <noscript> rule re-shows the nav when scripting is off,
+ * so a no-JS visitor still gets every link, exactly as before the menu button.
  */
 import { PRIMARY_NAV, getSectionLinks } from "@/config/navigation";
 import { SITE } from "@/config/site";
@@ -29,34 +34,68 @@ const sections = PRIMARY_NAV.map((section) => ({
 
 <header class="sticky top-0 z-50 border-b border-ink-200 bg-paper/90 backdrop-blur supports-[backdrop-filter]:bg-paper/75">
   <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6">
-    <a
-      href="/"
-      class="group flex items-center gap-2.5 self-start md:self-auto"
-      aria-current={currentPath === "/" ? "page" : undefined}
-    >
-      <span
-        aria-hidden="true"
-        class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-700 text-white shadow-card"
+    {/* `md:contents` dissolves this row at desktop, leaving the original logo + nav layout. */}
+    <div class="flex items-center justify-between gap-3 md:contents">
+      <a
+        href="/"
+        class="group flex items-center gap-2.5 self-start md:self-auto"
+        aria-current={currentPath === "/" ? "page" : undefined}
       >
-        <svg viewBox="0 0 24 24" fill="none" class="size-5">
-          <path
-            d="M5 7h6a4 4 0 0 1 4 4v2a4 4 0 0 0 4 4"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          ></path>
-          <circle cx="5" cy="7" r="2" fill="currentColor"></circle>
-          <circle cx="19" cy="17" r="2" fill="currentColor"></circle>
-        </svg>
-      </span>
-      <span class="text-lg font-extrabold tracking-display text-ink-900 group-hover:text-brand-700">
-        {brandLead}{" "}
-        <span class="text-brand-700 group-hover:text-brand-800">{brandTail.join(" ")}</span>
-      </span>
-    </a>
+        <span
+          aria-hidden="true"
+          class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-700 text-white shadow-card"
+        >
+          <svg viewBox="0 0 24 24" fill="none" class="size-5">
+            <path
+              d="M5 7h6a4 4 0 0 1 4 4v2a4 4 0 0 0 4 4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            ></path>
+            <circle cx="5" cy="7" r="2" fill="currentColor"></circle>
+            <circle cx="19" cy="17" r="2" fill="currentColor"></circle>
+          </svg>
+        </span>
+        <span class="text-lg font-extrabold tracking-display text-ink-900 group-hover:text-brand-700">
+          {brandLead}{" "}
+          <span class="text-brand-700 group-hover:text-brand-800">{brandTail.join(" ")}</span>
+        </span>
+      </a>
 
-    <nav aria-label="Main" class="relative">
-      <ul class="-mx-2.5 flex flex-wrap items-center gap-x-0.5 gap-y-0.5 text-sm font-medium">
+      <button
+        type="button"
+        class="group -mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-ink-700 hover:bg-ink-100 hover:text-brand-700 md:hidden"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        data-nav-burger
+      >
+        <span class="sr-only">Menu</span>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="size-6 group-aria-expanded:hidden"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M2 5.75A.75.75 0 0 1 2.75 5h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 5.75Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="hidden size-6 group-aria-expanded:block"
+        >
+          <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+        </svg>
+      </button>
+    </div>
+
+    {/* Hidden below `md` until the menu button opens it; always shown at `md`+. */}
+    <nav id="primary-nav" aria-label="Main" class="relative max-md:hidden" data-primary-nav>
+      <ul class="-mx-2.5 flex flex-wrap items-center gap-x-0.5 gap-y-0.5 text-sm font-medium max-md:flex-col max-md:items-stretch max-md:pb-1">
         {sections.map(({ label, href, pillar, links }, index) => {
           const isCurrent = currentPath === href;
           const inSection = currentPath.startsWith(href);
@@ -113,7 +152,8 @@ const sections = PRIMARY_NAV.map((section) => ({
                   hidden
                   data-nav-menu
                   class:list={[
-                    "absolute inset-x-0 top-full z-40 pt-2 md:inset-x-auto md:w-80",
+                    // Inline accordion below `md`; absolute dropdown from `md` up.
+                    "z-40 max-md:pt-1 md:absolute md:top-full md:w-80 md:pt-2",
                     isLast ? "md:right-0" : "md:left-0",
                   ]}
                 >
@@ -149,6 +189,18 @@ const sections = PRIMARY_NAV.map((section) => ({
       </ul>
     </nav>
   </div>
+
+  {/* With scripting off the menu button can't open anything, so show the nav. */}
+  <noscript>
+    <style>
+      [data-primary-nav] {
+        display: block !important;
+      }
+      [data-nav-burger] {
+        display: none !important;
+      }
+    </style>
+  </noscript>
 </header>
 
 <script>
@@ -167,6 +219,19 @@ const sections = PRIMARY_NAV.map((section) => ({
 
   const isOpen = ({ toggle }: NavItem) => toggle.getAttribute("aria-expanded") === "true";
 
+  // Mobile menu button. `max-md:hidden` is inert at desktop, so the same class
+  // toggle collapses the nav on small screens and does nothing on large ones.
+  const burger = document.querySelector<HTMLButtonElement>("[data-nav-burger]");
+  const primaryNav = document.querySelector<HTMLElement>("[data-primary-nav]");
+
+  const isMenuOpen = () => burger?.getAttribute("aria-expanded") === "true";
+
+  function setMenuOpen(open: boolean) {
+    if (!burger || !primaryNav) return;
+    burger.setAttribute("aria-expanded", String(open));
+    primaryNav.classList.toggle("max-md:hidden", !open);
+  }
+
   /** Opens or closes `target`; every other dropdown is always closed. */
   function setOpen(target: NavItem | null, open: boolean) {
     for (const entry of items) {
@@ -176,7 +241,22 @@ const sections = PRIMARY_NAV.map((section) => ({
     }
   }
 
-  const closeAll = () => setOpen(null, false);
+  /** Closes every dropdown, and the mobile menu with them. */
+  function closeAll() {
+    setOpen(null, false);
+    setMenuOpen(false);
+  }
+
+  burger?.addEventListener("click", () => setMenuOpen(!isMenuOpen()));
+
+  // Width-only, matching Tailwind's `md`, unlike `desktop` above: the collapsed
+  // state is a breakpoint concern, while hover-to-open is a pointer concern.
+  const wideViewport = window.matchMedia("(min-width: 48rem)");
+
+  // Leaving mobile width: drop the collapsed state so returning to it starts closed.
+  wideViewport.addEventListener("change", (event) => {
+    if (event.matches) setMenuOpen(false);
+  });
 
   for (const entry of items) {
     const { item, toggle, menu } = entry;
@@ -215,15 +295,30 @@ const sections = PRIMARY_NAV.map((section) => ({
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
+
+    // Escape closes the innermost thing first: a dropdown, then the mobile menu.
     const open = items.find(isOpen);
-    if (!open) return;
-    const hadFocus = open.item.contains(document.activeElement);
-    setOpen(open, false);
-    if (hadFocus) open.toggle.focus();
+    if (open) {
+      const hadFocus = open.item.contains(document.activeElement);
+      setOpen(open, false);
+      if (hadFocus) open.toggle.focus();
+      return;
+    }
+
+    if (isMenuOpen()) {
+      const hadFocus = primaryNav?.contains(document.activeElement);
+      setMenuOpen(false);
+      if (hadFocus) burger?.focus();
+    }
   });
 
   document.addEventListener("click", (event) => {
-    if (!items.some(({ item }) => item.contains(event.target as Node))) closeAll();
+    const target = event.target as Node;
+    // The button's own handler owns its state; don't undo it on the way up.
+    if (burger?.contains(target)) return;
+
+    if (!items.some(({ item }) => item.contains(target))) setOpen(null, false);
+    if (!primaryNav?.contains(target)) setMenuOpen(false);
   });
 
   // Pages restored from the back/forward cache must not reappear with a menu open.

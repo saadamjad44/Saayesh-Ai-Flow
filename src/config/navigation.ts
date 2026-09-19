@@ -1,6 +1,7 @@
 /**
- * Phase 1 navigation. Labels follow website-blueprint.jsx; only live Phase 1
- * pages are linked (no Tool Finder, AI by Industry, Blog, or Resources column).
+ * Site navigation. Labels follow website-blueprint.jsx; only live pages are
+ * linked (no Tool Finder, Prompt Library, Blog, or Resources column yet).
+ * Getting Started leads: it is the top-of-funnel entry point for beginners.
  */
 import { PAGES, getPage, type PageId, type PillarId, type SitePage } from "./pages";
 
@@ -21,6 +22,7 @@ const section = (label: string, pillar: PillarId): NavSection => ({
 });
 
 export const PRIMARY_NAV: readonly NavSection[] = [
+  section("Getting Started", "getting-started"),
   section("AI Writing Tools", "ai-writing-tools"),
   section("Business & Productivity", "ai-business-tools"),
   section("Automation", "ai-automation"),

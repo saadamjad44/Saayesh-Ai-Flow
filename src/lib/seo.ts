@@ -5,7 +5,7 @@
 import { getImage } from "astro:assets";
 
 import { SITE } from "@/config/site";
-import { getPage, type SitePage } from "@/config/pages";
+import { getPage, getParentPage, type SitePage } from "@/config/pages";
 import { DEFAULT_SOCIAL_MEDIA_ID, MEDIA, isMediaId, type MediaId } from "@/config/media";
 
 export interface BreadcrumbItem {
@@ -25,17 +25,19 @@ export function formatTitle(title: string): string {
   return title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 }
 
-/** Home → pillar (for articles) → current page. The homepage has no breadcrumb trail. */
+/**
+ * Home → parent → current page. The parent is the page's pillar (articles) or
+ * its explicit `parent` (e.g. a review under the /reviews/ hub); pages with
+ * neither sit directly under Home. The homepage has no breadcrumb trail.
+ */
 export function getBreadcrumbs(page: SitePage): BreadcrumbItem[] {
   if (page.path === "/") return [];
 
   const home = getPage("home");
   const trail: BreadcrumbItem[] = [{ label: "Home", path: home.path }];
 
-  if (page.pillar) {
-    const pillar = getPage(page.pillar);
-    trail.push({ label: pillar.title, path: pillar.path });
-  }
+  const parent = getParentPage(page);
+  if (parent) trail.push({ label: parent.title, path: parent.path });
 
   trail.push({ label: page.title, path: page.path });
   return trail;
