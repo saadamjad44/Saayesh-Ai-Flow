@@ -22,6 +22,7 @@ import type { ImageMetadata } from "astro";
 
 import aiAutomation from "@/assets/images/ai-automation.jpg";
 import aiBusinessTools from "@/assets/images/ai-business-tools.jpg";
+import aiByIndustry from "@/assets/images/ai-by-industry.jpg";
 import aiWritingTools from "@/assets/images/ai-writing-tools.jpg";
 import gettingStarted from "@/assets/images/getting-started.jpg";
 
@@ -75,6 +76,11 @@ export const MEDIA = {
       "Christina Morillo",
       "https://www.pexels.com/photo/white-dry-erase-board-with-red-diagram-1181311/",
     ),
+  },
+  "ai-by-industry": {
+    src: aiByIndustry,
+    alt: "Three people working separately on laptops at shared desks in an open coworking space.",
+    credit: pexels("Kindel Media", "https://www.pexels.com/photo/people-busy-working-7651637/"),
   },
   "getting-started": {
     src: gettingStarted,

@@ -24,6 +24,7 @@ export const PILLAR_IDS = [
   "ai-business-tools",
   "ai-automation",
   "getting-started",
+  "ai-by-industry",
 ] as const;
 
 export type PillarId = (typeof PILLAR_IDS)[number];
@@ -80,7 +81,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 1,
+  2: 2,
 };
 
 export const PAGES = [
@@ -248,6 +249,15 @@ export const PAGES = [
     id: "getting-started",
     title: "Getting Started with AI",
     path: "/getting-started/",
+    type: "pillar",
+    phase: 2,
+  },
+
+  // Phase 2B — AI by Industry pillar (topical hub; its cluster is not built yet)
+  {
+    id: "ai-by-industry",
+    title: "AI by Industry",
+    path: "/ai-by-industry/",
     type: "pillar",
     phase: 2,
   },

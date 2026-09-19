@@ -26,6 +26,7 @@ export const PRIMARY_NAV: readonly NavSection[] = [
   section("AI Writing Tools", "ai-writing-tools"),
   section("Business & Productivity", "ai-business-tools"),
   section("Automation", "ai-automation"),
+  section("By Industry", "ai-by-industry"),
 ];
 
 /**
