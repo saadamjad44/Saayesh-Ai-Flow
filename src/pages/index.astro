@@ -1,9 +1,12 @@
 ---
 /**
- * Homepage: positioning and the three Phase 1 pillars. Editorial methodology
+ * Homepage: positioning and the live category pillars. Editorial methodology
  * lives on the About + Editorial Process page, not here.
- * Phase 1 omits the latest-articles row (no articles yet), the email opt-in,
- * "Popular Comparisons", and unverified trust claims.
+ * Still omitted: the latest-articles row, the email opt-in, "Popular
+ * Comparisons", and unverified trust claims.
+ *
+ * PILLARS is ordered to match PRIMARY_NAV, and every entry needs its own image
+ * in the media registry — the `PageId & MediaId` type enforces that.
  */
 import { Image } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -13,6 +16,11 @@ import { getMedia, type MediaId } from "@/config/media";
 import { websiteSchema } from "@/lib/seo";
 
 const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
+  {
+    id: "getting-started",
+    summary:
+      "New to AI? Start here for what these tools actually do, where to begin, and the mistakes that waste the most time.",
+  },
   {
     id: "ai-writing-tools",
     summary:
@@ -77,7 +85,7 @@ const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
   <section id="categories" aria-labelledby="categories-heading" class="scroll-mt-24">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <div class="max-w-2xl">
-        <p class="eyebrow">Three categories</p>
+        <p class="eyebrow">Four categories</p>
         <h2
           class="mt-2 text-2xl font-bold tracking-display text-ink-900 sm:text-3xl"
           id="categories-heading"
@@ -86,7 +94,7 @@ const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
         </h2>
       </div>
 
-      <ul class="mt-9 grid gap-6 md:grid-cols-3">
+      <ul class="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {PILLARS.map(({ id, summary }, index) => {
           const pillar = getPage(id);
           const media = getMedia(id);
@@ -96,7 +104,7 @@ const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
                 src={media.src}
                 alt={media.alt}
                 widths={[400, 640, 800]}
-                sizes="(min-width: 768px) 360px, 100vw"
+                sizes="(min-width: 1024px) 270px, (min-width: 640px) 45vw, 100vw"
                 loading={index === 0 ? "eager" : "lazy"}
                 decoding={index === 0 ? "sync" : "async"}
                 class="aspect-video w-full border-b border-ink-200 object-cover"

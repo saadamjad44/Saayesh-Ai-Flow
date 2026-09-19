@@ -11,7 +11,7 @@
  *   2. Import it and add an entry below, including source and licence.
  *   3. Reference it with <FeaturedImage id="..." /> or MEDIA[id].
  *
- * Licence check (verified 2026-09-16): every photo below is from Pexels under
+ * Licence check (verified 2026-09-19): every photo below is from Pexels under
  * the Pexels Licence — free for commercial use, no attribution required, no
  * usage here that implies endorsement. https://www.pexels.com/license/
  * Credit is therefore recorded here rather than printed on the page. An image
@@ -23,6 +23,7 @@ import type { ImageMetadata } from "astro";
 import aiAutomation from "@/assets/images/ai-automation.jpg";
 import aiBusinessTools from "@/assets/images/ai-business-tools.jpg";
 import aiWritingTools from "@/assets/images/ai-writing-tools.jpg";
+import gettingStarted from "@/assets/images/getting-started.jpg";
 
 export interface MediaCredit {
   photographer: string;
@@ -73,6 +74,14 @@ export const MEDIA = {
     credit: pexels(
       "Christina Morillo",
       "https://www.pexels.com/photo/white-dry-erase-board-with-red-diagram-1181311/",
+    ),
+  },
+  "getting-started": {
+    src: gettingStarted,
+    alt: "An open laptop with a blank screen on a white desk, beside an empty notebook, a pen, and a glass of water.",
+    credit: pexels(
+      "Tatiana Syrikova",
+      "https://www.pexels.com/photo/from-above-laptop-with-blank-notebook-before-working-day-in-office-3975574/",
     ),
   },
 } as const satisfies Record<string, MediaAsset>;
