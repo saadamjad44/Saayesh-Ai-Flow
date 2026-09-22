@@ -82,7 +82,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 3,
+  2: 6,
 };
 
 export const PAGES = [
@@ -245,13 +245,45 @@ export const PAGES = [
     intent: "Informational",
   },
 
-  // Phase 2A — Getting Started pillar (top-of-funnel hub, no cluster yet)
+  // Phase 2A — Getting Started pillar (top-of-funnel hub)
   {
     id: "getting-started",
     title: "Getting Started with AI",
     path: "/getting-started/",
     type: "pillar",
     phase: 2,
+  },
+
+  // Phase 2C — Getting Started cluster, first batch
+  {
+    id: "how-to-use-ai-tools",
+    title: "How to Use AI Tools: A Beginner's Practical Guide",
+    path: "/getting-started/how-to-use-ai-tools/",
+    type: "article",
+    phase: 2,
+    pillar: "getting-started",
+    primaryKeyword: "how to use AI tools",
+    intent: "Informational",
+  },
+  {
+    id: "how-to-write-effective-ai-prompts",
+    title: "How to Write Effective AI Prompts: A Beginner's Guide",
+    path: "/getting-started/how-to-write-effective-ai-prompts/",
+    type: "article",
+    phase: 2,
+    pillar: "getting-started",
+    primaryKeyword: "how to write effective AI prompts",
+    intent: "Informational",
+  },
+  {
+    id: "ai-tools-for-beginners",
+    title: "AI Tools for Beginners: Where to Start",
+    path: "/getting-started/ai-tools-for-beginners/",
+    type: "article",
+    phase: 2,
+    pillar: "getting-started",
+    primaryKeyword: "AI tools for beginners",
+    intent: "Info / Commercial",
   },
 
   // Phase 2B — AI by Industry pillar (topical hub; its cluster is not built yet)

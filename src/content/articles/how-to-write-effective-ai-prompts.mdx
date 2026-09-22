@@ -1,0 +1,224 @@
+---
+pageId: how-to-write-effective-ai-prompts
+title: "How to Write Effective AI Prompts: A Beginner's Guide"
+description: What actually makes an AI prompt work - task, context, constraints, examples, and output format - with before-and-after examples across five kinds of work.
+publishedDate: 2026-09-22
+updatedDate: 2026-09-22
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What is an AI prompt?
+    answer: A prompt is everything you give a language model in a single request - the instruction, any background you supply, and any material you paste in. The model has no other information about your situation, so the prompt is not a search query but the entire brief the answer is built from.
+  - question: Is there one correct prompt formula?
+    answer: No. Several popular formulas circulate, and they are useful as checklists for what people commonly leave out, but none of them is universally best. Different tasks need different elements, and a short request is often better than a padded template. Treat any formula as a prompt for your own thinking rather than a structure to fill in every time.
+  - question: Do I need to tell the AI to act as an expert?
+    answer: Sometimes, but it is over-used. A role is worth adding when it genuinely changes the vocabulary, assumptions, or depth you want - asking for an explanation pitched at a complete beginner, for example. When your instructions and constraints are already specific, a role usually adds nothing.
+  - question: Why do longer prompts not always give better results?
+    answer: Because length is not the same as information. Adding adjectives, flattery, or restated instructions gives the model nothing new to work with, and a very long prompt can bury the parts that matter. What improves results is specific detail the model could not otherwise know, such as your audience, your constraints, and an example of the output you want.
+  - question: Should I keep my prompts somewhere?
+    answer: Yes, once one works. A prompt that reliably produces what you want is a small asset - it encodes what you already know about the task, and it keeps working if you change tools. Keeping them in your own document means you can reuse and refine them rather than rewriting from memory each time.
+---
+
+import { ComparisonTable } from "@/components/content";
+
+A prompt is the difference between an AI tool that feels like magic and one that feels like a waste of a subscription. Same model, same day, different result — because one request contained enough information to work from and the other did not.
+
+This guide covers what a prompt actually is, the parts that do the real work, and how to fix a weak one. It uses worked examples from five kinds of everyday work. If you have not yet settled into a working routine with these tools, [how to use AI tools](/getting-started/how-to-use-ai-tools/) covers the surrounding process first.
+
+## What a prompt actually is
+
+A prompt is everything you send in one request: your instruction, the background you provide, and any material you paste in.
+
+The important consequence is that **the prompt is the model's entire world for that answer**. It cannot see your business, your customers, your previous work, or the document sitting open next to you. Anything you do not supply, it fills in with the most statistically ordinary version of that thing.
+
+This is why "write a product description" returns something that could belong to any product. You gave it nothing to make it yours.
+
+The second consequence: a prompt is not a search query. Search rewards short keyword phrases. Prompting rewards the kind of detail you would give a competent freelancer who has never heard of your company.
+
+## The parts of a prompt that do the work
+
+Not every prompt needs every part. These are the elements worth having available, roughly in order of how much they typically matter.
+
+### The task
+
+Say what you want produced, as a verb and an object. "Summarize this transcript." "Draft a refund policy." "Explain this error message."
+
+Vague verbs produce vague output. "Help me with" and "look at" are not tasks. If several things need doing, either say so explicitly and in order, or split them across separate requests — a single prompt asking for six loosely related things usually does all six shallowly.
+
+### The context
+
+This is the part most beginners skip and the part that changes results most. Context is everything the model would need to know and cannot possibly guess:
+
+- **The situation.** What has happened, and what this output is for.
+- **The audience.** Who reads it, what they already know, and what they want from it.
+- **Source material.** Paste the notes, the transcript, the previous email, the draft. Do not describe a document you could include.
+- **Relevant constraints from your world.** Your policy, your terms, the fact that the client is already unhappy.
+
+### A role, when it genuinely helps
+
+Opening with "you are an experienced copywriter" is the most repeated prompting advice there is, and it is worth less than its reputation suggests.
+
+A role helps when it changes the vocabulary, assumptions, or depth of the answer — "explain this to someone who has never used a spreadsheet" produces genuinely different output from "explain this to a data analyst." It adds little when your instructions are already specific, because the constraints are doing the work the role was supposed to do.
+
+### Constraints
+
+Constraints are where a usable draft comes from. Be concrete:
+
+- **Length**, in a countable unit. "Four sentences", "under 150 words", "three bullet points" — not "short".
+- **Tone**, described rather than labelled. "Plain and direct, no exclamation marks" beats "professional".
+- **Exclusions.** What must not appear: jargon, promises about delivery dates, the price, anything you cannot verify.
+- **Boundaries on invention.** "Use only the information I have given you. If something is missing, write [NEEDS INPUT] rather than guessing."
+
+That last one is worth using whenever accuracy matters. It will not eliminate errors, but it gives the model an explicit alternative to filling a gap.
+
+### Examples
+
+One example of the output you want is usually worth several paragraphs of description — especially for tone, which is genuinely hard to specify in words.
+
+Paste a previous piece you were happy with and say "match this voice". For structured output, show a completed example of the structure rather than describing its fields. If you have a good example and a bad one, including both and naming the difference is more precise still.
+
+### The output format
+
+Say what shape the answer should take: prose, a bulleted list, a table with named columns, an email with a subject line, a block of code with no commentary.
+
+This matters more than it sounds, because a model's default is usually a short essay with an introduction and a summary. If you want something you can paste straight into a spreadsheet or a document, ask for it.
+
+## No formula is universally best
+
+You will encounter acronyms and templates promising the correct structure for a prompt. They are useful as checklists — they remind you of what people habitually leave out — but none of them is the right answer for every task.
+
+Treat them as a prompt for your own thinking. Some requests need a role and three examples; some need a single clear sentence and a pasted document. Padding a simple task into a template makes it longer, not better, and a formula applied mechanically tends to produce output that reads exactly as mechanical as it was. The reliable underlying principle is narrower than any acronym: **give the model the specific information it could not otherwise have, and say exactly what you want back.**
+
+## Prompts in practice
+
+Five ordinary tasks, each showing the weak version and a version with enough to work from.
+
+### Writing
+
+**Weak:** Write a blog intro about time management.
+
+**Better:**
+
+> Write an opening paragraph, about 90 words, for an article aimed at self-employed bookkeepers who work alone and feel behind constantly. Open with a specific recognisable moment, not a statistic or a rhetorical question. Plain, warm, no exclamation marks. Do not use the phrases "in today's fast-paced world" or "game-changer". Here are two paragraphs I wrote previously so you can match the voice: [paste].
+
+### Research and summarization
+
+**Weak:** Summarize this.
+
+**Better:**
+
+> Below is a transcript of a 50-minute client call. Produce two things: first, a five-bullet summary of what was agreed; second, a list of every action item with the person responsible and any date mentioned. Use only what appears in the transcript. If an owner or date was not stated, write "not specified" rather than inferring it. Transcript: [paste].
+
+The second half of that instruction is the important part. Asking for a summary invites the model to smooth over gaps; naming what to do about missing information tells it not to.
+
+### Business and productivity
+
+**Weak:** Write a policy for late payments.
+
+**Better:**
+
+> Draft a late payment policy for a two-person design studio invoicing UK business clients. Our terms are 14 days. We want a friendly first reminder, a firmer second at 21 days, and a clear statement of what happens at 30 days. Under 250 words, plain English, no legal jargon. Leave anything that should be checked with an accountant or solicitor marked as [CONFIRM] rather than stating it as fact.
+
+Flagging the parts that need professional review, instead of accepting a confident-sounding answer, is the right instinct for anything with legal or financial weight.
+
+### Marketing
+
+**Weak:** Write some social posts for my bakery.
+
+**Better:**
+
+> Write six short posts announcing that our sourdough is now available on Saturdays only, for a neighbourhood bakery's local followers. Each under 200 characters. Vary the angle: one practical, one about the reason for the change, one light. Warm and conversational, no hashtags, no emoji. Do not claim anything about ingredients or process beyond this: [paste your actual description].
+
+That final constraint is the one to carry into all marketing work. A model asked to be enthusiastic about a product will happily invent a selling point, and an invented claim about what you sell is a real problem, not a stylistic one.
+
+### Coding
+
+**Weak:** Fix my code.
+
+**Better:**
+
+> This function should return the total of an order including tax, but it returns the pre-tax figure when the discount is zero. Here is the function: [paste]. Here is an input that reproduces it and the output I get: [paste]. Explain what is wrong before changing anything, then give the corrected function. Keep the existing style and do not add libraries.
+
+Two things make this work: a reproducible case rather than a description of the symptom, and asking for the diagnosis before the fix, which makes it much easier to tell whether the change is actually justified.
+
+## Iterating well
+
+Your first prompt is a starting point. What matters is how you respond to what comes back.
+
+<ComparisonTable
+  caption="Turning a disappointing answer into a better one"
+  rowHeader="What is wrong"
+  columns={["Unhelpful response", "What to say instead"]}
+  rows={[
+    {
+      label: "Too generic",
+      cells: [
+        "Make it better",
+        "This could describe any company. Rewrite it using only these specifics: [paste]",
+      ],
+    },
+    {
+      label: "Wrong tone",
+      cells: [
+        "Less formal please",
+        "Too stiff. Match the voice of this piece I wrote: [paste]. Contractions are fine",
+      ],
+    },
+    {
+      label: "Too long",
+      cells: ["Shorter", "Cut to four sentences. Keep the second paragraph's point, drop the rest"],
+    },
+    {
+      label: "Contains something invented",
+      cells: [
+        "That is wrong",
+        "The figure in paragraph two is not in my source. Remove it and use only what I supplied",
+      ],
+    },
+    {
+      label: "Nearly right",
+      cells: [
+        "Try again",
+        "Keep everything except the opening line. Replace that with something about the deadline",
+      ],
+    },
+  ]}
+/>
+
+The pattern is the same throughout: name the specific problem, and say what to keep. And if three rounds of precise feedback are not converging, the brief is the problem — go back and rewrite the original prompt rather than continuing to patch the output.
+
+## Common mistakes
+
+- **Assuming shared knowledge.** It does not know your product, your client, or what you discussed with it yesterday unless you say so again.
+- **Confusing length with information.** Adjectives and flattery add words, not detail. A long prompt can also bury its own key instruction.
+- **Asking for too many things at once.** Six requests in one message tends to produce six shallow answers.
+- **Describing a document instead of pasting it.**
+- **Accepting fluent output as correct.** Confident tone is the default, not a signal of accuracy — verify anything you cannot see the source of.
+- **Starting from scratch each time.** A prompt that worked and was not saved is work you will repeat.
+
+## Improving a weak prompt: a worked rewrite
+
+**Start:** "Write a case study about our client."
+
+Nothing here is usable. Work through the elements:
+
+- **Task:** a written case study — of what length and shape?
+- **Context:** which client, what problem, what you did, what changed afterwards.
+- **Audience:** who reads this, and what would convince them?
+- **Constraints:** what you can and cannot claim publicly.
+- **Examples:** a previous case study whose structure worked.
+- **Format:** headings? A pull quote? A summary box?
+
+**Rewritten:**
+
+> Write a 500-word case study for our website, aimed at operations managers at mid-sized logistics firms evaluating whether to hire us. Structure it as: the situation, what we changed, what happened, then a two-sentence summary. Use only the information below and do not invent figures — where a number would strengthen a claim but is not in my notes, write [NUMBER NEEDED]. Plain and specific, no marketing superlatives. Match the structure of this earlier case study: [paste]. My notes on the project: [paste].
+
+Nothing clever happened there. It simply contains what the model would otherwise have had to invent.
+
+## Where to go next
+
+- Put this into a routine with [how to use AI tools](/getting-started/how-to-use-ai-tools/), which covers the process around the prompt.
+- If you are still choosing what to use, [AI tools for beginners](/getting-started/ai-tools-for-beginners/) walks through the categories and how to pick one.
+- Building a reusable set of briefs is the real payoff — see [AI prompts](/ai-prompts/).
+- For prompting aimed specifically at drafting and editing, [AI writing tools](/ai-writing-tools/) covers the category.
+- For the wider picture, return to [getting started with AI](/getting-started/).

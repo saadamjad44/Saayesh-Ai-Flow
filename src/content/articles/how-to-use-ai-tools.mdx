@@ -1,0 +1,180 @@
+---
+pageId: how-to-use-ai-tools
+title: "How to Use AI Tools: A Beginner's Practical Guide"
+description: A practical workflow for using AI tools well - pick the task, give context, brief it clearly, review the output, and verify anything that matters.
+publishedDate: 2026-09-22
+updatedDate: 2026-09-22
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What is the easiest way to start using AI tools?
+    answer: Open a general chat assistant and give it one real task you already do, such as rewriting a message you have already sent. Compare its version with yours. Doing this with work you can judge instantly teaches you more in ten minutes than reading tool comparisons for a week.
+  - question: Why does AI give me generic results?
+    answer: Almost always because the request contained no context. A model cannot see your business, your customer, or your previous work, so a short instruction leaves it to fill the gaps with the most average answer possible. Adding the situation, the audience, the constraints, and an example of what good looks like changes the output more than switching tools does.
+  - question: How do I know whether to trust what an AI tool tells me?
+    answer: Judge it by whether you could check it. Text you supplied and asked the tool to rework is low risk, because the source is in front of you. Facts, figures, names, dates, quotes, and anything legal, medical, or financial need confirming against a reliable source before you use them, because a language model can state something wrong in a completely confident tone.
+  - question: How many times should I go back and forth with an AI tool?
+    answer: There is no fixed number, but there is a useful stopping rule. If two or three rounds of specific feedback are not converging on what you want, the problem is usually the brief rather than the model. Start again with a fuller description of the task, or accept that this particular job is faster to do yourself.
+  - question: When should I automate a task instead of doing it by hand with AI?
+    answer: When the task has stopped being interesting. If you have run it manually enough times that the instructions barely change and you already know what a good result looks like, it is a reasonable candidate for automation. Automating before that point just makes an unreliable process run faster.
+---
+
+import { ComparisonTable } from "@/components/content";
+
+Most people's first attempt with an AI tool goes the same way. They open a chat window, type something short, get back a paragraph that is grammatically perfect and completely useless, and conclude the technology is overrated.
+
+The tool was not the problem. Using AI well is a repeatable process, and it is closer to briefing a capable new contractor than to searching Google. This guide walks through that process step by step, with a worked example at the end. It assumes no technical background and does not require you to have chosen a tool yet — if you are still at that stage, start with [AI tools for beginners](/getting-started/ai-tools-for-beginners/).
+
+## Start with a task, not a tool
+
+The single most common mistake is to start by choosing software. It feels productive, because there is plenty to read and compare, and it delays the part that actually teaches you anything.
+
+Start instead with one task you already do. It should be something you repeat, something made of words, and — crucially — something you can judge in seconds. You already know what a good version looks like, so you will immediately see whether the output is useful. That feedback is what builds skill.
+
+Keep the first task low-stakes. You are learning how the tool behaves, and you want to discover its failure modes somewhere they cost you nothing.
+
+## The working process
+
+### 1. Identify the task precisely
+
+"Help with marketing" is not a task. "Write a short email to customers who bought from us last year and have not ordered since" is.
+
+The difference matters because a vague request forces the model to guess what you meant, and its guesses average toward the blandest possible interpretation. Before you type anything, be able to finish these three sentences:
+
+- The output is **for** whom?
+- It needs to **do** what?
+- I will consider it good if it **is** what?
+
+If you cannot answer those, no tool will save the attempt.
+
+### 2. Choose an appropriate kind of tool
+
+You rarely need a specific product at this stage — you need the right category.
+
+<ComparisonTable
+  caption="Matching the kind of task to the kind of tool"
+  rowHeader="If the task is"
+  columns={["The right kind of tool", "Why"]}
+  rows={[
+    {
+      label: "Drafting, rewriting, or summarizing text",
+      cells: [
+        "A general chat assistant",
+        "Flexible, immediate, and the fastest way to learn what these models do well",
+      ],
+    },
+    {
+      label: "Writing inside a document or email you already have open",
+      cells: [
+        "The AI features built into software you already pay for",
+        "No new subscription, no copying text between windows",
+      ],
+    },
+    {
+      label: "One specific job done repeatedly and reliably",
+      cells: [
+        "A purpose-built tool for that job",
+        "Narrower scope usually means fewer surprises than a general assistant",
+      ],
+    },
+    {
+      label: "Something that should happen without you starting it",
+      cells: [
+        "An automation platform",
+        "Only worth the setup once the task is stable and you know what good output looks like",
+      ],
+    },
+  ]}
+/>
+
+For a first task, the top row is almost always the right answer. The categories are covered in more depth in [AI tools for beginners](/getting-started/ai-tools-for-beginners/).
+
+### 3. Give it context
+
+A language model knows nothing about your business. Not your prices, not your customers, not the email you sent last week, not the way you write. Every conversation starts from zero unless you supply the background.
+
+Useful context usually includes:
+
+- **The situation.** What has happened, and what needs to happen next.
+- **The audience.** Who reads this, what they already know, and what they care about.
+- **Source material.** The notes, the previous email, the document, the transcript — paste it in rather than describing it.
+- **Your voice.** One or two real examples of your own writing do more than any adjective.
+
+This is the step people skip, and it is the step that determines the result.
+
+### 4. Give clear instructions
+
+Context tells the model about the world. Instructions tell it what to produce: the format, the length, the tone, and the things to avoid.
+
+Be specific about limits. "Short" means nothing; "four sentences" means something. "Professional" is vague; "plain, direct, no exclamation marks" is actionable. Say what you do not want, too — it is often easier to name than what you do.
+
+Prompting is the skill that carries across every tool you will ever use, and it is worth learning properly. [How to write effective AI prompts](/getting-started/how-to-write-effective-ai-prompts/) covers the structure in detail, with examples for several kinds of work.
+
+### 5. Review the output honestly
+
+Read the result as an editor, not as a grateful recipient. Three questions:
+
+- **Is it correct?** Separate what the model reworked from your material, which you can check, from what it produced on its own, which you cannot.
+- **Is it usable?** Would you send this, after your own edit, without wincing?
+- **Does it sound like you?** Generic output is the default. If it reads like anyone could have written it, it needs more direction, not more length.
+
+Fluent writing is not evidence of accuracy. These models produce confident, well-formed prose whether or not the content behind it is right, so polish tells you nothing about correctness.
+
+### 6. Iterate with specific feedback
+
+Rejecting an output wholesale and asking again rarely helps. Tell it what was wrong and what to change:
+
+> That is too formal, and the second paragraph repeats the first. Rewrite it warmer, cut it to four sentences, and open with the delivery date rather than an apology.
+
+Keep the useful parts explicitly. "Keep the opening line, replace everything after it" is a normal and effective instruction.
+
+If two or three rounds of precise feedback are not converging, stop iterating and rewrite the original brief. Repeated small corrections cannot fix a request that was underspecified from the start.
+
+### 7. Verify anything that matters
+
+Whatever you publish or send is yours, regardless of what produced the first draft. Before anything leaves your hands, check:
+
+- **Facts, figures, and dates** against a source you trust.
+- **Names, quotes, and citations,** which are a known weak point — a model can produce a plausible reference that does not exist.
+- **Anything about your own business,** because the model was guessing unless you supplied it.
+- **Legal, tax, medical, or financial content,** which needs a qualified human, not a chat window.
+
+A working rule: AI writes the first draft, a human makes the last decision.
+
+### 8. Turn repeatable tasks into a workflow
+
+Once a task works reliably, stop reinventing the brief each time.
+
+Save the instructions that worked in a document of your own. Over a few months this becomes genuinely valuable — a set of briefs tuned to your business that keeps working if you switch tools, which prompts by themselves do not. Turning that into a repeatable method is what [AI prompts](/ai-prompts/) is about.
+
+Only after a task is boring should you consider automating it. Automation multiplies whatever you give it, including the mistakes. When you get there, [AI automation and workflows](/ai-automation/) covers connecting tools so a task runs without you.
+
+## A worked example
+
+Here is the whole process on one ordinary task: chasing an unanswered quote.
+
+**The weak attempt.** "Write a follow-up email." The result is a generic template with placeholder brackets, no better than the first thing a search would return.
+
+**The same task, worked through.**
+
+> A client asked for a quote nine days ago and has not replied. They were enthusiastic on the call but mentioned their budget approval runs through a partner. Write a follow-up email: friendly, not pushy, four sentences maximum, no exclamation marks. Offer to answer questions rather than pressing for a decision, and do not repeat the price. Here is the original quote email: [paste].
+
+Now the model has the situation, the audience, the constraints, the tone, and the source material. The draft that comes back will need editing — it usually does — but it will be editing rather than starting over.
+
+**Then:** read it as an editor, send one round of specific feedback if needed, check that nothing about the terms or dates has been invented, and save the brief for the next time a quote goes quiet.
+
+## The habits that make the difference
+
+- **One task used weekly beats five tools trialled once.** Collecting subscriptions is not progress.
+- **Paste the source material.** Describing a document rarely works as well as including it.
+- **Keep what works.** A saved brief compounds; a good result you did not record does not.
+- **Stop when it is not helping.** If editing the draft takes longer than writing it yourself, that task is not a fit. Dropping it is a real answer.
+- **Never publish unverified claims.** Your name is on the output.
+
+## Where to go next
+
+- If you have not picked a tool yet, [AI tools for beginners](/getting-started/ai-tools-for-beginners/) covers the categories, free versus paid, and the privacy questions worth asking first.
+- To get better results from whatever you are using, [how to write effective AI prompts](/getting-started/how-to-write-effective-ai-prompts/) goes deeper into briefing, with examples across writing, research, marketing, and code.
+- For the wider picture of where AI fits in a small business, return to [getting started with AI](/getting-started/).
+- When writing is the main job, [AI writing tools](/ai-writing-tools/) explains the categories and how to evaluate them.
+- For admin, scheduling, and day-to-day operations, see [AI business and productivity tools](/ai-business-tools/).
