@@ -1,0 +1,217 @@
+---
+pageId: ai-prompts-for-content-writing
+title: AI Prompts for Content Writing and Editing
+description: Prompts for the parts of writing AI is actually good at - outlining, restructuring, tightening, and critique - with the drafting traps to avoid.
+publishedDate: 2026-09-23
+updatedDate: 2026-09-23
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Should I use AI to write the whole draft?
+    answer: Rarely, and almost never for anything with your name on it. A full draft generated from a short brief arrives at the most ordinary version of the subject, and editing that into something worth reading usually takes longer than writing it yourself. The productive uses are the stages around drafting - structuring, critiquing, tightening, and repurposing what you have already written.
+  - question: How do I stop AI output sounding generic?
+    answer: Give it something specific to work from. A sample of your own writing, your real notes, your actual examples, and a named reader do more than any instruction about tone. Telling a tool to be "engaging" or "conversational" without source material produces a predictable imitation of those words, because there is nothing else for it to draw on.
+  - question: Will search engines penalise AI-assisted content?
+    answer: Google's published guidance rewards helpful, reliable, people-first content regardless of how it was produced, and treats content made primarily to manipulate rankings as spam whether a person or a tool wrote it. The practical implication is that method is not the issue - thin, unverified, or duplicative pages are, and AI makes those faster to produce.
+  - question: Can AI edit my writing without flattening my voice?
+    answer: It can, if you constrain it. Ask for specific edits - cut length, remove hedging, flag unclear sentences - rather than an open rewrite, and tell it which passages must stay exactly as written. An unconstrained "improve this" request regresses towards a neutral register, which is what people mean when they say editing tools flatten their writing.
+  - question: What should I never hand over to a prompt?
+    answer: Anything you cannot verify yourself. Statistics, quotes, citations, case studies, legal or medical statements, and claims about a product's capabilities all need a real source, and these tools produce plausible versions of all of them. The other thing to keep is the part only you can supply - your own experience, judgement, and examples, which is what distinguishes the piece from every other article on the topic.
+---
+
+import { ComparisonTable } from "@/components/content";
+
+The most common way to be disappointed by AI in writing work is to use it for the one stage it is worst at. Ask for a finished article and you get a competent, weightless piece of prose with nothing in it that only you could have written — then you spend longer fixing it than you would have spent writing it.
+
+**The short answer:** use prompts for the stages around drafting rather than for drafting itself. Structuring, interrogating, tightening, critiquing, and repurposing are where these tools genuinely help, because each of those tasks works on material you already have. The prompts below are organised that way, from planning through to self-editing.
+
+If you want the general principles behind them, the [AI prompts hub](/ai-prompts/) covers how prompting works, and [AI prompt examples](/ai-prompts/ai-prompt-examples/) shows thin and rewritten prompts side by side across ten kinds of work.
+
+## Who this is for, and who it is not
+
+This is for writers, freelancers, and content marketers who already write for a living or close to it, and who want AI to make the work faster without making it worse.
+
+It is not for people looking to produce large volumes of content without writing it. That path exists, but it produces exactly the kind of thin, unverified pages search engines treat as spam, and it is not what this page is for. It is also not a comparison of writing tools — [best AI writing tools](/ai-writing-tools/best-ai-writing-tools/) covers that, and the prompts here work in any of them.
+
+## Where AI actually helps in a writing process
+
+Content writing is not one task, and it is worth mapping the stages before the prompts, because the stage you are at determines whether a prompt is a good idea at all.
+
+<ComparisonTable
+  caption="Writing stages and how well prompting fits each"
+  rowHeader="Stage"
+  columns={["How well it fits", "Why"]}
+  rows={[
+    {
+      label: "Research and sourcing",
+      cells: [
+        "Poor, unless you supply the sources",
+        "Facts, citations, and statistics come back plausible and unverified",
+      ],
+    },
+    {
+      label: "Planning and outlining",
+      cells: ["Strong", "Structure is pattern work, and a bad outline is cheap to reject"],
+    },
+    {
+      label: "Interrogating your angle",
+      cells: ["Strong", "Objections and gaps are easier to see from outside the draft"],
+    },
+    {
+      label: "First draft",
+      cells: [
+        "Weak for anything with your name on it",
+        "Nothing in it is yours, and editing generic prose is slow work",
+      ],
+    },
+    {
+      label: "Restructuring a draft",
+      cells: ["Strong", "It works on your material, and you can judge the result instantly"],
+    },
+    {
+      label: "Line editing and tightening",
+      cells: ["Strong, if constrained", "Specific cuts work; open rewrites flatten voice"],
+    },
+    {
+      label: "Critique before publishing",
+      cells: [
+        "Strong",
+        "A fresh reading against explicit criteria catches what you stopped seeing",
+      ],
+    },
+    {
+      label: "Repurposing what you wrote",
+      cells: ["Strong", "The substance already exists and only the shape changes"],
+    },
+    {
+      label: "Fact-checking",
+      cells: ["Poor", "It cannot confirm a claim it may have produced the same way"],
+    },
+  ]}
+/>
+
+Everything below sits in the strong rows.
+
+## Planning and outlining
+
+### An outline that argues something
+
+> I am writing for [freelance designers juggling three or four clients] who [have no formal process and are sceptical of project management software]. My argument is that [lightweight tracking beats elaborate systems for this group]. Give me an outline of six to eight sections, each with a one-line purpose, ordered so the sceptical reader is not asked to accept the conclusion before the evidence. Do not write the sections. Flag any point in the outline where I will need a concrete example from my own experience.
+
+The flagging instruction is the useful part. It marks in advance the places only you can fill, which is precisely what stops the finished piece reading like everything else on the subject.
+
+**Limitation:** the ordering logic it applies is conventional. If your piece works because it breaks a convention, say so in the prompt.
+
+### Pressure-testing the angle before you commit
+
+> Here is the argument I plan to make and my outline: [paste]. Do not improve it. Instead: list the three strongest objections a well-informed sceptic would raise, name anything I am asserting that would need evidence I have not mentioned, and identify the single section most likely to be the weakest. Be blunt rather than encouraging.
+
+Asking it not to improve the outline is deliberate — an unprompted rewrite buries the critique you actually wanted.
+
+**Limitation:** the objections are the common ones, not the ones your particular readers hold.
+
+### Finding what the obvious version misses
+
+> Below are the introductions and headings of four articles already covering [topic]: [paste]. Identify what they all assume, what none of them address, and which questions a reader would still have after reading all four. Do not summarise them individually and do not suggest a headline.
+
+This is genuinely useful competitive reading, provided you paste the material rather than asking it to recall articles it cannot see.
+
+## Drafting, carefully
+
+Drafting is where the trouble starts, so the prompts that work are the ones that keep the substance yours.
+
+### From your own notes, not from nothing
+
+> Below are my rough notes and the three examples I want to use: [paste]. Write section three of the outline only — the one about [subject] — using only my notes and examples. Around 250 words. Plain declarative sentences, no rhetorical questions, no summary sentence at the end. Where my notes are too thin to write from, stop and say what is missing rather than filling the gap.
+
+The difference between this and "write me a section" is that everything in the output traces back to something you supplied. That is what makes the result editable rather than replaceable.
+
+**Limitation:** it will still smooth over hedges and uncertainties in your notes unless you tell it not to.
+
+### Getting past a stuck opening
+
+> Here is my draft with a weak opening: [paste]. Write five different first paragraphs for it — one starting from the specific example in paragraph four, one from the reader's problem, one from the counter-intuitive claim I make later, one from a plain statement of what the piece covers, and one that starts mid-situation. Around 60 words each. Do not change anything else.
+
+Five different approaches beat one improved attempt, because the blocker is usually the approach rather than the sentence.
+
+## Restructuring and editing
+
+This is the strongest use of prompting in writing work, and the most underused.
+
+### Diagnosing structure without rewriting
+
+> Here is my draft: [paste]. Do not rewrite it. Produce a reverse outline: one line per section saying what it actually does for the reader, not what it is about. Then tell me which sections do the same job twice, which one arrives too late, and where a reader would most likely stop reading. Quote the first few words of any passage you refer to.
+
+A reverse outline is the highest-value editing prompt there is. Writers lose sight of structure by the third revision, and this makes it visible in a form you can act on.
+
+### Tightening without flattening
+
+> Cut the draft below from [1,400] to about [1,000] words. Remove repetition, hedging, and anything that restates the point already made. Do not change my sentence rhythm, do not replace plain words with formal ones, and do not touch the passages between [KEEP] markers. List what you removed and why at the end.
+
+Naming the specific failure — formalising plain language — matters because that is the default drift. The KEEP markers protect the sentences you actually care about.
+
+**Limitation:** open-ended "make this better" requests regress towards a neutral register. Constrain the edit or accept the flattening.
+
+### A critique pass before you publish
+
+> Read the draft below as a demanding editor, not a supportive one. For each section, say whether it earns its place. Then identify: every claim that needs a source I have not given, every place I have asserted something a reader could reasonably dispute, anything that reads as filler, and the weakest paragraph in the piece. Do not fix anything and do not tell me what is good.
+
+"Do not tell me what is good" is worth including. Unprompted, the response is padded with praise that obscures the useful half.
+
+### Checking it against the brief
+
+> Here is the brief I was given and the draft I am about to submit: [paste both]. Working only from the brief, list anything it asks for that the draft does not deliver, and anything in the draft the brief did not ask for. Do not judge the quality of the writing. Mark anything where the brief is ambiguous enough that I should ask rather than assume.
+
+## Repurposing what you have already written
+
+Once a piece exists, the substance is done and only the shape changes — the safest category of writing prompt.
+
+### Into a different format
+
+> Turn the article below into [a six-email sequence / a conference talk outline / a 900-word version for a different audience]. Keep every claim identical and do not introduce examples or statistics that are not already in the piece. Where the new format needs something the article does not contain, mark it `[NEEDS: ...]` rather than inventing it.
+
+### Into social or newsletter form, without the usual tells
+
+> Below is my article. Write four short posts drawing on different points in it. Each one must make a specific claim from the article rather than tease it, be under 80 words, and end without a question or a call to action. No emoji, no numbered-list formatting, no opening line that says "here's the thing".
+
+Naming the clichés explicitly is more effective than asking for an original tone, because "original" gives the tool nothing to aim at while a prohibition does.
+
+For campaign-level work rather than individual pieces, [AI tools for marketing](/ai-by-industry/ai-tools-for-marketing/) covers where this fits in a wider process.
+
+### Keeping a description honest
+
+> Write a meta description for the article below: under 155 characters, describing what the article actually delivers rather than what it promises. No superlatives, no "discover", no question. Use only claims the article supports. Give me three options.
+
+## A note on voice
+
+The standard advice is to paste a sample and ask the tool to match your style. It works better than tone adjectives, but it has a limit worth knowing.
+
+What gets copied is the surface: sentence length, punctuation habits, formality, the rhythm of how you open a paragraph. What does not get copied is the thing that makes your writing recognisable — which examples you reach for, what you find worth arguing about, where you are willing to be blunt.
+
+So a style sample is genuinely useful for consistency across a long piece or a series, and genuinely useless as a substitute for having something to say. If a passage only works because of your experience, write that passage yourself.
+
+> Below are three samples of my writing, then a section of a new draft that does not sound like me. Rewrite the section to match the samples on sentence length, paragraph structure, and level of formality only. Do not change the argument, do not add examples, and do not adopt phrases from the samples wholesale. Samples: [paste]. Section: [paste].
+
+## Limitations and the things that stay yours
+
+**Facts, figures, quotes, and citations need a real source.** These tools produce plausible versions of all of them, and a fabricated citation looks exactly like a real one. Never publish a statistic that arrived in AI output without finding it at source.
+
+**Your experience is the part that cannot be generated.** It is also the part readers and search engines are looking for. Protect the paragraphs where it lives.
+
+**Open rewrites flatten voice.** Constrain edits to specific operations and protect what must survive.
+
+**Output varies between runs.** A prompt that produced an excellent critique once may not repeat it, so judge prompts by their average.
+
+**Responsibility for what you publish is yours** regardless of what drafted it — including factual accuracy, claims about products, and anything that touches legal, medical, or financial ground.
+
+**Volume is not a strategy.** Google's guidance on [creating helpful, reliable, people-first content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content) states that using automation, AI generation included, to produce content primarily to manipulate search rankings is a violation of its spam policies. AI makes thin pages faster to produce; it does not make them work.
+
+## Where to go next
+
+- **Prompts across other kinds of work.** [AI prompt examples](/ai-prompts/ai-prompt-examples/) covers ten tasks with thin and rewritten versions annotated.
+- **The underlying skill.** [AI prompts](/ai-prompts/) explains the parts of a prompt and how to repair one that is not working.
+- **Choosing a tool.** [Best AI writing tools](/ai-writing-tools/best-ai-writing-tools/) compares options, and [AI writing tools](/ai-writing-tools/) explains the categories.
+- **Marketing work specifically.** [AI tools for marketing](/ai-by-industry/ai-tools-for-marketing/) covers planning, campaigns, and repurposing at a wider scale.
+- **Running the business around the writing.** [ChatGPT prompts for small business tasks](/ai-prompts/chatgpt-prompts-for-small-business/) covers quotes, chasing, and client messages.
+
+How we research and label what we publish is set out on our [about and editorial process](/about/) page.

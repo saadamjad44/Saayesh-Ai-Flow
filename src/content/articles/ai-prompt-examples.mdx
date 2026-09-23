@@ -1,0 +1,240 @@
+---
+pageId: ai-prompt-examples
+title: AI Prompt Examples
+description: Annotated AI prompt examples across ten everyday tasks - the thin version, the rewritten version, and what each added line is actually doing.
+publishedDate: 2026-09-23
+updatedDate: 2026-09-23
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Can I copy these prompt examples and use them as they are?
+    answer: You can run them, but they will underperform until you replace the bracketed placeholders with your own material. Every example here is built around pasted source text, a stated audience, and real constraints, and those three things are what make the difference. A prompt copied without them is back to being a thin request with more words around it.
+  - question: Why does the same prompt give a different answer each time?
+    answer: Most AI text tools introduce an element of randomness when generating, so repeated runs vary even with identical input. That is expected behaviour rather than a fault. If you need consistency, tighten the output format, include a worked example of what a good answer looks like, and review each result instead of assuming it matches the last one.
+  - question: Should I write one long prompt or several short ones?
+    answer: Split the work when the steps need different judgement. Research, drafting, and editing in a single request usually produces a mediocre version of all three, because each stage inherits the weaknesses of the one before it. Several short prompts in sequence also let you correct course early, which is cheaper than rewriting a long output.
+  - question: Do prompts work the same way in every AI tool?
+    answer: The principles transfer, but the details do not. Tools differ in how much text they accept, whether they can read files or search the web, how strictly they follow formatting instructions, and whether they keep context between messages. Expect to adjust length and format instructions when you move a prompt from one tool to another.
+  - question: How do I know whether my prompt or the tool is the problem?
+    answer: Change one element at a time and watch what moves. If adding your source material, the audience, or an explicit format fixes the output, the prompt was the problem. If the result stays wrong after those three are in place - particularly on facts, arithmetic, or anything requiring current information - you have reached a limit of the tool rather than of your instructions.
+---
+
+import { ComparisonTable } from "@/components/content";
+
+Most prompt examples you find online are templates with one noun swapped out. They look useful and produce the same bland output the thin prompt did, because the thing that makes a prompt work is not its wording but the information inside it.
+
+This page takes ten ordinary tasks and shows two versions of each: the request people usually type, and a rewritten version with the missing pieces added. Each one is annotated so you can see what each added line is doing, rather than copying a formula you cannot adapt.
+
+**The short answer:** a good prompt example is one that carries your source material, names the audience, sets explicit limits, and says what to do when information is missing. Everything below is a demonstration of those four things applied to different work. If you want the underlying principles rather than examples, [how to write effective AI prompts](/getting-started/how-to-write-effective-ai-prompts/) covers them properly, and the [AI prompts hub](/ai-prompts/) is the starting point for the whole topic.
+
+## Who this is for, and who it is not
+
+This is for people who already use an AI tool regularly and keep getting output that is technically fine and practically useless: generic, wrong in small ways, or the right content in the wrong shape.
+
+It is not an introduction to AI tools. If you are still deciding which tool to use or what these things are good for, start with [getting started with AI](/getting-started/) instead. It is also not a prompt pack. There is nothing here to buy, and the examples are deliberately incomplete — the bracketed sections are where your material goes, and they are the part that does the work.
+
+## How to read the examples
+
+Each example follows the same structure.
+
+The **thin version** is what most people actually type. It is not wrong, it is just under-specified, so the tool fills the gaps with the most ordinary version of everything you left out.
+
+The **rewritten version** adds only information, not decoration. Notice how little of the extra length is adjectives. Almost every added clause is either source material, a constraint, an audience, or an instruction about what to do when something is unknown.
+
+The **why it works** note says which specific failure the rewrite prevents. That is the part worth internalising, because it is what lets you write your own.
+
+One convention throughout: `[paste ...]` means paste the real thing. Describing a document you could have included is the single most common reason a prompt underperforms.
+
+## Writing and drafting
+
+### 1. Turning notes into an email
+
+> **Thin:** Write a follow-up email from my meeting notes.
+
+> **Rewritten:** Here are my notes from a call with a client this morning: [paste notes]. Write a follow-up email confirming what we agreed. The client is not technical and was slightly anxious about the timeline. Keep it under 200 words, plain and businesslike, with a bulleted list of the agreed actions and who owns each one. If anything in my notes is ambiguous, flag it at the end as a question rather than smoothing it over. Do not add commitments that are not in the notes.
+
+**Why it works:** the two instructions at the end do most of the lifting. Without them, gaps in rough notes get quietly filled with invented detail — plausible dates, implied promises — and you send it without noticing. Asking for ambiguities to be listed separately turns a risk into a checklist.
+
+**Limitation:** it cannot tell you whether you misheard something in the meeting. It only knows what the notes say.
+
+### 2. Rewriting something you already have
+
+> **Thin:** Make this sound better.
+
+> **Rewritten:** Below is a paragraph from our services page. Rewrite it so a first-time visitor understands what we actually do within the first sentence. Keep it under 90 words, use concrete nouns rather than abstractions, remove anything that would be true of any competitor, and keep our two specific claims about turnaround time exactly as written. Give me three versions that differ in approach, not just in wording. Original: [paste].
+
+**Why it works:** "better" is not a target. This version names the reader, the failure to avoid (interchangeable marketing language), what must survive untouched, and how many options you want. Asking for three genuinely different versions is usually faster than editing one you dislike.
+
+**Limitation:** it cannot judge whether your claims are true or compliant. Anything factual still needs your check.
+
+### 3. Getting unstuck on a first draft
+
+> **Thin:** Write me an article about project management.
+
+> **Rewritten:** I am writing a piece for freelance designers who manage three or four client projects at once and have no formal process. I want to argue that lightweight tracking beats elaborate systems for this group. Do not write the article. Instead, give me an outline of six sections with a one-line purpose for each, then list the three strongest objections a sceptical reader would raise. Ask me up to five questions about anything you would need from my experience to make it specific.
+
+**Why it works:** it uses the tool for the part it is good at — structure and counter-arguments — while keeping the actual writing with the person who has the experience. The closing request for questions surfaces what is missing before you have written 800 words in the wrong direction.
+
+**Limitation:** the objections it raises are common ones, not ones drawn from your particular audience.
+
+For more on drafting and editing specifically, [AI prompts for content writing and editing](/ai-prompts/ai-prompts-for-content-writing/) goes considerably deeper on this kind of work.
+
+## Summarising and research
+
+### 4. Summarising a long document
+
+> **Thin:** Summarise this.
+
+> **Rewritten:** Summarise the document below for someone deciding whether to read it in full in the next ten minutes. Give me three bullets on what it argues, two on what it asks the reader to do, and one line on anything it leaves unclear or unsupported. Use only what is in the text — if something is not stated, do not infer it. Document: [paste].
+
+**Why it works:** it names the reader's decision, which determines what belongs in a summary. The instruction to flag what is unclear is what turns a summary into something you can act on, because it separates what the document says from what it implies.
+
+**Limitation:** if you ask a model to summarise a document you have not supplied, it will still produce a summary. It will just be constructed rather than read.
+
+### 5. Comparing options you have researched
+
+> **Thin:** Which of these tools is best?
+
+> **Rewritten:** Below are the pricing and feature pages for three tools I am considering: [paste]. Build a table comparing them on cost per user per month, whether they include [the specific feature you need], data location, and cancellation terms. Use only what appears in the pasted text. Where a page does not state something, write NOT STATED rather than estimating. After the table, list the two questions I would need to answer myself before choosing.
+
+**Why it works:** the NOT STATED instruction is the whole prompt. Without it, missing information gets filled in with the most common answer for that category of product, and a confident-looking table becomes the least trustworthy thing in your research.
+
+**Limitation:** pricing pages go out of date, and a comparison built from pasted text is only as current as the paste.
+
+## Business and admin
+
+### 6. Making sense of a messy list
+
+> **Thin:** Help me organise my week.
+
+> **Rewritten:** Here is everything on my list this week: [paste]. Group it into no more than four themes, put anything that unblocks another person first, and mark anything that looks likely to take more than an hour. Do not add tasks I did not write, and do not tell me to delegate — I work alone. If two items look like the same job described twice, say so.
+
+**Why it works:** the two prohibitions prevent the two standard failures — helpfully invented extra tasks, and generic productivity advice that assumes a team. The duplicate check is a genuinely useful piece of pattern-matching.
+
+**Limitation:** it does not know which of your deadlines are real.
+
+### 7. Drafting a reply you do not want to write
+
+> **Thin:** Write a polite reply saying no.
+
+> **Rewritten:** A supplier has sent the message below asking to increase their rates mid-contract. I want to decline for now but keep the relationship — we will likely need them again in the spring. Draft a reply under 120 words: acknowledge their position, decline clearly without apologising repeatedly, and leave a specific door open for a conversation at renewal. No hedging that could be read as agreement. Message: [paste].
+
+**Why it works:** the relationship goal is stated, so the tone has something to serve. "Decline clearly without apologising repeatedly" names a specific failure mode that polite-reply requests fall into by default.
+
+**Limitation:** anything with contractual consequences should be read carefully before sending, and read by someone qualified if the stakes are real.
+
+Task-specific versions of this kind of prompt are collected in [ChatGPT prompts for small business tasks](/ai-prompts/chatgpt-prompts-for-small-business/).
+
+## Customer-facing work
+
+### 8. A support reply grounded in your own policy
+
+> **Thin:** Answer this customer question.
+
+> **Rewritten:** A customer has sent the message below. Draft a reply using only the help-centre text I have pasted underneath it. Answer the actual question in the first sentence, stay warm but brief, and keep it under 120 words. If the help-centre text does not cover something they asked, insert `[GAP: ...]` describing what is missing rather than answering from general knowledge. Message: [paste]. Help-centre text: [paste].
+
+**Why it works:** the GAP marker makes the unsafe part of the draft visible at a glance. That is what makes a drafted reply safe to send after a quick read rather than a careful one.
+
+**Limitation:** a complaint, a refund, or an upset customer is not a drafting task. Handle those yourself.
+
+### 9. Asking for variations rather than an answer
+
+> **Thin:** Write a subject line for this email.
+
+> **Rewritten:** Write eight subject lines for the email below. Vary the approach deliberately: two direct, two curiosity-led, two naming the specific benefit, two referencing the deadline. Under 50 characters each, no exclamation marks, no emoji, and nothing that promises a result the email does not actually state. Email: [paste].
+
+**Why it works:** choosing between eight options is faster than improving one. Specifying the _kinds_ of variation stops you getting eight near-identical lines, which is what "give me some options" usually produces.
+
+**Limitation:** every claim in the output still needs checking against what is true, however persuasive it reads.
+
+## Technical work
+
+### 10. Debugging with the context included
+
+> **Thin:** Why doesn't this code work?
+
+> **Rewritten:** The TypeScript function below works normally but throws when the input array is empty. Explain what causes that before showing any code. Then give a corrected version that changes only what is necessary — do not restructure anything unrelated or add dependencies. Finish with the two cases I should test to confirm the fix. Code: [paste].
+
+**Why it works:** asking for the explanation first makes a wrong assumption visible before you paste a fix into a file. Constraining the scope of the change prevents the common outcome where a small bug returns as a rewritten function you now have to review in full.
+
+**Limitation:** it cannot see the rest of your codebase, your tests, or your runtime, so treat the diagnosis as a hypothesis.
+
+## What the rewrites have in common
+
+Ten different tasks, and the same handful of moves underneath them.
+
+<ComparisonTable
+  caption="What each rewrite added, and the failure it prevents"
+  rowHeader="The move"
+  columns={["What it looks like", "What it prevents"]}
+  rows={[
+    {
+      label: "Paste the material",
+      cells: [
+        "The actual notes, message, policy, or code — not a description of it",
+        "Answers built from general knowledge instead of your situation",
+      ],
+    },
+    {
+      label: "Name the reader",
+      cells: [
+        "Who sees this, what they already know, what they want from it",
+        "Vocabulary, length, and tone pitched at nobody in particular",
+      ],
+    },
+    {
+      label: "Set a hard limit",
+      cells: [
+        "A word count, a number of options, a format stated explicitly",
+        "Paragraphs when you wanted a list, or 600 words when you wanted 150",
+      ],
+    },
+    {
+      label: "Say what to do when unknown",
+      cells: [
+        "NOT STATED, UNKNOWN, or a [GAP: ...] marker for anything unsupported",
+        "Confident invention in the places you are least likely to check",
+      ],
+    },
+    {
+      label: "Name the failure to avoid",
+      cells: [
+        "Do not add tasks I did not write; nothing true of any competitor",
+        "The generic default the tool reaches for when unconstrained",
+      ],
+    },
+    {
+      label: "Ask for the reasoning first",
+      cells: [
+        "Explain the cause before showing the fix or the draft",
+        "A plausible answer you cannot evaluate until after you have used it",
+      ],
+    },
+  ]}
+/>
+
+Two habits are worth more than any individual example. Change one thing at a time, so you find out what actually made the difference. And when a prompt works on your real material, save it in a file of your own — a prompt that reliably handles your weekly client update is a small asset, and it moves with you if you change tools.
+
+## What these examples cannot do
+
+Worth being clear about the boundaries, because better prompting is often credited with fixing things it cannot touch.
+
+**A prompt cannot supply facts the tool does not have.** If it needs current information, your internal data, or anything beyond its training, the fix is to paste the source or connect the tool to it — not to word the request more carefully.
+
+**Arithmetic, dates, and counting stay unreliable** regardless of phrasing. Check them yourself.
+
+**Output varies between runs**, so a prompt that produced something excellent once may not repeat it. Judge prompts on their average result across several attempts, not their best one.
+
+**Nothing here changes who is responsible** for what you send, publish, or file. Every factual claim in the output is yours once you use it.
+
+**Confidential material needs a check before it goes into any prompt.** Vendor data-use terms and your own obligations vary sharply by sector; most tasks work perfectly well with identifying details removed.
+
+## Where to go next
+
+- **The principles behind the examples.** [How to write effective AI prompts](/getting-started/how-to-write-effective-ai-prompts/) covers the parts of a prompt and how to diagnose a weak one.
+- **The full topic.** [AI prompts](/ai-prompts/) is the hub: what a prompt is, a reusable structure, and when prompting is not the right tool.
+- **Running a business.** [ChatGPT prompts for small business tasks](/ai-prompts/chatgpt-prompts-for-small-business/) applies this to quotes, invoices, suppliers, and customer messages.
+- **Writing and editing.** [AI prompts for content writing and editing](/ai-prompts/ai-prompts-for-content-writing/) covers drafting, restructuring, and self-editing in detail.
+- **You are retyping the same prompt weekly.** That is the signal to look at [AI automation and workflows](/ai-automation/) instead.
+
+How we research and label what we publish is set out on our [about and editorial process](/about/) page.

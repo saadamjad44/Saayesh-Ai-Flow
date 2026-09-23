@@ -82,7 +82,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 9,
+  2: 12,
 };
 
 export const PAGES = [
@@ -327,14 +327,46 @@ export const PAGES = [
     intent: "Informational",
   },
 
-  // Phase 2B — AI Prompts pillar (skills hub; its cluster and the Prompt
-  // Library at /prompt-library/ are not built yet)
+  // Phase 2B — AI Prompts pillar (skills hub; the Prompt Library at
+  // /prompt-library/ is not built yet)
   {
     id: "ai-prompts",
     title: "AI Prompts",
     path: "/ai-prompts/",
     type: "pillar",
     phase: 2,
+  },
+
+  // Phase 2C — AI Prompts cluster, first batch
+  {
+    id: "ai-prompt-examples",
+    title: "AI Prompt Examples",
+    path: "/ai-prompts/ai-prompt-examples/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-prompts",
+    primaryKeyword: "AI prompt examples",
+    intent: "Informational",
+  },
+  {
+    id: "chatgpt-prompts-for-small-business",
+    title: "ChatGPT Prompts for Small Business Tasks",
+    path: "/ai-prompts/chatgpt-prompts-for-small-business/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-prompts",
+    primaryKeyword: "ChatGPT prompts for small business",
+    intent: "Info / Commercial",
+  },
+  {
+    id: "ai-prompts-for-content-writing",
+    title: "AI Prompts for Content Writing and Editing",
+    path: "/ai-prompts/ai-prompts-for-content-writing/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-prompts",
+    primaryKeyword: "AI prompts for content writing",
+    intent: "Informational",
   },
 ] as const satisfies readonly SitePage[];
 

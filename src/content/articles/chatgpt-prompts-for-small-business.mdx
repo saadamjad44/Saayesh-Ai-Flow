@@ -1,0 +1,213 @@
+---
+pageId: chatgpt-prompts-for-small-business
+title: ChatGPT Prompts for Small Business Tasks
+description: Task-specific ChatGPT prompts for quotes, invoices, suppliers, customer messages, hiring, and admin - with the context each one needs to be useful.
+publishedDate: 2026-09-23
+updatedDate: 2026-09-23
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Do these prompts only work in ChatGPT?
+    answer: No. They are written for ChatGPT because that is what most small business owners try first, but nothing in them is specific to it. The same prompts work in other general assistants, though you may need to adjust length and formatting instructions - tools differ in how much text they accept and how strictly they follow format requests.
+  - question: Is the free plan enough for this kind of work?
+    answer: For most of the tasks here, yes, at least to begin with. Paid plans generally matter when you need longer inputs, file handling, or heavier daily use rather than better answers to short prompts. Work on a free plan for a fortnight before paying, and only upgrade when you can name the specific limit you are hitting.
+  - question: Is it safe to paste customer or supplier details into a prompt?
+    answer: Check the vendor's data-use terms and any confidentiality obligations in your own contracts before real client information goes anywhere near a prompt, because what is acceptable varies by sector and by plan. In practice most of these tasks work perfectly well with names, addresses, and account numbers replaced by placeholders, which avoids the question entirely.
+  - question: Can ChatGPT do my bookkeeping or tax return?
+    answer: It can help you draft explanations, organise notes, and prepare questions for your accountant. It should not be the thing that decides a tax position, categorises transactions for filing, or calculates figures you then submit. Arithmetic is one of the least reliable things these tools do, and responsibility for what you file stays with you regardless.
+  - question: How do I stop retyping the same prompt every week?
+    answer: Keep the ones that work in your own document, edited as you learn what to change. Most assistants also support saved instructions or reusable custom assistants, which removes the retyping while keeping the task manual. Once a task is frequent, predictable, and has to happen without you, that is the point to look at automation instead.
+---
+
+import { ComparisonTable } from "@/components/content";
+
+Most prompt lists written for small businesses are marketing prompts in disguise: twenty ways to write a social caption, nothing about the quote you need to send by Thursday. The work that actually fills a small business week is quoting, chasing, explaining, replying, and recording — and those are the tasks worth having good prompts for.
+
+**The short answer:** the prompts below are organised by job rather than by department, and every one of them assumes you paste in your real material. A ChatGPT prompt for a small business task is only as good as the context it carries — your rates, your policy, the supplier's actual email — because none of that is knowable from the request alone.
+
+This page is about the prompts. If you are still working out where AI fits in your week at all, [AI tools for small business](/ai-by-industry/ai-tools-for-small-business/) covers the use cases first, and [AI business and productivity tools](/ai-business-tools/) covers the software side.
+
+## Who this is for, and who it is not
+
+This is for owners and sole traders who already have an AI assistant open and want better results from it on real business tasks. It assumes you do a bit of everything yourself and have no one to check your drafts.
+
+It is not for you if you are still deciding whether to bother — [AI tools for small business](/ai-by-industry/ai-tools-for-small-business/) is the better starting point for that. It is also not a substitute for professional advice. Nothing here is appropriate for a tax position, a contract term, an employment decision, or a regulated claim without a qualified person involved.
+
+## Before you use any of these
+
+Three things apply to every prompt below, and skipping them is why most copied prompts disappoint.
+
+**Paste your real material.** Your actual rate card, the supplier's actual email, your actual refund policy. Describing a document you could have included is the most common reason a prompt underperforms.
+
+**Replace identifying details you do not need.** Most of these tasks work just as well with the customer called "the customer" and the figures rounded. That sidesteps the data question entirely for the majority of what you would use it for.
+
+**Tell it what to do when it does not know.** Every prompt here includes some version of "write UNKNOWN rather than guessing". The default behaviour of these tools is to produce a plausible answer rather than to stop, and that default is most dangerous exactly where you are least likely to check.
+
+## Quotes, pricing, and proposals
+
+### Turning a vague enquiry into a structured quote request
+
+> A potential customer has sent the enquiry below. Using my standard scope questions underneath it, write a short reply that asks only for the information I am actually missing — do not ask for anything they already told me. Keep it under 120 words, friendly and direct, and number the questions so they can answer inline. Enquiry: [paste]. My standard questions: [paste].
+
+Most quoting time goes on the back-and-forth before the quote. This removes the part where you re-ask something they already answered, which is the thing that makes an enquiry go cold.
+
+**Limitation:** it cannot tell you whether the job is worth quoting for.
+
+### Drafting the quote itself
+
+> Below are my rate card and the scope the customer has agreed. Draft a quote email that states the total, breaks it into the line items from my rate card, names what is explicitly not included, and gives the validity period as [30 days]. Use only figures from my rate card — if the scope covers something my rate card does not price, list it under NEEDS PRICING instead of estimating. Under 250 words. Rate card: [paste]. Agreed scope: [paste].
+
+The NEEDS PRICING instruction is the important line. Without it, a scope item you have never priced comes back with a confident number attached.
+
+**Limitation:** check every figure and every total yourself. Arithmetic is not a strength of these tools, and a quote is a commercial commitment.
+
+### Explaining a price that has gone up
+
+> I need to tell an existing customer that my rate is increasing from [X] to [Y] from [date]. They have been with me [two years] and have never queried a price. Draft a message under 150 words that states the change plainly in the first two sentences, gives one honest reason without a list of excuses, and confirms what stays the same. Do not apologise more than once and do not invite negotiation.
+
+The instructions about apologising and negotiation are doing real work: without them, the default draft hedges enough to read as an opening offer.
+
+## Invoices, chasing, and money conversations
+
+### The first polite chase
+
+> This invoice is [14] days overdue and the customer is usually reliable. Draft a short chase — under 80 words — that assumes it was an oversight, restates the invoice number, amount, and due date from the details below, and gives one clear next step. No threats, no late-fee mention at this stage. Details: [paste invoice summary].
+
+### The second chase, when the first was ignored
+
+> This is my second chase on the same invoice, [30] days overdue, no reply to the first. Draft a firmer message that references the previous email, states the amount and how overdue it is, names the consequence under my terms below, and sets a specific date for response. Stay professional — no sarcasm, no ultimatum beyond what my terms actually say. My terms: [paste]. Previous message: [paste].
+
+**Limitation:** never let a draft assert a consequence your terms do not actually contain. That is what pasting the terms is for, and it is still worth reading the result against them.
+
+### Preparing questions for your accountant
+
+> Here are my notes and questions about [an expense category I am unsure how to treat]: [paste]. Turn this into a short, organised list of questions for my accountant, grouped by topic, with the relevant figures attached to each question. Do not answer the questions and do not tell me how the rules work — I want the list, not an opinion. Mark anything where my notes are too vague to ask a clear question.
+
+Prompting it not to answer is deliberate. Tax and accounting treatment is exactly the kind of confident-sounding answer that costs money to act on.
+
+## Customer messages
+
+### A reply grounded in your own policy
+
+> A customer has sent the message below. Draft a reply using only my policy text pasted underneath. Answer their actual question in the first sentence, keep it under 120 words, and stay warm without being effusive. If my policy does not cover something they asked, insert `[GAP: ...]` saying what is missing rather than answering from general knowledge. Message: [paste]. Policy: [paste].
+
+The GAP marker makes the unsafe part of a draft visible at a glance, which is what makes it safe to send after a quick read rather than a careful one.
+
+**Limitation:** complaints, refunds, and upset customers are not drafting tasks. Write those yourself.
+
+### Saying no to a request you cannot meet
+
+> A customer has asked for [the thing you cannot do]. I want to decline but keep them. Draft a reply under 120 words: decline in the first two sentences without a long preamble, give one real reason, and offer the nearest thing I can actually do, which is [alternative]. Do not offer anything I have not listed here.
+
+That last sentence prevents the most common failure in a decline draft: a helpful-sounding concession you never agreed to.
+
+### Turning a happy message into a review request
+
+> A customer sent me the message below after we finished a job. Draft a short reply that thanks them specifically — referencing what they actually mentioned, not a generic thank-you — and then asks for a review on [platform] with the link [URL]. Under 90 words. Do not suggest what they should write in the review. Message: [paste].
+
+Asking it not to suggest review wording matters for more than tone. Review platforms and consumer-protection regulators take a dim view of incentivised or scripted reviews.
+
+## Suppliers, contracts, and documents you have been sent
+
+### Understanding a document before you sign it
+
+> Below is a supplier agreement I have been sent. Summarise it for me as: what I am committing to, what they are committing to, the notice and cancellation terms, and anything that would cost me money beyond the headline price. Use only what is in the text — if something is not stated, write NOT STATED rather than assuming the normal arrangement. Then list the three things I should ask a solicitor about. Document: [paste].
+
+**Limitation:** this is comprehension support, not legal advice. The final section is the point of the prompt — it tells you what needs a professional, which is cheaper than finding out later.
+
+### Comparing two supplier offers
+
+> Here are two supplier quotes for the same work: [paste both]. Build a table comparing them on total cost, what is included, what is excluded, lead time, payment terms, and cancellation. Use only what each quote states, and write NOT STATED where a quote is silent. After the table, list the questions that would let me compare them properly.
+
+The "questions that would let me compare them properly" line is usually the most valuable output, because the gaps between two quotes are where the real difference sits.
+
+## Hiring, delegating, and handovers
+
+### Writing the job advert
+
+> I need to hire a [part-time bookkeeper] for [10 hours a month]. Here is what the role actually involves, in my own words: [paste]. Write a job advert under 300 words that describes the real work rather than a generic version of the role, states the hours and rate as [details], and is honest that this is a small business rather than implying a large team. No corporate filler, no "rockstar", no list of desirable qualities I did not mention.
+
+**Limitation:** employment law, contract terms, and anything touching discrimination needs proper advice. An advert that reads well can still be non-compliant.
+
+### The handover note you never write
+
+> I am away from [date] to [date]. Here are the things that might come up while I am out, in no particular order: [paste]. Turn this into a handover document: group by who might contact us, state what to do in each case, and mark anything where the answer is "wait for me" rather than guessing at my behalf. Do not invent procedures I have not described.
+
+This is among the safest possible uses — internal, low stakes, and you can judge it instantly — which is why it is a good first task if you are still building confidence.
+
+## Which of these to try first
+
+Not all of these are equally good starting points. The safe ones are frequent, internal, and immediately judgeable.
+
+<ComparisonTable
+  caption="Where to start, and what to keep a closer eye on"
+  rowHeader="Task"
+  columns={["Why it is a good or risky first prompt", "What you still have to check"]}
+  rows={[
+    {
+      label: "Handover notes",
+      cells: [
+        "Internal, low stakes, and you can see instantly if it is wrong",
+        "Only that it reflects what you actually said",
+      ],
+    },
+    {
+      label: "Invoice chases",
+      cells: [
+        "Frequent, short, and the right tone is genuinely hard to hit cold",
+        "That any stated consequence matches your terms",
+      ],
+    },
+    {
+      label: "Enquiry replies",
+      cells: [
+        "High frequency, and the cost of a slow reply is a lost job",
+        "That it has not asked for something already answered",
+      ],
+    },
+    {
+      label: "Quotes",
+      cells: [
+        "Valuable, but it is a commercial commitment once sent",
+        "Every figure, every total, and every exclusion",
+      ],
+    },
+    {
+      label: "Contract summaries",
+      cells: [
+        "Useful for comprehension, risky if treated as advice",
+        "Anything that determines whether you sign",
+      ],
+    },
+    {
+      label: "Anything with tax consequences",
+      cells: [
+        "Poor fit — confident wrong answers are the norm here",
+        "All of it, with a qualified person",
+      ],
+    },
+  ]}
+/>
+
+## Limitations worth being clear about
+
+**It does not know your business.** Not your rates, your customers, your history, or what you agreed last spring. Everything it uses arrives in the prompt or it does not exist.
+
+**It is unreliable with numbers, dates, and counting.** Anything that becomes a figure on a document you send needs checking by you.
+
+**It cannot give you advice.** Tax treatment, contract terms, employment decisions, and regulated claims all need a qualified person. Use it to prepare your questions, not to answer them.
+
+**Output varies between runs.** The same prompt will not produce the same draft twice, so judge a prompt on its average result rather than its best one.
+
+**Responsibility does not transfer.** Whatever drafted it, you sent it.
+
+## Where to go next
+
+- **The prompts themselves, in more depth.** [AI prompt examples](/ai-prompts/ai-prompt-examples/) shows thin and rewritten versions side by side, annotated with what each change does.
+- **Writing work specifically.** [AI prompts for content writing and editing](/ai-prompts/ai-prompts-for-content-writing/) covers drafting, restructuring, and editing.
+- **The wider skill.** [AI prompts](/ai-prompts/) is the hub for how prompting works and when it is the wrong tool.
+- **Where AI fits in your week.** [AI tools for small business](/ai-by-industry/ai-tools-for-small-business/) covers the use cases behind these tasks.
+- **The software side.** [AI business and productivity tools](/ai-business-tools/) covers meetings, scheduling, bookkeeping, and support, with specific picks in [best AI tools for small business](/ai-business-tools/best-ai-tools-for-small-business/) and costs in [how much does AI cost for a small business](/ai-business-tools/how-much-does-ai-cost-small-business/).
+- **You are pasting the same prompt weekly.** [AI automation and workflows](/ai-automation/) covers what to do once a task is predictable enough to run without you.
+
+How we research and label what we publish is set out on our [about and editorial process](/about/) page.
