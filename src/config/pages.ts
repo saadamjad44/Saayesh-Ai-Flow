@@ -82,7 +82,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 6,
+  2: 9,
 };
 
 export const PAGES = [
@@ -286,13 +286,45 @@ export const PAGES = [
     intent: "Info / Commercial",
   },
 
-  // Phase 2B — AI by Industry pillar (topical hub; its cluster is not built yet)
+  // Phase 2B — AI by Industry pillar (topical hub)
   {
     id: "ai-by-industry",
     title: "AI by Industry",
     path: "/ai-by-industry/",
     type: "pillar",
     phase: 2,
+  },
+
+  // Phase 2C — AI by Industry cluster, first batch
+  {
+    id: "ai-tools-for-marketing",
+    title: "AI Tools for Marketing: Practical Use Cases and Workflows",
+    path: "/ai-by-industry/ai-tools-for-marketing/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-by-industry",
+    primaryKeyword: "AI tools for marketing",
+    intent: "Informational",
+  },
+  {
+    id: "ai-tools-for-ecommerce",
+    title: "AI Tools for E-commerce: Practical Ways to Use AI",
+    path: "/ai-by-industry/ai-tools-for-ecommerce/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-by-industry",
+    primaryKeyword: "AI tools for e-commerce",
+    intent: "Informational",
+  },
+  {
+    id: "ai-tools-for-small-business",
+    title: "AI Tools for Small Business: Practical Use Cases",
+    path: "/ai-by-industry/ai-tools-for-small-business/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-by-industry",
+    primaryKeyword: "AI tools for small business",
+    intent: "Informational",
   },
 
   // Phase 2B — AI Prompts pillar (skills hub; its cluster and the Prompt
