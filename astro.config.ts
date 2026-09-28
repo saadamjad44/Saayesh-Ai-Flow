@@ -5,8 +5,12 @@ import tailwindcss from "@tailwindcss/vite";
 
 import { SITE, isPlaceholderDomain } from "./src/config/site";
 import { NOINDEX_PATHS, assertValidPageRegistry } from "./src/config/pages";
+import { contentLastmodByPath } from "./src/lib/sitemap-lastmod";
 
 assertValidPageRegistry();
+
+/** Registry path → authored update date, for sitemap <lastmod>. */
+const lastmodByPath = contentLastmodByPath();
 
 if (isPlaceholderDomain) {
   console.warn(
@@ -27,6 +31,14 @@ export default defineConfig({
     sitemap({
       // Noindexed legal pages stay out of the XML sitemap.
       filter: (page) => !NOINDEX_PATHS.has(new URL(page).pathname),
+      /**
+       * <lastmod> from the page's own `updatedDate`. Pages with no authored date
+       * are emitted unchanged rather than given an invented one.
+       */
+      serialize: (item) => {
+        const lastmod = lastmodByPath.get(new URL(item.url).pathname);
+        return lastmod ? { ...item, lastmod } : item;
+      },
     }),
   ],
   vite: {

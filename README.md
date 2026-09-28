@@ -104,7 +104,8 @@ Implemented in `src/lib/seo.ts`, `src/components/seo/SeoHead.astro`, and `astro.
 - **Open Graph / Twitter** — `og:site_name`, `og:locale`, `og:type`, `og:title`, `og:description`, `og:url`, and `twitter:card`/`title`/`description`.
 - **JSON-LD** — `WebSite` (homepage), `Article` (cluster articles), `CollectionPage` with an `ItemList` (pillar hubs), `FAQPage` (pages with FAQ frontmatter), and `BreadcrumbList` (any page with a trail). Serialized with `</script>` breakout protection.
 - **Breadcrumbs** — rendered from the registry (Home → pillar → page) and mirrored in structured data.
-- **Sitemap** — `@astrojs/sitemap` generates `/sitemap-index.xml`, filtered to exclude the noindexed legal pages; linked via `<link rel="sitemap">`.
+- **Sitemap** — `@astrojs/sitemap` generates `/sitemap-index.xml`, filtered to exclude the noindexed legal pages; linked via `<link rel="sitemap">`. `<lastmod>` comes from each entry's `updatedDate`, read from content frontmatter by `src/lib/sitemap-lastmod.ts`; pages with no authored date (home, about, contact) get no `lastmod` rather than an invented one.
+- **Outbound links** — `src/lib/links.ts` holds the one rule: editorial source links get no `rel` or `target`, and commercial destinations get `rel="sponsored nofollow"`. It is applied through `ContentLink.astro`, which the pillar and article routes map Markdown's `a` element to, so plain `[text](url)` links are covered too. Internal links are never touched. Affiliate hosts go in `SPONSORED_HOSTS` when a programme is actually live.
 - **robots.txt** — generated at build time so the sitemap URL always matches `SITE.url`. Noindexed pages are deliberately _not_ disallowed, so crawlers can read their noindex directive.
 - **Validation** — `BaseLayout` throws if a page's registry path does not match the route it renders at, and the page registry is validated on every build.
 
@@ -179,7 +180,7 @@ To add a page: add it to the registry in `src/config/pages.ts`, then create the 
 | `npm run build`        | Production build, including registry validation, content-schema validation, and layout path assertions |
 | `npm run verify`       | All three, in order                                                                                    |
 
-Latest local run of `npm run verify` passes: `astro check` reports 0 errors, 0 warnings, 0 hints across 40 files; Prettier reports all matched files formatted; the build completes with 18 pages.
+Latest local run of `npm run verify` passes: `astro check` reports 0 errors, 0 warnings, 0 hints across 44 files; Prettier reports all matched files formatted; the build completes with 32 pages.
 
 ---
 

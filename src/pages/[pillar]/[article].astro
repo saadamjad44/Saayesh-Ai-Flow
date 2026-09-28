@@ -2,6 +2,7 @@
 /** Cluster articles from the `articles` collection, nested under their pillar. */
 import { render } from "astro:content";
 import EntryLayout from "@/layouts/EntryLayout.astro";
+import ContentLink from "@/components/content/ContentLink.astro";
 import { getPublishedEntries, pathSegments } from "@/lib/content";
 import { getPage } from "@/config/pages";
 import { articleSchema, getSocialImage } from "@/lib/seo";
@@ -73,5 +74,6 @@ const socialImage = await getSocialImage(getPage(entry.data.pageId));
   relatedHeading="Keep reading"
   related={related}
 >
-  <Content />
+  {/* Every body link goes through the outbound-link policy in src/lib/links.ts. */}
+  <Content components={{ a: ContentLink }} />
 </EntryLayout>

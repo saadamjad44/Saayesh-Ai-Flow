@@ -2,6 +2,7 @@
 /** Pillar hubs from the `pillars` collection; paths come from the page registry. */
 import { render } from "astro:content";
 import EntryLayout from "@/layouts/EntryLayout.astro";
+import ContentLink from "@/components/content/ContentLink.astro";
 import { getPublishedEntries, pathSegments } from "@/lib/content";
 import { isMediaId } from "@/config/media";
 import { collectionPageSchema } from "@/lib/seo";
@@ -52,5 +53,6 @@ const path = Astro.url.pathname;
   relatedHeading={`${entry.data.title} guides`}
   related={articles}
 >
-  <Content />
+  {/* Every body link goes through the outbound-link policy in src/lib/links.ts. */}
+  <Content components={{ a: ContentLink }} />
 </EntryLayout>

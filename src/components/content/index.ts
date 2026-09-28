@@ -2,6 +2,7 @@
 export { default as AffiliateNote } from "./AffiliateNote.astro";
 export { default as ComparisonTable } from "./ComparisonTable.astro";
 export { default as ContentGap } from "./ContentGap.astro";
+export { default as ContentLink } from "./ContentLink.astro";
 export { default as FaqSection } from "./FaqSection.astro";
 export { default as FeaturedImage } from "./FeaturedImage.astro";
 export { default as LastUpdated } from "./LastUpdated.astro";

@@ -82,7 +82,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 12,
+  2: 14,
 };
 
 export const PAGES = [
@@ -367,6 +367,29 @@ export const PAGES = [
     pillar: "ai-prompts",
     primaryKeyword: "AI prompts for content writing",
     intent: "Informational",
+  },
+
+  // Phase 2D — AI Writing cluster expansion (narrower intents than the
+  // Phase 1 roundup: copy specifically, and blog-writing workflows)
+  {
+    id: "best-ai-copywriting-tools",
+    title: "Best AI Copywriting Tools",
+    path: "/ai-writing-tools/best-ai-copywriting-tools/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-writing-tools",
+    primaryKeyword: "best AI copywriting tools",
+    intent: "Commercial",
+  },
+  {
+    id: "ai-tools-for-blog-writing",
+    title: "AI Tools for Blog Writing",
+    path: "/ai-writing-tools/ai-tools-for-blog-writing/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-writing-tools",
+    primaryKeyword: "AI tools for blog writing",
+    intent: "Info / Commercial",
   },
 ] as const satisfies readonly SitePage[];
 

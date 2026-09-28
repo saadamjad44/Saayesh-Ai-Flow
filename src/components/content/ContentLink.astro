@@ -1,0 +1,29 @@
+---
+/**
+ * Every link inside MDX body content, internal or external.
+ *
+ * The pillar and article routes map Markdown's `a` element to this component, so
+ * a plain `[text](url)` link and an explicit `<ContentLink>` are both governed by
+ * the one outbound policy in src/lib/links.ts. Internal links pass straight
+ * through with nothing added.
+ *
+ * Use it explicitly only to override the policy for a single link — above all a
+ * commercial one: `<ContentLink href="..." kind="sponsored">text</ContentLink>`.
+ */
+import { outboundLinkAttrs, type OutboundLinkKind } from "@/lib/links";
+
+interface Props {
+  href?: string;
+  /** "sponsored" for affiliate, paid, or otherwise commercial destinations. */
+  kind?: OutboundLinkKind;
+  /** Opens in a new tab. Sponsored links do so by default. */
+  newTab?: boolean;
+}
+
+const { href, kind, newTab, ...rest } = Astro.props;
+const policy = href ? outboundLinkAttrs(href, { kind, newTab }) : {};
+---
+
+<a {href} {...rest} {...policy}>
+  <slot />
+</a>
