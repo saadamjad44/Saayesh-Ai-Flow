@@ -20,12 +20,39 @@
  */
 import type { ImageMetadata } from "astro";
 
+import logo from "@/assets/brand/saayesh-ai-flow-logo.png";
 import aiAutomation from "@/assets/images/ai-automation.jpg";
 import aiBusinessTools from "@/assets/images/ai-business-tools.jpg";
 import aiByIndustry from "@/assets/images/ai-by-industry.jpg";
 import aiPrompts from "@/assets/images/ai-prompts.jpg";
 import aiWritingTools from "@/assets/images/ai-writing-tools.jpg";
 import gettingStarted from "@/assets/images/getting-started.jpg";
+
+/**
+ * The brand logo, declared once so the header — and anything else that needs
+ * the mark later — never hardcodes a path.
+ *
+ * The owner-supplied master is src/assets/brand/logo-source.jpeg: the monogram
+ * on a flat white square. `saayesh-ai-flow-logo.png` is that file trimmed to
+ * the mark and given a real alpha channel, so it sits on the warm paper
+ * background without a white box behind it. It lives in src/assets/ rather than
+ * public/ so astro:assets emits responsive, width/height-stamped variants.
+ *
+ * `alt` is empty on purpose. Everywhere the logo is used it sits beside the
+ * visible "Saayesh AI Flow" wordmark inside the same link, so describing the
+ * mark as well would make a screen reader announce the brand name twice. The
+ * accessible name of the link comes from the wordmark text.
+ *
+ * The favicon set in public/ is deliberately NOT derived from this file: the
+ * monogram is a wide lockup that turns to mush at 16px, while public/favicon.svg
+ * is a square icon-only mark built to read at that size.
+ */
+export const BRAND_LOGO = {
+  src: logo,
+  alt: "",
+  /** Rendered height in the header, in px. Width follows the intrinsic ratio. */
+  headerHeight: 30,
+} as const;
 
 export interface MediaCredit {
   photographer: string;

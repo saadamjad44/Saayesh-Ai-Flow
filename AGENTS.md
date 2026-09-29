@@ -13,8 +13,8 @@ Build and grow Saayesh AI Flow as a trustworthy, SEO-first AI tools, automation,
 - Brand name: **Saayesh AI Flow**.
 - Domain: custom domain not purchased yet. `SITE_DOMAIN` in `src/config/site.ts` currently holds the Netlify production host; update that single value when the owner provides the final domain.
 - Phase 1 scope: exactly 17 pages (6 core/utility + 3 pillars + 8 keyword-targeted articles).
-- `/blog/` is deferred to Phase 2. Do not build or link it in Phase 1.
-- Phase 1 navigation, homepage, and footer link only to live Phase 1 pages. No email opt-in and nothing that depends on Phase 2/3 features.
+- `/blog/` is an approved Phase 2 core page and may be built and linked.
+- Navigation, homepage, and footer may link to approved live pages from the current active phase; do not link to unapproved or draft pages. No email opt-in and nothing that depends on Phase 2/3 features.
 - Testing: Phase 1 content is research-based. Do not invent hands-on testing, scores, screenshots, or first-hand claims unless the owner provides testing evidence.
 - SEO data: the owner's validated Semrush data is for internal prioritization only. Never publish search volume, KD, CPC, or competition claims on the website.
 - Legal pages (privacy policy, terms, affiliate disclosure) are noindexed and excluded from the XML sitemap.

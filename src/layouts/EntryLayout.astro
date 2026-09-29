@@ -5,6 +5,11 @@
  * category image. After the body: related internal pages, then the FAQ (with
  * its own FAQPage schema).
  *
+ * Every entry page also gets the contextual sidebar, built from the registry by
+ * getContentSidebar(): the current category and its articles, then the other
+ * categories. PageLayout switches to its two-column grid because that slot is
+ * filled, so no page has to opt in.
+ *
  * `testingStatus` stays in frontmatter and is still validated (see
  * content.config.ts and ScoreTable); it is simply not surfaced as a badge.
  */
@@ -15,7 +20,10 @@ import FaqSection from "@/components/content/FaqSection.astro";
 import FeaturedImage from "@/components/content/FeaturedImage.astro";
 import LastUpdated from "@/components/content/LastUpdated.astro";
 import RelatedPages, { type RelatedPage } from "@/components/content/RelatedPages.astro";
+import ContentSidebar from "@/components/layout/ContentSidebar.astro";
 import type { MediaId } from "@/config/media";
+import { getPage } from "@/config/pages";
+import { getContentSidebar } from "@/lib/sidebar";
 import type { JsonLd } from "@/lib/seo";
 
 interface Props {
@@ -32,6 +40,9 @@ interface Props {
 
 const { entry, ogType, jsonLd, relatedHeading, related, eyebrow, mediaId } = Astro.props;
 const { data } = entry;
+
+const currentPath = Astro.url.pathname;
+const sidebar = await getContentSidebar(getPage(data.pageId));
 ---
 
 <PageLayout
@@ -50,9 +61,16 @@ const { data } = entry;
 
   {mediaId && (
     <Fragment slot="hero">
-      <div class="mx-auto max-w-3xl px-4 pb-10 sm:px-6">
+      {/* Padding comes from PageLayout's container; only the measure is set here. */}
+      <div class="pb-10 lg:max-w-3xl">
         <FeaturedImage id={mediaId} priority />
       </div>
+    </Fragment>
+  )}
+
+  {sidebar && (
+    <Fragment slot="sidebar">
+      <ContentSidebar sidebar={sidebar} currentPath={currentPath} />
     </Fragment>
   )}
 

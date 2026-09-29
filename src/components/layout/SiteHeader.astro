@@ -1,19 +1,20 @@
 ---
 /**
- * Site header. One link per pillar, each with a disclosure dropdown listing
- * that pillar's built articles. Pillar links stay plain, crawlable links; a
- * small script only toggles the dropdowns (hover and keyboard focus on
- * desktop, tap/click everywhere, Escape to close).
+ * Site header: the brand lockup and five primary links. Topic navigation moved
+ * out of here — pillars are reached through /blog/, the footer, the homepage
+ * cards, and the contextual sidebar on every pillar and article page — so there
+ * are no dropdowns left to manage and every link is a plain, crawlable <a>.
  *
- * Below `md` the nav collapses behind a menu button and the dropdowns expand
- * inline as an accordion, so the header keeps working as pillars are added.
- * The markup is the same list at every width — there is no second copy of the
- * links for mobile. A <noscript> rule re-shows the nav when scripting is off,
- * so a no-JS visitor still gets every link, exactly as before the menu button.
+ * Below `md` the nav collapses behind a menu button; the markup is the same
+ * list at every width, with no second copy of the links for mobile. A
+ * <noscript> rule re-shows the nav when scripting is off, so a no-JS visitor
+ * still gets every link.
  */
-import { PRIMARY_NAV, getSectionLinks } from "@/config/navigation";
+import { Image } from "astro:assets";
+
+import { PRIMARY_NAV, isCurrentSection } from "@/config/navigation";
+import { BRAND_LOGO } from "@/config/media";
 import { SITE } from "@/config/site";
-import { getPublishedEntries } from "@/lib/content";
 
 interface Props {
   /** Pathname of the current page, used to mark the active nav item. */
@@ -25,37 +26,35 @@ const { currentPath } = Astro.props;
 /** Wordmark: first word plain, the rest in the brand colour. */
 const [brandLead, ...brandTail] = SITE.name.split(" ");
 
-const builtPageIds = new Set((await getPublishedEntries("articles")).map(({ page }) => page.id));
-const sections = PRIMARY_NAV.map((section) => ({
-  ...section,
-  links: getSectionLinks(section.pillar, builtPageIds),
-}));
+/** Intrinsic ratio of the trimmed mark, so the width never has to be guessed. */
+const logoWidth = Math.round(
+  (BRAND_LOGO.src.width / BRAND_LOGO.src.height) * BRAND_LOGO.headerHeight,
+);
 ---
 
 <header class="sticky top-0 z-50 border-b border-ink-200 bg-paper/90 backdrop-blur supports-[backdrop-filter]:bg-paper/75">
-  <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6">
-    {/* `md:contents` dissolves this row at desktop, leaving the original logo + nav layout. */}
+  <div class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-2.5 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6">
+    {/* `md:contents` dissolves this row at desktop, leaving the logo + nav layout. */}
     <div class="flex items-center justify-between gap-3 md:contents">
       <a
         href="/"
-        class="group flex items-center gap-2.5 self-start md:self-auto"
+        class="group flex items-center gap-2.5 self-start py-1 md:self-auto"
         aria-current={currentPath === "/" ? "page" : undefined}
       >
-        <span
-          aria-hidden="true"
-          class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-700 text-white shadow-card"
-        >
-          <svg viewBox="0 0 24 24" fill="none" class="size-5">
-            <path
-              d="M5 7h6a4 4 0 0 1 4 4v2a4 4 0 0 0 4 4"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            ></path>
-            <circle cx="5" cy="7" r="2" fill="currentColor"></circle>
-            <circle cx="19" cy="17" r="2" fill="currentColor"></circle>
-          </svg>
-        </span>
+        {/*
+          Decorative: the wordmark beside it already names the brand, so the
+          link's accessible name is correct without the image repeating it.
+        */}
+        <Image
+          src={BRAND_LOGO.src}
+          alt={BRAND_LOGO.alt}
+          width={logoWidth}
+          height={BRAND_LOGO.headerHeight}
+          densities={[1, 2]}
+          loading="eager"
+          decoding="sync"
+          class="h-7 w-auto shrink-0 sm:h-[30px]"
+        />
         <span class="text-lg font-extrabold tracking-display text-ink-900 group-hover:text-brand-700">
           {brandLead}{" "}
           <span class="text-brand-700 group-hover:text-brand-800">{brandTail.join(" ")}</span>
@@ -94,95 +93,25 @@ const sections = PRIMARY_NAV.map((section) => ({
     </div>
 
     {/* Hidden below `md` until the menu button opens it; always shown at `md`+. */}
-    <nav id="primary-nav" aria-label="Main" class="relative max-md:hidden" data-primary-nav>
-      <ul class="-mx-2.5 flex flex-wrap items-center gap-x-0.5 gap-y-0.5 text-sm font-medium max-md:flex-col max-md:items-stretch max-md:pb-1">
-        {sections.map(({ label, href, pillar, links }, index) => {
-          const isCurrent = currentPath === href;
-          const inSection = currentPath.startsWith(href);
-          const menuId = `nav-menu-${pillar}`;
-          const isLast = index === sections.length - 1;
+    <nav id="primary-nav" aria-label="Main" class="max-md:hidden" data-primary-nav>
+      <ul class="-mx-3 flex items-center gap-x-1 text-sm font-medium max-md:flex-col max-md:items-stretch max-md:pb-1">
+        {PRIMARY_NAV.map((entry) => {
+          const isCurrent = currentPath === entry.href;
+          const inSection = isCurrentSection(entry, currentPath);
           return (
-            <li class="md:relative" data-nav-item>
-              <div
+            <li>
+              <a
+                href={entry.href}
+                aria-current={isCurrent ? "page" : undefined}
                 class:list={[
-                  "flex items-center rounded-lg hover:bg-ink-100 has-[[aria-expanded=true]]:bg-ink-100",
+                  "relative inline-flex min-h-11 items-center rounded-lg px-3 hover:bg-ink-100 hover:text-brand-700 max-md:w-full",
                   inSection ? "text-brand-700" : "text-ink-700",
+                  inSection &&
+                    "after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full after:bg-brand-600 max-md:after:hidden",
                 ]}
               >
-                <a
-                  href={href}
-                  aria-current={isCurrent ? "page" : undefined}
-                  class:list={[
-                    "relative inline-flex min-h-11 items-center rounded-lg hover:text-brand-700",
-                    links.length > 0 ? "pr-1 pl-2.5" : "px-2.5",
-                    inSection &&
-                      "after:absolute after:inset-x-2.5 after:bottom-1.5 after:h-0.5 after:rounded-full after:bg-brand-600",
-                  ]}
-                >
-                  {label}
-                </a>
-                {links.length > 0 && (
-                  <button
-                    type="button"
-                    class="group inline-flex min-h-11 items-center rounded-lg pr-2 pl-1 hover:text-brand-700"
-                    aria-expanded="false"
-                    aria-controls={menuId}
-                    data-nav-toggle
-                  >
-                    <span class="sr-only">{label} articles</span>
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="size-4 transition-transform group-aria-expanded:rotate-180 motion-reduce:transition-none"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-
-              {links.length > 0 && (
-                <div
-                  id={menuId}
-                  hidden
-                  data-nav-menu
-                  class:list={[
-                    // Inline accordion below `md`; absolute dropdown from `md` up.
-                    "z-40 max-md:pt-1 md:absolute md:top-full md:w-80 md:pt-2",
-                    isLast ? "md:right-0" : "md:left-0",
-                  ]}
-                >
-                  <ul
-                    class="rounded-xl border border-ink-200 bg-surface p-1.5"
-                    style="box-shadow: var(--shadow-menu)"
-                  >
-                    {links.map((item) => {
-                      const isCurrentItem = currentPath === item.href;
-                      return (
-                        <li>
-                          <a
-                            href={item.href}
-                            aria-current={isCurrentItem ? "page" : undefined}
-                            class:list={[
-                              "flex min-h-11 items-center rounded-lg px-3 py-2 leading-snug",
-                              isCurrentItem
-                                ? "bg-brand-50 font-semibold text-brand-700"
-                                : "text-ink-700 hover:bg-ink-100 hover:text-brand-700",
-                            ]}
-                          >
-                            {item.label}
-                          </a>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
+                {entry.label}
+              </a>
             </li>
           );
         })}
@@ -204,21 +133,6 @@ const sections = PRIMARY_NAV.map((section) => ({
 </header>
 
 <script>
-  // Disclosure dropdowns for the main nav. Without JS, pillar links still work.
-  const items = [...document.querySelectorAll<HTMLElement>("[data-nav-item]")].flatMap((item) => {
-    const toggle = item.querySelector<HTMLButtonElement>("[data-nav-toggle]");
-    const menu = item.querySelector<HTMLElement>("[data-nav-menu]");
-    return toggle && menu ? [{ item, toggle, menu }] : [];
-  });
-  type NavItem = (typeof items)[number];
-
-  // Hover and focus-to-open apply only to pointer devices at the desktop breakpoint.
-  const desktop = window.matchMedia("(hover: hover) and (min-width: 48rem)");
-  const HOVER_CLOSE_DELAY_MS = 150;
-  let hoverTimer: number | undefined;
-
-  const isOpen = ({ toggle }: NavItem) => toggle.getAttribute("aria-expanded") === "true";
-
   // Mobile menu button. `max-md:hidden` is inert at desktop, so the same class
   // toggle collapses the nav on small screens and does nothing on large ones.
   const burger = document.querySelector<HTMLButtonElement>("[data-nav-burger]");
@@ -232,95 +146,27 @@ const sections = PRIMARY_NAV.map((section) => ({
     primaryNav.classList.toggle("max-md:hidden", !open);
   }
 
-  /** Opens or closes `target`; every other dropdown is always closed. */
-  function setOpen(target: NavItem | null, open: boolean) {
-    for (const entry of items) {
-      const next = entry === target && open;
-      entry.toggle.setAttribute("aria-expanded", String(next));
-      entry.menu.hidden = !next;
-    }
-  }
-
-  /** Closes every dropdown, and the mobile menu with them. */
-  function closeAll() {
-    setOpen(null, false);
-    setMenuOpen(false);
-  }
-
   burger?.addEventListener("click", () => setMenuOpen(!isMenuOpen()));
 
-  // Width-only, matching Tailwind's `md`, unlike `desktop` above: the collapsed
-  // state is a breakpoint concern, while hover-to-open is a pointer concern.
-  const wideViewport = window.matchMedia("(min-width: 48rem)");
-
   // Leaving mobile width: drop the collapsed state so returning to it starts closed.
-  wideViewport.addEventListener("change", (event) => {
+  window.matchMedia("(min-width: 48rem)").addEventListener("change", (event) => {
     if (event.matches) setMenuOpen(false);
   });
 
-  for (const entry of items) {
-    const { item, toggle, menu } = entry;
-
-    toggle.addEventListener("click", () => setOpen(entry, !isOpen(entry)));
-
-    item.addEventListener("mouseenter", () => {
-      if (!desktop.matches) return;
-      window.clearTimeout(hoverTimer);
-      setOpen(entry, true);
-    });
-
-    item.addEventListener("mouseleave", () => {
-      if (!desktop.matches) return;
-      window.clearTimeout(hoverTimer);
-      hoverTimer = window.setTimeout(() => setOpen(entry, false), HOVER_CLOSE_DELAY_MS);
-    });
-
-    // Keyboard focus entering the item opens it on desktop; moves within it don't re-open.
-    item.addEventListener("focusin", (event) => {
-      const from = event.relatedTarget as Node | null;
-      const target = event.target as HTMLElement;
-      if (desktop.matches && !item.contains(from) && target.matches(":focus-visible")) {
-        setOpen(entry, true);
-      }
-    });
-
-    item.addEventListener("focusout", (event) => {
-      if (!item.contains(event.relatedTarget as Node | null)) setOpen(entry, false);
-    });
-
-    menu.addEventListener("click", (event) => {
-      if ((event.target as HTMLElement).closest("a")) closeAll();
-    });
-  }
-
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape") return;
-
-    // Escape closes the innermost thing first: a dropdown, then the mobile menu.
-    const open = items.find(isOpen);
-    if (open) {
-      const hadFocus = open.item.contains(document.activeElement);
-      setOpen(open, false);
-      if (hadFocus) open.toggle.focus();
-      return;
-    }
-
-    if (isMenuOpen()) {
-      const hadFocus = primaryNav?.contains(document.activeElement);
-      setMenuOpen(false);
-      if (hadFocus) burger?.focus();
-    }
+    if (event.key !== "Escape" || !isMenuOpen()) return;
+    const hadFocus = primaryNav?.contains(document.activeElement);
+    setMenuOpen(false);
+    if (hadFocus) burger?.focus();
   });
 
   document.addEventListener("click", (event) => {
     const target = event.target as Node;
     // The button's own handler owns its state; don't undo it on the way up.
-    if (burger?.contains(target)) return;
-
-    if (!items.some(({ item }) => item.contains(target))) setOpen(null, false);
-    if (!primaryNav?.contains(target)) setMenuOpen(false);
+    if (burger?.contains(target) || primaryNav?.contains(target)) return;
+    setMenuOpen(false);
   });
 
   // Pages restored from the back/forward cache must not reappear with a menu open.
-  window.addEventListener("pageshow", closeAll);
+  window.addEventListener("pageshow", () => setMenuOpen(false));
 </script>

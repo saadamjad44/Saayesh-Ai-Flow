@@ -1,9 +1,16 @@
 ---
 /**
- * Single-column page on BaseLayout for core, legal, pillar, and article pages:
+ * Page shell on BaseLayout for core, legal, pillar, and article pages:
  * eyebrow, heading, optional intro, optional legal-draft notice, and a prose body.
- * Slots: default (prose body), "meta" (end of the header), "hero" (full-width,
- * below the header), "after" (below the prose).
+ * Slots: default (prose body), "meta" (end of the header), "hero" (below the
+ * header), "after" (below the prose), "sidebar" (contextual navigation).
+ *
+ * With no "sidebar" slot the page is a single measured column, exactly as
+ * before. Fill that slot and the page widens at `lg` into a two-column grid —
+ * the same measured column, plus contextual navigation on the right. Below `lg`
+ * the sidebar sits above the prose (as a collapsed accordion, see
+ * ContentSidebar) and the column width is unchanged, so nothing is pushed
+ * off-screen and body copy keeps the same measure at every width.
  */
 import BaseLayout from "./BaseLayout.astro";
 import ContentGap from "@/components/content/ContentGap.astro";
@@ -36,11 +43,19 @@ const {
   ogType,
   jsonLd,
 } = Astro.props;
+
+const hasSidebar = Astro.slots.has("sidebar");
 ---
 
 <BaseLayout pageId={pageId} title={title} description={description} ogType={ogType} jsonLd={jsonLd}>
-  <article class="pb-16 sm:pb-20">
-    <header class="mx-auto max-w-3xl px-4 pt-8 pb-8 sm:px-6 sm:pt-12 sm:pb-10">
+  <article
+    class:list={[
+      "mx-auto max-w-3xl px-4 pb-16 sm:px-6 sm:pb-20",
+      // Only the grid row widens; the prose column keeps its measure.
+      hasSidebar && "lg:max-w-6xl",
+    ]}
+  >
+    <header class:list={["pt-8 pb-8 sm:pt-12 sm:pb-10", hasSidebar && "lg:max-w-3xl"]}>
       {eyebrow && <p class="eyebrow">{eyebrow}</p>}
       <h1
         class:list={[
@@ -82,12 +97,24 @@ const {
 
     <slot name="hero" />
 
-    <div class="mx-auto max-w-3xl px-4 sm:px-6">
-      <div class="prose max-w-none">
-        <slot />
-      </div>
+    <div
+      class:list={[
+        hasSidebar && "lg:grid lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start lg:gap-12",
+      ]}
+    >
+      {hasSidebar && (
+        <aside class="mb-8 lg:sticky lg:top-20 lg:order-2 lg:mb-0">
+          <slot name="sidebar" />
+        </aside>
+      )}
 
-      <slot name="after" />
+      <div class:list={["min-w-0", hasSidebar && "lg:order-1 lg:max-w-3xl"]}>
+        <div class="prose max-w-none">
+          <slot />
+        </div>
+
+        <slot name="after" />
+      </div>
     </div>
   </article>
 </BaseLayout>

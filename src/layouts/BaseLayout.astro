@@ -1,6 +1,6 @@
 ---
 /**
- * Shared page shell: SEO head, skip link, header, breadcrumbs, main, footer.
+ * Shared page shell: SEO head, skip link, header, search, breadcrumbs, main, footer.
  *
  * Registry pages pass `pageId`; the canonical URL, noindex flag, and
  * breadcrumbs then come from src/config/pages.ts. Pages outside the registry
@@ -12,6 +12,7 @@
 import "@/styles/global.css";
 import SeoHead from "@/components/seo/SeoHead.astro";
 import SiteHeader from "@/components/layout/SiteHeader.astro";
+import SiteSearch from "@/components/layout/SiteSearch.astro";
 import SiteFooter from "@/components/layout/SiteFooter.astro";
 import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
 import { SITE } from "@/config/site";
@@ -73,6 +74,7 @@ const socialImage = await getSocialImage(page);
     </a>
 
     <SiteHeader currentPath={currentPath} />
+    <SiteSearch />
     <Breadcrumbs items={breadcrumbs} />
 
     <main id="main-content" tabindex="-1" class="flex-1 focus:outline-none">

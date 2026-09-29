@@ -1,0 +1,416 @@
+---
+/**
+ * Site-wide content search, in a band directly under the primary navigation.
+ *
+ * This is a fast local text search, not semantic or AI search. The static index
+ * at /search-index.json is built from the page registry and the MDX collections
+ * (see src/lib/search-index.ts); the browser fetches it once, on the first
+ * interaction with the box, and every keystroke after that is matched and
+ * ranked in-page. No request goes anywhere at type time.
+ *
+ * The band is not sticky — the header above it is. That keeps the sticky strip
+ * slim on phones while the box still sits where a visitor expects it.
+ *
+ * Markup follows the ARIA combobox pattern: the input owns `aria-expanded`,
+ * `aria-controls`, and `aria-activedescendant`; results are options in a
+ * listbox. Escape closes, Arrow keys move, Enter opens the active result.
+ * With scripting off the whole band is hidden, since it could not work.
+ */
+const PLACEHOLDER = "Search AI tools, prompts, automation, writing, business...";
+---
+
+<div class="border-b border-ink-200 bg-surface" data-search-band hidden>
+  <div class="mx-auto max-w-6xl px-4 py-3 sm:px-6">
+    <div role="search" class="relative mx-auto max-w-2xl" data-site-search>
+      <label for="site-search-input" class="sr-only">
+        Search Saayesh AI Flow
+      </label>
+
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-ink-400"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+
+      <input
+        id="site-search-input"
+        type="search"
+        role="combobox"
+        placeholder={PLACEHOLDER}
+        autocomplete="off"
+        spellcheck="false"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="site-search-listbox"
+        class="w-full rounded-xl border border-ink-200 bg-paper py-2.5 pr-3 pl-11 text-[0.9375rem] text-ink-900 shadow-card placeholder:text-ink-400 hover:border-ink-300 focus:border-brand-400 focus:bg-surface focus:outline-none"
+        data-search-input
+      />
+
+      <div
+        hidden
+        class="absolute inset-x-0 top-full z-40 mt-2 overflow-hidden rounded-xl border border-ink-200 bg-surface"
+        style="box-shadow: var(--shadow-menu)"
+        data-search-panel
+      >
+        <p class="hidden px-4 py-6 text-center text-sm text-ink-500" data-search-empty></p>
+        <ul
+          id="site-search-listbox"
+          role="listbox"
+          aria-label="Search results"
+          class="max-h-[min(26rem,60vh)] overflow-y-auto overscroll-contain py-1.5"
+          data-search-list
+        ></ul>
+      </div>
+
+      {/* Result count for screen readers, announced without moving focus. */}
+      <p role="status" aria-live="polite" class="sr-only" data-search-status></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  interface SearchDoc {
+    title: string;
+    description: string;
+    url: string;
+    category: string;
+    keywords: string[];
+    headings: string[];
+  }
+
+  /** Lowercased fields, built once per document when the index arrives. */
+  interface ScorableDoc extends SearchDoc {
+    lowerTitle: string;
+    lowerDescription: string;
+    lowerCategory: string;
+    lowerKeywords: string;
+    lowerHeadings: string;
+  }
+
+  const INDEX_URL = "/search-index.json";
+  const DEBOUNCE_MS = 120;
+  const MAX_RESULTS = 8;
+
+  /**
+   * Field weights. A title hit always outranks a keyword hit, which outranks a
+   * category, description, or heading hit, so the most on-topic page wins.
+   */
+  const WEIGHT = {
+    titlePrefix: 120,
+    titleWordStart: 90,
+    title: 60,
+    keywords: 45,
+    category: 25,
+    description: 18,
+    headings: 12,
+  } as const;
+
+  /** The whole query appearing verbatim in a title beats any sum of parts. */
+  const PHRASE_BONUS = 80;
+
+  /**
+   * A query that *is* a page's title should win outright — enough to clear a
+   * longer title that merely starts with the same words ("AI Prompts" beats
+   * "AI Prompts for Content Writing" when that is exactly what was typed).
+   */
+  const EXACT_TITLE_BONUS = 250;
+
+  /** A plural term matched through its singular still counts, but for less. */
+  const SINGULAR_PENALTY = 0.8;
+
+  const band = document.querySelector<HTMLElement>("[data-search-band]");
+  const searchRoot = document.querySelector<HTMLElement>("[data-site-search]");
+  const searchInput = document.querySelector<HTMLInputElement>("[data-search-input]");
+  const searchPanel = document.querySelector<HTMLElement>("[data-search-panel]");
+  const searchList = document.querySelector<HTMLUListElement>("[data-search-list]");
+  const searchEmpty = document.querySelector<HTMLElement>("[data-search-empty]");
+  const searchStatus = document.querySelector<HTMLElement>("[data-search-status]");
+
+  if (
+    band &&
+    searchRoot &&
+    searchInput &&
+    searchPanel &&
+    searchList &&
+    searchEmpty &&
+    searchStatus
+  ) {
+    // Re-bound as non-null locals, so the helpers below can close over them.
+    const root: HTMLElement = searchRoot;
+    const input: HTMLInputElement = searchInput;
+    const panel: HTMLElement = searchPanel;
+    const list: HTMLUListElement = searchList;
+    const empty: HTMLElement = searchEmpty;
+    const status: HTMLElement = searchStatus;
+
+    // Hidden in the markup so a no-JS visitor never sees a box that cannot work.
+    band.hidden = false;
+
+    let docs: ScorableDoc[] | null = null;
+    let loading: Promise<void> | null = null;
+    let results: SearchDoc[] = [];
+    let activeIndex = -1;
+    let debounce: number | undefined;
+
+    function prepare(raw: SearchDoc[]): ScorableDoc[] {
+      return raw.map((doc) => ({
+        ...doc,
+        lowerTitle: doc.title.toLowerCase(),
+        lowerDescription: doc.description.toLowerCase(),
+        lowerCategory: doc.category.toLowerCase(),
+        lowerKeywords: doc.keywords.join(" ").toLowerCase(),
+        lowerHeadings: doc.headings.join(" ").toLowerCase(),
+      }));
+    }
+
+    /** Fetches the static index once. Repeat calls await the same request. */
+    function loadIndex(): Promise<void> {
+      loading ??= fetch(INDEX_URL)
+        .then((response) => (response.ok ? response.json() : []))
+        .then((raw: SearchDoc[]) => {
+          docs = prepare(Array.isArray(raw) ? raw : []);
+        })
+        .catch(() => {
+          docs = [];
+        });
+      return loading;
+    }
+
+    /** Score for one literal term across every field, 0 if it appears in none. */
+    function scoreLiteral(doc: ScorableDoc, term: string): number {
+      let score = 0;
+      const at = doc.lowerTitle.indexOf(term);
+
+      if (at === 0) score += WEIGHT.titlePrefix;
+      else if (at > 0)
+        score += /[\s(/-]/.test(doc.lowerTitle[at - 1] ?? "")
+          ? WEIGHT.titleWordStart
+          : WEIGHT.title;
+
+      if (doc.lowerKeywords.includes(term)) score += WEIGHT.keywords;
+      if (doc.lowerCategory.includes(term)) score += WEIGHT.category;
+      if (doc.lowerDescription.includes(term)) score += WEIGHT.description;
+      if (doc.lowerHeadings.includes(term)) score += WEIGHT.headings;
+
+      return score;
+    }
+
+    /**
+     * Score for one term, or 0 if nothing matches. A plural term is also tried
+     * as its singular, at a discount, and the better of the two wins — so
+     * "prompts" finds "AI Prompt Examples" by its title rather than scraping a
+     * category match. A singular term needs no such pass: it is already a
+     * substring of its own plural.
+     */
+    function scoreTerm(doc: ScorableDoc, term: string): number {
+      const direct = scoreLiteral(doc, term);
+      if (term.length <= 3 || !term.endsWith("s")) return direct;
+
+      const singular = Math.round(scoreLiteral(doc, term.slice(0, -1)) * SINGULAR_PENALTY);
+      return Math.max(direct, singular);
+    }
+
+    /** Documents matching every term, best first. Ties keep index order. */
+    function search(query: string): SearchDoc[] {
+      if (!docs) return [];
+      const phrase = query.trim().toLowerCase();
+      const terms = phrase.split(/\s+/).filter(Boolean);
+      if (terms.length === 0) return [];
+
+      const scored: { doc: ScorableDoc; score: number }[] = [];
+
+      for (const doc of docs) {
+        let total = 0;
+        let matchedAll = true;
+
+        for (const term of terms) {
+          const score = scoreTerm(doc, term);
+          if (score === 0) {
+            matchedAll = false;
+            break;
+          }
+          total += score;
+        }
+
+        if (!matchedAll) continue;
+        if (doc.lowerTitle === phrase) total += EXACT_TITLE_BONUS;
+        else if (terms.length > 1 && doc.lowerTitle.includes(phrase)) total += PHRASE_BONUS;
+        scored.push({ doc, score: total });
+      }
+
+      return scored
+        .sort((a, b) => b.score - a.score)
+        .slice(0, MAX_RESULTS)
+        .map(({ doc }) => doc);
+    }
+
+    /** One result row. Built as nodes, so result text is never parsed as HTML. */
+    function renderOption(doc: SearchDoc, index: number): HTMLLIElement {
+      const li = document.createElement("li");
+      li.setAttribute("role", "presentation");
+
+      const link = document.createElement("a");
+      link.id = `site-search-option-${index}`;
+      link.href = doc.url;
+      link.setAttribute("role", "option");
+      link.setAttribute("aria-selected", "false");
+      link.className =
+        "block scroll-my-1.5 rounded-lg px-3 py-2.5 aria-selected:bg-brand-50 hover:bg-ink-100";
+
+      const head = document.createElement("span");
+      head.className = "flex items-baseline justify-between gap-3";
+
+      const title = document.createElement("span");
+      title.className = "font-semibold text-ink-900";
+      title.textContent = doc.title;
+
+      const category = document.createElement("span");
+      category.className = "shrink-0 text-xs font-medium tracking-wide text-ink-500";
+      category.textContent = doc.category;
+
+      head.append(title, category);
+
+      const description = document.createElement("span");
+      description.className = "mt-0.5 line-clamp-2 text-sm leading-snug text-ink-600";
+      description.textContent = doc.description;
+
+      link.append(head, description);
+      li.append(link);
+      return li;
+    }
+
+    function options(): HTMLAnchorElement[] {
+      return [...list.querySelectorAll<HTMLAnchorElement>('[role="option"]')];
+    }
+
+    function setActive(index: number) {
+      const items = options();
+      activeIndex = items.length === 0 ? -1 : index;
+
+      items.forEach((item, i) => item.setAttribute("aria-selected", String(i === activeIndex)));
+
+      const active = items[activeIndex];
+      if (active) {
+        input.setAttribute("aria-activedescendant", active.id);
+        active.scrollIntoView({ block: "nearest" });
+      } else {
+        input.removeAttribute("aria-activedescendant");
+      }
+    }
+
+    function close() {
+      panel.hidden = true;
+      input.setAttribute("aria-expanded", "false");
+      input.removeAttribute("aria-activedescendant");
+      activeIndex = -1;
+    }
+
+    function render(query: string) {
+      results = search(query);
+      list.replaceChildren(...results.map(renderOption));
+
+      const hasQuery = query.trim().length > 0;
+      const noResults = hasQuery && results.length === 0;
+
+      empty.classList.toggle("hidden", !noResults);
+      if (noResults) empty.textContent = `No results for “${query.trim()}”. Try another word.`;
+
+      if (!hasQuery) {
+        close();
+        status.textContent = "";
+        return;
+      }
+
+      panel.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+      setActive(-1);
+
+      status.textContent = noResults
+        ? "No results"
+        : `${results.length} result${results.length === 1 ? "" : "s"}`;
+    }
+
+    /** Loads the index if needed, then renders the current query. */
+    async function update() {
+      const query = input.value;
+      if (query.trim().length === 0) {
+        render("");
+        return;
+      }
+      if (!docs) await loadIndex();
+      // The box may have been cleared or retyped while the index downloaded.
+      render(input.value);
+    }
+
+    // Warm the index on first focus so the first keystroke already has it.
+    input.addEventListener("focus", () => void loadIndex(), { once: true });
+
+    input.addEventListener("input", () => {
+      window.clearTimeout(debounce);
+      debounce = window.setTimeout(() => void update(), DEBOUNCE_MS);
+    });
+
+    input.addEventListener("keydown", (event) => {
+      const count = results.length;
+
+      switch (event.key) {
+        case "ArrowDown":
+          if (count === 0) return;
+          event.preventDefault();
+          panel.hidden = false;
+          input.setAttribute("aria-expanded", "true");
+          setActive((activeIndex + 1) % count);
+          return;
+
+        case "ArrowUp":
+          if (count === 0) return;
+          event.preventDefault();
+          setActive((activeIndex - 1 + count) % count);
+          return;
+
+        case "Enter": {
+          const active = options()[activeIndex];
+          if (!active) return;
+          event.preventDefault();
+          window.location.href = active.href;
+          return;
+        }
+
+        case "Escape":
+          if (panel.hidden) return;
+          event.preventDefault();
+          close();
+          return;
+
+        case "Tab":
+          close();
+      }
+    });
+
+    // Pointer hover tracks the active option, so mouse and keyboard agree.
+    list.addEventListener("mousemove", (event) => {
+      const option = (event.target as HTMLElement).closest<HTMLAnchorElement>('[role="option"]');
+      if (!option) return;
+      const index = options().indexOf(option);
+      if (index !== -1 && index !== activeIndex) setActive(index);
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!root.contains(event.target as Node)) close();
+    });
+
+    root.addEventListener("focusout", (event) => {
+      if (!root.contains(event.relatedTarget as Node | null)) close();
+    });
+
+    // Pages restored from the back/forward cache must not reappear with results open.
+    window.addEventListener("pageshow", close);
+  }
+</script>

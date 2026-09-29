@@ -4,8 +4,12 @@
  *
  * Every page declares the `phase` that approved it, and PAGE_COUNTS locks the
  * total per phase: Phase 1 stays at exactly 17 pages forever, and each Phase 2
- * batch bumps its count deliberately. Phase 3 URLs (/compare/, /blog/) must not
- * appear in this file.
+ * batch bumps its count deliberately. Phase 3 URLs (/compare/) must not appear
+ * in this file.
+ *
+ * /blog/ was deferred at Phase 1 and approved as a Phase 2 page: it is the
+ * central index of published article content, generated from this registry and
+ * the MDX collections rather than a hand-maintained list.
  */
 
 export type PageType = "core" | "utility" | "pillar" | "article" | "review" | "tool";
@@ -82,7 +86,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 14,
+  2: 15,
 };
 
 export const PAGES = [
@@ -244,6 +248,10 @@ export const PAGES = [
     primaryKeyword: "how to automate email responses with AI",
     intent: "Informational",
   },
+
+  // Phase 2 — Blog index: the chronological hub for every published article.
+  // Article URLs stay under their pillar; this page only links to them.
+  { id: "blog", title: "Blog", path: "/blog/", type: "core", phase: 2 },
 
   // Phase 2A — Getting Started pillar (top-of-funnel hub)
   {
