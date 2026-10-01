@@ -5,11 +5,17 @@
 
 /**
  * Canonical bare domain (no protocol, no trailing slash), e.g. "example.com".
- * Currently the Netlify production host; swap it here once the custom domain
- * is purchased. A `.invalid` value marks an unset placeholder — `.invalid` is
- * a reserved TLD, so placeholder URLs can never resolve.
+ *
+ * The apex is canonical: `www.saayeshaiflow.com` and the old Netlify host both
+ * 301 here (see netlify.toml), so exactly one hostname is ever indexable. Every
+ * canonical URL, og:url, JSON-LD id, sitemap entry, and the robots.txt sitemap
+ * line is derived from this one value — and so is the internal-vs-external test
+ * in src/lib/links.ts. Change it here and nowhere else.
+ *
+ * A `.invalid` value marks an unset placeholder — `.invalid` is a reserved TLD,
+ * so placeholder URLs can never resolve.
  */
-export const SITE_DOMAIN = "peppy-seahorse-9d05e3.netlify.app";
+export const SITE_DOMAIN = "saayeshaiflow.com";
 
 export const isPlaceholderDomain = SITE_DOMAIN.endsWith(".invalid");
 

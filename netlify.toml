@@ -4,3 +4,34 @@
 
 [build.environment]
   NODE_VERSION = "24"
+
+# Canonical host enforcement.
+#
+# SITE_DOMAIN in src/config/site.ts is the apex, saayeshaiflow.com, and every
+# canonical URL and sitemap entry points there. These rules make the network
+# agree with that: any other hostname serving this build is 301'd to the apex
+# with its path intact, so a page is never reachable at two indexable URLs.
+#
+# `force = true` is required — without it Netlify serves the static file that
+# already exists at that path and the redirect never fires. `:splat` carries the
+# full path, and the site builds with trailing slashes, so /a/b/ stays /a/b/.
+#
+# Host-specific `from` values mean deploy previews and branch deploys
+# (deploy-preview-1--*.netlify.app, branch--*.netlify.app) are untouched and
+# keep working normally. HTTP requests are upgraded to HTTPS by Netlify's own
+# Force HTTPS setting before these rules are evaluated.
+
+# www -> apex. The apex is canonical; www must never be a site of its own.
+[[redirects]]
+  from = "https://www.saayeshaiflow.com/*"
+  to = "https://saayeshaiflow.com/:splat"
+  status = 301
+  force = true
+
+# The old Netlify production host -> apex, so the pre-launch URLs pass their
+# link equity on instead of standing as a duplicate copy of the whole site.
+[[redirects]]
+  from = "https://peppy-seahorse-9d05e3.netlify.app/*"
+  to = "https://saayeshaiflow.com/:splat"
+  status = 301
+  force = true
