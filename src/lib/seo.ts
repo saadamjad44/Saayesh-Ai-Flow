@@ -6,7 +6,13 @@ import { getImage } from "astro:assets";
 
 import { SITE } from "@/config/site";
 import { getPage, getParentPage, type SitePage } from "@/config/pages";
-import { DEFAULT_SOCIAL_MEDIA_ID, MEDIA, isMediaId, type MediaId } from "@/config/media";
+import {
+  BRAND_LOGO,
+  DEFAULT_SOCIAL_MEDIA_ID,
+  MEDIA,
+  isMediaId,
+  type MediaId,
+} from "@/config/media";
 
 export interface BreadcrumbItem {
   label: string;
@@ -99,7 +105,32 @@ export function websiteSchema(): JsonLd {
   };
 }
 
-const publisher = () => ({ "@type": "Organization", name: SITE.name, url: absoluteUrl("/") });
+/**
+ * The site's one Organization entity: Saayesh AI Flow itself. Every schema that
+ * needs the brand — the `author` and `publisher` of an article, the `publisher`
+ * of a pillar hub, the standalone node on the homepage — is built from this one
+ * factory, so the name, URL, and logo can never drift apart between pages.
+ *
+ * `logo` is the full-resolution brand master from src/assets/brand/, emitted by
+ * astro:assets at build time, so the URL is absolute, crawlable, and far above
+ * Google's 112px minimum. It is deliberately not a favicon: those are cropped
+ * to a square tile for a browser tab and are the wrong asset for a logo claim.
+ */
+const organization = (): JsonLd => ({
+  "@type": "Organization",
+  name: SITE.name,
+  url: absoluteUrl("/"),
+  logo: absoluteUrl(BRAND_LOGO.src.src),
+});
+
+/**
+ * The same Organization as a standalone node, for the homepage. Only the
+ * homepage emits it on its own; everywhere else it is nested inside the schema
+ * that references it, so the site never declares the brand twice on one page.
+ */
+export function organizationSchema(): JsonLd {
+  return { "@context": "https://schema.org", ...organization() };
+}
 
 export interface ArticleSchemaInput {
   headline: string;
@@ -122,8 +153,8 @@ export function articleSchema(input: ArticleSchemaInput): JsonLd {
     datePublished: input.datePublished.toISOString(),
     dateModified: input.dateModified.toISOString(),
     inLanguage: SITE.lang,
-    author: publisher(),
-    publisher: publisher(),
+    author: organization(),
+    publisher: organization(),
   };
 }
 
@@ -139,7 +170,7 @@ export function collectionPageSchema(
     description: input.description,
     url: absoluteUrl(input.path),
     inLanguage: SITE.lang,
-    publisher: publisher(),
+    publisher: organization(),
     mainEntity: {
       "@type": "ItemList",
       itemListElement: items.map((item, index) => ({

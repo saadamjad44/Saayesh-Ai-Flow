@@ -13,7 +13,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SITE } from "@/config/site";
 import { getPage, type PageId } from "@/config/pages";
 import { getMedia, type MediaId } from "@/config/media";
-import { websiteSchema } from "@/lib/seo";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 
 const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
   {
@@ -43,7 +43,7 @@ const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
   pageId="home"
   title={`${SITE.name}: AI Tools, Automation & Workflow Guides`}
   description="Research-based guides to AI writing tools, AI business tools, and AI automation workflows for solopreneurs and small business owners."
-  jsonLd={[websiteSchema()]}
+  jsonLd={[websiteSchema(), organizationSchema()]}
 >
   <section class="relative overflow-hidden border-b border-ink-200 bg-surface">
     {/* Decorative grid wash; hidden from assistive tech. */}
