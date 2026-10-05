@@ -59,10 +59,22 @@ const socialImage = await getSocialImage(page);
       image={socialImage}
       jsonLd={schemas}
     />
-    {/* Brand mark from public/; .ico keeps legacy clients off a 404 fallback. */}
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {/*
+      Favicons, all square rasterisations of the Saayesh AI Flow "SAF" monogram
+      in src/assets/brand/. Root-relative and stable, so Google Search can keep
+      a single crawled icon across the site.
+
+      The .ico carries 16/32/48 so browsers and legacy clients pick their own
+      size without a 404 fallback; the 48px PNG is the 1:1, multiple-of-48
+      source Google Search asks for; the 192px PNG covers high-DPI tabs and
+      Android home screens. There is deliberately no SVG icon: Google Search
+      does not use one, and a second mark in a different format is exactly what
+      makes a crawler choose the wrong asset.
+    */}
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body class="flex min-h-screen flex-col overflow-x-clip bg-paper text-ink-700 antialiased">

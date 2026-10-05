@@ -43,9 +43,12 @@ import gettingStarted from "@/assets/images/getting-started.jpg";
  * mark as well would make a screen reader announce the brand name twice. The
  * accessible name of the link comes from the wordmark text.
  *
- * The favicon set in public/ is deliberately NOT derived from this file: the
- * monogram is a wide lockup that turns to mush at 16px, while public/favicon.svg
- * is a square icon-only mark built to read at that size.
+ * The favicon set in public/ (favicon.ico, favicon-48x48.png,
+ * favicon-192x192.png, apple-touch-icon.png) is rasterised from this same file,
+ * centred on a flat white square so the icon Google Search shows is the real
+ * brand mark rather than a stand-in. The monogram is a wide lockup, so the
+ * small sizes keep less margin than the large ones; regenerate the whole set
+ * together if the logo ever changes, and keep every size square.
  */
 export const BRAND_LOGO = {
   src: logo,
