@@ -86,7 +86,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 16,
+  2: 17,
 };
 
 export const PAGES = [
@@ -412,6 +412,20 @@ export const PAGES = [
     pillar: "ai-business-tools",
     primaryKeyword: "claude for small business",
     intent: "Info / Commercial",
+  },
+  // Phase 2E — the head-to-head that follows the single-product deep dive: a
+  // buyer who has shortlisted the two general assistants and needs to pick one
+  // for day-to-day business work. Sits in the business cluster rather than the
+  // writing cluster because the intent is operational, not content production.
+  {
+    id: "claude-vs-chatgpt-for-small-business",
+    title: "Claude vs ChatGPT for Small Business: Which Is Better?",
+    path: "/ai-business-tools/claude-vs-chatgpt-for-small-business/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-business-tools",
+    primaryKeyword: "claude vs chatgpt for small business",
+    intent: "Commercial",
   },
 ] as const satisfies readonly SitePage[];
 
