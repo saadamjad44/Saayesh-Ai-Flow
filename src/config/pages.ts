@@ -86,7 +86,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 15,
+  2: 16,
 };
 
 export const PAGES = [
@@ -397,6 +397,20 @@ export const PAGES = [
     phase: 2,
     pillar: "ai-writing-tools",
     primaryKeyword: "AI tools for blog writing",
+    intent: "Info / Commercial",
+  },
+
+  // Phase 2E — AI Business cluster expansion: a single-product deep dive, for
+  // readers who have already decided the category and are now assessing one
+  // connected-workflow product against the software they already run.
+  {
+    id: "claude-for-small-business",
+    title: "Claude for Small Business: 8 Practical Workflows",
+    path: "/ai-business-tools/claude-for-small-business/",
+    type: "article",
+    phase: 2,
+    pillar: "ai-business-tools",
+    primaryKeyword: "claude for small business",
     intent: "Info / Commercial",
   },
 ] as const satisfies readonly SitePage[];

@@ -74,6 +74,7 @@ const MENU_LABELS: Partial<Record<PageId, string>> = {
   "ai-prompts-for-content-writing": "AI Prompts for Content Writing",
   "chatgpt-prompts-for-small-business": "ChatGPT Prompts for Small Business",
   "how-much-does-ai-cost-small-business": "How Much Does AI Cost?",
+  "claude-for-small-business": "Claude for Small Business",
 };
 
 /** Short nav label for a page: the override if there is one, else its title. */

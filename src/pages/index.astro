@@ -5,44 +5,55 @@
  * Still omitted: the latest-articles row, the email opt-in, "Popular
  * Comparisons", and unverified trust claims.
  *
- * PILLARS is ordered to match PRIMARY_NAV, and every entry needs its own image
- * in the media registry — the `PageId & MediaId` type enforces that.
+ * The card list is derived, not hand-listed: membership and order come from
+ * PILLAR_NAV (the same ordered list the footer and sidebar use), filtered to
+ * pillars that are actually published, so a draft pillar never appears here.
+ * Titles and URLs come from the page registry and images from the media
+ * registry, which leaves PILLAR_SUMMARIES as the only authored copy below.
  */
 import { Image } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SITE } from "@/config/site";
-import { getPage, type PageId } from "@/config/pages";
-import { getMedia, type MediaId } from "@/config/media";
+import { PILLAR_NAV } from "@/config/navigation";
+import { getPage, type PillarId } from "@/config/pages";
+import { getMedia } from "@/config/media";
+import { getPublishedEntries } from "@/lib/content";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 
-const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
-  {
-    id: "getting-started",
-    summary:
-      "New to AI? Start here for what these tools actually do, where to begin, and the mistakes that waste the most time.",
-  },
-  {
-    id: "ai-writing-tools",
-    summary:
-      "Roundups and head-to-head comparisons to help you choose an AI writing tool for your work.",
-  },
-  {
-    id: "ai-business-tools",
-    summary:
-      "AI tools for solopreneurs and small business owners, including what they cost and what they can take off your plate.",
-  },
-  {
-    id: "ai-automation",
-    summary:
-      "Step-by-step automation examples and workflows for email, scheduling, and other repeat tasks.",
-  },
-];
+/**
+ * Card copy per pillar, as a complete Record over PillarId. Adding a pillar to
+ * the registry therefore fails the build until it has a summary here, and
+ * getMedia() below fails it until the pillar has an image — so the homepage
+ * cannot silently fall behind the registry and show only some categories,
+ * which is exactly what it had been doing.
+ */
+const PILLAR_SUMMARIES: Readonly<Record<PillarId, string>> = {
+  "getting-started":
+    "New to AI? Start here for what these tools actually do, where to begin, and the mistakes that waste the most time.",
+  "ai-writing-tools":
+    "Roundups and head-to-head comparisons to help you choose an AI writing tool for your work.",
+  "ai-business-tools":
+    "AI tools for solopreneurs and small business owners, including what they cost and what they can take off your plate.",
+  "ai-automation":
+    "Step-by-step automation examples and workflows for email, scheduling, and other repeat tasks.",
+  "ai-prompts":
+    "How to brief AI tools properly, with worked prompt examples for writing, marketing, and everyday business tasks.",
+  "ai-by-industry":
+    "Where AI fits in a specific line of work, from small business and e-commerce to marketing teams.",
+};
+
+const publishedPillarIds = new Set(
+  (await getPublishedEntries("pillars")).map(({ page }) => page.id),
+);
+
+/** Every published pillar, in PILLAR_NAV order. */
+const pillarCards = PILLAR_NAV.filter((entry) => publishedPillarIds.has(entry.pillar));
 ---
 
 <BaseLayout
   pageId="home"
   title={`${SITE.name}: AI Tools, Automation & Workflow Guides`}
-  description="Research-based guides to AI writing tools, AI business tools, and AI automation workflows for solopreneurs and small business owners."
+  description="Research-based guides to AI tools, workflows, prompts, and business use cases for solopreneurs and small business owners."
   jsonLd={[websiteSchema(), organizationSchema()]}
 >
   <section class="relative overflow-hidden border-b border-ink-200 bg-surface">
@@ -60,8 +71,8 @@ const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
           {SITE.tagline}
         </h1>
         <p class="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-ink-600 sm:text-xl">
-          Practical guides to AI writing tools, AI business tools, and AI automation for
-          solopreneurs and small business owners, written to help you choose with less guesswork.
+          Practical guides to AI tools, workflows, prompts, and business use cases for solopreneurs
+          and small business owners, written to help you choose and use AI with less guesswork.
         </p>
         <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <a href="#categories" class="btn btn-primary">
@@ -85,7 +96,7 @@ const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
   <section id="categories" aria-labelledby="categories-heading" class="scroll-mt-24">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <div class="max-w-2xl">
-        <p class="eyebrow">Four categories</p>
+        <p class="eyebrow">Categories</p>
         <h2
           class="mt-2 text-2xl font-bold tracking-display text-ink-900 sm:text-3xl"
           id="categories-heading"
@@ -94,17 +105,18 @@ const PILLARS: readonly { id: PageId & MediaId; summary: string }[] = [
         </h2>
       </div>
 
-      <ul class="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {PILLARS.map(({ id, summary }, index) => {
+      <ul class="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {pillarCards.map(({ pillar: id }, index) => {
           const pillar = getPage(id);
           const media = getMedia(id);
+          const summary = PILLAR_SUMMARIES[id];
           return (
             <li class="card card-link group relative flex flex-col overflow-hidden">
               <Image
                 src={media.src}
                 alt={media.alt}
                 widths={[400, 640, 800]}
-                sizes="(min-width: 1024px) 270px, (min-width: 640px) 45vw, 100vw"
+                sizes="(min-width: 1024px) 352px, (min-width: 640px) 45vw, 100vw"
                 loading={index === 0 ? "eager" : "lazy"}
                 decoding={index === 0 ? "sync" : "async"}
                 class="aspect-video w-full border-b border-ink-200 object-cover"

@@ -1,0 +1,415 @@
+---
+pageId: claude-for-small-business
+title: "Claude for Small Business: 8 Practical Workflows"
+heading: "Claude for Small Business: 8 Practical Workflows, Limits & Best Uses"
+description: Explore 8 practical Claude for Small Business workflows, the integrations they depend on, their limits, and where human approval still matters.
+publishedDate: 2026-10-06
+updatedDate: 2026-10-06
+testingStatus: research-based
+hasAffiliateLinks: false
+pricingVerifiedDate: 2026-10-06
+faq:
+  - question: Is Claude good for small businesses?
+    answer: It depends on whether your routine work already lives in software Claude connects to. Anthropic's plugin listing says Claude for Small Business ships 43 ready-to-run workflows and works with 37 partner connectors, including QuickBooks, Xero, HubSpot, Salesforce, Shopify, Stripe, Square, Gusto, Google Workspace and Microsoft 365. If you run two or three of those and repeat the same admin every week, there is something concrete to use. If your records are on paper, in spreadsheets, or in tools that are not connected, most of the value does not apply yet.
+  - question: Can Claude automate business tasks?
+    answer: It can prepare and stage them, and it can complete some of them once you allow it. Anthropic describes workflows that pull data from connected tools, draft the output, and hold it for approval, with the option to let an individual workflow run on its own afterwards. Some steps are designed to stop short on purpose - Anthropic's payroll example with Gusto stages the run and leaves the submission to the owner.
+  - question: What integrations does Claude for Small Business support?
+    answer: The May 2026 launch covered Intuit QuickBooks, PayPal, HubSpot, Canva, Docusign, Google Workspace and Microsoft 365. The September 2026 update added 27 more integrations, including Shopify, Salesforce, TikTok, Atlassian, Zoom, Xero, Gusto, Square, Stripe and Zapier. Anthropic's plugin listing describes the plugin as working with 37 partner connectors in total. Check the connector list for your own stack before subscribing, because not every workflow uses every connector.
+  - question: How much does Claude cost for a small business?
+    answer: Claude for Small Business is included on every paid Claude plan rather than sold separately, and Anthropic recommends the Team plan for a business with more than one person. On Anthropic's pricing page, checked on 6 October 2026, Pro is listed at $20 per month billed monthly or $17 per month on annual billing ($200 up front), Max starts at $100 per month, and Team standard seats are $25 per seat per month billed monthly or $20 billed annually with a two-seat minimum. The connected software itself - your accounting, CRM or payroll subscriptions - is billed separately by those vendors.
+  - question: Can Claude run workflows automatically?
+    answer: Yes, but not by default. Anthropic states that every workflow starts in approval mode, where Claude drafts and stages the work and nothing sends, posts or pays until you say so. You can let a workflow run on its own once you trust it, you make that choice one workflow at a time, and you can switch it back whenever you want.
+---
+
+import { ComparisonTable, VerdictBox } from "@/components/content";
+
+Claude for Small Business is a plugin that runs inside Claude Cowork and connects Claude to the business software you already pay for, so it can pull real numbers, draft real work, and hold it for your approval. Anthropic launched it on 13 May 2026 with 15 workflows and seven integrations. The [September 2026 update](https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs) took it to 43 workflows, added 27 new integrations, and reported more than 900,000 installs since launch.
+
+This guide does not list all 43. Most owners do not need a catalogue; they need to know which parts of their week this could realistically touch. So it works through eight representative workflows and use cases, says which tools each one depends on, and is explicit about where Claude stops and you take over.
+
+<VerdictBox
+  heading="The short answer"
+  bestFor="Owners whose finance, CRM, store, or payroll data already sits in connected tools, and who repeat the same admin weekly"
+  notFor="Businesses running on paper, spreadsheets, or unconnected software, and any decision that needs professional judgement"
+>
+  Claude for Small Business is useful in proportion to how much of your business already lives in
+  software it connects to. Its strongest uses are **gathering scattered information and staging work
+  for review** - briefs, month-end preparation, follow-up drafts, reorder suggestions. Its weakest
+  uses are anything where the underlying data is incomplete or the decision is not yours alone. The
+  default is approval mode, and for anything that reaches a customer or moves money, that is where
+  it should stay.
+</VerdictBox>
+
+## How this guide was researched
+
+This is a research-based guide, not a hands-on review. Saayesh AI Flow has not run these workflows inside a live business, so there are no scores, screenshots, or time-saving figures here.
+
+Everything factual below comes from Anthropic's own material: the [Claude for Small Business announcement](https://www.anthropic.com/news/claude-for-small-business), the September expansion post, the [plugin listing](https://claude.com/marketplace/plugins/small-business), the [Claude for Small Business solutions page](https://claude.com/solutions/small-business), the [Claude Cowork documentation](https://support.claude.com/en/articles/13345190-get-started-with-claude-cowork), and the [Claude pricing page](https://claude.com/pricing). Where something is third-party analysis rather than an Anthropic product fact, it is attributed as such. Where we are reading between the lines - which controls suit which risk, for instance - that is marked as our judgement, not documentation.
+
+The dates in the page header show when the article and the prices were last checked. Claude for Small Business has changed substantially twice in five months, so verify anything that matters to your decision against the links above before you act on it.
+
+## What Claude for Small Business actually is
+
+Three things are worth separating, because the word "Claude" covers all of them and they behave very differently.
+
+**Claude the chat assistant** answers what you type. It has no access to your books, your pipeline, or your inventory unless you paste them in.
+
+**Claude Cowork** is the agentic surface. Anthropic describes it as using "the same agentic architecture that powers Claude Code, with no terminal required": instead of answering one prompt at a time, it takes a multi-step task and works through it. Cowork is available on paid Claude plans.
+
+**Claude for Small Business** is a plugin you turn on inside Cowork. It supplies two things chat does not: a library of pre-built workflows written for small-business jobs, and connectors to the products those jobs run on. Anthropic's plugin listing describes 43 ready-to-run workflows and 37 partner connectors.
+
+That connector layer is the whole difference. Asking ordinary Claude to "chase my overdue invoices" produces a nicely worded template you then have to fill in. The same request inside a connected workflow can read which invoices are actually overdue, by how much, and from whom, and draft the specific message - because QuickBooks or Xero is attached to it.
+
+Workflows are addressed as named commands rather than freeform prompts. Anthropic's listing groups them into running the business - `/monday-brief`, `/close-month`, `/plan-payroll`, `/pay-the-bills`, `/restock`, `/tax-prep` - and growing it - `/speed-to-lead`, `/grow-pipeline`, `/call-list`, `/marketing-monday` - plus `/smb-onboard` for setup. The May announcement also named individual skills behind them, including an invoice chaser, a month-end prepper, a contract reviewer, a lead triager and a content strategist.
+
+### How approval and autonomy work
+
+This is the part most worth understanding before you decide, and it is easy to get wrong in both directions. Claude for Small Business is neither approval-only nor broadly autonomous. The model is graduated, and the choice is yours per workflow.
+
+1. **Approval by default.** Anthropic's plugin listing is unambiguous: "Every workflow starts in approval mode: Claude drafts and stages the work, and nothing sends, posts, or pays until you say so." The September post puts it the same way - Claude does the work and waits for approval before anything sends, posts or pays.
+2. **Optional autonomy, one workflow at a time.** "Once you're comfortable with a workflow, you can let it run on its own. You make that choice one workflow at a time and can switch it back whenever you want." So autonomy is not a single account-wide switch, and it is reversible.
+3. **Some final actions stop regardless.** Certain workflows are built to hand off rather than finish. Anthropic's documented payroll example is the clearest: with Gusto, Claude "confirms there's cash to cover the run, pulls the hours, flags anything off, and stages it," and then, in Anthropic's words, "Payroll is set up for you to submit."
+
+The practical reading: you are not choosing between a passive drafting tool and an agent loose in your accounts. You are choosing, workflow by workflow, how much of a process you have watched enough times to stop watching.
+
+## Which businesses get the most value
+
+### Your existing software stack matters more than your size
+
+Claude for Small Business is a connector product. Its usefulness tracks your stack more closely than your revenue or headcount.
+
+<ComparisonTable
+  caption="How your existing tools map to what Claude for Small Business can do"
+  rowHeader="If you already run"
+  columns={["What becomes possible", "When it was added"]}
+  rows={[
+    {
+      label: "QuickBooks or Xero",
+      cells: [
+        "Reading cash position and overdue invoices, month-end preparation, invoice follow-up drafts",
+        "QuickBooks at the May 2026 launch; Xero in the September 2026 update",
+      ],
+    },
+    {
+      label: "HubSpot or Salesforce",
+      cells: [
+        "Pipeline changes in a brief, inbound lead triage and reply drafting, call lists",
+        "HubSpot at launch; Salesforce in September",
+      ],
+    },
+    {
+      label: "Shopify",
+      cells: [
+        "Live sales and inventory, a drafted reorder before a bestseller sells out, catalogue into campaign content",
+        "September 2026",
+      ],
+    },
+    {
+      label: "Stripe or Square",
+      cells: [
+        "Payment and takings data feeding briefs and month-end reconciliation checks",
+        "September 2026",
+      ],
+    },
+    {
+      label: "Google Workspace or Microsoft 365",
+      cells: [
+        "Mail, calendar and document context behind drafting and scheduling work",
+        "Both at the May 2026 launch",
+      ],
+    },
+    {
+      label: "Gusto",
+      cells: ["Payroll preparation staged for you to submit", "September 2026"],
+    },
+    {
+      label: "Canva, TikTok, Zoom, Atlassian, Zapier",
+      cells: [
+        "Asset creation, social posting, meeting context, project tracking, and onward automation",
+        "Canva at launch; the rest in the September 2026 set of 27",
+      ],
+    },
+  ]}
+/>
+
+Two cautions about that table. A connector being supported does not mean every workflow uses it: Anthropic publishes the connector list and the workflow library separately, and which connectors a given workflow draws on is a per-workflow matter you should check in the plugin itself. And the September post names ten of the 27 new integrations explicitly, so treat any longer list you see elsewhere as unverified unless it points back to Anthropic.
+
+If almost none of those rows describe your business, the honest answer is that this product is not aimed at you yet. A general assistant costs the same and asks less of your setup; see our [best AI tools for small business](/ai-business-tools/best-ai-tools-for-small-business/) roundup for that comparison.
+
+### Team size and workflow volume
+
+Anthropic does not publish an employee-count threshold, and we are not going to invent one. What it does say is narrower and more useful: Claude for Small Business is available on every paid Claude plan, and Anthropic recommends the Team plan "for businesses with more than one person."
+
+The variable that actually matters is repetition. A workflow has to be worth configuring, trusting, and reviewing. Something you do weekly - a Monday brief, invoice follow-ups, a posting calendar - earns that back quickly. Something you do twice a year does not, however well the workflow is written.
+
+### A quick decision framework
+
+Six questions, in the order they tend to decide it:
+
+1. **Repetition.** Do you run the same multi-step process at least weekly, from data held in software?
+2. **Connectors.** Are the specific products that hold that data on Anthropic's connector list?
+3. **Data quality.** Are your books, CRM, and inventory current enough that a report built from them would be right? This is the question most often skipped and most often fatal.
+4. **Risk.** If a step ran unsupervised and got it wrong, what is the worst outcome - a bad internal number, or a wrong message to a customer?
+5. **Review appetite.** Are you willing to read staged output properly for the first few weeks, rather than approving on trust?
+6. **Cost.** What does the Claude plan add on top of software you already pay for, and is the repetitive work it absorbs worth that?
+
+Two "no" answers in the first three questions usually means waiting. Our guide to [how much AI costs a small business](/ai-business-tools/how-much-does-ai-cost-small-business/) covers the sixth question across tools more generally.
+
+## Eight practical workflows and use cases
+
+A note on what follows, because the distinction is easy to blur. Some of these are workflows Anthropic names in its own listing. Others are use cases Anthropic describes in its product material without publishing them as a separate named workflow. Each one below says which it is, so you can check the claim yourself rather than take ours.
+
+Each uses the same frame: the problem, what Claude does, what stays with you, the integrations involved, the useful outcome, and the limitation.
+
+### 1. Invoice chasing and payment follow-up
+
+**Status:** the May 2026 announcement names an invoice chaser among the plugin's skills, and the solutions page lists overdue invoices and follow-ups among the work it handles.
+
+**The problem.** Late payment is rarely a knowledge problem. You know who owes you. The follow-up does not get written because it is awkward, it is the fourth thing on the list, and it has to be re-drafted for each client.
+
+**Claude's role.** Read the ledger, identify what is genuinely overdue and by how long, and draft the specific message to the specific customer with the real amount and date in it.
+
+**Your role.** Deciding who gets chased, how firmly, and who gets left alone because the relationship is worth more than the invoice. Sending is a judgement call about a customer, not a data operation.
+
+**Integrations.** Accounting - QuickBooks or Xero. Payment data from Stripe, Square or PayPal where takings need matching. Mail through Google Workspace or Microsoft 365.
+
+**Useful outcome.** The follow-up actually goes out, in the week it should, with correct figures.
+
+**Limitation.** It is only as right as your ledger. Unreconciled payments produce chase letters to customers who have already paid, which is the most expensive mistake available in this category.
+
+**Suggested control.** Keep in approval mode. This is outbound customer communication about money.
+
+### 2. Month-end close preparation
+
+**Status:** `/close-month` is a named workflow, and the May announcement names a month-end prepper skill.
+
+**The problem.** Month-end is a hunt. Figures sit in the accounting package, the payment processor, the store, and your inbox, and the job is mostly assembling them before anyone can look at anything.
+
+**Claude's role.** Pull the pieces together, cross-check them against each other, and flag what looks wrong. Anthropic's solutions page describes checking the books against Stripe and Shopify, flagging anything odd, and explaining the month in plain English.
+
+**Your role.** Every accounting decision. What a discrepancy means, how something should be treated, and whether the result is correct.
+
+**Integrations.** QuickBooks or Xero, plus Stripe, Square, PayPal, and Shopify where relevant.
+
+**Useful outcome.** You, or your bookkeeper, start from an assembled position with the anomalies already surfaced, instead of starting from the hunt.
+
+**Limitation.** Preparation is not closing, and flagged is not resolved. This does not replace a bookkeeper or an accountant, and nothing here should be treated as a tax or compliance decision.
+
+**Suggested control.** Approval mode while you learn what it flags and what it misses. Scheduled autonomous runs are more defensible here than in most places, because the output is internal, but only once you trust the flags.
+
+### 3. Inbound lead response
+
+**Status:** `/speed-to-lead` is a named workflow, and the May announcement names a lead triager skill.
+
+**The problem.** Enquiries arrive when you are working. The first reply often lands the next morning, by which time the prospect has contacted someone else.
+
+**Claude's role.** Pick up the enquiry, pull what is known about the sender, draft a reply, and log it. Anthropic's solutions page describes a 9pm enquiry getting a reply with two real meeting times that land in the CRM.
+
+**Your role.** Qualification and pricing. Whether this is a customer you want, what the job is worth, and anything the reply commits you to.
+
+**Integrations.** HubSpot or Salesforce, with mail and calendar through Google Workspace or Microsoft 365.
+
+**Useful outcome.** Nothing sits unanswered overnight, and the CRM reflects reality without manual entry.
+
+**Limitation.** Speed is not judgement. A fast, friendly, slightly wrong answer about scope or availability costs more than a slower right one.
+
+**Suggested control.** This is the clearest case for graduated autonomy. Keep drafting under approval until the replies are consistently right; if you later let it send, constrain it to acknowledgement and scheduling, and keep anything touching price or scope staged.
+
+### 4. Proposal drafting
+
+**Status:** described by Anthropic as a use case - the solutions page says to send Claude a voice memo and photos from a site visit and get a proposal back - rather than published as a separate named workflow in the listing we checked.
+
+**The problem.** Proposals are the bottleneck between a good conversation and paid work. The pricing takes ten minutes of thought and the document takes an evening.
+
+**Claude's role.** Turn your notes, recording, or photos into a structured draft in your usual format, with the detail from the visit carried into it.
+
+**Your role.** Scope, price, terms, and dates. Every number and every commitment.
+
+**Integrations.** HubSpot or Salesforce for the client record, Google Workspace or Microsoft 365 for the document, Docusign for signature, Canva where the proposal is a designed asset.
+
+**Useful outcome.** The proposal goes out the same day instead of the following week.
+
+**Limitation.** It can only price from what you give it. A draft that infers a figure from loosely similar past work is a commercial risk, and a proposal is a pre-contractual document, so treat the numbers as yours to verify every time.
+
+**Suggested control.** Approval, permanently. This is a document that binds you.
+
+### 5. Shopify sales, inventory and reorder support
+
+**Status:** `/restock` is a named workflow, and Anthropic describes the Shopify capability directly. The capability description and the workflow list are published separately, so we are not presenting the Shopify description as a separately named workflow of its own.
+
+**The problem.** Stock decisions get made late, from a dashboard nobody opens on the right day, and bestsellers run out.
+
+**Claude's role.** In Anthropic's wording, merchants "see live sales and inventory, get a reorder drafted before a bestseller sells out, and turn the product catalog into next week's campaign."
+
+**Your role.** Whether to place the order, at what quantity, with what cash. A reorder is a cash-flow decision wearing an inventory costume.
+
+**Integrations.** Shopify, with Stripe or Square for payments and QuickBooks or Xero for the cash position behind the decision.
+
+**Useful outcome.** The reorder conversation starts before the stockout rather than after it.
+
+**Limitation.** Inventory accuracy upstream decides everything. Shrinkage, unlogged returns, and sales through channels Shopify cannot see all produce confident, wrong suggestions. Seasonality and one-off spikes are also not obvious from sales data alone.
+
+**Suggested control.** Approval. Autonomous purchasing commits money against a forecast.
+
+### 6. Social content planning and staging
+
+**Status:** `/marketing-monday` is a named workflow, the May announcement names a content strategist skill, and the solutions page describes building a two-week posting calendar with product shots from your store.
+
+**The problem.** Posting stops the moment you get busy, which is the moment the business most needs it.
+
+**Claude's role.** Build the calendar, draft the posts, pull in assets, and stage everything in one pass rather than scattered across the fortnight.
+
+**Your role.** Brand voice, claims, and what you are willing to say publicly. Also the judgement about whether a planned post is still appropriate on the day.
+
+**Integrations.** Canva for assets, TikTok for posting, Shopify for product content, Google Workspace or Microsoft 365 for the planning documents.
+
+**Useful outcome.** Two weeks of content exists in a reviewable state instead of being improvised or skipped.
+
+**Limitation.** Calendars are easier than voice. Generic output is the standing risk with planned content, and volume for its own sake does nothing for you. For the wider workflow around this, see our guide to [AI tools for marketing](/ai-by-industry/ai-tools-for-marketing/).
+
+**Suggested control.** Approval for anything that posts publicly, at least until the voice is right. Internal calendar drafting is a reasonable candidate for autonomy.
+
+### 7. The Monday brief
+
+**Status:** `/monday-brief` is a named workflow. Anthropic's listing describes the plugin as working with 37 partner connectors, and the September post presents the brief as the workflow that draws across them.
+
+**The problem.** Knowing where the business stands means opening six tools, so it happens monthly instead of weekly.
+
+**Claude's role.** Anthropic's description: cash position, last week's sales against the week before, what moved in the pipeline, and which invoices are overdue, "on one page before you've opened a spreadsheet." It can run on a schedule.
+
+**Your role.** What to do about any of it. A brief reports; it does not prioritise your week for you.
+
+**Integrations.** Potentially the widest of any workflow here - accounting, payments, CRM, store, and calendar.
+
+**Useful outcome.** A weekly position you actually read, assembled from live data rather than memory.
+
+**Limitation.** A brief inherits every gap in its sources. An uncategorised bank feed or a stale CRM produces a confident summary of the wrong position, and a tidy one-pager is more persuasive than the messy truth it was built from. Spot-check the underlying numbers for the first several weeks.
+
+**Suggested control.** The strongest candidate for scheduled autonomy, because the output is internal, read-only, and visibly wrong when it is wrong.
+
+### 8. Payroll preparation
+
+**Status:** `/plan-payroll` is a named workflow, and the Gusto behaviour is documented explicitly.
+
+**The problem.** Payroll is high-consequence and repetitive, which is the worst combination. The preparation is dull and the mistakes are expensive.
+
+**Claude's role.** Quoting the September post, with Gusto Claude "confirms there's cash to cover the run, pulls the hours, flags anything off, and stages it."
+
+**Your role.** Submission, and everything that depends on it. Anthropic's own framing is "Payroll is set up for you to submit." The hours, the amounts, and the employment and tax consequences are yours.
+
+**Integrations.** Gusto for payroll, QuickBooks or Xero for the cash check.
+
+**Useful outcome.** The checks happen before the run rather than after it, and a cash shortfall surfaces while you can still do something about it.
+
+**Limitation.** This is preparation only. It is not a payroll service, it is not tax advice, and it does not take on your obligations as an employer. If your payroll has unusual elements - variable hours across jurisdictions, complex benefits, contractor classification questions - keep your payroll provider or accountant closely involved.
+
+**Suggested control.** Approval, and Anthropic has made that the design here rather than a setting.
+
+## What Claude for Small Business is not good for
+
+Documented capability and appropriate use are different questions. Several categories deserve a flat no.
+
+**High-stakes financial decisions.** Claude can assemble the numbers behind a decision about pricing, borrowing, hiring, or a large purchase. It should not make it. The data it reads is a partial picture of a business you understand in full.
+
+**Tax and compliance.** The `/tax-prep` workflow and the tax-season organizer skill the May announcement names are filing-preparation tools. Tax treatment, deadlines, registration, and reporting obligations are professional judgements with legal consequences. Nothing here replaces an accountant or a tax adviser.
+
+**Legal decisions.** The May announcement names a contract reviewer skill, and contract review is genuinely useful for orientation - finding the clauses that need reading properly. Deciding whether to sign, what to negotiate, or how a term would be enforced is a lawyer's work.
+
+**Poor or incomplete source data.** This is the most common real-world failure and the least discussed. Every workflow above reads from your systems. If the books are behind, the CRM is stale, or inventory does not reflect reality, connected workflows do not reveal the problem, they launder it into fluent, confident output. Fix the data first.
+
+**Unsupported tools and processes.** If the system holding your critical data is not on the connector list, the workflows that would use it do not apply to you. Zapier being an integration widens what is reachable, but a chain of automations around an unsupported tool is a project, not a feature.
+
+**Decisions needing multi-person judgement.** Here we are leaving documentation behind, so the attribution matters. Third-party analysis by [Bosio Digital](https://bosio.digital/articles/claude-for-small-business) argues that the binding constraint on this product is not company size or technical sophistication but the number of people who have to agree on what "correct" means: approval mode asks a person to approve, but it does not decide which person is accountable, at what threshold, or how a bad output gets corrected for everyone else doing that job. That is an analyst's assessment rather than a limitation Anthropic documents. It is worth taking seriously all the same, because approval controls of this shape are built around a single decision-maker, and a business with several people holding real authority needs to settle who signs off on what before switching anything on.
+
+## Approval versus autonomy: what should you let run?
+
+Anthropic provides the mechanism - per-workflow autonomy, reversible - but does not publish a risk classification of its workflows. The table below is our editorial framework for applying that mechanism, not an Anthropic categorisation.
+
+The useful variable is not how complex a task is. It is what happens if it runs wrong and nobody notices until later.
+
+<ComparisonTable
+  caption="A risk frame for deciding what to leave in approval mode (editorial judgement, not an Anthropic classification)"
+  rowHeader="Risk level"
+  columns={["Kind of work", "Why", "Reasonable setting"]}
+  rows={[
+    {
+      label: "Lower risk",
+      cells: [
+        "Internal briefs and reports, information gathering, first drafts you will edit, summaries",
+        "Nothing leaves the business, the output is visibly wrong when it is wrong, and an error costs you a wasted read",
+        "A candidate for scheduled autonomy once the output has been right for several cycles",
+      ],
+    },
+    {
+      label: "Higher risk",
+      cells: [
+        "External messages to customers, anything that moves or commits money, payroll, proposals and contracts, public posts",
+        "An error reaches someone outside the business, cannot be unsent, and damages a relationship or a balance rather than a document",
+        "Approval, as a standing rule - and for proposals, contracts and payroll, permanently",
+      ],
+    },
+  ]}
+/>
+
+Three things that framework does not settle, because only you can:
+
+- **Your error tolerance is specific to you.** One wrong chase letter is a nuisance to a firm with 400 customers and a serious problem to one with nine.
+- **Data quality changes the answer.** The same workflow deserves a different setting in a business with reconciled books than in one three weeks behind.
+- **Autonomy needs a review habit, not just a switch.** An autonomous workflow nobody reads is worse than a manual one, because the failure is silent. If you would not read the output weekly, leave it in approval, where you have to.
+
+A reasonable sequence: run everything in approval mode for a month, keep a note of what you corrected, and promote only the workflows you stopped correcting, starting with the internal ones.
+
+## Setup reality
+
+Briefly, because setting it up is a different question from whether to, and a long tutorial here would not help you decide.
+
+1. **Get on a paid Claude plan.** Cowork is available on paid plans, and Claude for Small Business is included on every paid plan rather than sold as an add-on.
+2. **Turn on the plugin in Cowork.** It installs into Claude Cowork, and Anthropic's listing provides `/smb-onboard` as the setup workflow.
+3. **Connect your tools.** Per the Cowork documentation, you control which connectors Claude can use through the "+" menu in the chat box or the Customize, then Connectors page. Connect the systems the workflows you care about need, and nothing else.
+4. **Start with one workflow, not eight.** Pick the most repetitive and least risky thing on your list; the brief is the usual answer.
+5. **Leave it in approval mode and read the output properly.** Note what you correct.
+6. **Promote selectively.** Enable autonomy only for workflows you have stopped correcting, one at a time, knowing you can switch back.
+
+The step most often skipped is the third one in spirit rather than letter: connect fewer tools than you can. Every connector is an access decision about business data, and the value comes from the two or three systems that hold the work you repeat.
+
+## Claude versus your current workflow
+
+Three honest comparisons, kept short.
+
+**Against doing it manually.** The gain is assembly and drafting, not judgement. For repeated, multi-system work, that is most of the labour. For anything you do rarely, the setup and review overhead can exceed the saving.
+
+**Against an ordinary chatbot.** This is the real distinction, and it cuts both ways. Unconnected Claude or ChatGPT can write you an excellent invoice-chaser template, but it cannot tell you who is overdue. Connected workflows close that gap - and they also mean a tool is reading your books, and the output becomes harder to sanity-check precisely because it looks authoritative. If your data is messy, the chatbot that has to ask you for the numbers is arguably the safer tool. For how the general assistants compare on their own terms, see our [Jasper vs Claude vs ChatGPT](/ai-writing-tools/jasper-vs-claude-vs-chatgpt/) comparison.
+
+**Against the AI already in your software.** QuickBooks, HubSpot, Shopify and the rest ship their own AI features, and those have an advantage: they are native to the data and need no extra subscription. Claude's advantage is the opposite one - it works across tools, which is where small-business processes actually live. A month-end that spans accounting, Stripe and a store is a cross-tool problem no single vendor's AI sees whole. Check what your existing plans already include before adding anything; our [AI workflows for solopreneurs](/ai-automation/best-ai-workflows-for-solopreneurs/) guide covers building these processes with tools you may already have.
+
+## What Claude for Small Business costs
+
+Claude for Small Business is not priced separately. It is included on every paid Claude plan, and Anthropic recommends the Team plan for a business with more than one person. The following are list prices from [Anthropic's pricing page](https://claude.com/pricing), checked on 6 October 2026, in US dollars and excluding tax.
+
+- **Free:** $0. Cowork is not available on the free plan, so the plugin is not reachable here.
+- **Pro:** $20 per month billed monthly, or $17 per month on annual billing ($200 billed up front).
+- **Max:** from $100 per month, for higher usage than Pro allows.
+- **Team:** standard seats at $25 per seat per month billed monthly, or $20 billed annually, with a two-seat minimum. Premium seats are $125 per seat monthly, or $100 billed annually.
+- **Enterprise:** seat price plus usage at API rates, from $20 per seat per month billed annually.
+
+Whether those figures represent good value is your call against your own numbers, and it depends entirely on how much repetitive work you would actually move. Two things to add to the sum, though.
+
+First, connected software is billed by its own vendors. Accounting, CRM, payroll, and store subscriptions are separate costs, and the workflows above assume you already hold them. This product connects to that stack; it does not replace any part of it.
+
+Second, be wary of total-cost estimates that circulate for this kind of product. They depend on seat counts, which systems you connect, and what you already pay for, so a figure calculated for someone else's business tells you very little about yours. Our [guide to AI costs for small businesses](/ai-business-tools/how-much-does-ai-cost-small-business/) works through the components.
+
+## Who should consider Claude for Small Business?
+
+**A good fit when** your finance, CRM, store, or payroll data already sits in connected systems; those records are current enough to build a report from; you repeat the same multi-step process at least weekly; one person can decide what "approved" means; and you are willing to read staged output properly for the first month.
+
+**Probably not a good fit when** your records live on paper, in spreadsheets, or in software that is not on the connector list; your books or CRM are behind; your work is mostly one-off and judgement-heavy rather than repetitive; several people would need to agree on every approval and nobody has decided who owns it; or what you actually need is a writing and thinking assistant, in which case a plain Claude or ChatGPT subscription costs the same and asks far less of your setup.
+
+If you are not sure which description fits, the cheapest test is the brief. It is read-only, internal, and built from the systems you would connect anyway, and if its first few runs are wrong, you have learned something useful about your data rather than sent anything to a customer.
+
+## Where to go next
+
+- **Comparing products rather than assessing one.** [Best AI tools for small business](/ai-business-tools/best-ai-tools-for-small-business/) covers named options by use case.
+- **Deciding where AI fits at all.** [AI tools for small business](/ai-by-industry/ai-tools-for-small-business/) works through the jobs in a typical week before naming any software.
+- **Building the processes yourself.** [AI workflows for solopreneurs](/ai-automation/best-ai-workflows-for-solopreneurs/) covers repeatable processes with general tools.
+- **Budgeting.** [How much does AI cost for a small business?](/ai-business-tools/how-much-does-ai-cost-small-business/) breaks costs down by level.
+- **The wider category.** [AI business and productivity tools](/ai-business-tools/) is the hub for admin, meetings, bookkeeping, and support.

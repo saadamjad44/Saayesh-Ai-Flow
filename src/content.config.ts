@@ -27,8 +27,14 @@ const entrySchema = (type: PageType) =>
   z
     .object({
       pageId: pageIdOfType(type),
-      /** Page title, used for the <h1> and the <title> (the brand is appended). */
+      /** Page title, used for the <title> (the brand is appended) and, by default, the <h1>. */
       title: z.string().trim().min(1).max(70),
+      /**
+       * Visible <h1>, when it should differ from `title` — e.g. a search-length
+       * title plus a fuller on-page heading. Feeds PageLayout's existing
+       * `heading` prop; omit it and the <h1> is `title`, as on every other page.
+       */
+      heading: z.string().trim().min(1).max(90).optional(),
       /** Meta description. */
       description: z.string().trim().min(50).max(160),
       publishedDate: z.coerce.date(),

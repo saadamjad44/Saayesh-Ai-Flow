@@ -12,6 +12,9 @@
  *
  * `testingStatus` stays in frontmatter and is still validated (see
  * content.config.ts and ScoreTable); it is simply not surfaced as a badge.
+ *
+ * An entry may set a `heading` in frontmatter when its visible <h1> should read
+ * more fully than its <title>; with no `heading` the <h1> is the title.
  */
 import type { CollectionEntry } from "astro:content";
 import PageLayout from "./PageLayout.astro";
@@ -48,6 +51,7 @@ const sidebar = await getContentSidebar(getPage(data.pageId));
 <PageLayout
   pageId={data.pageId}
   title={data.title}
+  heading={data.heading}
   description={data.description}
   eyebrow={eyebrow}
   intro={data.description}
