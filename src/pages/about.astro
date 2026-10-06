@@ -6,11 +6,17 @@
 import PageLayout from "@/layouts/PageLayout.astro";
 import OwnerDetail from "@/components/content/OwnerDetail.astro";
 import { SITE } from "@/config/site";
-import { getPage } from "@/config/pages";
+import { getPage, PILLAR_IDS } from "@/config/pages";
 import { SCORE_CATEGORIES } from "@/config/editorial";
 
 const contactPath = getPage("contact").path;
 const disclosurePath = getPage("affiliate-disclosure").path;
+
+/**
+ * The categories we actually publish, straight from the registry, so this
+ * paragraph cannot drift out of date as pillars are added.
+ */
+const pillars = PILLAR_IDS.map((id) => getPage(id));
 ---
 
 <PageLayout
@@ -23,9 +29,15 @@ const disclosurePath = getPage("affiliate-disclosure").path;
 >
   <h2>Why this site exists</h2>
   <p>
-    {SITE.name} publishes guides, comparisons, and workflows about AI writing tools, AI business
-    tools, and AI automation. It is written for solopreneurs, freelancers, and small business owners
-    who need to pick tools and set up workflows without a team to test everything for them.
+    {SITE.name} publishes guides, comparisons, and workflows across {pillars.length} categories:{" "}
+    {pillars.map((pillar, index) => (
+      <>
+        {index > 0 && (index === pillars.length - 1 ? ", and " : ", ")}
+        <a href={pillar.path}>{pillar.title}</a>
+      </>
+    ))}
+    . It is written for solopreneurs, freelancers, and small business owners who need to pick tools
+    and set up workflows without a team to test everything for them.
   </p>
 
   <h2>Who runs the site</h2>
