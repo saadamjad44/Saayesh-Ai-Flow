@@ -1,0 +1,179 @@
+---
+/**
+ * Every page nested under a pillar: cluster articles from the `articles`
+ * collection, and free interactive tools from the `tools` collection.
+ *
+ * One route rather than two, because both sit at /[pillar]/[slug]/ — a second
+ * dynamic route of the same shape would be an ambiguous duplicate — and both
+ * use the same entry layout, breadcrumbs, sidebar, and FAQ mechanism. What
+ * differs is only the eyebrow, the page schema (Article vs WebApplication),
+ * and the heading above the related-pages block.
+ *
+ * A tool's interactive part is a component its MDX body imports, so nothing
+ * about the calculator is special-cased here.
+ */
+import { render } from "astro:content";
+import EntryLayout from "@/layouts/EntryLayout.astro";
+import ContentLink from "@/components/content/ContentLink.astro";
+import type { RelatedPage } from "@/components/content/RelatedPages.astro";
+import { getPublishedEntries, pathSegments } from "@/lib/content";
+import { getPage, type PageId } from "@/config/pages";
+import { articleSchema, getSocialImage, webApplicationSchema, type JsonLd } from "@/lib/seo";
+
+export async function getStaticPaths() {
+  /**
+   * The guides a tool page points to after the body, in this order. A chosen
+   * shortlist, not every guide in the cluster: for the cost calculator these
+   * answer the three questions a visitor has the moment they see their total —
+   * what those prices look like across the market, which tools belong in the
+   * stack, and whether to spend on software or on a person.
+   *
+   * The category hub is deliberately not in here. It is linked from the tool's
+   * own body, in context, so adding it again as a card would only dilute these
+   * three. Ids are typed to the registry, so renaming or unpublishing one of
+   * these guides fails the build rather than silently dropping a card.
+   *
+   * Declared inside getStaticPaths because Astro hoists that function into its
+   * own scope, where module-level consts from this frontmatter are not visible.
+   */
+  const TOOL_RELATED_GUIDES: readonly PageId[] = [
+    "how-much-does-ai-cost-small-business",
+    "best-ai-tools-for-small-business",
+    "ai-tools-vs-virtual-assistant",
+  ];
+
+  const [pillars, articles, tools] = await Promise.all([
+    getPublishedEntries("pillars"),
+    getPublishedEntries("articles"),
+    getPublishedEntries("tools"),
+  ]);
+
+  /** The published pillar hub a cluster page hangs off, or a build failure. */
+  const hubOf = (pageId: string, pillarId: string | undefined) => {
+    const parent = pillars.find((pillar) => pillar.page.id === pillarId);
+    if (!parent) {
+      throw new Error(`Cluster page "${pageId}" needs its pillar "${pillarId}" to be published`);
+    }
+    return parent;
+  };
+
+  /** Card for the category hub, first in every related-pages block. */
+  const hubCard = (hub: ReturnType<typeof hubOf>): RelatedPage => ({
+    title: hub.entry.data.title,
+    path: hub.page.path,
+    description: hub.entry.data.description,
+    kicker: "Category hub",
+  });
+
+  const articleRoutes = articles.map(({ entry, page }) => {
+    const hub = hubOf(page.id, page.pillar);
+
+    const siblings = articles
+      .filter((article) => article.page.pillar === page.pillar && article.page.id !== page.id)
+      .map(({ entry: sibling, page: siblingPage }): RelatedPage => ({
+        title: sibling.data.title,
+        path: siblingPage.path,
+        description: sibling.data.description,
+        kicker: "In this category",
+      }));
+
+    const [pillar, slug] = pathSegments(page);
+    return {
+      params: { pillar, entry: slug },
+      props: {
+        entry,
+        kind: "article" as const,
+        /** Category label above the <h1>, from the parent pillar. */
+        eyebrow: hub.entry.data.title,
+        relatedHeading: "Keep reading",
+        related: [hubCard(hub), ...siblings],
+      },
+    };
+  });
+
+  /**
+   * A tool's related block is the TOOL_RELATED_GUIDES shortlist above, so a
+   * visitor who has just totalled their spend lands on the few guides that
+   * explain the numbers rather than on the whole cluster.
+   */
+  const toolRoutes = tools.map(({ entry, page }) => {
+    // Fails the build if the cluster's hub is unpublished: the tool's
+    // breadcrumb and contextual sidebar both resolve through it.
+    hubOf(page.id, page.pillar);
+
+    const guides = TOOL_RELATED_GUIDES.map((guideId): RelatedPage => {
+      const guide = articles.find((article) => article.page.id === guideId);
+      if (!guide) {
+        throw new Error(`Tool "${page.id}" links to unpublished guide "${guideId}"`);
+      }
+      return {
+        title: guide.entry.data.title,
+        path: guide.page.path,
+        description: guide.entry.data.description,
+        kicker: "In this category",
+      };
+    });
+
+    const [pillar, slug] = pathSegments(page);
+    return {
+      params: { pillar, entry: slug },
+      props: {
+        entry,
+        kind: "tool" as const,
+        eyebrow: "Free tool",
+        relatedHeading: "Guides behind the numbers",
+        related: guides,
+      },
+    };
+  });
+
+  return [...articleRoutes, ...toolRoutes];
+}
+
+type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
+
+const { entry, kind, eyebrow, relatedHeading, related } = Astro.props;
+const { Content } = await render(entry);
+const page = getPage(entry.data.pageId);
+const path = Astro.url.pathname;
+
+let jsonLd: readonly JsonLd[];
+if (kind === "tool") {
+  // The utility itself is the page's main entity. BreadcrumbList comes from the
+  // layout and FAQPage from the visible FAQ, so nothing is declared twice.
+  jsonLd = [
+    webApplicationSchema({
+      name: entry.data.heading ?? entry.data.title,
+      description: entry.data.description,
+      path,
+      datePublished: entry.data.publishedDate,
+      dateModified: entry.data.updatedDate,
+    }),
+  ];
+} else {
+  // Same image the page shares socially, so the Article schema can't drift from it.
+  const socialImage = await getSocialImage(page);
+  jsonLd = [
+    articleSchema({
+      headline: entry.data.title,
+      description: entry.data.description,
+      path,
+      datePublished: entry.data.publishedDate,
+      dateModified: entry.data.updatedDate,
+      image: socialImage.url,
+    }),
+  ];
+}
+---
+
+<EntryLayout
+  entry={entry}
+  eyebrow={eyebrow}
+  ogType={kind === "tool" ? "website" : "article"}
+  jsonLd={jsonLd}
+  relatedHeading={relatedHeading}
+  related={related}
+>
+  {/* Every body link goes through the outbound-link policy in src/lib/links.ts. */}
+  <Content components={{ a: ContentLink }} />
+</EntryLayout>

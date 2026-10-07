@@ -1,0 +1,173 @@
+---
+/**
+ * One AI tool inside the cost calculator: a named row of cost inputs.
+ *
+ * Rendered twice by AiCostCalculator — once as the first visible row, once
+ * inside a <template> whose `rowId` is the placeholder token below — so the
+ * markup for an added row can never drift from the markup for the first one.
+ * The script replaces that token in every id, `for`, and `aria-describedby`
+ * when it clones the template, which is why the ids are built from `rowId`
+ * rather than hardcoded.
+ *
+ * No vendor or plan prices appear anywhere here: every figure is the visitor's
+ * own, so the calculator cannot go stale when a vendor changes its pricing.
+ */
+import { LIMITS } from "./ai-cost-calculator";
+
+interface Props {
+  /** Row number, or ROW_TOKEN in the cloning template. */
+  rowId: string;
+}
+
+const { rowId } = Astro.props;
+
+/**
+ * Cost inputs for one tool. `kind` picks the input's step/inputmode and the
+ * validation rule the script applies: money allows decimals, a count does not.
+ */
+const FIELDS = [
+  {
+    key: "price",
+    kind: "money",
+    label: "Price per seat, per month",
+    hint: "Enter 0 if this tool is free on your plan.",
+    value: "",
+  },
+  {
+    key: "seats",
+    kind: "count",
+    label: "Number of paid seats",
+    hint: "Seats you pay for, not your total headcount.",
+    value: "",
+  },
+  {
+    key: "addon",
+    kind: "money",
+    label: "Monthly usage or add-on cost",
+    hint: "API usage, credits, or paid add-ons. Leave at 0 if none.",
+    value: "0",
+  },
+  {
+    key: "setup",
+    kind: "money",
+    label: "One-time setup, training or implementation",
+    hint: "Charged once, not every month. Leave at 0 if none.",
+    value: "0",
+  },
+] as const;
+
+const fieldId = (key: string) => `ai-cost-tool-${rowId}-${key}`;
+const nameId = fieldId("name");
+---
+
+<li class="rounded-xl border border-ink-200 bg-paper p-4 sm:p-5" data-tool-row>
+  <fieldset>
+    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+      <legend class="text-sm font-bold tracking-[0.06em] text-ink-900 uppercase">
+        Tool <span data-row-number>{rowId}</span>
+      </legend>
+      <button
+        type="button"
+        class="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-ink-300 bg-surface px-3 py-1.5 text-sm font-semibold text-ink-700 hover:border-red-400 hover:text-red-700 disabled:cursor-not-allowed disabled:border-ink-200 disabled:text-ink-400"
+        data-remove-tool
+      >
+        <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+          <path
+            fill-rule="evenodd"
+            d="M4 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H4.75A.75.75 0 0 1 4 10Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Remove
+        <span class="sr-only">
+          tool <span data-row-number>{rowId}</span>
+        </span>
+      </button>
+    </div>
+
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <label for={nameId} class="block text-sm font-semibold text-ink-900">
+          Tool or plan name
+        </label>
+        <input
+          id={nameId}
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          maxlength="60"
+          placeholder="e.g. Assistant Pro, 5 seats"
+          class="mt-1.5 block w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none"
+          data-field="name"
+        />
+        <p id={`${nameId}-hint`} class="mt-1.5 text-sm text-ink-500">
+          Optional. Used only to label this row in the breakdown below.
+        </p>
+      </div>
+
+      {FIELDS.map((field) => {
+        const id = fieldId(field.key);
+        const isMoney = field.kind === "money";
+        return (
+          <div>
+            <label for={id} class="block text-sm font-semibold text-ink-900">
+              {field.label}
+            </label>
+            <div class="relative mt-1.5">
+              {isMoney && (
+                <span
+                  aria-hidden="true"
+                  class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm font-medium text-ink-500"
+                  data-currency-symbol
+                >
+                  $
+                </span>
+              )}
+              <input
+                id={id}
+                type="number"
+                min="0"
+                max={isMoney ? LIMITS.maxMoney : LIMITS.maxCount}
+                step={isMoney ? "0.01" : "1"}
+                inputmode={isMoney ? "decimal" : "numeric"}
+                autocomplete="off"
+                value={field.value}
+                aria-describedby={`${id}-hint`}
+                class:list={[
+                  "block w-full rounded-lg border border-ink-300 bg-surface py-2.5 pr-3 text-ink-900 focus:border-brand-500 focus:outline-none aria-[invalid=true]:border-red-600",
+                  isMoney ? "pl-11" : "pl-3",
+                ]}
+                data-field={field.key}
+                data-kind={field.kind}
+              />
+            </div>
+            <p id={`${id}-hint`} class="mt-1.5 text-sm text-ink-500">
+              {field.hint}
+            </p>
+            {/* Errors carry an icon and words, never colour alone. */}
+            <p
+              id={`${id}-error`}
+              hidden
+              class="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-red-700"
+              data-field-error={field.key}
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class="mt-0.5 size-4 shrink-0"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.63-1.516 2.63H3.72c-1.347 0-2.189-1.463-1.515-2.63L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span data-error-text>Enter a number.</span>
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  </fieldset>
+</li>

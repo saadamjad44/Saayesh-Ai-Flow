@@ -4,7 +4,7 @@
  * add an article to src/config/pages.ts with its MDX entry and it appears in
  * the sidebar of its pillar and of every sibling article automatically.
  */
-import { PILLAR_NAV, getSectionLinks } from "@/config/navigation";
+import { PILLAR_NAV, getSectionLinks, getToolLinks } from "@/config/navigation";
 import { getPage, type PillarId, type SitePage } from "@/config/pages";
 import { getPublishedEntries } from "@/lib/content";
 
@@ -28,14 +28,18 @@ export interface ContentSidebar {
   sections: readonly SidebarSection[];
 }
 
-/** The pillar a page belongs to: itself for a pillar, its parent for an article. */
+/**
+ * The pillar a page belongs to: itself for a pillar, its parent for anything
+ * inside the cluster (an article or a free tool).
+ */
 function pillarOf(page: SitePage): PillarId | undefined {
   if (page.type === "pillar") return page.id as PillarId;
   return page.pillar;
 }
 
 /**
- * Sidebar for a pillar or article page: that pillar's published articles, then
+ * Sidebar for any page inside a cluster — a pillar hub, an article, or a free
+ * tool: that pillar's published articles, its free tools when it has any, then
  * a compact list of the other pillars. Returns undefined for any other page,
  * so core and legal pages keep their single-column layout.
  */
@@ -43,12 +47,14 @@ export async function getContentSidebar(page: SitePage): Promise<ContentSidebar 
   const pillarId = pillarOf(page);
   if (!pillarId) return undefined;
 
-  const [pillars, articles] = await Promise.all([
+  const [pillars, articles, tools] = await Promise.all([
     getPublishedEntries("pillars"),
     getPublishedEntries("articles"),
+    getPublishedEntries("tools"),
   ]);
 
   const builtPageIds = new Set(articles.map(({ page: article }) => article.id));
+  const builtToolIds = new Set(tools.map(({ page: tool }) => tool.id));
   const publishedPillarIds = new Set(pillars.map(({ page: pillar }) => pillar.id));
 
   const pillar = getPage(pillarId);
@@ -60,6 +66,11 @@ export async function getContentSidebar(page: SitePage): Promise<ContentSidebar 
       links: getSectionLinks(pillarId, builtPageIds),
     },
   ];
+
+  const toolLinks = getToolLinks(pillarId, builtToolIds);
+  if (toolLinks.length > 0) {
+    sections.push({ heading: "Free tools", links: toolLinks });
+  }
 
   const otherPillars = PILLAR_NAV.filter(
     (entry) => entry.pillar !== pillarId && publishedPillarIds.has(entry.pillar),

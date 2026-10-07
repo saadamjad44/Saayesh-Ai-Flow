@@ -8,8 +8,8 @@
  * dependency of any kind.
  *
  * Everything in it comes from sources that already exist — the page registry in
- * src/config/pages.ts and the `pillars` / `articles` MDX collections — so there
- * is no second list of articles to keep in step. Noindexed pages (the legal
+ * src/config/pages.ts and the `pillars` / `articles` / `tools` MDX collections —
+ * so there is no second list of pages to keep in step. Noindexed pages (the legal
  * pages) are excluded, so search never surfaces what search engines are told to
  * ignore.
  */
@@ -59,20 +59,26 @@ async function entryHeadings(entry: CollectionEntry<EntryCollection>): Promise<s
     .slice(0, MAX_HEADINGS);
 }
 
-/** Pillar title for an article, used as its result label. */
+/**
+ * Result label: the kind of page for a tool (a free utility is what a searcher
+ * is actually looking for, and "tool" then matches as a query term), else the
+ * parent pillar for an article, else the kind of page.
+ */
 function categoryOf(page: SitePage): string {
+  if (page.type === "tool") return "Free tool";
   if (page.pillar) return getPage(page.pillar).title;
   return page.type === "pillar" ? "Category" : "Page";
 }
 
 /**
  * Every searchable page, in registry order: the static core pages, then the
- * pillar hubs and their published articles.
+ * pillar hubs, their published articles, and the free tools.
  */
 export async function buildSearchIndex(): Promise<SearchDoc[]> {
-  const [pillars, articles] = await Promise.all([
+  const [pillars, articles, tools] = await Promise.all([
     getPublishedEntries("pillars"),
     getPublishedEntries("articles"),
+    getPublishedEntries("tools"),
   ]);
 
   const staticDocs = (PAGES as readonly SitePage[])
@@ -90,7 +96,7 @@ export async function buildSearchIndex(): Promise<SearchDoc[]> {
     });
 
   const entryDocs = await Promise.all(
-    [...pillars, ...articles].map(async ({ entry, page }): Promise<SearchDoc> => {
+    [...pillars, ...articles, ...tools].map(async ({ entry, page }): Promise<SearchDoc> => {
       const keywords = page.primaryKeyword ? [page.primaryKeyword] : [];
       return {
         title: entry.data.title,

@@ -1,0 +1,777 @@
+---
+/**
+ * Small Business AI Cost Calculator — the interactive part of
+ * /ai-business-tools/small-business-ai-cost-calculator/.
+ *
+ * Imported by that page's MDX body, so the calculator sits in the normal
+ * content flow and the surrounding editorial copy is authored like any other
+ * entry. All arithmetic, validation, and formatting live in
+ * ./ai-cost-calculator.ts, shared with this markup so the inputs' `max`
+ * attributes and the script's limits cannot drift apart.
+ *
+ * Privacy, which the page states in writing and this implementation has to
+ * guarantee: there is no `<form>` element (so no value can ever be submitted,
+ * not even as a query string if scripting fails), no `fetch`, no analytics
+ * call, and no `localStorage` or cookie write anywhere in the script below.
+ * Every figure stays in the page's own DOM for as long as the tab is open.
+ *
+ * Nothing here hardcodes a vendor, plan, or price: the visitor supplies every
+ * figure, which is what keeps the tool accurate as vendor pricing changes.
+ */
+import ToolRow from "./ToolRow.astro";
+import { CURRENCIES, DEFAULT_CURRENCY, LIMITS, ROW_TOKEN } from "./ai-cost-calculator";
+
+/** Business-level inputs. All whole-number counts; business units is optional. */
+const BUSINESS_FIELDS = [
+  {
+    key: "employees",
+    label: "Total employees",
+    hint: "Everyone on your payroll, including you.",
+  },
+  {
+    key: "activeUsers",
+    label: "Active AI users",
+    hint: "The people who actually use these AI tools.",
+  },
+  {
+    key: "businessUnits",
+    label: "Business units or departments",
+    hint: "Optional. Leave blank if you do not split AI costs this way.",
+  },
+] as const;
+
+/** The two figures a visitor came for, shown larger than the rest. */
+const HEADLINE_RESULTS = [
+  { key: "monthly", label: "Monthly AI spend", note: "Total recurring cost, every month" },
+  { key: "firstYear", label: "First-year total", note: "Annual recurring plus one-time setup" },
+] as const;
+
+/**
+ * The remaining figures. `note` is the starting text; the script rewrites the
+ * per-person and per-unit notes to show the division it actually performed.
+ */
+const SECONDARY_RESULTS = [
+  { key: "annual", label: "Annual recurring spend", note: "Monthly spend x 12", optional: false },
+  {
+    key: "setup",
+    label: "One-time setup cost",
+    note: "Charged once, not recurring",
+    optional: false,
+  },
+  {
+    key: "perUser",
+    label: "Cost per active AI user",
+    note: "Add your active AI users to see this",
+    optional: false,
+  },
+  {
+    key: "perEmployee",
+    label: "Cost per employee",
+    note: "Add your employee count to see this",
+    optional: false,
+  },
+  {
+    key: "perUnit",
+    label: "Cost per business unit",
+    note: "Add your business units to see this",
+    optional: true,
+  },
+] as const;
+
+const headingId = "ai-cost-calculator";
+---
+
+<section
+  aria-labelledby={headingId}
+  class="not-prose my-10 overflow-hidden rounded-2xl border border-ink-200 bg-surface shadow-card"
+  data-ai-cost-calculator
+>
+  <div class="border-b border-ink-200 bg-ink-50 px-4 py-5 sm:px-6 sm:py-6">
+    <p class="eyebrow">Free calculator</p>
+    <h2
+      id={headingId}
+      class="mt-2 text-2xl font-bold tracking-display text-ink-900 sm:text-[1.75rem]"
+    >
+      Work out your AI software costs
+    </h2>
+    <p class="mt-2.5 leading-relaxed text-ink-600">
+      Add each AI tool you pay for, with its own price. Totals update as you type — there is no
+      Calculate button, no sign-up, and no vendor prices built in.
+    </p>
+    <p class="mt-3 flex items-start gap-2 text-sm font-medium text-ink-700">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="mt-0.5 size-4 shrink-0 text-brand-700"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <span>
+        Your figures stay in your browser. This calculator does not submit the numbers you enter.
+      </span>
+    </p>
+  </div>
+
+  <div class="px-4 py-6 sm:px-6">
+    {/*
+      Deliberately not a <form>: nothing here is ever submitted, and a form
+      would put the visitor's figures in a query string if its submit handler
+      ever failed to run.
+    */}
+    <fieldset>
+      <legend class="text-base font-bold tracking-display text-ink-900">Your business</legend>
+      <p class="mt-1 text-sm text-ink-500">
+        Used for the per-person and per-unit figures. Leave a field blank to skip that figure.
+      </p>
+
+      <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-business>
+        {BUSINESS_FIELDS.map((field) => {
+          const id = `ai-cost-${field.key}`;
+          return (
+            <div>
+              <label for={id} class="block text-sm font-semibold text-ink-900">
+                {field.label}
+              </label>
+              <input
+                id={id}
+                type="number"
+                min="0"
+                max={LIMITS.maxCount}
+                step="1"
+                inputmode="numeric"
+                autocomplete="off"
+                aria-describedby={`${id}-hint`}
+                class="mt-1.5 block w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none aria-[invalid=true]:border-red-600"
+                data-field={field.key}
+                data-kind="count"
+              />
+              <p id={`${id}-hint`} class="mt-1.5 text-sm text-ink-500">
+                {field.hint}
+              </p>
+              <p
+                id={`${id}-error`}
+                hidden
+                class="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-red-700"
+                data-field-error={field.key}
+              >
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="mt-0.5 size-4 shrink-0"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.63-1.516 2.63H3.72c-1.347 0-2.189-1.463-1.515-2.63L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span data-error-text>Enter a number.</span>
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      <div class="mt-5 rounded-xl border border-ink-200 bg-ink-50 p-4">
+        <label for="ai-cost-currency" class="block text-sm font-semibold text-ink-900">
+          Currency
+        </label>
+        <select
+          id="ai-cost-currency"
+          aria-describedby="ai-cost-currency-hint"
+          class="mt-1.5 block w-full max-w-xs rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
+          data-currency
+        >
+          {CURRENCIES.map((currency) => (
+            <option
+              value={currency.code}
+              data-symbol={currency.symbol}
+              selected={currency.code === DEFAULT_CURRENCY.code}
+            >
+              {currency.code} ({currency.symbol}) — {currency.label}
+            </option>
+          ))}
+        </select>
+        <p id="ai-cost-currency-hint" class="mt-2 text-sm text-ink-600">
+          <strong class="font-semibold text-ink-900">
+            This calculator does not convert currencies.
+          </strong>{" "}
+          Changing this only changes the symbol shown. Enter all costs in the same currency.
+        </p>
+      </div>
+    </fieldset>
+
+    <fieldset class="mt-8 border-t border-ink-200 pt-6">
+      <legend class="text-base font-bold tracking-display text-ink-900">Your AI tools</legend>
+      <p class="mt-1 text-sm text-ink-500">
+        One row per subscription. At least one tool row is always kept, and you can add up to{" "}
+        {LIMITS.maxRows}.
+      </p>
+
+      <ul class="mt-4 space-y-4" data-tool-list>
+        <ToolRow rowId="1" />
+      </ul>
+
+      <button type="button" class="btn btn-secondary mt-4 w-full sm:w-auto" data-add-tool>
+        <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+          <path
+            fill-rule="evenodd"
+            d="M10 4a.75.75 0 0 1 .75.75v4.5h4.5a.75.75 0 0 1 0 1.5h-4.5v4.5a.75.75 0 0 1-1.5 0v-4.5h-4.5a.75.75 0 0 1 0-1.5h4.5v-4.5A.75.75 0 0 1 10 4Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Add another tool
+      </button>
+      <p hidden class="mt-3 text-sm font-medium text-ink-700" data-row-limit-note>
+        That is the maximum of {LIMITS.maxRows} tool rows. Remove a row to add a different tool.
+      </p>
+    </fieldset>
+
+    <div class="mt-8 border-t border-ink-200 pt-6">
+      <h3 class="text-xl font-bold tracking-display text-ink-900 sm:text-2xl">Your AI costs</h3>
+
+      <p
+        hidden
+        class="mt-3 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-medium text-red-800"
+        data-invalid-note
+      >
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="mt-0.5 size-4 shrink-0"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.63-1.516 2.63H3.72c-1.347 0-2.189-1.463-1.515-2.63L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span data-invalid-note-text></span>
+      </p>
+
+      <dl class="mt-4 grid gap-3 sm:grid-cols-2">
+        {HEADLINE_RESULTS.map((result) => (
+          <div class="rounded-xl border border-brand-200 bg-brand-50 p-4 sm:p-5">
+            <dt class="text-sm font-semibold text-brand-900">{result.label}</dt>
+            <dd>
+              <p
+                class="mt-1 text-3xl font-extrabold tracking-display text-ink-900 tabular-nums sm:text-4xl"
+                data-result={result.key}
+              >
+                —
+              </p>
+              <p class="mt-1 text-sm text-ink-600" data-result-note={result.key}>
+                {result.note}
+              </p>
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <dl class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {SECONDARY_RESULTS.map((result) => (
+          <div
+            class="rounded-xl border border-ink-200 bg-paper p-4"
+            hidden={result.optional}
+            data-result-card={result.key}
+          >
+            <dt class="text-sm font-semibold text-ink-900">{result.label}</dt>
+            <dd>
+              <p
+                class="mt-1 text-xl font-bold tracking-display text-ink-900 tabular-nums"
+                data-result={result.key}
+              >
+                —
+              </p>
+              <p class="mt-1 text-sm text-ink-500" data-result-note={result.key}>
+                {result.note}
+              </p>
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <h4 class="mt-8 text-base font-bold tracking-display text-ink-900">Cost breakdown by tool</h4>
+      <p class="mt-1 text-sm text-ink-500">
+        Recurring monthly cost per tool: seats plus usage. One-time setup costs are totalled
+        separately above.
+      </p>
+      <div class="mt-3 overflow-x-auto">
+        <table class="w-full text-sm">
+          <caption class="sr-only">Monthly recurring cost by tool</caption>
+          <thead>
+            <tr class="border-b border-ink-300">
+              <th scope="col" class="py-2 pr-3 text-left font-semibold text-ink-700">
+                Tool
+              </th>
+              <th scope="col" class="py-2 pl-3 text-right font-semibold text-ink-700">
+                Monthly cost
+              </th>
+            </tr>
+          </thead>
+          <tbody data-breakdown-body></tbody>
+          <tfoot>
+            <tr class="border-t-2 border-ink-300">
+              <th scope="row" class="py-2.5 pr-3 text-left font-bold text-ink-900">
+                Total
+              </th>
+              <td
+                class="py-2.5 pl-3 text-right font-bold text-ink-900 tabular-nums"
+                data-breakdown-total
+              >
+                —
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-3 border-t border-ink-200 pt-5 sm:flex-row sm:items-center">
+        <button type="button" class="btn btn-secondary w-full sm:w-auto" data-reset>
+          Reset calculator
+        </button>
+        <button type="button" class="btn btn-secondary w-full sm:w-auto" hidden data-copy>
+          Copy results summary
+        </button>
+        <p class="text-sm text-ink-600 sm:ml-1" role="status" data-copy-status></p>
+      </div>
+    </div>
+  </div>
+
+  {/* Concise, debounced announcement of the headline figures for screen readers. */}
+  <p role="status" aria-live="polite" class="sr-only" data-announce></p>
+
+  <noscript>
+    <p class="border-t border-ink-200 bg-yellow-50 px-4 py-4 text-sm text-yellow-900 sm:px-6">
+      This calculator needs JavaScript to add up your figures. The formulas it uses are written out
+      in full under “How this AI cost calculator works” below, so you can work the same totals out
+      by hand or in a spreadsheet.
+    </p>
+  </noscript>
+</section>
+
+{/* Source of every added row, so added rows can never drift from the first one. */}
+<template data-ai-cost-row-template>
+  <ToolRow rowId={ROW_TOKEN} />
+</template>
+
+<script>
+  /**
+   * Calculator behaviour. Reads the DOM, validates, computes with the shared
+   * module, and writes the results back. It makes no network request, sends
+   * nothing to analytics, and writes to no storage — see the component comment.
+   */
+  import {
+    CURRENCIES,
+    DEFAULT_CURRENCY,
+    LIMITS,
+    ROW_TOKEN,
+    computeTotals,
+    formatMoney,
+    parseFieldValue,
+    type BusinessInput,
+    type CostTotals,
+    type FieldKind,
+    type ToolInput,
+  } from "./ai-cost-calculator";
+
+  const calculator = document.querySelector<HTMLElement>("[data-ai-cost-calculator]");
+  const rowSource = document.querySelector<HTMLTemplateElement>("[data-ai-cost-row-template]");
+
+  const listEl = calculator?.querySelector<HTMLUListElement>("[data-tool-list]");
+  const businessEl = calculator?.querySelector<HTMLElement>("[data-business]");
+  const addEl = calculator?.querySelector<HTMLButtonElement>("[data-add-tool]");
+  const resetEl = calculator?.querySelector<HTMLButtonElement>("[data-reset]");
+  const copyEl = calculator?.querySelector<HTMLButtonElement>("[data-copy]");
+  const copyStatusEl = calculator?.querySelector<HTMLElement>("[data-copy-status]");
+  const currencyEl = calculator?.querySelector<HTMLSelectElement>("[data-currency]");
+  const breakdownEl = calculator?.querySelector<HTMLTableSectionElement>("[data-breakdown-body]");
+  const breakdownTotalEl = calculator?.querySelector<HTMLElement>("[data-breakdown-total]");
+  const limitNoteEl = calculator?.querySelector<HTMLElement>("[data-row-limit-note]");
+  const errorNoteEl = calculator?.querySelector<HTMLElement>("[data-invalid-note]");
+  const errorNoteTextEl = calculator?.querySelector<HTMLElement>("[data-invalid-note-text]");
+  const announceEl = calculator?.querySelector<HTMLElement>("[data-announce]");
+
+  if (
+    calculator &&
+    rowSource &&
+    listEl &&
+    businessEl &&
+    addEl &&
+    resetEl &&
+    copyEl &&
+    copyStatusEl &&
+    currencyEl &&
+    breakdownEl &&
+    breakdownTotalEl &&
+    limitNoteEl &&
+    errorNoteEl &&
+    errorNoteTextEl &&
+    announceEl
+  ) {
+    // Re-bound as non-null locals, so the helpers below can close over them.
+    const root: HTMLElement = calculator;
+    const template: HTMLTemplateElement = rowSource;
+    const toolList: HTMLUListElement = listEl;
+    const businessPanel: HTMLElement = businessEl;
+    const addButton: HTMLButtonElement = addEl;
+    const resetButton: HTMLButtonElement = resetEl;
+    const copyButton: HTMLButtonElement = copyEl;
+    const copyStatus: HTMLElement = copyStatusEl;
+    const currencySelect: HTMLSelectElement = currencyEl;
+    const breakdownBody: HTMLTableSectionElement = breakdownEl;
+    const breakdownTotal: HTMLElement = breakdownTotalEl;
+    const rowLimitNote: HTMLElement = limitNoteEl;
+    const invalidNote: HTMLElement = errorNoteEl;
+    const invalidNoteText: HTMLElement = errorNoteTextEl;
+    const announce: HTMLElement = announceEl;
+
+    /** Milliseconds of quiet typing before the headline figures are announced. */
+    const ANNOUNCE_DELAY_MS = 900;
+    /** How long a copy confirmation stays on screen. */
+    const COPY_STATUS_MS = 6000;
+
+    /**
+     * Id suffix for added rows; row 1 is already in the document. It only ever
+     * increases, including across a reset: the row left standing by a reset is
+     * not necessarily the original row 1, so rewinding the counter could hand
+     * out an id that row is already using and break its label associations.
+     */
+    let idSeed = 1;
+    let announceTimer: number | undefined;
+    let copyTimer: number | undefined;
+    /** Last rendered summary, so Copy never re-reads or recomputes the inputs. */
+    let summary = "";
+
+    const rows = () => [...toolList.querySelectorAll<HTMLElement>("[data-tool-row]")];
+
+    const selectedCurrency = () =>
+      CURRENCIES.find((currency) => currency.code === currencySelect.value) ?? DEFAULT_CURRENCY;
+
+    interface Reading {
+      /** `null` when the field is empty or its entry was rejected. */
+      value: number | null;
+      invalid: boolean;
+    }
+
+    /**
+     * Validates one named input inside `scope`, shows or clears its error, and
+     * returns the value. An invalid entry counts as 0 in the totals, and the
+     * note above the results says so — the alternative, silently dropping the
+     * row, would make a total change for no visible reason.
+     */
+    function readField(scope: ParentNode, key: string): Reading {
+      const input = scope.querySelector<HTMLInputElement>(`[data-field="${key}"]`);
+      if (!input) return { value: null, invalid: false };
+
+      const kind: FieldKind = input.dataset.kind === "count" ? "count" : "money";
+      const parsed = parseFieldValue(input.value, kind);
+      const error = scope.querySelector<HTMLElement>(`[data-field-error="${key}"]`);
+      const errorText = error?.querySelector<HTMLElement>("[data-error-text]");
+      const hintId = `${input.id}-hint`;
+
+      if (parsed.ok) {
+        input.removeAttribute("aria-invalid");
+        input.setAttribute("aria-describedby", hintId);
+        if (error) error.hidden = true;
+        return { value: parsed.value, invalid: false };
+      }
+
+      input.setAttribute("aria-invalid", "true");
+      input.setAttribute("aria-describedby", `${hintId} ${input.id}-error`);
+      if (errorText) errorText.textContent = parsed.message;
+      if (error) error.hidden = false;
+      return { value: null, invalid: true };
+    }
+
+    function collectTools(): { tools: ToolInput[]; invalid: number } {
+      const tools: ToolInput[] = [];
+      let invalid = 0;
+
+      for (const row of rows()) {
+        const name = row.querySelector<HTMLInputElement>('[data-field="name"]');
+        const price = readField(row, "price");
+        const seats = readField(row, "seats");
+        const addOn = readField(row, "addon");
+        const setup = readField(row, "setup");
+
+        invalid += [price, seats, addOn, setup].filter((field) => field.invalid).length;
+
+        tools.push({
+          name: name?.value ?? "",
+          pricePerSeat: price.value ?? 0,
+          seats: seats.value ?? 0,
+          monthlyAddOn: addOn.value ?? 0,
+          oneTimeSetup: setup.value ?? 0,
+        });
+      }
+
+      return { tools, invalid };
+    }
+
+    function collectBusiness(): { business: BusinessInput; invalid: number } {
+      const employees = readField(businessPanel, "employees");
+      const activeUsers = readField(businessPanel, "activeUsers");
+      const businessUnits = readField(businessPanel, "businessUnits");
+
+      return {
+        business: {
+          employees: employees.value,
+          activeUsers: activeUsers.value,
+          businessUnits: businessUnits.value,
+        },
+        invalid: [employees, activeUsers, businessUnits].filter((field) => field.invalid).length,
+      };
+    }
+
+    const setText = (attribute: string, key: string, text: string) => {
+      const node = root.querySelector<HTMLElement>(`[${attribute}="${key}"]`);
+      if (node) node.textContent = text;
+    };
+
+    const setResult = (key: string, text: string) => setText("data-result", key, text);
+    const setNote = (key: string, text: string) => setText("data-result-note", key, text);
+
+    /** "Monthly spend / 3 active AI users", or what to fill in to get it. */
+    function divisionNote(count: number | null, unit: string, plural: string): string {
+      if (count === null) return `Add your ${plural} to see this`;
+      if (count <= 0) return `Enter 1 or more ${plural} to see this`;
+      return `Monthly spend / ${count} ${count === 1 ? unit : plural}`;
+    }
+
+    function renumber(): void {
+      rows().forEach((row, index) => {
+        for (const label of row.querySelectorAll<HTMLElement>("[data-row-number]")) {
+          label.textContent = String(index + 1);
+        }
+      });
+    }
+
+    /** At least one tool row always stays, so the last Remove button is disabled. */
+    function syncControls(): void {
+      const current = rows();
+      for (const row of current) {
+        const remove = row.querySelector<HTMLButtonElement>("[data-remove-tool]");
+        if (remove) remove.disabled = current.length <= 1;
+      }
+      const atLimit = current.length >= LIMITS.maxRows;
+      addButton.disabled = atLimit;
+      rowLimitNote.hidden = !atLimit;
+    }
+
+    /** Plain-text results, for the Copy button. Built from the same totals. */
+    function buildSummary(
+      totals: CostTotals,
+      business: BusinessInput,
+      symbol: string,
+      code: string,
+    ): string {
+      const money = (value: number | null) => formatMoney(value, symbol);
+      const lines = [
+        `AI software costs (all figures in ${code})`,
+        "",
+        `Monthly recurring AI spend: ${money(totals.monthlyRecurring)}`,
+        `Annual recurring AI spend: ${money(totals.annualRecurring)}`,
+        `One-time setup cost: ${money(totals.totalSetup)}`,
+        `First-year total: ${money(totals.firstYearTotal)}`,
+        `Cost per active AI user, per month: ${money(totals.perActiveUser)}`,
+        `Cost per employee, per month: ${money(totals.perEmployee)}`,
+      ];
+
+      if (business.businessUnits !== null && business.businessUnits > 0) {
+        lines.push(`Cost per business unit, per month: ${money(totals.perBusinessUnit)}`);
+      }
+
+      lines.push("", "Monthly cost by tool");
+      for (const tool of totals.perTool) {
+        lines.push(`- ${tool.name}: ${money(tool.monthly)}`);
+      }
+      lines.push(`Total: ${money(totals.monthlyRecurring)}`);
+      lines.push("", `Calculated with ${location.origin}${location.pathname}`);
+
+      return lines.join("\n");
+    }
+
+    function render(): void {
+      const { tools, invalid: toolErrors } = collectTools();
+      const { business, invalid: businessErrors } = collectBusiness();
+      const { symbol, code } = selectedCurrency();
+      const totals = computeTotals(tools, business);
+      const money = (value: number | null) => formatMoney(value, symbol);
+
+      setResult("monthly", money(totals.monthlyRecurring));
+      setResult("annual", money(totals.annualRecurring));
+      setResult("setup", money(totals.totalSetup));
+      setResult("firstYear", money(totals.firstYearTotal));
+      setResult("perUser", money(totals.perActiveUser));
+      setResult("perEmployee", money(totals.perEmployee));
+      setResult("perUnit", money(totals.perBusinessUnit));
+
+      setNote("perUser", divisionNote(business.activeUsers, "active AI user", "active AI users"));
+      setNote("perEmployee", divisionNote(business.employees, "employee", "employees"));
+      setNote("perUnit", divisionNote(business.businessUnits, "business unit", "business units"));
+
+      // The per-unit figure only exists once a visitor says they have units.
+      const unitCard = root.querySelector<HTMLElement>('[data-result-card="perUnit"]');
+      if (unitCard) {
+        unitCard.hidden = business.businessUnits === null || business.businessUnits <= 0;
+      }
+
+      // Tool names are written with textContent, never parsed as HTML.
+      breakdownBody.replaceChildren(
+        ...totals.perTool.map((tool) => {
+          const tr = document.createElement("tr");
+          tr.className = "border-b border-ink-200";
+
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.className = "py-2.5 pr-3 text-left font-medium text-ink-800";
+          th.textContent = tool.name;
+
+          const td = document.createElement("td");
+          td.className = "py-2.5 pl-3 text-right text-ink-900 tabular-nums";
+          td.textContent = money(tool.monthly);
+
+          tr.append(th, td);
+          return tr;
+        }),
+      );
+      breakdownTotal.textContent = money(totals.monthlyRecurring);
+
+      const errors = toolErrors + businessErrors;
+      invalidNote.hidden = errors === 0;
+      invalidNoteText.textContent =
+        errors === 1
+          ? "One field needs attention. It is counted as 0 until you fix it."
+          : `${errors} fields need attention. They are counted as 0 until you fix them.`;
+
+      summary = buildSummary(totals, business, symbol, code);
+
+      window.clearTimeout(announceTimer);
+      announceTimer = window.setTimeout(() => {
+        announce.textContent =
+          `Monthly AI spend ${money(totals.monthlyRecurring)}. ` +
+          `Annual recurring ${money(totals.annualRecurring)}. ` +
+          `First-year total ${money(totals.firstYearTotal)}.`;
+      }, ANNOUNCE_DELAY_MS);
+    }
+
+    function setCurrencySymbols(): void {
+      const { symbol } = selectedCurrency();
+      for (const node of root.querySelectorAll<HTMLElement>("[data-currency-symbol]")) {
+        node.textContent = symbol;
+      }
+    }
+
+    function addRow(): void {
+      if (rows().length >= LIMITS.maxRows) return;
+
+      idSeed += 1;
+      const holder = document.createElement("template");
+      holder.innerHTML = template.innerHTML.replaceAll(ROW_TOKEN, String(idSeed));
+      const row = holder.content.firstElementChild;
+      if (!(row instanceof HTMLElement)) return;
+
+      toolList.append(row);
+      renumber();
+      syncControls();
+      setCurrencySymbols();
+      render();
+
+      row.querySelector<HTMLInputElement>('[data-field="name"]')?.focus();
+      announce.textContent = `Tool ${rows().length} added.`;
+    }
+
+    function removeRow(row: HTMLElement): void {
+      const current = rows();
+      if (current.length <= 1) return;
+
+      const index = current.indexOf(row);
+      row.remove();
+      renumber();
+      syncControls();
+      render();
+
+      const remaining = rows();
+      const focusTarget = remaining[Math.min(index, remaining.length - 1)];
+      focusTarget?.querySelector<HTMLInputElement>('[data-field="name"]')?.focus();
+      announce.textContent =
+        `Tool removed. ${remaining.length} ` + `${remaining.length === 1 ? "tool" : "tools"} left.`;
+    }
+
+    /**
+     * Back to the page's initial state: one tool row, the server-rendered
+     * default values, and the default currency. No figure is kept anywhere.
+     */
+    function reset(): void {
+      for (const row of rows().slice(1)) row.remove();
+      for (const input of root.querySelectorAll<HTMLInputElement>("input")) {
+        input.value = input.defaultValue;
+      }
+      currencySelect.value = DEFAULT_CURRENCY.code;
+
+      renumber();
+      syncControls();
+      setCurrencySymbols();
+      render();
+
+      copyStatus.textContent = "";
+      businessPanel.querySelector<HTMLInputElement>('[data-field="employees"]')?.focus();
+      announce.textContent = "Calculator reset.";
+    }
+
+    function showCopyStatus(message: string): void {
+      copyStatus.textContent = message;
+      window.clearTimeout(copyTimer);
+      copyTimer = window.setTimeout(() => {
+        copyStatus.textContent = "";
+      }, COPY_STATUS_MS);
+    }
+
+    addButton.addEventListener("click", addRow);
+    resetButton.addEventListener("click", reset);
+
+    toolList.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const button = target.closest<HTMLButtonElement>("[data-remove-tool]");
+      if (!button || button.disabled) return;
+      const row = button.closest<HTMLElement>("[data-tool-row]");
+      if (row) removeRow(row);
+    });
+
+    // Live totals: one delegated listener covers added rows without rebinding.
+    root.addEventListener("input", render);
+    currencySelect.addEventListener("change", () => {
+      setCurrencySymbols();
+      render();
+    });
+
+    /**
+     * Copy is a local clipboard write of figures the visitor can already see.
+     * The button stays hidden where the API is unavailable, rather than
+     * offering an action that cannot work.
+     */
+    if (navigator.clipboard) {
+      copyButton.hidden = false;
+      copyButton.addEventListener("click", () => {
+        navigator.clipboard.writeText(summary).then(
+          () => showCopyStatus("Results summary copied."),
+          () =>
+            showCopyStatus("Copy was blocked by your browser. Select the figures to copy them."),
+        );
+      });
+    }
+
+    syncControls();
+    setCurrencySymbols();
+    render();
+  }
+</script>

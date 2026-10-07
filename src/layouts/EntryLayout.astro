@@ -1,6 +1,8 @@
 ---
 /**
- * Pillar and article pages rendered from MDX entries, on PageLayout.
+ * Content entry pages rendered from MDX, on PageLayout: pillar hubs, cluster
+ * articles, and the free interactive tools (which share the same editorial
+ * frontmatter, so they share this shell too).
  * Header: category eyebrow, last updated, affiliate note, and an optional
  * category image. After the body: related internal pages, then the FAQ (with
  * its own FAQPage schema).
@@ -26,11 +28,12 @@ import RelatedPages, { type RelatedPage } from "@/components/content/RelatedPage
 import ContentSidebar from "@/components/layout/ContentSidebar.astro";
 import type { MediaId } from "@/config/media";
 import { getPage } from "@/config/pages";
+import type { EntryCollection } from "@/lib/content";
 import { getContentSidebar } from "@/lib/sidebar";
 import type { JsonLd } from "@/lib/seo";
 
 interface Props {
-  entry: CollectionEntry<"pillars" | "articles">;
+  entry: CollectionEntry<EntryCollection>;
   ogType: "website" | "article";
   jsonLd: readonly JsonLd[];
   relatedHeading: string;

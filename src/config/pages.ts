@@ -86,7 +86,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 17,
+  2: 18,
 };
 
 export const PAGES = [
@@ -427,6 +427,25 @@ export const PAGES = [
     primaryKeyword: "claude vs chatgpt for small business",
     intent: "Commercial",
   },
+
+  // Phase 2F — the cluster's first free interactive utility, and a deliberately
+  // different page type from the guides around it: a browser-side calculator
+  // with supporting editorial copy, so it carries WebApplication schema rather
+  // than Article schema (see src/lib/seo.ts) and is rendered from the `tools`
+  // collection. It sits inside the AI Business cluster, where the budgeting
+  // intent already lives, rather than under a new /tools/ top level that a
+  // single utility would not justify. Further tools can be registered the same
+  // way, here or under another pillar, with no further architecture change.
+  {
+    id: "small-business-ai-cost-calculator",
+    title: "Small Business AI Cost Calculator: Monthly & Annual Spend",
+    path: "/ai-business-tools/small-business-ai-cost-calculator/",
+    type: "tool",
+    phase: 2,
+    pillar: "ai-business-tools",
+    primaryKeyword: "small business AI cost calculator",
+    intent: "Informational",
+  },
 ] as const satisfies readonly SitePage[];
 
 export type PageId = (typeof PAGES)[number]["id"];
@@ -513,7 +532,18 @@ export function assertValidPageRegistry(): void {
         break;
       }
       case "tool": {
-        if (segments.length !== 1) {
+        /**
+         * A free interactive utility. It lives either inside a content cluster
+         * (/[pillar]/[slug]/, so it inherits that cluster's breadcrumb, sidebar
+         * and internal links) or at the top level as its own hub (a future
+         * /tool-finder/). Both shapes are checked here; a tool declaring a
+         * `pillar` must actually sit under it.
+         */
+        if (page.pillar) {
+          if (!page.path.startsWith(`/${page.pillar}/`) || segments.length !== 2) {
+            problems.push(`${page.id}: tool path must be /${page.pillar}/[slug]/`);
+          }
+        } else if (segments.length !== 1) {
           problems.push(`${page.id}: tool path must be a single top-level segment`);
         }
         break;

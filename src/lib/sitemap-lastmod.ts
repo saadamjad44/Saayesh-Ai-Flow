@@ -9,7 +9,7 @@
  * Pages with no authored date (home, about, contact, the legal pages) get no
  * `lastmod` at all — an omitted value is correct, a guessed one is not.
  *
- * Only the two content directories are read; inclusion, exclusion, and canonical
+ * Only the content directories are read; inclusion, exclusion, and canonical
  * URLs are unchanged and stay owned by astro.config.ts and the page registry.
  */
 import { readdirSync, readFileSync } from "node:fs";
@@ -17,7 +17,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { PAGES, type SitePage } from "../config/pages";
 
 /** Content collections, relative to this file. Must match content.config.ts. */
-const CONTENT_DIRS = ["../content/pillars/", "../content/articles/"] as const;
+const CONTENT_DIRS = ["../content/pillars/", "../content/articles/", "../content/tools/"] as const;
 
 const FRONTMATTER = /^---\r?\n([\s\S]*?)\r?\n---/;
 

@@ -5,6 +5,11 @@
  * Still omitted: the latest-articles row, the email opt-in, "Popular
  * Comparisons", and unverified trust claims.
  *
+ * Below the pillars sits one further section: the free interactive tools, built
+ * from the published `tools` collection. It is deliberately not a seventh
+ * pillar card — the six content pillars stay six — and sits after them so the
+ * category hierarchy and the hero are unchanged.
+ *
  * The card list is derived, not hand-listed: membership and order come from
  * PILLAR_NAV (the same ordered list the footer and sidebar use), filtered to
  * pillars that are actually published, so a draft pillar never appears here.
@@ -15,7 +20,7 @@ import { Image } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SITE } from "@/config/site";
 import { PILLAR_NAV } from "@/config/navigation";
-import { getPage, type PillarId } from "@/config/pages";
+import { getPage, type PageId, type PillarId } from "@/config/pages";
 import { getMedia } from "@/config/media";
 import { getPublishedEntries } from "@/lib/content";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
@@ -48,6 +53,22 @@ const publishedPillarIds = new Set(
 
 /** Every published pillar, in PILLAR_NAV order. */
 const pillarCards = PILLAR_NAV.filter((entry) => publishedPillarIds.has(entry.pillar));
+
+/**
+ * Call-to-action wording for each free interactive tool, keyed by page id.
+ * The free-tools section below is built from the published `tools` collection
+ * rather than written out, so registering a second tool adds a second button
+ * here instead of needing the section rebuilt — and the six content pillars
+ * above stay exactly six, because a tool is never a pillar card.
+ */
+const TOOL_CTA_LABELS: Partial<Record<PageId, string>> = {
+  "small-business-ai-cost-calculator": "Use the AI Cost Calculator",
+};
+
+const toolLinks = (await getPublishedEntries("tools")).map(({ entry, page }) => ({
+  href: page.path,
+  label: TOOL_CTA_LABELS[page.id as PageId] ?? entry.data.title,
+}));
 ---
 
 <BaseLayout
@@ -155,4 +176,48 @@ const pillarCards = PILLAR_NAV.filter((entry) => publishedPillarIds.has(entry.pi
       </ul>
     </div>
   </section>
+
+  {/*
+    Free utilities, after the pillars so the category hierarchy is unchanged and
+    nothing competes with the hero. Derived from the published `tools`
+    collection, never hand-listed.
+  */}
+  {toolLinks.length > 0 && (
+    <section aria-labelledby="free-tools-heading" class="border-t border-ink-200 bg-surface">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
+        <div class="max-w-2xl">
+          <p class="eyebrow">Free tool</p>
+          <h2
+            id="free-tools-heading"
+            class="mt-2 text-2xl font-bold tracking-display text-ink-900 sm:text-3xl"
+          >
+            Plan your AI software budget
+          </h2>
+          <p class="mt-4 text-lg leading-relaxed text-pretty text-ink-600">
+            Estimate monthly, annual and first-year AI costs across multiple tools, users and usage
+            fees.
+          </p>
+        </div>
+
+        <div class="mt-7 flex flex-col gap-x-5 gap-y-3 sm:flex-row sm:flex-wrap sm:items-center">
+          {toolLinks.map((tool, index) => (
+            <a
+              href={tool.href}
+              class:list={["btn w-full sm:w-auto", index === 0 ? "btn-primary" : "btn-secondary"]}
+            >
+              {tool.label}
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                <path
+                  fill-rule="evenodd"
+                  d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </a>
+          ))}
+          <p class="text-sm text-ink-500">No sign-up. Your figures stay in your browser.</p>
+        </div>
+      </div>
+    </section>
+  )}
 </BaseLayout>

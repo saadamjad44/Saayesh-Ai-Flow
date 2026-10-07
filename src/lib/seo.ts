@@ -183,6 +183,51 @@ export function collectionPageSchema(
   };
 }
 
+export interface WebApplicationSchemaInput {
+  name: string;
+  description: string;
+  path: string;
+  datePublished: Date;
+  dateModified: Date;
+}
+
+/**
+ * A free interactive utility page (registry `type: "tool"`), described as the
+ * thing it actually is: a WebApplication that runs in the browser.
+ *
+ * Every property below is factual and verifiable on the page itself — the tool
+ * needs nothing but a browser, costs nothing, and requires no account — so no
+ * claim here depends on data the site does not have.
+ *
+ * `isAccessibleForFree` carries the price on its own, and there is deliberately
+ * no `offers`: an Offer describes something sold, and a zero-price Offer would
+ * also have to name one `priceCurrency`, which this tool does not have — it
+ * displays several currencies and converts none of them. Also absent, and for
+ * the same reason: Product, Review, Rating, and AggregateRating. The site has
+ * no ratings or reviews of its own tools and must not imply any.
+ *
+ * This is the only schema a tool page emits besides the BreadcrumbList that
+ * BaseLayout already adds for every page, and the FAQPage that FaqSection emits
+ * from the visible FAQ. A tool page never emits Article schema: it is not one.
+ */
+export function webApplicationSchema(input: WebApplicationSchemaInput): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript",
+    inLanguage: SITE.lang,
+    isAccessibleForFree: true,
+    datePublished: input.datePublished.toISOString(),
+    dateModified: input.dateModified.toISOString(),
+    publisher: organization(),
+  };
+}
+
 export interface FaqItem {
   question: string;
   /** Plain text, so the visible answer and the structured data stay identical. */

@@ -76,6 +76,7 @@ const MENU_LABELS: Partial<Record<PageId, string>> = {
   "how-much-does-ai-cost-small-business": "How Much Does AI Cost?",
   "claude-for-small-business": "Claude for Small Business",
   "claude-vs-chatgpt-for-small-business": "Claude vs ChatGPT",
+  "small-business-ai-cost-calculator": "AI Cost Calculator",
 };
 
 /** Short nav label for a page: the override if there is one, else its title. */
@@ -90,6 +91,19 @@ export function menuLabel(page: SitePage): string {
 export function getSectionLinks(pillar: PillarId, builtPageIds: ReadonlySet<string>): NavLink[] {
   return (PAGES as readonly SitePage[])
     .filter((page) => page.type === "article" && page.pillar === pillar)
+    .filter((page) => builtPageIds.has(page.id))
+    .map((page) => ({ label: menuLabel(page), href: page.path }));
+}
+
+/**
+ * Free-tool links for a pillar, in registry order, limited to tools that are
+ * actually built. Separate from getSectionLinks() on purpose: an interactive
+ * utility is not an editorial guide, so the sidebar lists it under its own
+ * heading rather than mixed into the category's reading list.
+ */
+export function getToolLinks(pillar: PillarId, builtPageIds: ReadonlySet<string>): NavLink[] {
+  return (PAGES as readonly SitePage[])
+    .filter((page) => page.type === "tool" && page.pillar === pillar)
     .filter((page) => builtPageIds.has(page.id))
     .map((page) => ({ label: menuLabel(page), href: page.path }));
 }

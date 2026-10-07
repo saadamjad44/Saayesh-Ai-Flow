@@ -7,7 +7,7 @@ import { PAGES, getPage, type SitePage } from "@/config/pages";
 
 const registryIndex = (page: SitePage) => PAGES.findIndex((p) => p.id === page.id);
 
-export type EntryCollection = "pillars" | "articles";
+export type EntryCollection = "pillars" | "articles" | "tools";
 
 export interface PublishedEntry<C extends EntryCollection> {
   entry: CollectionEntry<C>;

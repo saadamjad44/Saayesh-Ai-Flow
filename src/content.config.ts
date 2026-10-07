@@ -77,4 +77,16 @@ const articles = defineCollection({
   schema: entrySchema("article"),
 });
 
-export const collections = { pillars, articles };
+/**
+ * Free interactive utilities (`type: "tool"` in the registry). Same editorial
+ * frontmatter as a guide — title, description, dates, testing status, affiliate
+ * flag, FAQ — because the same layout, FAQ schema, and "last updated" line
+ * apply. The interactive part is a component the entry body imports, so a tool
+ * needs no schema of its own.
+ */
+const tools = defineCollection({
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/tools" }),
+  schema: entrySchema("tool"),
+});
+
+export const collections = { pillars, articles, tools };

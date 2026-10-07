@@ -1,0 +1,188 @@
+---
+pageId: small-business-ai-cost-calculator
+title: "Small Business AI Cost Calculator: Monthly & Annual Spend"
+heading: Small Business AI Cost Calculator
+description: Free calculator for your monthly, annual and first-year AI software costs across multiple tools, seats and usage fees. Plan your small business AI budget.
+publishedDate: 2026-10-07
+updatedDate: 2026-10-07
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: How much should a small business spend on AI?
+    answer: There is no benchmark figure we can honestly give you, because spending depends on your headcount, which tools you use, and how much you use them. What this calculator does is tell you what your own stack costs, so you can judge that total against what the work is worth to you. For published list prices at three budget levels, see our guide on how much AI costs for a small business.
+  - question: How do I calculate AI cost per employee?
+    answer: Add up what every AI tool costs you per month, including per-seat charges and usage fees, then divide that total by your number of employees. The calculator does this for you and also divides by your active AI users, which is usually the more useful of the two because it shows what each person actually using AI costs you.
+  - question: What is included in first-year AI cost?
+    answer: In this calculator, the first-year total is twelve months of recurring spend plus every one-time setup, training and implementation cost you entered. It does not include price rises, tax, promotional rates that expire, or tools you add later in the year.
+  - question: Should setup and training be included in AI costs?
+    answer: Include them in your first-year figure, and keep them out of your monthly figure. Setup, configuration, onboarding and training are real costs, but they are charged once, so mixing them into a monthly number makes your ongoing spend look higher than it is. The calculator keeps the two separate for that reason.
+  - question: Does this calculator include API usage and add-on charges?
+    answer: Yes, if you enter them. Each tool row has a monthly usage or add-on field for API spend, credits, overage charges and paid add-ons. The calculator cannot look those figures up for you, so take them from your last invoice or your vendor dashboard.
+  - question: Does this calculator work out ROI or hours saved?
+    answer: No. It is a hard-cost calculator only. It will not estimate productivity gains, hours saved, revenue, payback period, or the value of work AI replaces, because those depend on assumptions about your business that we would have to invent. Every figure it shows is arithmetic on numbers you entered.
+  - question: Does it convert currencies?
+    answer: No. The currency selector changes the symbol shown and nothing else, because there are no exchange rates in the calculator. Enter every cost in the same currency, converting them yourself first if your vendors bill you in different ones.
+  - question: Do my figures get sent anywhere?
+    answer: No. The calculator runs entirely in your browser. Your figures are never submitted to a server, posted to a form, sent to analytics, or saved on your device, and they disappear when you close the tab. There is no sign-up and no email required to see results.
+---
+
+import { ComparisonTable } from "@/components/content";
+import { AiCostCalculator } from "@/components/tools";
+
+Most small businesses underestimate AI spend for the same reason: the subscriptions arrive one at a time. A $20 assistant here, a $25 design tool there, a usage charge on an automation platform, and a one-off setup fee that never appears on a pricing page. Separately they look small. Totalled across a year, they are a line item worth knowing.
+
+This calculator adds them up. Enter each tool you pay for, with its own price and seat count, and it returns your monthly, annual and first-year AI cost, plus what AI costs per active user, per employee and per business unit. You enter the prices yourself, so nothing here goes stale when a vendor changes its plans — and nothing here guesses at savings you have not measured.
+
+<AiCostCalculator />
+
+## What your AI costs include
+
+A tool's advertised price is rarely its full cost. When you total your stack, account for all of these:
+
+- **Per-seat subscriptions.** The headline price multiplied by the number of people you pay for. Some plans also set a seat minimum, so three people can mean paying for five.
+- **Usage-based fees.** API spend, credits, transcription minutes, automation tasks, or message volumes billed on top of the base plan, or forcing a tier upgrade in a busy month.
+- **Paid add-ons.** AI features sold separately from the plan they sit in, extra storage, or premium integrations.
+- **Implementation and setup.** Configuration, data migration, connecting the tool to your existing software, or a consultant's time to get it running.
+- **Training.** The hours your team spends learning a tool, and any paid onboarding or course that comes with it.
+- **Integration expenses.** The automation platform or middleware that connects a tool to the rest of your stack, which is often a separate subscription of its own.
+
+Two of those groups behave very differently. Subscriptions and usage fees recur every month forever. Setup, implementation and training are charged once. Treating them as one number is the most common way an AI budget ends up wrong, which is why the calculator above totals them separately.
+
+For how AI pricing models are structured in practice, and the costs vendors tend to leave off the pricing page, read our guide to [how much AI costs for a small business](/ai-business-tools/how-much-does-ai-cost-small-business/).
+
+## How this AI cost calculator works
+
+Every figure comes from the same few lines of arithmetic. There is nothing hidden, weighted or estimated:
+
+- **Monthly cost of one tool** = (price per seat per month × paid seats) + monthly usage or add-on cost
+- **Total monthly recurring spend** = the sum of every tool's monthly cost
+- **Annual recurring spend** = total monthly recurring spend × 12
+- **Total one-time setup cost** = the sum of every tool's one-time setup, training and implementation cost
+- **First-year total** = annual recurring spend + total one-time setup cost
+- **Cost per active AI user, per month** = total monthly recurring spend ÷ active AI users
+- **Cost per employee, per month** = total monthly recurring spend ÷ total employees
+- **Cost per business unit, per month** = total monthly recurring spend ÷ business units
+
+A few deliberate choices follow from those formulas:
+
+- **One-time costs stay out of the recurring figures.** Setup appears in the first-year total and in its own card, never in the monthly or annual recurring lines.
+- **Per-person figures use recurring spend only.** Dividing a one-off implementation fee across staff every month would overstate what AI costs you from month two onward.
+- **Nothing is annualised twice.** If you pay annually, divide what you pay by twelve and enter that as the monthly seat price, so the annual figure stays correct.
+- **Figures you leave blank count as nothing.** Blank is not zero-divided: a per-person figure simply does not appear until you give the calculator a headcount.
+
+## How to calculate AI cost per employee
+
+Total your monthly AI spend, then divide it by your headcount. For a five-person business paying $140 a month in total, AI costs $28 per employee per month.
+
+That number is useful for budgeting and for comparing AI against other per-head software costs. It is not a measure of value, and on its own it can mislead: if only three of those five people use AI, the cost per employee understates what each user actually costs you.
+
+That is why the calculator reports both. **Cost per active AI user** divides your spend by the people genuinely using the tools, which is the figure to use when you are deciding whether to add seats or cut them. **Cost per employee** spreads the same spend across everyone on the payroll, which is the figure to use when AI is one line in a wider per-head software budget.
+
+If the gap between the two is large, you are paying for tools that most of the business does not touch. Sometimes that is correct — a single specialist tool can be worth it. Sometimes it means seats you bought for people who never logged in.
+
+## How to calculate AI cost per business unit
+
+Divide total monthly AI spend by the number of departments, teams or business units you want to account for. A $200 monthly spend across two units is $100 per unit per month.
+
+This is a flat split, which is the honest default when you have no usage data: it tells you what the stack costs per unit, not how much each unit consumed. If one team runs nearly all the usage, a flat split will overstate the quieter team's cost.
+
+Two ways to make it sharper, both of which you can do with the same calculator:
+
+1. **Run the calculator once per unit,** entering only the tools and seats that unit actually pays for. That gives you a real per-unit total rather than an average.
+2. **Keep the flat split for shared tools** — the automation platform or assistant everyone uses — and assign tool-specific subscriptions directly to the unit that uses them.
+
+Leave the business-unit field blank if you do not split costs this way. The figure then disappears instead of showing you a meaningless number.
+
+## Monthly AI cost vs first-year AI cost
+
+These are two different questions, and confusing them is how AI budgets get approved and then overrun.
+
+**Monthly recurring cost** is what the stack costs to keep running. It is the number to watch month to month, the number to compare against the work AI takes off your plate, and the number that changes when you add or remove a seat.
+
+**First-year cost** is what you actually spend in the first twelve months: twelve months of recurring spend plus every setup, implementation and training cost. It is almost always the larger figure, and it is the one to use when you ask whether adopting AI was worth it in year one.
+
+The gap between them matters because it closes. A stack with $140 a month recurring and $200 of setup costs $1,880 in year one and $1,680 in year two, assuming prices hold. Judging the tools on the first-year figure alone makes them look more expensive than they will be; judging on the monthly figure alone hides money you have already committed.
+
+## Worked example
+
+**These are hypothetical inputs, not an estimate of what a typical business spends.** They exist to show the arithmetic, and the tool names are deliberately generic: substitute your own.
+
+A five-person company pays for two AI tools. Three people use the first, two use the second. Four of the five are active AI users.
+
+<ComparisonTable
+  caption="Hypothetical AI stack for a five-person business (figures invented for this example)"
+  rowHeader="Cost line"
+  columns={["Working", "Monthly"]}
+  rows={[
+    {
+      label: "Tool A, 3 paid seats",
+      cells: ["$20 per seat per month × 3 seats", "$60"],
+    },
+    {
+      label: "Tool B, 2 paid seats",
+      cells: ["$25 per seat per month × 2 seats", "$50"],
+    },
+    {
+      label: "Usage and add-on fees",
+      cells: ["Entered on Tool B's row", "$30"],
+    },
+    {
+      label: "Total monthly recurring",
+      cells: ["$60 + $50 + $30", "$140"],
+    },
+  ]}
+/>
+
+From that monthly total, the rest follows:
+
+- **Annual recurring spend:** $140 × 12 = **$1,680**
+- **One-time setup and training:** **$200**, entered once on Tool A's row
+- **First-year total:** $1,680 + $200 = **$1,880**
+- **Cost per active AI user:** $140 ÷ 4 = **$35 per month**
+- **Cost per employee:** $140 ÷ 5 = **$28 per month**
+
+Note the gap between the last two figures. AI costs this business $28 per head, but $35 for each person actually using it — and in year two, with the setup cost behind them, their first-year total drops to the $1,680 recurring figure.
+
+## How to reduce unnecessary AI software costs
+
+The calculator shows you the total. Bringing it down is mostly a matter of removing waste rather than negotiating prices.
+
+### Cut duplicate tools before anything else
+
+Two general AI assistants rarely do twice the work. The same goes for two writing tools, two transcription services, or an automation platform you bought while another one sat unused. Run the calculator with the duplicate removed and see what the saving actually is before you cancel. If you are choosing between two assistants rather than keeping both, our [Claude vs ChatGPT comparison for small business](/ai-business-tools/claude-vs-chatgpt-for-small-business/) works through where each one fits.
+
+### Buy seats for active users, not headcount
+
+Per-seat pricing punishes optimism. Count the people who used the tool in the last month, not the people who might. Watch for seat minimums, which can make a small team pay for seats it does not want.
+
+### Audit subscriptions you have stopped using
+
+Check your card statement against the tools in your calculator rows. Anything you cannot account for is either a forgotten trial that converted or a tool somebody stopped using months ago.
+
+### Review your AI budget every quarter
+
+Set a recurring reminder to re-run these numbers. Prices change, promotional rates expire, usage grows, and people leave. A quarterly pass catches all four while the amounts are still small.
+
+### Compare annual and monthly billing carefully
+
+Annual billing is genuinely cheaper per month on most plans, but it commits you for a year and is usually paid up front. Pay monthly while a tool is still proving itself, and switch to annual only once it has earned a permanent place in the stack.
+
+### Count usage, API and add-on charges as part of the price
+
+A $20 plan with $40 of monthly API spend is a $60 tool. Enter both in the calculator's rows so the comparison between tools is honest.
+
+### Start from the problem, not the tool
+
+The most expensive AI mistake is not an overpriced subscription; it is a stack assembled out of curiosity. Pick the task that costs you the most time, find the tool that does it, and stop there. Our guide to the [best AI tools for small business](/ai-business-tools/best-ai-tools-for-small-business/) is organised by use case for exactly that reason.
+
+## Where to go next
+
+- **Deciding whether to spend on software or on people?** Our [AI tools vs virtual assistant comparison](/ai-business-tools/ai-tools-vs-virtual-assistant/) works through the costs and the kinds of tasks each suits.
+- **Want list prices to sanity-check your own figures?** The three budget levels in [how much AI costs for a small business](/ai-business-tools/how-much-does-ai-cost-small-business/) name real tools and current prices.
+- **Not sure which tools belong in your stack yet?** Start with the [AI business and productivity hub](/ai-business-tools/).
+
+## About this calculator
+
+It is free, needs no account, and takes no email address. It is vendor-neutral: no prices are built in, no tool is recommended by the calculator itself, and the page carries no affiliate links. Every formula it uses is published above, and every figure it returns is arithmetic on numbers you entered.
+
+It deliberately does not estimate return on investment, hours saved, productivity gains, revenue, or payback period. Those numbers require assumptions about your business that only you can supply, and a calculator that invents them produces a confident figure that means nothing.

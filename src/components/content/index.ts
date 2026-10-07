@@ -8,4 +8,5 @@ export { default as FeaturedImage } from "./FeaturedImage.astro";
 export { default as LastUpdated } from "./LastUpdated.astro";
 export { default as OwnerDetail } from "./OwnerDetail.astro";
 export { default as ScoreTable } from "./ScoreTable.astro";
+export { default as ToolCallout } from "./ToolCallout.astro";
 export { default as VerdictBox } from "./VerdictBox.astro";
