@@ -172,7 +172,7 @@ export const PAGES = [
   },
   {
     id: "best-ai-tools-for-small-business",
-    title: "Best AI Tools for Small Business",
+    title: "Best AI Tools for Small Business in 2026: Picks by Use Case",
     path: "/ai-business-tools/best-ai-tools-for-small-business/",
     type: "article",
     phase: 1,
