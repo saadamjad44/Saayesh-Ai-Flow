@@ -1,39 +1,117 @@
 ---
 /**
- * Contact form handled by Netlify Forms (detected in the built HTML at deploy).
- * No JavaScript; spam is filtered with a honeypot field. Without an `action`,
- * Netlify shows its default success page, so no extra URL is added.
+ * Contact form, delivered by Web3Forms (https://web3forms.com) on the free
+ * plan. Submission goes over `fetch`, so the visitor stays on this page and
+ * sees the result inline.
+ *
+ * The access key is a *public* value and is inlined into the built HTML on
+ * purpose: a Web3Forms access key only authorises delivery to the one inbox it
+ * was issued for and grants no account access. It comes from
+ * PUBLIC_WEB3FORMS_ACCESS_KEY (see .env.example) so it can be rotated without a
+ * code change, not because it is a secret. With no key set, the form renders
+ * disabled rather than silently failing.
+ *
+ * Spam protection is what the free plan actually supports: Web3Forms' own
+ * server-side filtering, the hidden `botcheck` honeypot, and hCaptcha. On the
+ * free plan hCaptcha runs through Web3Forms' own proxy site key, so there is no
+ * hCaptcha account, no secret key, and no environment variable to set —
+ * Web3Forms verifies the token server-side when the form is submitted.
+ * Cloudflare Turnstile and reCAPTCHA v3 are Starter-and-above features
+ * (web3forms.com/pricing), so they are not used.
+ *
+ * `action` is kept so the form degrades to a normal POST, but with hCaptcha
+ * switched on in the Web3Forms dashboard a submission without a token is
+ * rejected — so the <noscript> note below points no-JS visitors at email.
+ *
+ * Field contents are never sent to GA4 or any other analytics.
  */
 import { getPage } from "@/config/pages";
+import { INTEGRATIONS, OWNER, SITE } from "@/config/site";
 
-const FORM_NAME = "contact";
+/** Web3Forms submission endpoint, shared by the fetch and no-JS paths. */
+const ENDPOINT = "https://api.web3forms.com/submit";
+
+/**
+ * Web3Forms' loader. It finds `[data-captcha="true"]`, fills in the free-plan
+ * proxy site key, and pulls in hCaptcha's own api.js. It does not touch form
+ * submission, so the fetch handler below stays in charge.
+ */
+const WEB3FORMS_CLIENT = "https://web3forms.com/client/script.js";
+
+/** The name hCaptcha gives the token field it writes into this form. */
+const CAPTCHA_FIELD = "h-captcha-response";
+
+const accessKey = INTEGRATIONS.web3formsAccessKey;
+const isConfigured = accessKey.length > 0;
+
+if (!isConfigured) {
+  console.warn(
+    "[contact form] PUBLIC_WEB3FORMS_ACCESS_KEY is not set, so the contact form is " +
+      "rendered disabled. Set it in the build environment before deploying.",
+  );
+}
 
 /** Subject options from website-blueprint.jsx (Contact page). */
 const SUBJECTS = ["General", "Tool Submission", "Correction", "Business Inquiry"] as const;
 
 const privacyPath = getPage("privacy-policy").path;
+const fallbackEmail = OWNER.contactEmail;
+
+/** Shortest message we accept, so a one-word submit is caught before sending. */
+const MESSAGE_MIN = 10;
+const MESSAGE_MAX = 5000;
 
 const fieldClass =
-  "mt-1.5 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3.5 py-2.5 text-base text-ink-900 shadow-card placeholder:text-ink-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/25 focus:outline-none";
+  "mt-1.5 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3.5 py-2.5 text-base text-ink-900 shadow-card placeholder:text-ink-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/25 focus:outline-none aria-[invalid=true]:border-red-600";
 
 const labelClass = "block text-sm font-semibold text-ink-900";
+
+const errorClass = "mt-1.5 flex items-start gap-1.5 text-sm font-medium text-red-700";
+
+/** Shared warning glyph for field errors, the status region, and the notice. */
+const WARNING_PATH =
+  "M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.63-1.516 2.63H3.72c-1.347 0-2.189-1.463-1.515-2.63L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z";
+
+const TICK_PATH =
+  "M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z";
+
+/** Every field that is validated in-page, in tab order. */
+const FIELDS = [
+  { name: "name", error: "Enter your name." },
+  { name: "email", error: "Enter an email address we can reply to." },
+  { name: "subject", error: "Choose a subject." },
+  { name: "message", error: `Add at least ${MESSAGE_MIN} characters so we know what you need.` },
+] as const;
+
+const errorText = new Map(FIELDS.map((field) => [field.name, field.error]));
+
+/** Shown when the captcha has not been solved, or could not load at all. */
+const CAPTCHA_ERROR = "Confirm you are human to send this message.";
 ---
 
-<form
-  name={FORM_NAME}
-  method="POST"
-  data-netlify="true"
-  netlify-honeypot="bot-field"
-  class="not-prose card space-y-5 p-5 sm:p-7"
->
-  <input type="hidden" name="form-name" value={FORM_NAME} />
+<form action={ENDPOINT} method="POST" class="not-prose card space-y-5 p-5 sm:p-7" data-contact-form>
+  <input type="hidden" name="access_key" value={accessKey} />
 
-  <p class="hidden" aria-hidden="true">
-    <label>
-      Leave this field empty
-      <input name="bot-field" tabindex="-1" autocomplete="off" />
-    </label>
-  </p>
+  {/*
+    Names the sender in the notification email. The `subject` select below is
+    Web3Forms' reserved subject field, so the chosen category becomes the email
+    subject line, and `email` is used as the reply-to address automatically.
+  */}
+  <input type="hidden" name="from_name" value={`${SITE.name} contact form`} />
+
+  {/*
+    Web3Forms honeypot — the free plan's own anti-bot field. Hidden from sight,
+    from assistive technology, and from the tab order, so only something filling
+    every input will tick it.
+  */}
+  <input
+    type="checkbox"
+    name="botcheck"
+    class="hidden"
+    tabindex="-1"
+    autocomplete="off"
+    aria-hidden="true"
+  />
 
   <div class="grid gap-5 sm:grid-cols-2">
     <div>
@@ -46,9 +124,24 @@ const labelClass = "block text-sm font-semibold text-ink-900";
         type="text"
         autocomplete="name"
         required
+        maxlength="100"
+        aria-describedby="contact-name-error"
         class={fieldClass}
+        data-field="name"
       />
+      <p id="contact-name-error" hidden class={errorClass} data-error="name">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="mt-0.5 size-4 shrink-0"
+        >
+          <path fill-rule="evenodd" d={WARNING_PATH} clip-rule="evenodd"></path>
+        </svg>
+        <span>{errorText.get("name")}</span>
+      </p>
     </div>
+
     <div>
       <label for="contact-email" class={labelClass}>
         Email
@@ -59,8 +152,22 @@ const labelClass = "block text-sm font-semibold text-ink-900";
         type="email"
         autocomplete="email"
         required
+        maxlength="254"
+        aria-describedby="contact-email-error"
         class={fieldClass}
+        data-field="email"
       />
+      <p id="contact-email-error" hidden class={errorClass} data-error="email">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="mt-0.5 size-4 shrink-0"
+        >
+          <path fill-rule="evenodd" d={WARNING_PATH} clip-rule="evenodd"></path>
+        </svg>
+        <span>{errorText.get("email")}</span>
+      </p>
     </div>
   </div>
 
@@ -68,18 +175,92 @@ const labelClass = "block text-sm font-semibold text-ink-900";
     <label for="contact-subject" class={labelClass}>
       Subject
     </label>
-    <select id="contact-subject" name="subject" required class={fieldClass}>
+    <select
+      id="contact-subject"
+      name="subject"
+      required
+      aria-describedby="contact-subject-error"
+      class={fieldClass}
+      data-field="subject"
+    >
       {SUBJECTS.map((subject) => (
         <option value={subject}>{subject}</option>
       ))}
     </select>
+    <p id="contact-subject-error" hidden class={errorClass} data-error="subject">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="mt-0.5 size-4 shrink-0"
+      >
+        <path fill-rule="evenodd" d={WARNING_PATH} clip-rule="evenodd"></path>
+      </svg>
+      <span>{errorText.get("subject")}</span>
+    </p>
   </div>
 
   <div>
     <label for="contact-message" class={labelClass}>
       Message
     </label>
-    <textarea id="contact-message" name="message" rows="6" required class={fieldClass}></textarea>
+    <textarea
+      id="contact-message"
+      name="message"
+      rows="6"
+      required
+      minlength={MESSAGE_MIN}
+      maxlength={MESSAGE_MAX}
+      aria-describedby="contact-message-error"
+      class={fieldClass}
+      data-field="message"
+    ></textarea>
+    <p id="contact-message-error" hidden class={errorClass} data-error="message">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="mt-0.5 size-4 shrink-0"
+      >
+        <path fill-rule="evenodd" d={WARNING_PATH} clip-rule="evenodd"></path>
+      </svg>
+      <span>{errorText.get("message")}</span>
+    </p>
+  </div>
+
+  <div>
+    {/*
+      hCaptcha, rendered by the Web3Forms loader. It must sit inside the form:
+      hCaptcha injects its token as a field named `h-captcha-response`, which the
+      FormData payload then picks up on its own. `data-captcha` is what tells the
+      loader to apply the free-plan proxy site key.
+    */}
+    <div
+      class="h-captcha"
+      data-captcha="true"
+      data-theme="light"
+      data-captcha-widget
+      data-token-field={CAPTCHA_FIELD}
+    ></div>
+
+    <p id="contact-captcha-error" hidden class={errorClass} data-error="captcha">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="mt-0.5 size-4 shrink-0"
+      >
+        <path fill-rule="evenodd" d={WARNING_PATH} clip-rule="evenodd"></path>
+      </svg>
+      <span>{CAPTCHA_ERROR}</span>
+    </p>
+
+    <noscript>
+      <p class="mt-1.5 text-sm text-ink-600">
+        The anti-spam check needs JavaScript, so this form cannot be sent with it turned off.
+        {fallbackEmail ? ` Please email ${fallbackEmail} instead.` : ""}
+      </p>
+    </noscript>
   </div>
 
   <p class="text-sm text-ink-500">
@@ -90,7 +271,302 @@ const labelClass = "block text-sm font-semibold text-ink-900";
     for how form submissions are handled.
   </p>
 
-  <button type="submit" class="btn btn-primary w-full sm:w-auto">
-    Send message
-  </button>
+  <div>
+    <button
+      type="submit"
+      class="btn btn-primary w-full sm:w-auto"
+      disabled={!isConfigured}
+      data-submit
+    >
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="none"
+        class="hidden size-4 shrink-0 animate-spin motion-reduce:animate-none"
+        data-spinner
+      >
+        <circle
+          cx="10"
+          cy="10"
+          r="8"
+          stroke="currentColor"
+          stroke-opacity="0.3"
+          stroke-width="2"
+        ></circle>
+        <path
+          d="M18 10a8 8 0 0 0-8-8"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        ></path>
+      </svg>
+      <span data-submit-label>Send message</span>
+    </button>
+  </div>
+
+  {!isConfigured && (
+    <p class="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-medium text-red-800">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="mt-0.5 size-4 shrink-0"
+      >
+        <path fill-rule="evenodd" d={WARNING_PATH} clip-rule="evenodd" />
+      </svg>
+      <span>
+        This form is not configured yet, so it cannot send anything.
+        {fallbackEmail ? ` Please email ${fallbackEmail} instead.` : ""}
+      </span>
+    </p>
+  )}
+
+  {/*
+    One live region for every outcome, announced politely and given focus on
+    failure. The tone is carried by an icon and the wording, never colour alone.
+  */}
+  <p
+    hidden
+    tabindex="-1"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    class="flex items-start gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium"
+    data-status
+  >
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      class="mt-0.5 hidden size-4 shrink-0"
+      data-status-icon="success"
+    >
+      <path fill-rule="evenodd" d={TICK_PATH} clip-rule="evenodd"></path>
+    </svg>
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      class="mt-0.5 hidden size-4 shrink-0"
+      data-status-icon="error"
+    >
+      <path fill-rule="evenodd" d={WARNING_PATH} clip-rule="evenodd"></path>
+    </svg>
+    <span data-status-text></span>
+  </p>
 </form>
+
+{/*
+  Kept inline and unbundled: it is a third-party loader that has to run as-is,
+  and it is only pulled in on the page that actually carries the form.
+*/}
+<script is:inline async defer src={WEB3FORMS_CLIENT}></script>
+
+<script>
+  /**
+   * Progressive enhancement for the contact form: validate in-page, POST JSON
+   * to Web3Forms, and report the outcome without leaving the page. With this
+   * script absent the form still posts normally to the same endpoint.
+   *
+   * Nothing here touches gtag or dataLayer — field contents never reach GA4.
+   */
+  interface Web3FormsResponse {
+    success?: boolean;
+    message?: string;
+  }
+
+  type Tone = "success" | "error";
+
+  /** Status-region classes, swapped per outcome. */
+  const STATUS_TONE: Record<Tone, string[]> = {
+    // Brand rather than green: global.css reserves the semantic colours.
+    success: ["border-brand-200", "bg-brand-50", "text-brand-800"],
+    error: ["border-red-200", "bg-red-50", "text-red-800"],
+  };
+
+  const CAPTCHA_ERROR_SELECTOR = '[data-error="captcha"]';
+
+  const SUCCESS_TEXT = "Thanks — your message has been sent. We will reply by email.";
+  const FAILURE_TEXT =
+    "Your message could not be sent, and nothing you typed has been lost. Try again, or email us at the address below.";
+
+  type FormField = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
+  const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
+  const statusBox = form?.querySelector<HTMLElement>("[data-status]");
+  const statusText = form?.querySelector<HTMLElement>("[data-status-text]");
+  const submitButton = form?.querySelector<HTMLButtonElement>("[data-submit]");
+  const submitLabel = form?.querySelector<HTMLElement>("[data-submit-label]");
+  const spinner = form?.querySelector<SVGElement>("[data-spinner]");
+
+  if (form && statusBox && statusText && submitButton && submitLabel && spinner) {
+    // Re-bound as non-null locals, so the helpers below can close over them.
+    const contactForm: HTMLFormElement = form;
+    const status: HTMLElement = statusBox;
+    const statusMessage: HTMLElement = statusText;
+    const button: HTMLButtonElement = submitButton;
+    const label: HTMLElement = submitLabel;
+    const busyIcon: SVGElement = spinner;
+
+    const endpoint = contactForm.action;
+
+    /**
+     * Browser bubbles off, now that this script can show its own messages. Set
+     * here rather than in the markup so the no-JS path keeps native validation.
+     */
+    contactForm.noValidate = true;
+
+    const idleLabel = label.textContent ?? "Send message";
+    const fields = [...contactForm.querySelectorAll<FormField>("[data-field]")];
+
+    /** Guards against a second submit while one is already in flight. */
+    let sending = false;
+
+    const captchaWidget = contactForm.querySelector<HTMLElement>("[data-captcha-widget]");
+    const captchaError = contactForm.querySelector<HTMLElement>(CAPTCHA_ERROR_SELECTOR);
+
+    /**
+     * The token hCaptcha writes into the form once the challenge is solved.
+     * Empty until then, and empty again after a reset.
+     */
+    function captchaToken(): string {
+      const name = captchaWidget?.dataset.tokenField;
+      if (!name) return "";
+      const field = contactForm.elements.namedItem(name);
+      return field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement
+        ? field.value.trim()
+        : "";
+    }
+
+    /** Clears the solved challenge, since a token is only good for one submit. */
+    function resetCaptcha() {
+      const api = (window as unknown as { hcaptcha?: { reset: () => void } }).hcaptcha;
+      api?.reset();
+    }
+
+    /**
+     * True once the challenge is solved. Also covers hCaptcha failing to load
+     * at all: Web3Forms rejects a tokenless submission, so saying so here beats
+     * sending it and reporting a server error.
+     */
+    function validateCaptcha(): boolean {
+      const solved = captchaToken().length > 0;
+      if (captchaError) captchaError.hidden = solved;
+      if (!solved) {
+        (captchaWidget ?? captchaError)?.scrollIntoView({ block: "center" });
+        captchaWidget?.querySelector("iframe")?.focus();
+      }
+      return solved;
+    }
+
+    /** Shows or clears one field's error, in the markup and to assistive tech. */
+    function setFieldError(field: FormField, invalid: boolean) {
+      field.setAttribute("aria-invalid", String(invalid));
+      const message = contactForm.querySelector<HTMLElement>(
+        `[data-error="${field.dataset.field}"]`,
+      );
+      if (message) message.hidden = !invalid;
+    }
+
+    function showStatus(tone: Tone, text: string) {
+      status.classList.remove(...STATUS_TONE.success, ...STATUS_TONE.error);
+      status.classList.add(...STATUS_TONE[tone]);
+
+      for (const icon of status.querySelectorAll<SVGElement>("[data-status-icon]")) {
+        icon.classList.toggle("hidden", icon.dataset.statusIcon !== tone);
+      }
+
+      statusMessage.textContent = text;
+      status.hidden = false;
+    }
+
+    function setSending(active: boolean) {
+      sending = active;
+      button.disabled = active;
+      button.setAttribute("aria-busy", String(active));
+      busyIcon.classList.toggle("hidden", !active);
+      label.textContent = active ? "Sending…" : idleLabel;
+    }
+
+    /** Marks every invalid field and focuses the first one. False if any failed. */
+    function validate(): boolean {
+      let firstInvalid: FormField | null = null;
+
+      for (const field of fields) {
+        const valid = field.checkValidity();
+        setFieldError(field, !valid);
+        if (!valid && !firstInvalid) firstInvalid = field;
+      }
+
+      if (!firstInvalid) return true;
+      firstInvalid.focus();
+      return false;
+    }
+
+    // Once a field has been visited its error follows what is in it.
+    for (const field of fields) {
+      field.addEventListener("blur", () => setFieldError(field, !field.checkValidity()));
+      field.addEventListener("input", () => {
+        if (field.getAttribute("aria-invalid") === "true" && field.checkValidity()) {
+          setFieldError(field, false);
+        }
+      });
+    }
+
+    contactForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (sending) return;
+
+      status.hidden = true;
+      if (!validate()) return;
+      if (!validateCaptcha()) return;
+
+      /**
+       * Everything the form holds — access_key, from_name, the four fields, and
+       * the honeypot only if something ticked it. Sent as JSON so the browser
+       * stays on this page.
+       */
+      const payload: Record<string, string> = {};
+      for (const [key, value] of new FormData(contactForm).entries()) {
+        if (typeof value === "string") payload[key] = value;
+      }
+
+      setSending(true);
+
+      void (async () => {
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const result: Web3FormsResponse = await response
+            .json()
+            .catch((): Web3FormsResponse => ({}));
+
+          if (response.ok && result.success === true) {
+            // Cleared only on success, so a failed send never loses what was typed.
+            contactForm.reset();
+            for (const field of fields) setFieldError(field, false);
+            showStatus("success", SUCCESS_TEXT);
+          } else {
+            showStatus("error", FAILURE_TEXT);
+            status.focus();
+          }
+        } catch {
+          showStatus("error", FAILURE_TEXT);
+          status.focus();
+        } finally {
+          // Single-use either way: Web3Forms has already redeemed the token, and
+          // `form.reset()` does not reach inside the widget.
+          resetCaptcha();
+          setSending(false);
+        }
+      })();
+    });
+
+    // A page restored from the back/forward cache must not come back mid-send.
+    window.addEventListener("pageshow", () => setSending(false));
+  }
+</script>

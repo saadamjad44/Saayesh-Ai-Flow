@@ -62,4 +62,14 @@ export const INTEGRATIONS = {
   /** GA4 Measurement ID ("G-XXXXXXXXXX"). Loaded once per page by SeoHead. */
   ga4MeasurementId: "G-VFBKW7YSWG",
   searchConsoleVerification: "",
+  /**
+   * Web3Forms access key for the contact form, from the build environment
+   * (PUBLIC_WEB3FORMS_ACCESS_KEY — see .env.example).
+   *
+   * Public by design and inlined into the built HTML: the key only authorises
+   * delivery to the one inbox it was issued for and grants no account access.
+   * It is an environment variable so it can be rotated without a code change,
+   * not because it is a secret. Empty means the form renders disabled.
+   */
+  web3formsAccessKey: (import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY ?? "").trim(),
 } as const;

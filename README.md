@@ -52,7 +52,7 @@ Alongside the pillars: a homepage, a `/blog/` index generated from the registry 
 | Formatting    | Prettier `^3.9.6` + `prettier-plugin-astro`                                   |
 | Hosting       | Netlify (`netlify.toml`, `NODE_VERSION = "24"`)                               |
 
-Requires Node `>=22.12.0` (`engines` in `package.json`). No runtime JavaScript framework and no client-side data fetching: the only browser scripts are the navigation toggles, the search box, and GA4.
+Requires Node `>=22.12.0` (`engines` in `package.json`). No runtime JavaScript framework and no client-side data fetching: the only browser scripts are the navigation toggles, the search box, the contact form, and GA4.
 
 ---
 
@@ -65,7 +65,7 @@ src/
 │   └── images/           # Category images processed by astro:assets
 ├── components/
 │   ├── content/          # MDX building blocks (ComparisonTable, VerdictBox, FaqSection, …)
-│   ├── forms/            # ContactForm (Netlify Forms)
+│   ├── forms/            # ContactForm (Web3Forms)
 │   ├── layout/           # SiteHeader, SiteFooter, Breadcrumbs, ContentSidebar, SiteSearch
 │   └── seo/              # SeoHead
 ├── config/
@@ -107,6 +107,27 @@ All URLs use trailing slashes (`/ai-automation/`) in development and production 
 
 ---
 
+## Environment variables
+
+Copy `.env.example` to `.env` for local development, and set the same variables in the hosting build environment for production. `.env` is git-ignored; `.env.example` is committed and must never hold a real value.
+
+| Variable                      | Required | Purpose                                                                 |
+| ----------------------------- | -------- | ----------------------------------------------------------------------- |
+| `PUBLIC_WEB3FORMS_ACCESS_KEY` | Yes      | Web3Forms access key the contact form submits to (`ContactForm.astro`). |
+
+`PUBLIC_`-prefixed variables are inlined into the built HTML and JavaScript at build time, so they are public. Never put a secret in one.
+
+The contact form's hCaptcha check needs **no** environment variable: on the Web3Forms free plan it runs through Web3Forms' own proxy site key, and Web3Forms verifies the token server-side. There is no hCaptcha account and no secret key to hold. (Cloudflare Turnstile and reCAPTCHA v3 would need both, and are Starter-and-above features on [web3forms.com/pricing](https://web3forms.com/pricing).)
+
+A Web3Forms access key is public by design: it only authorises delivery to the one inbox it was issued for and grants no account access, which is why it belongs in the page markup. It is an environment variable so it can be rotated from the Web3Forms dashboard without a code change. With the variable unset, the build logs a warning and the contact form renders disabled with an email fallback instead of silently failing.
+
+Because it is read at build time, it has to be set wherever `npm run build` actually runs:
+
+- **Cloudflare builds from Git:** add it under **Workers & Pages → the project → Settings → Variables and Secrets** as a plain-text build variable for the Production (and Preview) environment, then trigger a redeploy. An existing deployment will not pick it up until it is rebuilt.
+- **Building locally and uploading (`wrangler deploy`):** the dashboard variable is never consulted. Put the key in the local `.env` instead, and rebuild before deploying.
+
+---
+
 ## Production / Deployment
 
 Netlify builds from GitHub: pushing to `main` triggers a build, and the pre-rendered output in `dist/` is published to [https://saayeshaiflow.com](https://saayeshaiflow.com).
@@ -120,7 +141,7 @@ Netlify builds from GitHub: pushing to `main` triggers a build, and the pre-rend
   NODE_VERSION = "24"
 ```
 
-Astro is configured for static output, so every page is pre-rendered HTML at build time; there is no server runtime. The contact form is picked up by Netlify Forms from the built HTML at deploy time. `netlify.toml` also holds the 301 rules that enforce the canonical apex hostname.
+Astro is configured for static output, so every page is pre-rendered HTML at build time; there is no server runtime. The contact form posts straight from the browser to [Web3Forms](https://web3forms.com), which emails the submission on — see [Environment variables](#environment-variables). `netlify.toml` also holds the 301 rules that enforce the canonical apex hostname.
 
 The canonical domain lives in one place: `SITE_DOMAIN` in `src/config/site.ts`. Canonical URLs, `og:url`, JSON-LD, the sitemap, the `robots.txt` sitemap line, and the internal-versus-external link test all derive from it.
 

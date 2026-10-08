@@ -58,7 +58,17 @@ const disclosurePath = getPage("affiliate-disclosure").path;
   <h2>Third-party services</h2>
   <ul>
     <li>
-      <strong>Netlify</strong> hosts the website and processes contact form submissions.
+      <strong>Cloudflare</strong> hosts and serves the website.
+    </li>
+    <li>
+      <strong>Web3Forms</strong> receives contact form submissions and emails them to us. The name,
+      email address, subject, and message you type are sent to Web3Forms when you submit the form.
+    </li>
+    <li>
+      <strong>hCaptcha</strong> provides the anti-spam check on the contact form, through Web3Forms.
+      Loading and completing that check sends your IP address and information about your browser and
+      interaction with the page to hCaptcha, and may set cookies in your browser. It runs only on
+      the contact page.
     </li>
     <li>
       <strong>Analytics:</strong> <ContentGap label="Analytics provider(s), if enabled at launch" />
