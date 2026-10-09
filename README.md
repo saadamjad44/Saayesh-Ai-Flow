@@ -121,10 +121,21 @@ The contact form's hCaptcha check needs **no** environment variable: on the Web3
 
 A Web3Forms access key is public by design: it only authorises delivery to the one inbox it was issued for and grants no account access, which is why it belongs in the page markup. It is an environment variable so it can be rotated from the Web3Forms dashboard without a code change. With the variable unset, the build logs a warning and the contact form renders disabled with an email fallback instead of silently failing.
 
-Because it is read at build time, it has to be set wherever `npm run build` actually runs:
+It is read at **build** time, not at request time, so it has to exist in the environment that runs `npm run build`. Cloudflare keeps build variables and runtime variables on separate screens, and a **runtime** variable is invisible to the build — that is the one mistake that produces a deployed page with an empty `access_key`:
 
-- **Cloudflare builds from Git:** add it under **Workers & Pages → the project → Settings → Variables and Secrets** as a plain-text build variable for the Production (and Preview) environment, then trigger a redeploy. An existing deployment will not pick it up until it is rebuilt.
-- **Building locally and uploading (`wrangler deploy`):** the dashboard variable is never consulted. Put the key in the local `.env` instead, and rebuild before deploying.
+- **Workers project (Workers Builds):** **Settings → Build → Variables and Secrets**. The similarly named **Settings → Runtime → Variables and Secrets** is the wrong screen — it injects values into the Worker at request time, which a pre-rendered static build never sees.
+- **Pages project (Git integration):** **Settings → Environment variables → Production** (and Preview, if preview deploys should work too). These are available to the build.
+- **Building locally and uploading (`wrangler deploy` / `wrangler pages deploy`):** no dashboard variable is consulted at all, because the build happened on your machine. Put the key in the local `.env` and rebuild before deploying.
+
+After adding it, trigger a **new deployment** — an existing one is already-built output and will not pick it up.
+
+To confirm a given deployment actually had it, open that deployment's build log and search for `PUBLIC_WEB3FORMS_ACCESS_KEY`. `ContactForm.astro` prints
+
+```
+[contact form] PUBLIC_WEB3FORMS_ACCESS_KEY is not set, so the contact form is rendered disabled.
+```
+
+during the build whenever the variable is missing. If that line is in the log, the build had no key, whatever the dashboard shows — check the spelling (case-sensitive, `PUBLIC_` prefix, no surrounding quotes) and that it is attached to the environment that built.
 
 ---
 
