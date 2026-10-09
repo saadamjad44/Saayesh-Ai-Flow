@@ -89,7 +89,13 @@ const errorText = new Map(FIELDS.map((field) => [field.name, field.error]));
 const CAPTCHA_ERROR = "Confirm you are human to send this message.";
 ---
 
-<form action={ENDPOINT} method="POST" class="not-prose card space-y-5 p-5 sm:p-7" data-contact-form>
+<form
+  action={ENDPOINT}
+  method="POST"
+  class="not-prose card space-y-5 p-5 sm:p-7"
+  data-contact-form
+  data-configured={String(isConfigured)}
+>
   <input type="hidden" name="access_key" value={accessKey} />
 
   {/*
@@ -393,13 +399,23 @@ const CAPTCHA_ERROR = "Confirm you are human to send this message.";
   type FormField = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
   const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
+
+  /**
+   * With no access key the server has already rendered the submit button
+   * disabled next to a single configuration notice, so the enhancement stays
+   * off entirely: nothing re-enables the button, no submit handler runs, and no
+   * second "could not be sent" message can appear for what is a build-time
+   * problem rather than a failed send.
+   */
+  const configured = form?.dataset.configured === "true";
+
   const statusBox = form?.querySelector<HTMLElement>("[data-status]");
   const statusText = form?.querySelector<HTMLElement>("[data-status-text]");
   const submitButton = form?.querySelector<HTMLButtonElement>("[data-submit]");
   const submitLabel = form?.querySelector<HTMLElement>("[data-submit-label]");
   const spinner = form?.querySelector<SVGElement>("[data-spinner]");
 
-  if (form && statusBox && statusText && submitButton && submitLabel && spinner) {
+  if (configured && form && statusBox && statusText && submitButton && submitLabel && spinner) {
     // Re-bound as non-null locals, so the helpers below can close over them.
     const contactForm: HTMLFormElement = form;
     const status: HTMLElement = statusBox;
