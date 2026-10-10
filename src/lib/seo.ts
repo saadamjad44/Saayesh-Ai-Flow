@@ -5,6 +5,7 @@
 import { getImage } from "astro:assets";
 
 import { SITE } from "@/config/site";
+import { AUTHOR } from "@/config/author";
 import { getPage, getParentPage, type SitePage } from "@/config/pages";
 import {
   BRAND_LOGO,
@@ -95,13 +96,24 @@ export async function getSocialImage(page?: SitePage): Promise<SocialImage> {
   return { url: absoluteUrl(optimized.src), alt, ...SOCIAL_IMAGE_SIZE };
 }
 
+/**
+ * Stable node identifiers, so the WebSite, the Organization behind it, and the
+ * Person who writes it are one entity each across the whole site rather than a
+ * fresh anonymous node on every page.
+ */
+const WEBSITE_ID = () => absoluteUrl("/#website");
+const ORGANIZATION_ID = () => absoluteUrl("/#organization");
+const AUTHOR_ID = () => absoluteUrl(`${AUTHOR.path}#person`);
+
 export function websiteSchema(): JsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": WEBSITE_ID(),
     name: SITE.name,
     url: absoluteUrl("/"),
     inLanguage: SITE.lang,
+    publisher: { "@id": ORGANIZATION_ID() },
   };
 }
 
@@ -118,6 +130,7 @@ export function websiteSchema(): JsonLd {
  */
 const organization = (): JsonLd => ({
   "@type": "Organization",
+  "@id": ORGANIZATION_ID(),
   name: SITE.name,
   url: absoluteUrl("/"),
   logo: absoluteUrl(BRAND_LOGO.src.src),
@@ -130,6 +143,44 @@ const organization = (): JsonLd => ({
  */
 export function organizationSchema(): JsonLd {
   return { "@context": "https://schema.org", ...organization() };
+}
+
+/**
+ * The site's one author, as a reference to the Person node the author page
+ * defines in full. Every article points at this same @id, so Google sees one
+ * person who wrote all of them rather than a separate namesake per page.
+ *
+ * Only `name` and `url` are repeated inline: enough to be useful on its own if
+ * the author page has not been crawled yet, and nothing that could contradict
+ * the fuller node. Nothing here is a credential.
+ */
+const author = (): JsonLd => ({
+  "@type": "Person",
+  "@id": AUTHOR_ID(),
+  name: AUTHOR.name,
+  url: absoluteUrl(AUTHOR.path),
+});
+
+/**
+ * The author page: a ProfilePage whose main entity is the Person every article
+ * credits. `description` is the owner's own factual role line and `worksFor` is
+ * the site's Organization — both already visible on the page. No jobTitle,
+ * award, credential, alumniOf, or sameAs is emitted, because the site states
+ * none of them.
+ */
+export function profilePageSchema(input: { path: string; description: string }): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    url: absoluteUrl(input.path),
+    inLanguage: SITE.lang,
+    mainEntity: {
+      ...author(),
+      description: input.description,
+      worksFor: { "@id": ORGANIZATION_ID() },
+    },
+    publisher: organization(),
+  };
 }
 
 export interface ArticleSchemaInput {
@@ -149,11 +200,17 @@ export function articleSchema(input: ArticleSchemaInput): JsonLd {
     headline: input.headline,
     description: input.description,
     image: input.image,
-    mainEntityOfPage: absoluteUrl(input.path),
+    mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(input.path) },
     datePublished: input.datePublished.toISOString(),
     dateModified: input.dateModified.toISOString(),
     inLanguage: SITE.lang,
-    author: organization(),
+    /**
+     * The person who wrote it, matching the visible byline on the page; the
+     * brand remains the publisher. Author and publisher are deliberately
+     * different entities now — an article is written by a named person, which
+     * is what the byline says and what Google asks an author field to carry.
+     */
+    author: author(),
     publisher: organization(),
   };
 }

@@ -43,6 +43,7 @@ export type PillarId = (typeof PILLAR_IDS)[number];
 const RESERVED_SEGMENTS: ReadonlySet<string> = new Set([
   "about",
   "affiliate-disclosure",
+  "author",
   "blog",
   "compare",
   "contact",
@@ -86,7 +87,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 18,
+  2: 19,
 };
 
 export const PAGES = [
@@ -252,6 +253,21 @@ export const PAGES = [
   // Phase 2 — Blog index: the chronological hub for every published article.
   // Article URLs stay under their pillar; this page only links to them.
   { id: "blog", title: "Blog", path: "/blog/", type: "core", phase: 2 },
+
+  // Phase 2 — the author page for the one person who writes the site, approved
+  // by the owner on 2026-10-09 as part of the technical SEO audit. It carries
+  // the Person entity that every article's `author` points at, so the visible
+  // byline on each guide has a real, crawlable page behind it. There is no
+  // /author/ index: one author needs no hub, and an empty one would be a thin
+  // page. `author` is a reserved top-level segment above, so no pillar can
+  // ever shadow this route.
+  {
+    id: "author-saad-amjad",
+    title: "Saad Amjad",
+    path: "/author/saad-amjad/",
+    type: "core",
+    phase: 2,
+  },
 
   // Phase 2A — Getting Started pillar (top-of-funnel hub)
   {
@@ -466,10 +482,6 @@ export function getParentPage(page: SitePage): SitePage | undefined {
   const parentId = page.parent ?? page.pillar;
   return parentId ? pagesById.get(parentId) : undefined;
 }
-
-export const NOINDEX_PATHS: ReadonlySet<string> = new Set(
-  PAGES.filter((page: SitePage) => page.noindex).map((page) => page.path),
-);
 
 const URL_PATTERN = /^\/(?:[a-z0-9]+(?:-[a-z0-9]+)*\/)*$/;
 

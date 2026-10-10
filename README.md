@@ -10,7 +10,7 @@ Practical, research-based guides to AI tools and workflows for solopreneurs and 
 
 - **Production:** [https://saayeshaiflow.com](https://saayeshaiflow.com)
 
-`saayeshaiflow.com` is the canonical hostname. `www.saayeshaiflow.com` and the earlier Netlify host both return a 301 to the apex (see `netlify.toml`), so every page is reachable at exactly one indexable URL.
+`saayeshaiflow.com` is the canonical hostname, and every page is reachable at exactly one indexable URL. Verified in production: `http://saayeshaiflow.com` → 301 → `https://saayeshaiflow.com`, `https://www.saayeshaiflow.com` → 301 → the apex, and a path without its trailing slash → 308 → the trailing-slash URL. Those host redirects are enforced by the hosting platform in front of the build (Cloudflare, see [Production / Deployment](#production--deployment)), not by anything in this repo; `netlify.toml` holds the equivalent rules for a Netlify deploy and is inert while the site is served from Cloudflare.
 
 ---
 
@@ -47,10 +47,10 @@ Alongside the pillars: a homepage, a `/blog/` index generated from the registry 
 | Language      | TypeScript `^6.0.3`, `astro/tsconfigs/strict`                                 |
 | Content       | `@astrojs/mdx` `^8.0.1` + Astro content collections                           |
 | Styling       | Tailwind CSS `^4.3.3` via `@tailwindcss/vite`, with `@tailwindcss/typography` |
-| Sitemap       | `@astrojs/sitemap` `^3.7.4`                                                   |
+| Sitemap       | `src/pages/sitemap.xml.ts` (own endpoint, one `/sitemap.xml`)                 |
 | Type checking | `@astrojs/check` `^0.9.10`                                                    |
 | Formatting    | Prettier `^3.9.6` + `prettier-plugin-astro`                                   |
-| Hosting       | Netlify (`netlify.toml`, `NODE_VERSION = "24"`)                               |
+| Hosting       | Cloudflare (`wrangler.jsonc`); `netlify.toml` kept for a Netlify deploy       |
 
 Requires Node `>=22.12.0` (`engines` in `package.json`). No runtime JavaScript framework and no client-side data fetching: the only browser scripts are the navigation toggles, the search box, the contact form, and GA4.
 
@@ -78,7 +78,7 @@ src/
 │   ├── articles/         # Cluster articles (MDX)
 │   └── pillars/          # Pillar hubs (MDX)
 ├── layouts/              # BaseLayout, PageLayout, EntryLayout
-├── lib/                  # content, seo, links, sidebar, search-index, sitemap-lastmod, format, ids
+├── lib/                  # content, seo, links, sidebar, search-index, format, ids
 ├── pages/                # Routes
 ├── styles/global.css     # Tailwind entry, theme tokens, base styles
 └── content.config.ts     # Collection schemas
@@ -141,7 +141,9 @@ during the build whenever the variable is missing. If that line is in the log, t
 
 ## Production / Deployment
 
-Netlify builds from GitHub: pushing to `main` triggers a build, and the pre-rendered output in `dist/` is published to [https://saayeshaiflow.com](https://saayeshaiflow.com).
+Production is served from **Cloudflare** (`wrangler.jsonc`, `pages_build_output_dir: "./dist"`): pushing to `main` triggers a build, and the pre-rendered output in `dist/` is published to [https://saayeshaiflow.com](https://saayeshaiflow.com). Response headers on the live site are Cloudflare's, and unknown URLs return a real `404` with `404.html` as the body.
+
+`netlify.toml` is kept for a Netlify deploy and is **not** in effect today — including its host-canonicalization redirects, which Cloudflare handles instead:
 
 ```toml
 [build]
@@ -152,7 +154,11 @@ Netlify builds from GitHub: pushing to `main` triggers a build, and the pre-rend
   NODE_VERSION = "24"
 ```
 
-Astro is configured for static output, so every page is pre-rendered HTML at build time; there is no server runtime. The contact form posts straight from the browser to [Web3Forms](https://web3forms.com), which emails the submission on — see [Environment variables](#environment-variables). `netlify.toml` also holds the 301 rules that enforce the canonical apex hostname.
+Astro is configured for static output, so every page is pre-rendered HTML at build time; there is no server runtime. The contact form posts straight from the browser to [Web3Forms](https://web3forms.com), which emails the submission on — see [Environment variables](#environment-variables).
+
+`public/_redirects` holds the few **path** redirects, in the format both Cloudflare Pages and Netlify read from the published directory: today, the old sitemap URLs (`/sitemap-index.xml`, `/sitemap-0.xml`) → `/sitemap.xml`. That file cannot match hostnames, so it is not where host rules go.
+
+Host canonicalization (HTTP → HTTPS, `www` → apex) lives in the hosting platform, not in the repo, so it has to be checked there rather than in a config file. One known imperfection: `http://www.saayeshaiflow.com` currently redirects in two hops (`→ https://www.…` → apex). Collapsing it to one hop needs a single-hop redirect rule in the Cloudflare dashboard.
 
 The canonical domain lives in one place: `SITE_DOMAIN` in `src/config/site.ts`. Canonical URLs, `og:url`, JSON-LD, the sitemap, the `robots.txt` sitemap line, and the internal-versus-external link test all derive from it.
 
@@ -164,9 +170,10 @@ Implemented in `src/lib/seo.ts`, `src/components/seo/SeoHead.astro`, and `astro.
 
 - **Canonical URLs** — absolute, built from `SITE.url`; omitted on pages outside the registry (404).
 - **Meta and social tags** — title, description, a robots directive (`index, follow, max-image-preview:large`, or `noindex, follow`), Open Graph, and Twitter card tags with a build-optimized 1200×675 preview image.
-- **Structured data** — `WebSite` and `Organization` (homepage), `Article` (cluster articles), `CollectionPage` with an `ItemList` (pillar hubs), `FAQPage` (generated from FAQ frontmatter, where a page has one), and `BreadcrumbList` (any page with a trail). Serialized with `</script>` breakout protection.
+- **Structured data** — `WebSite` and `Organization` (homepage), `Article` (cluster articles), `WebApplication` (tool pages), `CollectionPage` with an `ItemList` (pillar hubs and /blog/), `ProfilePage` with a `Person` (the author page), `FAQPage` (generated from FAQ frontmatter, where a page has one), and `BreadcrumbList` (any page with a trail). The `WebSite`, `Organization`, and author `Person` nodes carry stable `@id`s (`/#website`, `/#organization`, `/author/saad-amjad/#person`) and reference each other, so each is one entity site-wide. Serialized with `</script>` breakout protection.
 - **Breadcrumbs** — rendered from the registry (Home → pillar → page) and mirrored in structured data.
-- **Sitemap** — `@astrojs/sitemap` generates `/sitemap-index.xml`, filtered to exclude the noindexed legal pages. `<lastmod>` comes from each entry's `updatedDate` in frontmatter, read by `src/lib/sitemap-lastmod.ts`; pages with no authored date (home, about, contact) get no `lastmod` rather than an invented one.
+- **Byline and author** — every entry page shows "By Saad Amjad" linked to `/author/saad-amjad/`, beside the entry's own last-updated and pricing-verified dates. The same person is the `author` of the `Article` schema. `src/config/author.ts` holds the one copy of the name, path, role line, and owner-supplied bio, which the About page and the author page both render.
+- **Sitemap** — `src/pages/sitemap.xml.ts` generates one `/sitemap.xml` from the page registry, intersected with the published content collections, excluding the noindexed legal pages (and the 404 page, which is not in the registry). `<lastmod>` is each entry's `updatedDate` from frontmatter; pages with no authored date (home, about, contact, blog, the author page) get no `lastmod` rather than an invented one. `@astrojs/sitemap` was removed: it can only write a sitemap _index_ and has no option for a single `/sitemap.xml`.
 - **robots.txt** — generated at build time so the sitemap URL always matches `SITE.url`. Noindexed pages are deliberately not disallowed, so crawlers can read their noindex directive.
 - **Internal linking** — pillar hubs link down to their clusters, articles link across to siblings, and every pillar and article page carries a contextual sidebar built from the registry. Nothing is hand-listed.
 - **Outbound links** — `src/lib/links.ts` holds the one rule: editorial source links get no `rel` or `target`, and commercial destinations get `rel="sponsored nofollow"`. It is applied through `ContentLink.astro`, which the pillar and article routes map Markdown's `a` element to, so plain `[text](url)` links are covered too. Internal links are never touched. Affiliate hosts go in `SPONSORED_HOSTS` when a programme is actually live; it is currently empty.
@@ -227,10 +234,10 @@ Skip-to-content link, `aria-current` on active navigation links, `aria-expanded`
 
 Derived from the page registry, the content collections, and the current build:
 
-- **33 pages** in the registry — 6 pillar hubs, 20 cluster articles, 4 core pages (home, blog, about, contact), and 3 noindexed legal pages.
-- **34 HTML files** built, which is the 33 registry pages plus the 404 page.
-- **30 URLs** in the XML sitemap — the registry pages minus the 3 noindexed legal pages.
-- **26 MDX content entries**, with no drafts.
+- **36 pages** in the registry — 6 pillar hubs, 21 cluster articles, 1 interactive tool, 5 core pages (home, blog, about, contact, author), and 3 noindexed legal pages.
+- **37 HTML files** built, which is the 36 registry pages plus the 404 page.
+- **33 URLs** in `/sitemap.xml` — the registry pages minus the 3 noindexed legal pages.
+- **28 MDX content entries**, with no drafts.
 
 These numbers change whenever a page is added. `npm run build` prints the page count, and `src/config/pages.ts` is the source of truth.
 

@@ -26,11 +26,12 @@ import FeaturedImage from "@/components/content/FeaturedImage.astro";
 import LastUpdated from "@/components/content/LastUpdated.astro";
 import RelatedPages, { type RelatedPage } from "@/components/content/RelatedPages.astro";
 import ContentSidebar from "@/components/layout/ContentSidebar.astro";
+import { AUTHOR } from "@/config/author";
 import type { MediaId } from "@/config/media";
 import { getPage } from "@/config/pages";
 import type { EntryCollection } from "@/lib/content";
 import { getContentSidebar } from "@/lib/sidebar";
-import type { JsonLd } from "@/lib/seo";
+import { absoluteUrl, type JsonLd } from "@/lib/seo";
 
 interface Props {
   entry: CollectionEntry<EntryCollection>;
@@ -49,6 +50,20 @@ const { data } = entry;
 
 const currentPath = Astro.url.pathname;
 const sidebar = await getContentSidebar(getPage(data.pageId));
+
+/**
+ * Article-only Open Graph tags, from the entry's own dates and the author page.
+ * The same values the visible byline shows and the Article schema carries, so
+ * an og: tag can never disagree with either.
+ */
+const openGraphArticle =
+  ogType === "article"
+    ? {
+        publishedTime: data.publishedDate.toISOString(),
+        modifiedTime: data.updatedDate.toISOString(),
+        authorUrl: absoluteUrl(AUTHOR.path),
+      }
+    : undefined;
 ---
 
 <PageLayout
@@ -59,6 +74,7 @@ const sidebar = await getContentSidebar(getPage(data.pageId));
   eyebrow={eyebrow}
   intro={data.description}
   ogType={ogType}
+  article={openGraphArticle}
   jsonLd={jsonLd}
 >
   <Fragment slot="meta">

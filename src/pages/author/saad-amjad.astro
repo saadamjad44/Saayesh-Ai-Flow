@@ -1,0 +1,122 @@
+---
+/**
+ * /author/saad-amjad/ — the author page behind the byline on every guide.
+ *
+ * Everything on it is already published elsewhere on the site: the name and
+ * location come from OWNER in src/config/site.ts, the background paragraphs
+ * from AUTHOR in src/config/author.ts (the same text the About page renders),
+ * and the research approach is a summary of the About page's editorial process
+ * with a link to it rather than a second, divergent copy. No qualification,
+ * employer, date, award, certification, or testing claim is added here.
+ *
+ * The guide list is generated from the page registry and the published
+ * collections, exactly as /blog/ is, so it can never list an unbuilt page — but
+ * it is grouped by category rather than chronological, because the question
+ * this page answers is "what does this person cover", not "what is newest".
+ */
+import PageLayout from "@/layouts/PageLayout.astro";
+import { AUTHOR } from "@/config/author";
+import { PILLAR_NAV } from "@/config/navigation";
+import { getPage } from "@/config/pages";
+import { OWNER, SITE } from "@/config/site";
+import { getPublishedEntries } from "@/lib/content";
+import { profilePageSchema } from "@/lib/seo";
+
+const page = getPage("author-saad-amjad");
+
+const [pillars, articles, tools] = await Promise.all([
+  getPublishedEntries("pillars"),
+  getPublishedEntries("articles"),
+  getPublishedEntries("tools"),
+]);
+
+/** Pillar id → its published hub, for the category headings below. */
+const hubs = new Map(pillars.map(({ entry, page: hub }) => [hub.id, { entry, page: hub }]));
+
+/** Published guides grouped by category, in nav order; empty groups dropped. */
+const groups = PILLAR_NAV.map((section) => hubs.get(section.pillar))
+  .filter((hub): hub is NonNullable<typeof hub> => hub !== undefined)
+  .map((hub) => ({
+    title: hub.entry.data.title,
+    path: hub.page.path,
+    guides: articles
+      .filter(({ page: article }) => article.pillar === hub.page.id)
+      .map(({ entry, page: article }) => ({ title: entry.data.title, path: article.path })),
+  }))
+  .filter((group) => group.guides.length > 0);
+
+const blogPath = getPage("blog").path;
+const aboutPath = getPage("about").path;
+const contactPath = getPage("contact").path;
+
+const description = `${AUTHOR.name} runs ${SITE.name} and writes its guides to AI tools, automation, prompts, and small business workflows. Background, research approach, and published articles.`;
+---
+
+<PageLayout
+  pageId="author-saad-amjad"
+  title={`${AUTHOR.name}, Author at ${SITE.name}`}
+  heading={AUTHOR.name}
+  eyebrow="Author"
+  description={description}
+  intro={AUTHOR.role}
+  jsonLd={[profilePageSchema({ path: page.path, description: AUTHOR.role })]}
+>
+  <h2>Background</h2>
+  {AUTHOR.bio.map((paragraph) => (
+    <p>{paragraph}</p>
+  ))}
+  {OWNER.location && (
+    <p>
+      He is based in {OWNER.location}, and runs {SITE.name} himself — the site has no other writers,
+      so every guide on it is his.
+    </p>
+  )}
+
+  <h2>How these guides are researched</h2>
+  <p>
+    The guides here are research-based. They work from publicly available information — official
+    product documentation, pricing pages, and product announcements — summarized in our own words,
+    and they say so on the page. Where a guide quotes prices, it shows the date those prices were
+    checked, and where it has not been hands-on tested, it carries no scores. The full editorial
+    process, including how testing is labelled and how the site makes money, is on the{" "}
+    <a href={aboutPath}>About and editorial process page</a>.
+  </p>
+  <p>
+    Found something out of date or wrong? Please say so through the{" "}
+    <a href={contactPath}>contact page</a> and choose “Correction” as the subject.
+  </p>
+
+  <h2>Published guides</h2>
+  <p>
+    Every guide below is by {AUTHOR.name}, grouped by category. The{" "}
+    <a href={blogPath}>blog index</a> lists the same guides newest first.
+  </p>
+
+  {groups.map((group) => (
+    <>
+      <h3>
+        <a href={group.path}>{group.title}</a>
+      </h3>
+      <ul>
+        {group.guides.map((guide) => (
+          <li>
+            <a href={guide.path}>{guide.title}</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  ))}
+
+  {tools.length > 0 && (
+    <>
+      <h3>Free tools</h3>
+      <ul>
+        {tools.map(({ entry, page: tool }) => (
+          <li>
+            <a href={tool.path}>{entry.data.heading ?? entry.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</PageLayout>

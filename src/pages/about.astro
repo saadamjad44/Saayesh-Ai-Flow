@@ -5,6 +5,7 @@
  */
 import PageLayout from "@/layouts/PageLayout.astro";
 import OwnerDetail from "@/components/content/OwnerDetail.astro";
+import { AUTHOR } from "@/config/author";
 import { SITE } from "@/config/site";
 import { getPage, PILLAR_IDS } from "@/config/pages";
 import { SCORE_CATEGORIES } from "@/config/editorial";
@@ -44,16 +45,16 @@ const pillars = PILLAR_IDS.map((id) => getPage(id));
   <p>
     {SITE.name} is run by <OwnerDetail field="name" />, based in <OwnerDetail field="location" />.
   </p>
+  {/*
+    The same owner-supplied background the author page shows, from AUTHOR in
+    src/config/author.ts, so the two pages can never describe him differently.
+  */}
+  {AUTHOR.bio.map((paragraph) => (
+    <p>{paragraph}</p>
+  ))}
   <p>
-    Saad Amjad is a Full Stack Web Developer specializing in React.js, Node.js, and AI tools
-    integration. He has hands-on experience building web applications, including e-commerce
-    platforms, task management systems, and AI-powered developer tools.
-  </p>
-  <p>
-    His work combines modern web development with practical AI integration, including REST APIs,
-    authentication, prompt engineering, and AI-powered workflows. He also has experience with SEO
-    basics, responsive web design, and modern development tools such as Git, GitHub, Postman, and VS
-    Code.
+    He writes every guide published here. See his <a href={AUTHOR.path}>author page</a> for the full
+    list.
   </p>
 
   <h2>How we research</h2>

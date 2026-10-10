@@ -7,6 +7,13 @@
 
 # Canonical host enforcement.
 #
+# NOT IN EFFECT TODAY. Production is served from Cloudflare (see wrangler.jsonc
+# and the README), which does not read this file, and the host redirects below
+# are configured there instead — verified live: http apex -> https apex (301)
+# and https://www.saayeshaiflow.com -> apex (301). These rules are kept so a
+# Netlify deploy would still canonicalize correctly; change them together with
+# the Cloudflare rules, never in isolation.
+#
 # SITE_DOMAIN in src/config/site.ts is the apex, saayeshaiflow.com, and every
 # canonical URL and sitemap entry points there. These rules make the network
 # agree with that: any other hostname serving this build is 301'd to the apex

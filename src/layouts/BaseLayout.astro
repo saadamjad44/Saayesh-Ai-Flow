@@ -10,7 +10,7 @@
  * the body into a scroll container and stop the sticky header from sticking.
  */
 import "@/styles/global.css";
-import SeoHead from "@/components/seo/SeoHead.astro";
+import SeoHead, { type OpenGraphArticle } from "@/components/seo/SeoHead.astro";
 import SiteHeader from "@/components/layout/SiteHeader.astro";
 import SiteSearch from "@/components/layout/SiteSearch.astro";
 import SiteFooter from "@/components/layout/SiteFooter.astro";
@@ -26,10 +26,12 @@ interface Props {
   /** Forces noindex. Registry pages marked `noindex` are always noindexed. */
   noindex?: boolean;
   ogType?: "website" | "article";
+  /** Article-only Open Graph tags, for `ogType: "article"` pages. */
+  article?: OpenGraphArticle;
   jsonLd?: readonly JsonLd[];
 }
 
-const { title, description, pageId, noindex = false, ogType, jsonLd = [] } = Astro.props;
+const { title, description, pageId, noindex = false, ogType, article, jsonLd = [] } = Astro.props;
 
 const page = pageId ? getPage(pageId) : undefined;
 const currentPath = Astro.url.pathname;
@@ -56,6 +58,7 @@ const socialImage = await getSocialImage(page);
       canonicalPath={page?.path}
       noindex={noindex || page?.noindex === true || !page}
       ogType={ogType}
+      article={article}
       image={socialImage}
       jsonLd={schemas}
     />
@@ -75,7 +78,7 @@ const socialImage = await getSocialImage(page);
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="sitemap" href="/sitemap.xml" />
   </head>
   <body class="flex min-h-screen flex-col overflow-x-clip bg-paper text-ink-700 antialiased">
     <a

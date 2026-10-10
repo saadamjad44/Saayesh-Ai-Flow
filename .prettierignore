@@ -7,3 +7,7 @@ AGENTS.md
 skills/
 website-blueprint.jsx
 revised-blueprint-phase1.jsx
+
+# Cloudflare deployment config. Prettier would add a trailing comma (valid JSONC,
+# but this file is read by the deploy tooling, not by us), so it is left alone.
+wrangler.jsonc

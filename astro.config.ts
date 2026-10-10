@@ -1,16 +1,11 @@
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
-import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
 import { SITE, isPlaceholderDomain } from "./src/config/site";
-import { NOINDEX_PATHS, assertValidPageRegistry } from "./src/config/pages";
-import { contentLastmodByPath } from "./src/lib/sitemap-lastmod";
+import { assertValidPageRegistry } from "./src/config/pages";
 
 assertValidPageRegistry();
-
-/** Registry path → authored update date, for sitemap <lastmod>. */
-const lastmodByPath = contentLastmodByPath();
 
 if (isPlaceholderDomain) {
   console.warn(
@@ -26,21 +21,14 @@ export default defineConfig({
   build: {
     format: "directory",
   },
-  integrations: [
-    mdx(),
-    sitemap({
-      // Noindexed legal pages stay out of the XML sitemap.
-      filter: (page) => !NOINDEX_PATHS.has(new URL(page).pathname),
-      /**
-       * <lastmod> from the page's own `updatedDate`. Pages with no authored date
-       * are emitted unchanged rather than given an invented one.
-       */
-      serialize: (item) => {
-        const lastmod = lastmodByPath.get(new URL(item.url).pathname);
-        return lastmod ? { ...item, lastmod } : item;
-      },
-    }),
-  ],
+  /**
+   * The XML sitemap is src/pages/sitemap.xml.ts, not @astrojs/sitemap: the
+   * integration can only write a sitemap *index* (/sitemap-index.xml plus
+   * /sitemap-0.xml) and has no option for a single /sitemap.xml, which is the
+   * URL Search Console and every other tool expect. The endpoint builds the
+   * same list from the page registry and the content collections.
+   */
+  integrations: [mdx()],
   vite: {
     plugins: [tailwindcss()],
   },

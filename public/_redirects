@@ -1,0 +1,10 @@
+# Path redirects, in the format both Cloudflare Pages and Netlify read from the
+# published output directory. Host canonicalization (HTTP -> HTTPS, www -> apex)
+# is NOT here: this file cannot match hostnames, so that stays in the hosting
+# platform's own rules — see the README.
+#
+# The sitemap used to be a sitemap index at /sitemap-index.xml (@astrojs/sitemap)
+# and is now the single /sitemap.xml. This keeps the old URL working for anything
+# that already fetched it, instead of turning it into a 404.
+/sitemap-index.xml  /sitemap.xml  301
+/sitemap-0.xml      /sitemap.xml  301
