@@ -1,20 +1,34 @@
 ---
 /**
- * Shared page shell: SEO head, skip link, header, search, breadcrumbs, main, footer.
+ * Shared page shell: SEO head, font preloads, skip link, header, main, footer.
+ * Content search lives inside the header now (see SearchBox), so there is no
+ * separate search band under it.
  *
  * Registry pages pass `pageId`; the canonical URL, noindex flag, and
  * breadcrumbs then come from src/config/pages.ts. Pages outside the registry
  * (only the 404 page) omit `pageId` and are always noindexed with no canonical.
  *
+ * The BreadcrumbList JSON-LD is emitted here, but the *visible* trail is not:
+ * it is rendered by each page template inside that page's own header, so it
+ * lines up with the measured column instead of a container of its own. Both are
+ * built from getBreadcrumbs(), so the trail and the schema always match.
+ *
  * The body uses `overflow-x-clip`, not `overflow-x-hidden`: `hidden` would turn
  * the body into a scroll container and stop the sticky header from sticking.
  */
 import "@/styles/global.css";
+/**
+ * The two latin font subsets every page needs for its first paint, imported for
+ * their hashed build URLs so they can be preloaded. The latin-extended and
+ * monospace faces are deliberately not preloaded: `unicode-range` means the
+ * extended files are only fetched by a page that needs those glyphs, and the
+ * monospace face is used for small labels well after first paint.
+ */
+import displayFontUrl from "@/assets/fonts/plus-jakarta-sans-latin.woff2?url";
+import bodyFontUrl from "@/assets/fonts/inter-latin.woff2?url";
 import SeoHead, { type OpenGraphArticle } from "@/components/seo/SeoHead.astro";
 import SiteHeader from "@/components/layout/SiteHeader.astro";
-import SiteSearch from "@/components/layout/SiteSearch.astro";
 import SiteFooter from "@/components/layout/SiteFooter.astro";
-import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
 import { SITE } from "@/config/site";
 import { getPage, type PageId } from "@/config/pages";
 import { breadcrumbSchema, getBreadcrumbs, getSocialImage, type JsonLd } from "@/lib/seo";
@@ -52,6 +66,14 @@ const socialImage = await getSocialImage(page);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/*
+      Self-hosted fonts, so there is no third-party connection to open and no
+      external stylesheet in front of the first paint. Both files are
+      same-origin but still need `crossorigin`: fonts are always fetched in
+      CORS mode, and a preload without it would be fetched twice.
+    */}
+    <link rel="preload" href={displayFontUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bodyFontUrl} as="font" type="font/woff2" crossorigin />
     <SeoHead
       title={title}
       description={description}
@@ -89,8 +111,6 @@ const socialImage = await getSocialImage(page);
     </a>
 
     <SiteHeader currentPath={currentPath} />
-    <SiteSearch />
-    <Breadcrumbs items={breadcrumbs} />
 
     <main id="main-content" tabindex="-1" class="flex-1 focus:outline-none">
       <slot />

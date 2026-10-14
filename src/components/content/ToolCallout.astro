@@ -29,13 +29,13 @@ const labelId = id ?? headingId(linkText, "free-tool");
 
 <aside
   aria-labelledby={labelId}
-  class="callout not-prose my-8 border-brand-200 border-l-brand-600 bg-brand-50 px-5 py-5 sm:px-6"
+  class="callout not-prose my-8 border-accent-200 border-l-accent-600 bg-accent-50 px-5 py-5 sm:px-6"
 >
-  <p class="eyebrow">Free tool</p>
-  <p id={labelId} class="mt-1.5 text-lg font-bold tracking-display">
+  <p class="eyebrow eyebrow-accent">Free tool</p>
+  <p id={labelId} class="mt-1.5 font-display text-lg font-bold tracking-tight">
     <a
       href={page.path}
-      class="inline-flex items-baseline gap-1.5 text-brand-800 underline decoration-brand-300 underline-offset-[3px] hover:text-brand-900 hover:decoration-current"
+      class="inline-flex items-baseline gap-1.5 text-accent-800 underline decoration-accent-200 underline-offset-[3px] transition-colors duration-180 ease-ui hover:decoration-current motion-reduce:transition-none"
     >
       {linkText}
       <svg

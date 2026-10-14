@@ -1,0 +1,377 @@
+---
+/**
+ * Site content search. Mounted more than once per page: compactly in the
+ * header, and at full size in the homepage hero.
+ *
+ * Markup follows the ARIA combobox pattern — the input owns `aria-expanded`,
+ * `aria-controls`, and `aria-activedescendant`; results are options in a
+ * listbox. Escape closes, Arrow keys move, Enter opens the active result.
+ *
+ * Every instance needs its own `id` because the ARIA relationships are
+ * id-based; the script below wires each `[data-search-root]` independently and
+ * they share one download of the index.
+ *
+ * The whole component is hidden until the script runs (`data-search-shell` is
+ * rendered `hidden`), so a visitor with scripting off never sees a box that
+ * could not work. Nothing indexable lives in here — the crawlable routes to
+ * every page are the header nav, the footer, /blog/, and the contextual
+ * sidebars — so hiding it costs nothing in discoverability.
+ */
+interface Props {
+  /** Unique per instance on the page, e.g. "header" or "hero". */
+  id: string;
+  /** "compact" for the header strip, "hero" for the homepage. */
+  variant?: "compact" | "hero";
+  placeholder?: string;
+  /** Accessible name for the search landmark, e.g. "Search guides". */
+  label?: string;
+  class?: string;
+}
+
+const {
+  id,
+  variant = "compact",
+  placeholder = "Search guides, tools and prompts...",
+  label = "Search Saayesh AI Flow",
+  class: className,
+} = Astro.props;
+
+const inputId = `search-${id}-input`;
+const listboxId = `search-${id}-listbox`;
+const isHero = variant === "hero";
+---
+
+<div
+  role="search"
+  aria-label={label}
+  class:list={["relative", className]}
+  data-search-shell
+  data-search-root
+  data-search-id={id}
+  hidden
+>
+  <label for={inputId} class="sr-only">
+    {label}
+  </label>
+
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    class:list={[
+      "pointer-events-none absolute top-1/2 -translate-y-1/2 text-ink-400",
+      isHero ? "left-4 size-5 sm:left-5 sm:size-6" : "left-3 size-4.5",
+    ]}
+  >
+    <path
+      fill-rule="evenodd"
+      d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+      clip-rule="evenodd"
+    ></path>
+  </svg>
+
+  <input
+    id={inputId}
+    type="search"
+    role="combobox"
+    placeholder={placeholder}
+    autocomplete="off"
+    spellcheck="false"
+    aria-autocomplete="list"
+    aria-expanded="false"
+    aria-controls={listboxId}
+    class:list={[
+      "w-full border border-ink-200 bg-surface text-ink-900 transition-[border-color,box-shadow] duration-180 ease-ui focus:border-brand-400 focus:outline-none motion-reduce:transition-none",
+      isHero
+        ? "rounded-xl py-3.5 pr-4 pl-12 text-base shadow-panel hover:border-ink-300 sm:py-4 sm:pl-14 sm:text-lg"
+        : "rounded-lg py-2 pr-3 pl-9.5 text-sm shadow-card hover:border-ink-300",
+    ]}
+    data-search-input
+  />
+
+  {/* Keyboard hint, desktop only — a phone has no "/" to press. */}
+  {!isHero && (
+    <kbd
+      aria-hidden="true"
+      class="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 rounded border border-ink-200 bg-ink-50 px-1.5 py-0.5 font-mono text-[0.625rem] font-medium text-ink-500 lg:block"
+      data-search-hint
+    >
+      /
+    </kbd>
+  )}
+
+  <div
+    hidden
+    class:list={[
+      "absolute inset-x-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-ink-200 bg-surface shadow-menu",
+      isHero && "text-left",
+    ]}
+    data-search-panel
+  >
+    <p class="hidden px-4 py-6 text-center text-sm text-ink-500" data-search-empty></p>
+    <ul
+      id={listboxId}
+      role="listbox"
+      aria-label="Search results"
+      class="max-h-[min(26rem,60vh)] overflow-y-auto overscroll-contain py-1.5"
+      data-search-list
+    ></ul>
+  </div>
+
+  {/* Result count for screen readers, announced without moving focus. */}
+  <p role="status" aria-live="polite" class="sr-only" data-search-status></p>
+</div>
+
+<script>
+  import {
+    INDEX_URL,
+    prepareDocs,
+    searchDocs,
+    type ScorableDoc,
+    type SearchDoc,
+  } from "@/lib/search";
+
+  const DEBOUNCE_MS = 120;
+
+  /** One download of the index, shared by every box on the page. */
+  let docs: ScorableDoc[] | null = null;
+  let loading: Promise<void> | null = null;
+
+  function loadIndex(): Promise<void> {
+    loading ??= fetch(INDEX_URL)
+      .then((response) => (response.ok ? response.json() : []))
+      .then((raw: SearchDoc[]) => {
+        docs = prepareDocs(Array.isArray(raw) ? raw : []);
+      })
+      .catch(() => {
+        docs = [];
+      });
+    return loading;
+  }
+
+  /** Wires one search box. Called once per `[data-search-root]` on the page. */
+  function mountSearch(root: HTMLElement) {
+    const inputEl = root.querySelector<HTMLInputElement>("[data-search-input]");
+    const panelEl = root.querySelector<HTMLElement>("[data-search-panel]");
+    const listEl = root.querySelector<HTMLUListElement>("[data-search-list]");
+    const emptyEl = root.querySelector<HTMLElement>("[data-search-empty]");
+    const statusEl = root.querySelector<HTMLElement>("[data-search-status]");
+    const hint = root.querySelector<HTMLElement>("[data-search-hint]");
+    const instanceId = root.dataset.searchId ?? "search";
+
+    if (!inputEl || !panelEl || !listEl || !emptyEl || !statusEl) return;
+
+    // Re-bound as non-null locals, so the helpers below can close over them.
+    const input: HTMLInputElement = inputEl;
+    const panel: HTMLElement = panelEl;
+    const list: HTMLUListElement = listEl;
+    const empty: HTMLElement = emptyEl;
+    const status: HTMLElement = statusEl;
+
+    // Rendered hidden so no-JS visitors never see a box that cannot work.
+    root.hidden = false;
+
+    let results: SearchDoc[] = [];
+    let activeIndex = -1;
+    let debounce: number | undefined;
+
+    /** One result row. Built as nodes, so result text is never parsed as HTML. */
+    function renderOption(doc: SearchDoc, index: number): HTMLLIElement {
+      const li = document.createElement("li");
+      li.setAttribute("role", "presentation");
+
+      const link = document.createElement("a");
+      link.id = `search-${instanceId}-option-${index}`;
+      link.href = doc.url;
+      link.setAttribute("role", "option");
+      link.setAttribute("aria-selected", "false");
+      link.className =
+        "block scroll-my-1.5 rounded-lg px-3 py-2.5 aria-selected:bg-brand-50 hover:bg-ink-50";
+
+      const head = document.createElement("span");
+      head.className = "flex items-baseline justify-between gap-3";
+
+      const title = document.createElement("span");
+      title.className = "font-display text-[0.9375rem] font-bold text-ink-900";
+      title.textContent = doc.title;
+
+      const category = document.createElement("span");
+      category.className =
+        "shrink-0 font-mono text-[0.625rem] font-medium tracking-[0.08em] text-ink-500 uppercase";
+      category.textContent = doc.category;
+
+      head.append(title, category);
+
+      const description = document.createElement("span");
+      description.className = "mt-0.5 line-clamp-2 text-sm leading-snug text-ink-600";
+      description.textContent = doc.description;
+
+      link.append(head, description);
+      li.append(link);
+      return li;
+    }
+
+    const options = () => [...list.querySelectorAll<HTMLAnchorElement>('[role="option"]')];
+
+    function setActive(index: number) {
+      const items = options();
+      activeIndex = items.length === 0 ? -1 : index;
+
+      items.forEach((item, i) => item.setAttribute("aria-selected", String(i === activeIndex)));
+
+      const active = items[activeIndex];
+      if (active) {
+        input.setAttribute("aria-activedescendant", active.id);
+        active.scrollIntoView({ block: "nearest" });
+      } else {
+        input.removeAttribute("aria-activedescendant");
+      }
+    }
+
+    function close() {
+      panel.hidden = true;
+      input.setAttribute("aria-expanded", "false");
+      input.removeAttribute("aria-activedescendant");
+      activeIndex = -1;
+    }
+
+    function render(query: string) {
+      results = docs ? searchDocs(docs, query) : [];
+      list.replaceChildren(...results.map(renderOption));
+
+      const hasQuery = query.trim().length > 0;
+      const noResults = hasQuery && results.length === 0;
+
+      empty.classList.toggle("hidden", !noResults);
+      if (noResults) empty.textContent = `No results for “${query.trim()}”. Try another word.`;
+
+      if (!hasQuery) {
+        close();
+        status.textContent = "";
+        return;
+      }
+
+      panel.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+      setActive(-1);
+
+      status.textContent = noResults
+        ? "No results"
+        : `${results.length} result${results.length === 1 ? "" : "s"}`;
+    }
+
+    /** Loads the index if needed, then renders the current query. */
+    async function update() {
+      if (input.value.trim().length === 0) {
+        render("");
+        return;
+      }
+      if (!docs) await loadIndex();
+      // The box may have been cleared or retyped while the index downloaded.
+      render(input.value);
+    }
+
+    // Warm the index on first focus so the first keystroke already has it.
+    input.addEventListener("focus", () => void loadIndex(), { once: true });
+    input.addEventListener("focus", () => hint?.classList.add("lg:hidden"));
+    input.addEventListener("blur", () => hint?.classList.remove("lg:hidden"));
+
+    input.addEventListener("input", () => {
+      window.clearTimeout(debounce);
+      debounce = window.setTimeout(() => void update(), DEBOUNCE_MS);
+    });
+
+    input.addEventListener("keydown", (event) => {
+      const count = results.length;
+
+      switch (event.key) {
+        case "ArrowDown":
+          if (count === 0) return;
+          event.preventDefault();
+          panel.hidden = false;
+          input.setAttribute("aria-expanded", "true");
+          setActive((activeIndex + 1) % count);
+          return;
+
+        case "ArrowUp":
+          if (count === 0) return;
+          event.preventDefault();
+          setActive((activeIndex - 1 + count) % count);
+          return;
+
+        case "Enter": {
+          const active = options()[activeIndex];
+          if (!active) return;
+          event.preventDefault();
+          window.location.href = active.href;
+          return;
+        }
+
+        case "Escape":
+          if (panel.hidden) {
+            input.blur();
+            return;
+          }
+          event.preventDefault();
+          close();
+          return;
+
+        case "Tab":
+          close();
+      }
+    });
+
+    // Pointer hover tracks the active option, so mouse and keyboard agree.
+    list.addEventListener("mousemove", (event) => {
+      const option = (event.target as HTMLElement).closest<HTMLAnchorElement>('[role="option"]');
+      if (!option) return;
+      const index = options().indexOf(option);
+      if (index !== -1 && index !== activeIndex) setActive(index);
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!root.contains(event.target as Node)) close();
+    });
+
+    root.addEventListener("focusout", (event) => {
+      if (!root.contains(event.relatedTarget as Node | null)) close();
+    });
+
+    // Pages restored from the back/forward cache must not reappear with results open.
+    window.addEventListener("pageshow", close);
+  }
+
+  const boxes = [...document.querySelectorAll<HTMLElement>("[data-search-root]")];
+  boxes.forEach(mountSearch);
+
+  /**
+   * "/" focuses the first search box that is actually on screen — the header
+   * renders one box for desktop and one inside the mobile sheet, and only one
+   * of the two is displayed at any width. Ignored while the visitor is already
+   * typing somewhere.
+   */
+  if (boxes.length > 0) {
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey) return;
+
+      const active = document.activeElement;
+      const isTyping =
+        active instanceof HTMLInputElement ||
+        active instanceof HTMLTextAreaElement ||
+        active instanceof HTMLSelectElement ||
+        (active instanceof HTMLElement && active.isContentEditable);
+      if (isTyping) return;
+
+      // offsetParent is null for anything `display: none`, including a box
+      // hidden by a breakpoint or sitting in a collapsed panel.
+      const visible = boxes
+        .filter((box) => box.offsetParent !== null)
+        .map((box) => box.querySelector<HTMLInputElement>("[data-search-input]"))
+        .find((input) => input !== null);
+
+      if (!visible) return;
+      event.preventDefault();
+      visible.focus();
+    });
+  }
+</script>

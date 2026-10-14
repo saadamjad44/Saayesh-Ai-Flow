@@ -20,22 +20,24 @@ const { heading, items, id } = Astro.props;
 
 {items.length > 0 && (
   <section aria-labelledby={id} class="not-prose my-12 border-t border-ink-200 pt-10">
-    <h2 id={id} class="text-2xl font-bold tracking-display text-ink-900 sm:text-3xl">
+    <h2 id={id} class="type-section">
       {heading}
     </h2>
-    <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+    <ul class="mt-7 grid gap-4 sm:grid-cols-2">
       {items.map((item) => (
         <li class="card card-link group relative flex flex-col p-5">
           {item.kicker && <p class="eyebrow">{item.kicker}</p>}
-          <h3 class:list={["font-semibold text-ink-900", item.kicker && "mt-1.5"]}>
-            <a href={item.path} class="after:absolute after:inset-0 group-hover:text-brand-700">
+          <h3 class:list={["type-card-title", item.kicker && "mt-1.5"]}>
+            <a href={item.path} class="stretch-target group-hover:text-brand-800">
               {item.title}
             </a>
           </h3>
-          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink-600">{item.description}</p>
+          <p class="mt-2 flex-1 text-[0.9375rem] leading-relaxed text-ink-600">
+            {item.description}
+          </p>
           <span
             aria-hidden="true"
-            class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700"
+            class="mt-4 inline-flex items-center gap-1.5 font-display text-sm font-bold text-brand-700"
           >
             Read guide
             <svg

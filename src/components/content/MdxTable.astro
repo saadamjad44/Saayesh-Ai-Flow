@@ -1,0 +1,26 @@
+---
+/**
+ * Plain Markdown tables inside an MDX body.
+ *
+ * Authored comparisons use <ComparisonTable>, which brings its own framed,
+ * sticky-column shell. This is for the ordinary pipe tables in the prose: it
+ * keeps the table's own horizontal scroll inside a focusable container, so a
+ * wide table never widens the page on a phone and a keyboard user can still
+ * scroll it.
+ *
+ * The <table> stays inside `.prose` so it keeps the shared table typography
+ * from global.css; only its margin is dropped, because the frame around it owns
+ * the spacing now.
+ */
+---
+
+<div class="my-7 overflow-hidden rounded-card border border-ink-200 bg-surface shadow-card">
+  <p class="border-b border-ink-200 bg-ink-50 px-4 py-2 text-xs text-ink-500 sm:hidden">
+    Scroll sideways to see every column.
+  </p>
+  <div tabindex="0" class="overflow-x-auto overscroll-x-contain">
+    <table class="my-0! w-full min-w-[38rem] border-collapse text-left">
+      <slot />
+    </table>
+  </div>
+</div>

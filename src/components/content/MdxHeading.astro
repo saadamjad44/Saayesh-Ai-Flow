@@ -1,0 +1,29 @@
+---
+/**
+ * H2 and H3 inside MDX bodies, mapped from Markdown by the entry routes.
+ *
+ * The only thing this adds to a plain heading is a deep link: Astro already
+ * generates the `id`, and a long guide whose sections can be linked to is
+ * considerably more useful to share and to cite. The anchor is invisible until
+ * the heading is hovered or the link itself is focused (see `.heading-anchor`
+ * in global.css), so it adds nothing visually and stays keyboard-reachable.
+ *
+ * The heading text itself is untouched, so the document outline, the table of
+ * contents, and the search index all see exactly what they saw before.
+ */
+interface Props {
+  as: "h2" | "h3";
+  id?: string;
+}
+
+const { as: Tag, id } = Astro.props;
+---
+
+<Tag {id}>
+  {id && (
+    <a class="heading-anchor" href={`#${id}`} aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a>
+  )}
+  <slot />
+</Tag>

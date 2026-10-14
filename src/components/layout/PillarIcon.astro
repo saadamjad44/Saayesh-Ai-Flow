@@ -1,0 +1,68 @@
+---
+/**
+ * Line glyph for a content pillar, drawn from one shared 24-grid so the six
+ * categories read as a set rather than six borrowed icons: same 1.75 stroke,
+ * same round joins, same optical weight.
+ *
+ * Always decorative — the category name is always beside it — so every glyph is
+ * `aria-hidden` and the component takes no label.
+ */
+import type { PillarIconId } from "@/config/pillars";
+
+interface Props {
+  icon: PillarIconId;
+  class?: string;
+}
+
+const { icon, class: className } = Astro.props;
+
+/** Path data per glyph, on a 24x24 grid. */
+const PATHS: Record<PillarIconId, string[]> = {
+  // Compass: finding your bearings.
+  compass: ["M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Z", "M15.5 8.5l-2 5-5 2 2-5 5-2Z"],
+  // Pen nib: writing.
+  nib: ["M4 20l3.5-8.5L15 4l5 5-7.5 7.5L4 20Z", "M9.5 14.5l-2-2", "M14.5 6.5l3 3"],
+  // Briefcase: business and productivity.
+  briefcase: [
+    "M3.5 8.5h17v10a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5v-10Z",
+    "M9 8.5V6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 6v2.5",
+    "M3.5 13h17",
+  ],
+  // Three nodes joined by a branch: a workflow.
+  workflow: [
+    "M5.5 4.5h4v4h-4z",
+    "M14.5 15.5h4v4h-4z",
+    "M14.5 4.5h4v4h-4z",
+    "M7.5 8.5v5a1.5 1.5 0 0 0 1.5 1.5h5.5",
+    "M16.5 8.5v2",
+  ],
+  // A chat bubble with a caret: briefing a model.
+  prompt: [
+    "M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5v-7Z",
+    "M8.5 8.5l2 1.75-2 1.75",
+    "M12.5 12.5h3.5",
+  ],
+  // Two buildings of different heights: different lines of work.
+  industry: [
+    "M3.5 20.5V9.5l6-3v14",
+    "M9.5 12.5l6-3v11.5",
+    "M15.5 20.5V11l5 2.5v7Z",
+    "M2.5 20.5h19",
+  ],
+};
+---
+
+<svg
+  aria-hidden="true"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+>
+  {PATHS[icon].map((d) => (
+    <path d={d} />
+  ))}
+</svg>

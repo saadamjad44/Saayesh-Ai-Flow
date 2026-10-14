@@ -1,0 +1,95 @@
+---
+/**
+ * Pros and cons for one tool or one choice.
+ *
+ * Side by side from `sm` up and stacked below it, with the two lists marked by
+ * shape and words as well as colour — a plus in a circle against a minus in a
+ * circle — so the distinction survives a greyscale print and a colour-vision
+ * difference.
+ *
+ * Both lists are required: a pros-only block is marketing, and this site's
+ * review framework commits to showing the trade-offs. Items are plain strings,
+ * so what the reader sees is what the search index sees.
+ */
+interface Props {
+  /** What the lists are about, e.g. "ChatGPT". Shown above them. */
+  subject?: string;
+  pros: readonly string[];
+  cons: readonly string[];
+}
+
+const { subject, pros, cons } = Astro.props;
+
+if (pros.length === 0 || cons.length === 0) {
+  throw new Error(
+    `ProsCons${subject ? ` "${subject}"` : ""}: both pros and cons are required — ` +
+      "a one-sided list is not a trade-off.",
+  );
+}
+
+const COLUMNS = [
+  {
+    key: "pros" as const,
+    label: "Strengths",
+    items: pros,
+    tone: "text-accent-700",
+    chip: "bg-accent-50 text-accent-700 ring-accent-200",
+    // A plus sign.
+    path: "M10 4.75v10.5M4.75 10h10.5",
+  },
+  {
+    key: "cons" as const,
+    label: "Limitations",
+    items: cons,
+    tone: "text-ink-700",
+    chip: "bg-ink-100 text-ink-700 ring-ink-300",
+    // A minus sign.
+    path: "M4.75 10h10.5",
+  },
+];
+---
+
+<div class="not-prose my-9">
+  {subject && <p class="eyebrow mb-3">{subject}</p>}
+  <div class="grid gap-4 sm:grid-cols-2">
+    {COLUMNS.map((column) => (
+      <section class="card flex flex-col p-5">
+        <h3 class="flex items-center gap-2.5 font-display text-sm font-bold text-ink-900">
+          <span
+            class:list={[
+              "flex size-6 shrink-0 items-center justify-center rounded-full ring-1 ring-inset",
+              column.chip,
+            ]}
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.25"
+              stroke-linecap="round"
+              class="size-3.5"
+            >
+              <path d={column.path} />
+            </svg>
+          </span>
+          {column.label}
+        </h3>
+        <ul class="mt-4 space-y-2.5 text-[0.9375rem] leading-relaxed text-ink-600">
+          {column.items.map((item) => (
+            <li class="flex gap-2.5">
+              <span
+                aria-hidden="true"
+                class:list={[
+                  "mt-2 size-1.5 shrink-0 rounded-full",
+                  column.key === "pros" ? "bg-accent-600" : "bg-ink-400",
+                ]}
+              ></span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</div>

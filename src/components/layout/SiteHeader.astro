@@ -1,20 +1,34 @@
 ---
 /**
- * Site header: the brand lockup and five primary links. Topic navigation moved
- * out of here — pillars are reached through /blog/, the footer, the homepage
- * cards, and the contextual sidebar on every pillar and article page — so there
- * are no dropdowns left to manage and every link is a plain, crawlable <a>.
+ * Site header: brand lockup, a Categories mega menu over the six content
+ * pillars, three stable links, and the content search box.
  *
- * Below `md` the nav collapses behind a menu button; the markup is the same
- * list at every width, with no second copy of the links for mobile. A
- * <noscript> rule re-shows the nav when scripting is off, so a no-JS visitor
- * still gets every link.
+ * Every link in here — including the ones inside the collapsed menus — is a
+ * plain <a> rendered on the server, so a crawler sees the same navigation a
+ * visitor does and no pillar depends on JavaScript to be discoverable.
+ *
+ * Two disclosure panels, because desktop and mobile want different shapes and
+ * trying to serve both from one element produced a menu that was wrong on one
+ * of them:
+ *   - `[data-mega-panel]` is the desktop dropdown, absolutely positioned under
+ *     the bar and opened by the Categories button.
+ *   - `[data-mobile-panel]` is the small-screen sheet, in the flow under the
+ *     bar, carrying search, the categories, the free tools, and the links.
+ * Each is hidden at the width it does not serve, so only one is ever reachable.
+ *
+ * A <noscript> rule shows the mobile sheet at every width and hides both
+ * toggles, so with scripting off the whole navigation is still open and usable.
  */
 import { Image } from "astro:assets";
 
-import { PRIMARY_NAV, isCurrentSection } from "@/config/navigation";
+import PillarIcon from "./PillarIcon.astro";
+import SearchBox from "./SearchBox.astro";
+import { PRIMARY_NAV, PILLAR_NAV, getAllToolLinks, isCurrentSection } from "@/config/navigation";
+import { getPillarPresentation } from "@/config/pillars";
 import { BRAND_LOGO } from "@/config/media";
+import { getPage } from "@/config/pages";
 import { SITE } from "@/config/site";
+import { getPublishedEntries } from "@/lib/content";
 
 interface Props {
   /** Pathname of the current page, used to mark the active nav item. */
@@ -30,71 +44,90 @@ const [brandLead, ...brandTail] = SITE.name.split(" ");
 const logoWidth = Math.round(
   (BRAND_LOGO.src.width / BRAND_LOGO.src.height) * BRAND_LOGO.headerHeight,
 );
+
+const [publishedPillars, publishedTools] = await Promise.all([
+  getPublishedEntries("pillars"),
+  getPublishedEntries("tools"),
+]);
+
+const publishedPillarIds = new Set(publishedPillars.map(({ page }) => page.id));
+
+/** Menu rows for every published pillar, in PILLAR_NAV order. */
+const categories = PILLAR_NAV.filter((entry) => publishedPillarIds.has(entry.pillar)).map(
+  (entry) => {
+    const page = getPage(entry.pillar);
+    const { menu, icon } = getPillarPresentation(entry.pillar);
+    return { title: page.title, href: page.path, description: menu, icon };
+  },
+);
+
+const tools = getAllToolLinks(new Set(publishedTools.map(({ page }) => page.id)));
+const blogPath = getPage("blog").path;
+
+/** The Categories button is "in section" on any pillar page or below one. */
+const inCategories = categories.some(({ href }) => currentPath.startsWith(href));
 ---
 
-<header class="sticky top-0 z-50 border-b border-ink-200 bg-paper/90 backdrop-blur supports-[backdrop-filter]:bg-paper/75">
-  <div class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-2.5 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6">
-    {/* `md:contents` dissolves this row at desktop, leaving the logo + nav layout. */}
-    <div class="flex items-center justify-between gap-3 md:contents">
-      <a
-        href="/"
-        class="group flex items-center gap-2.5 self-start py-1 md:self-auto"
-        aria-current={currentPath === "/" ? "page" : undefined}
-      >
-        {/*
-          Decorative: the wordmark beside it already names the brand, so the
-          link's accessible name is correct without the image repeating it.
-        */}
-        <Image
-          src={BRAND_LOGO.src}
-          alt={BRAND_LOGO.alt}
-          width={logoWidth}
-          height={BRAND_LOGO.headerHeight}
-          densities={[1, 2]}
-          loading="eager"
-          decoding="sync"
-          class="h-7 w-auto shrink-0 sm:h-[30px]"
-        />
-        <span class="text-lg font-extrabold tracking-display text-ink-900 group-hover:text-brand-700">
-          {brandLead}{" "}
-          <span class="text-brand-700 group-hover:text-brand-800">{brandTail.join(" ")}</span>
-        </span>
-      </a>
+<header
+  class="sticky top-0 z-50 border-b border-ink-200 bg-paper/85 backdrop-blur-md transition-shadow duration-180 ease-ui data-[scrolled]:shadow-card supports-[backdrop-filter]:bg-paper/70 motion-reduce:transition-none"
+  data-site-header
+>
+  <div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-2.5 sm:px-6 lg:gap-6">
+    <a
+      href="/"
+      class="group flex shrink-0 items-center gap-2.5 py-1"
+      aria-current={currentPath === "/" ? "page" : undefined}
+    >
+      {/*
+        Decorative: the wordmark beside it already names the brand, so the
+        link's accessible name is correct without the image repeating it.
+      */}
+      <Image
+        src={BRAND_LOGO.src}
+        alt={BRAND_LOGO.alt}
+        width={logoWidth}
+        height={BRAND_LOGO.headerHeight}
+        densities={[1, 2]}
+        loading="eager"
+        decoding="sync"
+        class="h-7 w-auto shrink-0 sm:h-[30px]"
+      />
+      <span class="font-display text-[1.0625rem] font-extrabold tracking-[-0.02em] text-ink-900 transition-colors duration-180 ease-ui group-hover:text-brand-800 sm:text-lg motion-reduce:transition-none">
+        {brandLead} <span class="text-brand-700">{brandTail.join(" ")}</span>
+      </span>
+    </a>
 
-      <button
-        type="button"
-        class="group -mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-ink-700 hover:bg-ink-100 hover:text-brand-700 md:hidden"
-        aria-expanded="false"
-        aria-controls="primary-nav"
-        data-nav-burger
-      >
-        <span class="sr-only">Menu</span>
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          class="size-6 group-aria-expanded:hidden"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M2 5.75A.75.75 0 0 1 2.75 5h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 5.75Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z"
-            clip-rule="evenodd"
-          />
-        </svg>
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          class="hidden size-6 group-aria-expanded:block"
-        >
-          <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
-        </svg>
-      </button>
-    </div>
-
-    {/* Hidden below `md` until the menu button opens it; always shown at `md`+. */}
-    <nav id="primary-nav" aria-label="Main" class="max-md:hidden" data-primary-nav>
-      <ul class="-mx-3 flex items-center gap-x-1 text-sm font-medium max-md:flex-col max-md:items-stretch max-md:pb-1">
+    {/* Desktop navigation. */}
+    <nav aria-label="Main" class="max-md:hidden">
+      <ul class="flex items-center gap-x-0.5 text-[0.9375rem] font-medium">
+        <li>
+          <button
+            type="button"
+            aria-expanded="false"
+            aria-controls="categories-menu"
+            class:list={[
+              "group relative inline-flex min-h-10 items-center gap-1.5 rounded-lg px-3 transition-colors duration-180 ease-ui hover:bg-ink-100 hover:text-brand-700 aria-expanded:bg-ink-100 aria-expanded:text-brand-700 motion-reduce:transition-none",
+              inCategories ? "text-brand-700" : "text-ink-700",
+              inCategories &&
+                "after:absolute after:inset-x-3 after:-bottom-2.5 after:h-0.5 after:rounded-full after:bg-brand-600",
+            ]}
+            data-mega-toggle
+          >
+            Categories
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="size-4 text-ink-400 transition-transform duration-180 ease-ui group-aria-expanded:rotate-180 motion-reduce:transition-none"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+        </li>
         {PRIMARY_NAV.map((entry) => {
           const isCurrent = currentPath === entry.href;
           const inSection = isCurrentSection(entry, currentPath);
@@ -104,10 +137,10 @@ const logoWidth = Math.round(
                 href={entry.href}
                 aria-current={isCurrent ? "page" : undefined}
                 class:list={[
-                  "relative inline-flex min-h-11 items-center rounded-lg px-3 hover:bg-ink-100 hover:text-brand-700 max-md:w-full",
+                  "relative inline-flex min-h-10 items-center rounded-lg px-3 transition-colors duration-180 ease-ui hover:bg-ink-100 hover:text-brand-700 motion-reduce:transition-none",
                   inSection ? "text-brand-700" : "text-ink-700",
                   inSection &&
-                    "after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full after:bg-brand-600 max-md:after:hidden",
+                    "after:absolute after:inset-x-3 after:-bottom-2.5 after:h-0.5 after:rounded-full after:bg-brand-600",
                 ]}
               >
                 {entry.label}
@@ -117,15 +150,221 @@ const logoWidth = Math.round(
         })}
       </ul>
     </nav>
+
+    {/* Search fills the remaining width at desktop and is capped so it never dominates. */}
+    <div class="ml-auto hidden w-full max-w-xs md:block lg:max-w-sm">
+      <SearchBox
+        id="header"
+        label="Search guides and tools"
+        placeholder="Search guides, tools..."
+      />
+    </div>
+
+    <button
+      type="button"
+      class="group -mr-2 ml-auto inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-ink-700 transition-colors duration-180 ease-ui hover:bg-ink-100 hover:text-brand-700 md:hidden motion-reduce:transition-none"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-nav-burger
+    >
+      <span class="sr-only">Menu</span>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="size-6 group-aria-expanded:hidden"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M2 5.75A.75.75 0 0 1 2.75 5h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 5.75Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="hidden size-6 group-aria-expanded:block"
+      >
+        <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+      </svg>
+    </button>
   </div>
 
-  {/* With scripting off the menu button can't open anything, so show the nav. */}
+  {/* ---- Desktop mega menu ------------------------------------------- */}
+  <div
+    id="categories-menu"
+    hidden
+    class="absolute inset-x-0 top-full max-md:hidden"
+    data-mega-panel
+  >
+    <div class="border-b border-ink-200 bg-surface shadow-menu">
+      <div class="mx-auto grid max-w-7xl gap-x-10 gap-y-8 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_17rem]">
+        <div>
+          <p class="eyebrow eyebrow-rule">Browse by category</p>
+          <ul class="mt-5 grid gap-1.5 sm:grid-cols-2 xl:grid-cols-3">
+            {categories.map((category) => (
+              <li>
+                <a
+                  href={category.href}
+                  aria-current={currentPath === category.href ? "page" : undefined}
+                  class="group flex gap-3.5 rounded-xl p-3 transition-colors duration-180 ease-ui hover:bg-brand-50 motion-reduce:transition-none"
+                >
+                  <span class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-surface motion-reduce:transition-none">
+                    <PillarIcon icon={category.icon} class="size-5" />
+                  </span>
+                  <span class="min-w-0">
+                    <span class="block font-display text-[0.9375rem] font-bold text-ink-900 group-hover:text-brand-800">
+                      {category.title}
+                    </span>
+                    <span class="mt-0.5 block text-[0.8125rem] leading-snug text-ink-500">
+                      {category.description}
+                    </span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="lg:border-l lg:border-ink-200 lg:pl-10">
+          {tools.length > 0 && (
+            <>
+              <p class="eyebrow eyebrow-accent eyebrow-rule">Free tools</p>
+              <ul class="mt-5 space-y-1.5">
+                {tools.map((tool) => (
+                  <li>
+                    <a
+                      href={tool.href}
+                      aria-current={currentPath === tool.href ? "page" : undefined}
+                      class="group flex items-center justify-between gap-3 rounded-xl border border-ink-200 bg-paper p-3 transition-colors duration-180 ease-ui hover:border-accent-200 hover:bg-accent-50 motion-reduce:transition-none"
+                    >
+                      <span class="font-display text-[0.9375rem] font-bold text-ink-900 group-hover:text-accent-800">
+                        {tool.label}
+                      </span>
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="size-4 shrink-0 text-ink-400 transition-transform duration-180 ease-ui group-hover:translate-x-0.5 group-hover:text-accent-700 motion-reduce:transition-none"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          <a
+            href={blogPath}
+            class="mt-5 inline-flex items-center gap-1.5 py-1.5 font-display text-sm font-bold text-brand-700 hover:text-brand-800"
+          >
+            Browse every guide
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+              <path
+                fill-rule="evenodd"
+                d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* ---- Small-screen sheet ------------------------------------------ */}
+  <div
+    id="mobile-menu"
+    hidden
+    class="border-t border-ink-200 bg-surface md:hidden"
+    data-mobile-panel
+  >
+    <div class="mx-auto max-w-7xl space-y-6 px-4 py-5 sm:px-6">
+      <SearchBox id="menu" label="Search guides and tools" placeholder="Search guides, tools..." />
+
+      <nav aria-label="Categories">
+        <p class="eyebrow">Categories</p>
+        <ul class="mt-3 grid gap-1 sm:grid-cols-2">
+          {categories.map((category) => (
+            <li>
+              <a
+                href={category.href}
+                aria-current={currentPath === category.href ? "page" : undefined}
+                class="flex min-h-12 items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-brand-50 aria-[current=page]:bg-brand-50"
+              >
+                <span class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-ink-200 bg-paper text-brand-700">
+                  <PillarIcon icon={category.icon} class="size-5" />
+                </span>
+                <span class="font-display text-[0.9375rem] font-bold text-ink-900">
+                  {category.title}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {tools.length > 0 && (
+        <nav aria-label="Free tools">
+          <p class="eyebrow eyebrow-accent">Free tools</p>
+          <ul class="mt-3 space-y-1">
+            {tools.map((tool) => (
+              <li>
+                <a
+                  href={tool.href}
+                  aria-current={currentPath === tool.href ? "page" : undefined}
+                  class="flex min-h-12 items-center rounded-xl border border-ink-200 bg-paper px-3.5 font-display text-[0.9375rem] font-bold text-ink-900 hover:border-accent-200 hover:bg-accent-50"
+                >
+                  {tool.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
+      <nav aria-label="More">
+        <ul class="flex flex-col border-t border-ink-200 pt-4">
+          {PRIMARY_NAV.map((entry) => {
+            const inSection = isCurrentSection(entry, currentPath);
+            return (
+              <li>
+                <a
+                  href={entry.href}
+                  aria-current={currentPath === entry.href ? "page" : undefined}
+                  class:list={[
+                    "flex min-h-12 items-center rounded-lg px-2.5 font-medium hover:bg-ink-50",
+                    inSection ? "text-brand-700" : "text-ink-700",
+                  ]}
+                >
+                  {entry.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  {/*
+    With scripting off neither toggle can open anything, so show the sheet at
+    every width — it carries every link both menus hold.
+  */}
   <noscript>
     <style>
-      [data-primary-nav] {
+      [data-mobile-panel] {
         display: block !important;
       }
-      [data-nav-burger] {
+      [data-nav-burger],
+      [data-mega-toggle] {
         display: none !important;
       }
     </style>
@@ -133,40 +372,91 @@ const logoWidth = Math.round(
 </header>
 
 <script>
-  // Mobile menu button. `max-md:hidden` is inert at desktop, so the same class
-  // toggle collapses the nav on small screens and does nothing on large ones.
+  /**
+   * Header disclosure behaviour. Both panels are plain `hidden` toggles, so the
+   * markup is identical with and without scripting and nothing reflows when the
+   * script runs.
+   */
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  const megaToggle = document.querySelector<HTMLButtonElement>("[data-mega-toggle]");
+  const megaPanel = document.querySelector<HTMLElement>("[data-mega-panel]");
   const burger = document.querySelector<HTMLButtonElement>("[data-nav-burger]");
-  const primaryNav = document.querySelector<HTMLElement>("[data-primary-nav]");
+  const mobilePanel = document.querySelector<HTMLElement>("[data-mobile-panel]");
 
-  const isMenuOpen = () => burger?.getAttribute("aria-expanded") === "true";
+  /** One disclosure: a button with aria-expanded and the panel it controls. */
+  function disclosure(button: HTMLButtonElement | null, panel: HTMLElement | null) {
+    if (!button || !panel) return null;
 
-  function setMenuOpen(open: boolean) {
-    if (!burger || !primaryNav) return;
-    burger.setAttribute("aria-expanded", String(open));
-    primaryNav.classList.toggle("max-md:hidden", !open);
+    const isOpen = () => button.getAttribute("aria-expanded") === "true";
+
+    const setOpen = (open: boolean) => {
+      button.setAttribute("aria-expanded", String(open));
+      panel.hidden = !open;
+    };
+
+    button.addEventListener("click", () => setOpen(!isOpen()));
+    return { button, panel, isOpen, setOpen };
   }
 
-  burger?.addEventListener("click", () => setMenuOpen(!isMenuOpen()));
+  const mega = disclosure(megaToggle, megaPanel);
+  const mobile = disclosure(burger, mobilePanel);
+  const panels = [mega, mobile].filter((entry) => entry !== null);
 
-  // Leaving mobile width: drop the collapsed state so returning to it starts closed.
-  window.matchMedia("(min-width: 48rem)").addEventListener("change", (event) => {
-    if (event.matches) setMenuOpen(false);
-  });
+  /** Only one panel is ever open: opening either closes the other. */
+  for (const panel of panels) {
+    panel.button.addEventListener("click", () => {
+      for (const other of panels) {
+        if (other !== panel) other.setOpen(false);
+      }
+    });
+  }
+
+  const closeAll = (restoreFocus = false) => {
+    for (const panel of panels) {
+      if (!panel.isOpen()) continue;
+      const hadFocus = panel.panel.contains(document.activeElement);
+      panel.setOpen(false);
+      if (restoreFocus && hadFocus) panel.button.focus();
+    }
+  };
 
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || !isMenuOpen()) return;
-    const hadFocus = primaryNav?.contains(document.activeElement);
-    setMenuOpen(false);
-    if (hadFocus) burger?.focus();
+    if (event.key === "Escape") closeAll(true);
   });
 
   document.addEventListener("click", (event) => {
     const target = event.target as Node;
-    // The button's own handler owns its state; don't undo it on the way up.
-    if (burger?.contains(target) || primaryNav?.contains(target)) return;
-    setMenuOpen(false);
+    // Each button's own handler owns its state; don't undo it on the way up.
+    if (panels.some(({ button, panel }) => button.contains(target) || panel.contains(target))) {
+      return;
+    }
+    closeAll();
   });
 
-  // Pages restored from the back/forward cache must not reappear with a menu open.
-  window.addEventListener("pageshow", () => setMenuOpen(false));
+  document.addEventListener("focusin", (event) => {
+    const target = event.target as Node;
+    if (panels.some(({ button, panel }) => button.contains(target) || panel.contains(target))) {
+      return;
+    }
+    closeAll();
+  });
+
+  /** Crossing the md breakpoint invalidates whichever panel was open. */
+  window.matchMedia("(min-width: 48rem)").addEventListener("change", () => closeAll());
+
+  /** Pages restored from the back/forward cache must not reappear with a menu open. */
+  window.addEventListener("pageshow", () => closeAll());
+
+  /**
+   * A hairline shadow once the page has scrolled, so the sticky bar separates
+   * from the content under it. Passive listener, one attribute flip.
+   */
+  if (header) {
+    const setScrolled = () => {
+      if (window.scrollY > 4) header.setAttribute("data-scrolled", "");
+      else header.removeAttribute("data-scrolled");
+    };
+    setScrolled();
+    window.addEventListener("scroll", setScrolled, { passive: true });
+  }
 </script>

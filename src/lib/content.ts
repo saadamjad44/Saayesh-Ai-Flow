@@ -4,6 +4,11 @@
  */
 import { getCollection, type CollectionEntry } from "astro:content";
 import { PAGES, getPage, type SitePage } from "@/config/pages";
+import type { MediaId } from "@/config/media";
+import { getPillarPresentation, type PillarIconId } from "@/config/pillars";
+import type { PillarId } from "@/config/pages";
+import { readingMinutes } from "@/lib/format";
+import { socialMediaId } from "@/lib/seo";
 
 const registryIndex = (page: SitePage) => PAGES.findIndex((p) => p.id === page.id);
 
@@ -56,4 +61,55 @@ export async function getPublishedEntries<C extends EntryCollection>(
 /** Path segments of a registry path, e.g. "/a/b/" → ["a", "b"]. */
 export function pathSegments(page: SitePage): string[] {
   return page.path.split("/").filter(Boolean);
+}
+
+/**
+ * The shape every article listing on the site renders: the homepage's featured
+ * and latest rows, the blog archive, and a pillar hub's guide list.
+ *
+ * Built in one place so a card cannot show a different title, date, or category
+ * than the page it links to — every field is read from the entry's frontmatter
+ * or the page registry, never written out again by the template.
+ */
+export interface ArticleCardData {
+  title: string;
+  path: string;
+  description: string;
+  /** The parent category hub, for the card's kicker. Absent on pillar cards. */
+  category?: { title: string; path: string };
+  published: Date;
+  updated: Date;
+  /** Category image, for the one lead card a listing shows. */
+  mediaId: MediaId;
+  /** Category glyph, for the grid and row cards, which carry no photo. */
+  icon?: PillarIconId;
+  /** Estimated minutes to read, from the entry's own body. */
+  minutes: number;
+}
+
+/**
+ * Card data for one published entry. `categories` maps a pillar id to its hub
+ * title, which only the caller can supply — it comes from the pillar's own
+ * frontmatter, not the registry, so the kicker matches the hub's <h1>.
+ */
+export function toArticleCard<C extends EntryCollection>(
+  { entry, page }: PublishedEntry<C>,
+  categories?: ReadonlyMap<string, string>,
+): ArticleCardData {
+  const categoryTitle = page.pillar ? categories?.get(page.pillar) : undefined;
+
+  return {
+    title: entry.data.title,
+    path: page.path,
+    description: entry.data.description,
+    category:
+      page.pillar && categoryTitle
+        ? { title: categoryTitle, path: getPage(page.pillar).path }
+        : undefined,
+    published: entry.data.publishedDate,
+    updated: entry.data.updatedDate,
+    mediaId: socialMediaId(page),
+    icon: page.pillar ? getPillarPresentation(page.pillar as PillarId).icon : undefined,
+    minutes: readingMinutes(entry.body ?? ""),
+  };
 }

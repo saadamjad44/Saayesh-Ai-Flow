@@ -1,74 +1,150 @@
 ---
 /**
- * Homepage: positioning and the live category pillars. Editorial methodology
- * lives on the About + Editorial Process page, not here.
- * Still omitted: the latest-articles row, the email opt-in, "Popular
- * Comparisons", and unverified trust claims.
+ * Homepage.
  *
- * Below the pillars sits one further section: the free interactive tools, built
- * from the published `tools` collection. It is deliberately not a seventh
- * pillar card — the six content pillars stay six — and sits after them so the
- * category hierarchy and the hero are unchanged.
+ * Seven sections, in the order a visitor needs them: what this site is and a
+ * way to search it, the six categories, a short editorial selection of guides,
+ * four routes in for someone who does not know which category they want, the
+ * free cost calculator, the newest guides, and how the site works.
  *
- * The card list is derived, not hand-listed: membership and order come from
- * PILLAR_NAV (the same ordered list the footer and sidebar use), filtered to
- * pillars that are actually published, so a draft pillar never appears here.
- * Titles and URLs come from the page registry and images from the media
- * registry, which leaves PILLAR_SUMMARIES as the only authored copy below.
+ * Nothing on this page is hand-listed. The categories come from PILLAR_NAV
+ * filtered to published pillars; the featured and "start here" selections are
+ * editor's picks in src/config/homepage.ts, typed to the registry so an
+ * unpublished pick fails the build; the latest row is the collections sorted by
+ * date; and the calculator preview is produced by the calculator's own
+ * computeTotals() at build time, so the figures shown cannot be arithmetic the
+ * real tool would not do.
+ *
+ * Deliberately absent: visitor counts, "most popular" claims, review scores,
+ * testimonials, partner logos, and any email opt-in. The site has none of them.
  */
-import { Image } from "astro:assets";
+import ArticleCard from "@/components/content/ArticleCard.astro";
+import FlowDiagram from "@/components/home/FlowDiagram.astro";
+import PillarIcon from "@/components/layout/PillarIcon.astro";
+import SearchBox from "@/components/layout/SearchBox.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { SITE } from "@/config/site";
+import { AUTHOR } from "@/config/author";
+import {
+  CALCULATOR_PREVIEW,
+  FEATURED_GUIDES,
+  LATEST_GUIDE_COUNT,
+  START_HERE,
+} from "@/config/homepage";
 import { PILLAR_NAV } from "@/config/navigation";
-import { getPage, type PageId, type PillarId } from "@/config/pages";
-import { getMedia } from "@/config/media";
-import { getPublishedEntries } from "@/lib/content";
+import { getPage, type PageId } from "@/config/pages";
+import { getPillarPresentation } from "@/config/pillars";
+import { SITE } from "@/config/site";
+import {
+  computeTotals,
+  formatMoney,
+  DEFAULT_CURRENCY,
+} from "@/components/tools/ai-cost-calculator";
+import { getPublishedEntries, toArticleCard } from "@/lib/content";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 
-/**
- * Card copy per pillar, as a complete Record over PillarId. Adding a pillar to
- * the registry therefore fails the build until it has a summary here, and
- * getMedia() below fails it until the pillar has an image — so the homepage
- * cannot silently fall behind the registry and show only some categories,
- * which is exactly what it had been doing.
- */
-const PILLAR_SUMMARIES: Readonly<Record<PillarId, string>> = {
-  "getting-started":
-    "New to AI? Start here for what these tools actually do, where to begin, and the mistakes that waste the most time.",
-  "ai-writing-tools":
-    "Roundups and head-to-head comparisons to help you choose an AI writing tool for your work.",
-  "ai-business-tools":
-    "AI tools for solopreneurs and small business owners, including what they cost and what they can take off your plate.",
-  "ai-automation":
-    "Step-by-step automation examples and workflows for email, scheduling, and other repeat tasks.",
-  "ai-prompts":
-    "How to brief AI tools properly, with worked prompt examples for writing, marketing, and everyday business tasks.",
-  "ai-by-industry":
-    "Where AI fits in a specific line of work, from small business and e-commerce to marketing teams.",
-};
+const [pillars, articles, tools] = await Promise.all([
+  getPublishedEntries("pillars"),
+  getPublishedEntries("articles"),
+  getPublishedEntries("tools"),
+]);
 
-const publishedPillarIds = new Set(
-  (await getPublishedEntries("pillars")).map(({ page }) => page.id),
+/** Pillar id → hub title, from the pillar's own frontmatter. */
+const categoryTitles = new Map(pillars.map(({ entry, page }) => [page.id, entry.data.title]));
+const publishedPillarIds = new Set(pillars.map(({ page }) => page.id));
+
+/** Every published pillar, in PILLAR_NAV order, with its guide count. */
+const categories = PILLAR_NAV.filter((entry) => publishedPillarIds.has(entry.pillar)).map(
+  (entry) => {
+    const page = getPage(entry.pillar);
+    const { summary, icon } = getPillarPresentation(entry.pillar);
+    return {
+      title: categoryTitles.get(page.id) ?? page.title,
+      href: page.path,
+      summary,
+      icon,
+      count: articles.filter(({ page: article }) => article.pillar === entry.pillar).length,
+    };
+  },
 );
 
-/** Every published pillar, in PILLAR_NAV order. */
-const pillarCards = PILLAR_NAV.filter((entry) => publishedPillarIds.has(entry.pillar));
+/** Articles by registry id, for the editor's picks below. */
+const articlesById = new Map(articles.map((article) => [article.page.id, article]));
+
+/** A picked guide, or a build failure naming the pick that cannot be rendered. */
+function pick(id: PageId) {
+  const article = articlesById.get(id);
+  if (!article) {
+    throw new Error(`Homepage features "${id}", which is not a published article`);
+  }
+  return toArticleCard(article, categoryTitles);
+}
+
+const [featuredLead, ...featuredRest] = FEATURED_GUIDES.map(pick);
+
+const startHere = START_HERE.map((path) => ({
+  ...path,
+  hub: getPage(path.pillar),
+  hubTitle: categoryTitles.get(path.pillar) ?? getPage(path.pillar).title,
+  guidePage: getPage(path.guide),
+  guideTitle: articlesById.get(path.guide)?.entry.data.title ?? getPage(path.guide).title,
+  icon: getPillarPresentation(path.pillar).icon,
+}));
+
+/** Newest first; a stable id tiebreak keeps the order deterministic. */
+const latest = [...articles]
+  .sort((a, b) => {
+    const delta = b.entry.data.publishedDate.getTime() - a.entry.data.publishedDate.getTime();
+    return delta !== 0 ? delta : a.page.id.localeCompare(b.page.id);
+  })
+  .slice(0, LATEST_GUIDE_COUNT)
+  .map((article) => toArticleCard(article, categoryTitles));
+
+const blogPath = getPage("blog").path;
+const aboutPath = getPage("about").path;
+
+/* ---- Free tools ------------------------------------------------------- */
+
+const toolPages = tools.map(({ entry, page }) => ({
+  href: page.path,
+  title: entry.data.heading ?? entry.data.title,
+}));
 
 /**
- * Call-to-action wording for each free interactive tool, keyed by page id.
- * The free-tools section below is built from the published `tools` collection
- * rather than written out, so registering a second tool adds a second button
- * here instead of needing the section rebuilt — and the six content pillars
- * above stay exactly six, because a tool is never a pillar card.
+ * The calculator preview's figures, from the calculator's own function. The
+ * inputs are round illustrative numbers, labelled as such on the page — no
+ * vendor price appears anywhere.
  */
-const TOOL_CTA_LABELS: Partial<Record<PageId, string>> = {
-  "small-business-ai-cost-calculator": "Use the AI Cost Calculator",
-};
+const preview = computeTotals(
+  CALCULATOR_PREVIEW.tools.map((tool) => ({ ...tool })),
+  { ...CALCULATOR_PREVIEW.business },
+);
+const money = (value: number | null) => formatMoney(value, DEFAULT_CURRENCY.symbol);
 
-const toolLinks = (await getPublishedEntries("tools")).map(({ entry, page }) => ({
-  href: page.path,
-  label: TOOL_CTA_LABELS[page.id as PageId] ?? entry.data.title,
-}));
+/* ---- Editorial method ------------------------------------------------- */
+
+/**
+ * How the guides are made, summarised from the About + Editorial Process page.
+ * Every line restates something that page already commits to; none of it is a
+ * claim about testing, popularity, or endorsement.
+ */
+const METHOD = [
+  {
+    title: "Research you can check",
+    body: "Guides are written from official product documentation, pricing pages, and product announcements, summarised in our own words with the sources linked.",
+  },
+  {
+    title: "Testing is labelled",
+    body: "A tool is only called tested when it has actually been tested. Research-based guides say so on the page and carry no scores.",
+  },
+  {
+    title: "Dates are visible",
+    body: "Every guide shows when it was last updated, and where it quotes prices, the date those prices were checked on the vendor's own page.",
+  },
+  {
+    title: "Affiliate links are disclosed",
+    body: "Some pages carry affiliate links and say so before the recommendation. Commissions do not decide what gets recommended or how it ranks.",
+  },
+];
 ---
 
 <BaseLayout
@@ -77,147 +153,413 @@ const toolLinks = (await getPublishedEntries("tools")).map(({ entry, page }) => 
   description="Research-based guides to AI tools, workflows, prompts, and business use cases for solopreneurs and small business owners."
   jsonLd={[websiteSchema(), organizationSchema()]}
 >
+  {/* ---- 1. Hero ---------------------------------------------------- */}
   <section class="relative overflow-hidden border-b border-ink-200 bg-surface">
-    {/* Decorative grid wash; hidden from assistive tech. */}
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 opacity-[0.55]"
-      style="background-image: linear-gradient(to right, var(--color-ink-100) 1px, transparent 1px), linear-gradient(to bottom, var(--color-ink-100) 1px, transparent 1px); background-size: 72px 72px; mask-image: radial-gradient(ellipse 80% 60% at 70% 0%, black, transparent);"
+      class="bg-grid pointer-events-none absolute inset-0 opacity-60"
+      style="mask-image: radial-gradient(ellipse 75% 65% at 70% 0%, black, transparent);"
     ></div>
 
-    <div class="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
-      <div class="max-w-3xl">
-        <p class="eyebrow">Independent AI tool guides</p>
-        <h1 class="mt-4 text-4xl font-extrabold tracking-display text-balance text-ink-900 sm:text-5xl lg:text-6xl lg:leading-[1.05]">
-          {SITE.tagline}
-        </h1>
-        <p class="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-ink-600 sm:text-xl">
-          Practical guides to AI tools, workflows, prompts, and business use cases for solopreneurs
-          and small business owners, written to help you choose and use AI with less guesswork.
-        </p>
-        <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <a href="#categories" class="btn btn-primary">
-            Browse categories
-            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-              <path
-                fill-rule="evenodd"
-                d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-          <a href={getPage("about").path} class="btn btn-secondary">
-            How we work
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+    <div class="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:py-24">
+      <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.85fr)] lg:gap-14">
+        <div>
+          <p class="eyebrow eyebrow-rule">Independent AI tool guides</p>
 
-  <section id="categories" aria-labelledby="categories-heading" class="scroll-mt-24">
-    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-      <div class="max-w-2xl">
-        <p class="eyebrow">Categories</p>
-        <h2
-          class="mt-2 text-2xl font-bold tracking-display text-ink-900 sm:text-3xl"
-          id="categories-heading"
-        >
-          Explore by category
-        </h2>
-      </div>
+          <h1 class="type-display mt-5">{SITE.tagline}</h1>
 
-      <ul class="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {pillarCards.map(({ pillar: id }, index) => {
-          const pillar = getPage(id);
-          const media = getMedia(id);
-          const summary = PILLAR_SUMMARIES[id];
-          return (
-            <li class="card card-link group relative flex flex-col overflow-hidden">
-              <Image
-                src={media.src}
-                alt={media.alt}
-                widths={[400, 640, 800]}
-                sizes="(min-width: 1024px) 352px, (min-width: 640px) 45vw, 100vw"
-                loading={index === 0 ? "eager" : "lazy"}
-                decoding={index === 0 ? "sync" : "async"}
-                class="aspect-video w-full border-b border-ink-200 object-cover"
-              />
-              <div class="flex flex-1 flex-col p-6">
-                <h3 class="text-lg font-bold tracking-display text-ink-900">
-                  <a
-                    href={pillar.path}
-                    class="after:absolute after:inset-0 group-hover:text-brand-700"
-                  >
-                    {pillar.title}
-                  </a>
-                </h3>
-                <p class="mt-2.5 flex-1 leading-relaxed text-ink-600">{summary}</p>
-                <span
-                  aria-hidden="true"
-                  class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700"
-                >
-                  Explore
-                  <svg
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    class="size-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </span>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  </section>
-
-  {/*
-    Free utilities, after the pillars so the category hierarchy is unchanged and
-    nothing competes with the hero. Derived from the published `tools`
-    collection, never hand-listed.
-  */}
-  {toolLinks.length > 0 && (
-    <section aria-labelledby="free-tools-heading" class="border-t border-ink-200 bg-surface">
-      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
-        <div class="max-w-2xl">
-          <p class="eyebrow">Free tool</p>
-          <h2
-            id="free-tools-heading"
-            class="mt-2 text-2xl font-bold tracking-display text-ink-900 sm:text-3xl"
-          >
-            Plan your AI software budget
-          </h2>
-          <p class="mt-4 text-lg leading-relaxed text-pretty text-ink-600">
-            Estimate monthly, annual and first-year AI costs across multiple tools, users and usage
-            fees.
+          <p class="type-lead mt-6 max-w-2xl">
+            Practical guides to AI tools, workflows, prompts, and business use cases for
+            solopreneurs and small business owners, written to help you choose and use AI with less
+            guesswork.
           </p>
-        </div>
 
-        <div class="mt-7 flex flex-col gap-x-5 gap-y-3 sm:flex-row sm:flex-wrap sm:items-center">
-          {toolLinks.map((tool, index) => (
-            <a
-              href={tool.href}
-              class:list={["btn w-full sm:w-auto", index === 0 ? "btn-primary" : "btn-secondary"]}
-            >
-              {tool.label}
+          <div class="mt-8 max-w-2xl">
+            <SearchBox
+              id="hero"
+              variant="hero"
+              label="Search guides, tools and prompts"
+              placeholder="Search guides, tools and prompts..."
+            />
+          </div>
+
+          <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <a href="#categories" class="btn btn-primary">
+              Browse categories
               <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
                 <path
                   fill-rule="evenodd"
-                  d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                  d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z"
                   clip-rule="evenodd"
                 />
               </svg>
             </a>
+            <a href={blogPath} class="btn btn-secondary">
+              Explore AI guides
+            </a>
+          </div>
+        </div>
+
+        <div class="max-lg:hidden">
+          <FlowDiagram />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---- 2. Categories ---------------------------------------------- */}
+  <section id="categories" aria-labelledby="categories-heading" class="scroll-mt-20">
+    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+      <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+        <div class="max-w-2xl">
+          <p class="eyebrow eyebrow-rule">Categories</p>
+          <h2 id="categories-heading" class="type-section mt-3">
+            Explore AI by category
+          </h2>
+        </div>
+        <a
+          href={blogPath}
+          class="-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-display text-sm font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
+        >
+          All guides
+          <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+            <path
+              fill-rule="evenodd"
+              d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </div>
+
+      <ul class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {categories.map((category) => (
+          <li class="card card-link group relative flex flex-col p-6">
+            <span class="flex size-11 items-center justify-center rounded-xl border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none">
+              <PillarIcon icon={category.icon} class="size-6" />
+            </span>
+
+            <h3 class="type-card-title mt-5">
+              <a href={category.href} class="stretch-target group-hover:text-brand-800">
+                {category.title}
+              </a>
+            </h3>
+
+            <p class="mt-2.5 flex-1 text-[0.9375rem] leading-relaxed text-ink-600">
+              {category.summary}
+            </p>
+
+            <p class="mt-5 flex items-center justify-between gap-3 border-t border-ink-100 pt-4">
+              <span class="font-mono text-[0.6875rem] tracking-[0.06em] text-ink-500 uppercase">
+                {category.count} {category.count === 1 ? "guide" : "guides"}
+              </span>
+              <span
+                aria-hidden="true"
+                class="inline-flex items-center gap-1.5 font-display text-sm font-bold text-brand-700"
+              >
+                Explore
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="size-4 transition-transform duration-180 ease-ui group-hover:translate-x-0.5 motion-reduce:transition-none"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </span>
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/* ---- 3. Featured guides ----------------------------------------- */}
+  <section aria-labelledby="featured-heading" class="border-y border-ink-200 bg-surface">
+    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+      <div class="max-w-2xl">
+        <p class="eyebrow eyebrow-rule">Editor's picks</p>
+        <h2 id="featured-heading" class="type-section mt-3">
+          Featured guides
+        </h2>
+        <p class="type-body mt-3">
+          Five guides that between them cover choosing a tool, comparing two, budgeting for them,
+          briefing them properly, and putting one to work.
+        </p>
+      </div>
+
+      <div class="mt-9 grid gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
+        {featuredLead && (
+          <ArticleCard
+            article={featuredLead}
+            variant="lead"
+            as="h3"
+            sizes="(min-width: 1024px) 36rem, 92vw"
+          />
+        )}
+
+        <ul class="grid gap-3 self-start">
+          {featuredRest.map((article) => (
+            <li>
+              <ArticleCard article={article} variant="row" as="h3" />
+            </li>
           ))}
-          <p class="text-sm text-ink-500">No sign-up. Your figures stay in your browser.</p>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {/* ---- 4. Start here ---------------------------------------------- */}
+  <section aria-labelledby="start-here-heading">
+    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+      <div class="max-w-2xl">
+        <p class="eyebrow eyebrow-rule">Start here</p>
+        <h2 id="start-here-heading" class="type-section mt-3">
+          Where do you want to begin?
+        </h2>
+        <p class="type-body mt-3">
+          Four ways in. Each one opens a category and points at the guide most people read first.
+        </p>
+      </div>
+
+      <ul class="mt-9 grid gap-4 sm:grid-cols-2">
+        {startHere.map((path) => (
+          <li class="card group relative flex flex-col p-6">
+            <div class="flex items-start gap-4">
+              <span class="flex size-10 shrink-0 items-center justify-center rounded-xl border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none">
+                <PillarIcon icon={path.icon} class="size-5" />
+              </span>
+              <div class="min-w-0">
+                <h3 class="font-display text-lg font-bold tracking-[-0.018em] text-ink-900">
+                  “{path.question}”
+                </h3>
+                <p class="mt-2 text-[0.9375rem] leading-relaxed text-ink-600">{path.summary}</p>
+              </div>
+            </div>
+
+            <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-ink-100 pt-4 text-sm">
+              <a
+                href={path.hub.path}
+                class="inline-flex items-center gap-1.5 font-display font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
+              >
+                {path.hubTitle}
+                <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </a>
+              <a
+                href={path.guidePage.path}
+                class="text-ink-500 underline decoration-ink-300 underline-offset-2 transition-colors duration-180 ease-ui hover:text-brand-700 hover:decoration-current motion-reduce:transition-none"
+              >
+                Start with: {path.guideTitle}
+              </a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/* ---- 5. Free cost calculator ------------------------------------ */}
+  {toolPages.length > 0 && (
+    <section aria-labelledby="calculator-heading" class="border-y border-ink-200 bg-surface">
+      <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        <div class="overflow-hidden rounded-panel bg-ink-950 shadow-panel">
+          <div class="relative">
+            <div
+              aria-hidden="true"
+              class="bg-grid-inverse pointer-events-none absolute inset-0"
+            ></div>
+
+            <div class="relative grid gap-10 p-7 sm:p-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-14 lg:p-12">
+              <div>
+                <p class="eyebrow text-accent-200">Free tool</p>
+                <h2
+                  id="calculator-heading"
+                  class="type-section mt-3 text-white [text-wrap:balance]"
+                >
+                  Work out what AI will actually cost you
+                </h2>
+                <p class="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-ink-300">
+                  Add the tools you are paying for — or thinking about — and the calculator totals
+                  your monthly and annual spend, adds one-off setup costs for a first-year figure,
+                  and divides it across your team.
+                </p>
+
+                <ul class="mt-7 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+                  {[
+                    "Monthly recurring cost across every tool",
+                    "Annual cost, and first-year cost with setup",
+                    "Cost per employee and per active user",
+                    "Six currencies, and nothing leaves your browser",
+                  ].map((item) => (
+                    <li class="flex gap-2.5 text-[0.9375rem] leading-relaxed text-ink-200">
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="mt-0.5 size-4.5 shrink-0 text-accent-200"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                  {toolPages.map((tool) => (
+                    <a href={tool.href} class="btn btn-inverse">
+                      Use the AI Cost Calculator
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="size-4"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  ))}
+                  <p class="font-mono text-xs text-ink-400">No sign-up. No data sent anywhere.</p>
+                </div>
+              </div>
+
+              {/*
+                Preview of the output, computed at build time by the
+                calculator's own computeTotals() from the illustrative inputs
+                in src/config/homepage.ts.
+              */}
+              <div class="rounded-card border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm">
+                <p class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-400 uppercase">
+                  Example — not vendor prices
+                </p>
+
+                <dl class="mt-5 space-y-4">
+                  <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
+                    <dt class="text-sm text-ink-300">Monthly</dt>
+                    <dd class="font-display text-2xl font-extrabold text-white tabular-nums">
+                      {money(preview.monthlyRecurring)}
+                    </dd>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
+                    <dt class="text-sm text-ink-300">Annual</dt>
+                    <dd class="font-display text-xl font-bold text-white tabular-nums">
+                      {money(preview.annualRecurring)}
+                    </dd>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
+                    <dt class="text-sm text-ink-300">First year, with setup</dt>
+                    <dd class="font-display text-xl font-bold text-accent-200 tabular-nums">
+                      {money(preview.firstYearTotal)}
+                    </dd>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-4">
+                    <dt class="text-sm text-ink-300">Per employee, monthly</dt>
+                    <dd class="font-display text-base font-bold text-white tabular-nums">
+                      {money(preview.perEmployee)}
+                    </dd>
+                  </div>
+                </dl>
+
+                <p class="mt-6 border-t border-white/10 pt-4 text-xs leading-relaxed text-ink-400">
+                  From {preview.perTool.length} example tools at {money(preview.monthlyRecurring)} a
+                  month plus {money(preview.totalSetup)} of one-off setup, across{" "}
+                  {CALCULATOR_PREVIEW.business.employees} people. Your own figures replace all of
+                  these.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   )}
+
+  {/* ---- 6. Latest guides ------------------------------------------- */}
+  <section aria-labelledby="latest-heading">
+    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+      <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+        <div class="max-w-2xl">
+          <p class="eyebrow eyebrow-rule">Latest</p>
+          <h2 id="latest-heading" class="type-section mt-3">
+            Newest guides
+          </h2>
+        </div>
+        <a
+          href={blogPath}
+          class="-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-display text-sm font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
+        >
+          Browse every guide
+          <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+            <path
+              fill-rule="evenodd"
+              d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </div>
+
+      <ul class="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {latest.map((article) => (
+          <li class="flex">
+            <ArticleCard article={article} as="h3" class="w-full" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/* ---- 7. How these guides are made ------------------------------- */}
+  <section aria-labelledby="method-heading" class="border-t border-ink-200 bg-surface">
+    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
+        <div>
+          <p class="eyebrow eyebrow-rule">How we work</p>
+          <h2 id="method-heading" class="type-section mt-3">
+            Why trust these guides
+          </h2>
+          <p class="type-body mt-4">
+            {SITE.name} is written and researched by {AUTHOR.name}. There is no team behind it, so
+            the method is published instead: what the guides are based on, what they will not claim,
+            and how the site makes money.
+          </p>
+          <a href={aboutPath} class="btn btn-secondary mt-6">
+            Read the editorial process
+          </a>
+        </div>
+
+        <ul class="grid gap-x-8 gap-y-7 sm:grid-cols-2">
+          {METHOD.map((item) => (
+            <li>
+              <h3 class="flex items-center gap-2.5 font-display text-[1.0625rem] font-bold text-ink-900">
+                <span
+                  aria-hidden="true"
+                  class="h-5 w-0.5 shrink-0 rounded-full bg-brand-600"
+                ></span>
+                {item.title}
+              </h3>
+              <p class="mt-2 pl-[1.125rem] leading-relaxed text-ink-600">{item.body}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

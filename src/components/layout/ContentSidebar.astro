@@ -1,15 +1,15 @@
 ---
 /**
- * Right-hand contextual navigation for pillar and article pages: the current
- * category and its articles, then the other categories. Content comes from
- * getContentSidebar(), which reads the page registry and the MDX collections —
- * no page lists anything itself.
+ * Contextual category navigation for pillar, article, and tool pages: the
+ * current category and its articles, its free tools, then the other categories.
+ * Content comes from getContentSidebar(), which reads the page registry and the
+ * MDX collections — no page lists anything itself.
  *
- * At `lg` and up it is the second grid column and sticks below the header. Below
- * `lg` it collapses to an accordion above the article body, closed by default so
- * it never pushes the content a visitor came for off the screen. The toggle is a
- * real button with aria-expanded / aria-controls; with scripting off the panel
- * is simply shown, since nothing could open it.
+ * At `lg` and up it sits in the sticky rail PageLayout provides, under the
+ * table of contents. Below `lg` it collapses to an accordion above the article
+ * body, closed by default so it never pushes the content a visitor came for off
+ * the screen. The toggle is a real button with aria-expanded / aria-controls;
+ * with scripting off the panel is simply shown, since nothing could open it.
  *
  * Every link is a plain <a> at every width — these are internal links, so the
  * crawler sees the same navigation whether or not the accordion is open.
@@ -29,17 +29,31 @@ const panelId = "content-sidebar-panel";
 <nav aria-label={sidebar.label} class="not-prose" data-content-sidebar>
   <button
     type="button"
-    class="group flex w-full items-center justify-between gap-3 rounded-xl border border-ink-200 bg-surface px-4 py-3 text-left text-sm font-semibold text-ink-900 shadow-card hover:border-ink-300 lg:hidden"
+    class="group flex w-full items-center justify-between gap-3 rounded-xl border border-ink-200 bg-surface px-4 py-3 text-left shadow-card transition-colors duration-180 ease-ui hover:border-ink-300 motion-reduce:transition-none lg:hidden"
     aria-expanded="false"
     aria-controls={panelId}
     data-sidebar-toggle
   >
-    <span>Browse this category</span>
+    <span class="flex items-center gap-2.5">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="size-4.5 shrink-0 text-brand-700"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M3.5 2.75a.75.75 0 0 0-1.5 0v14.5a.75.75 0 0 0 1.5 0v-4.392l1.657-.348a6.449 6.449 0 0 1 4.271.572 7.948 7.948 0 0 0 5.965.524l2.078-.64A.75.75 0 0 0 18 12.25v-8.5a.75.75 0 0 0-.904-.734l-2.38.501a7.25 7.25 0 0 1-4.186-.363l-.502-.2a8.75 8.75 0 0 0-5.053-.439l-1.475.31V2.75Z"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+      <span class="font-display text-sm font-bold text-ink-900">Browse this category</span>
+    </span>
     <svg
       aria-hidden="true"
       viewBox="0 0 20 20"
       fill="currentColor"
-      class="size-5 shrink-0 text-ink-400 transition-transform group-aria-expanded:rotate-180 motion-reduce:transition-none"
+      class="size-5 shrink-0 text-ink-400 transition-transform duration-180 ease-ui group-aria-expanded:rotate-180 motion-reduce:transition-none"
     >
       <path
         fill-rule="evenodd"
@@ -51,20 +65,22 @@ const panelId = "content-sidebar-panel";
 
   <div
     id={panelId}
-    class="max-lg:mt-2 max-lg:hidden max-lg:rounded-xl max-lg:border max-lg:border-ink-200 max-lg:bg-surface max-lg:p-4 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:overscroll-contain lg:border-l lg:border-ink-200 lg:pl-6"
+    class="max-lg:mt-2 max-lg:hidden max-lg:rounded-xl max-lg:border max-lg:border-ink-200 max-lg:bg-surface max-lg:p-4"
     data-sidebar-panel
   >
     {sidebar.sections.map((section, index) => (
       <div class:list={[index > 0 && "mt-7 border-t border-ink-200 pt-6"]}>
         {section.eyebrow && <p class="eyebrow">{section.eyebrow}</p>}
 
-        <h2 class:list={["text-sm font-bold text-ink-900", section.eyebrow && "mt-1.5"]}>
+        <h2
+          class:list={["font-display text-sm font-bold text-ink-900", section.eyebrow && "mt-1.5"]}
+        >
           {section.headingHref ? (
             <a
               href={section.headingHref}
               aria-current={currentPath === section.headingHref ? "page" : undefined}
               class:list={[
-                "hover:text-brand-700 hover:underline",
+                "transition-colors duration-180 ease-ui hover:text-brand-700 motion-reduce:transition-none",
                 currentPath === section.headingHref && "text-brand-700",
               ]}
             >
@@ -85,7 +101,7 @@ const panelId = "content-sidebar-panel";
                   aria-current={isCurrent ? "page" : undefined}
                   class:list={[
                     // The left rule reads as a docs tree; the current item fills it in.
-                    "-ml-px flex min-h-9 items-center border-l-2 py-1.5 pl-3 leading-snug",
+                    "-ml-px flex min-h-9 items-center border-l-2 py-1.5 pl-3 leading-snug transition-colors duration-180 ease-ui motion-reduce:transition-none",
                     isCurrent
                       ? "border-brand-600 font-semibold text-brand-700"
                       : "border-ink-200 text-ink-600 hover:border-ink-400 hover:text-brand-700",

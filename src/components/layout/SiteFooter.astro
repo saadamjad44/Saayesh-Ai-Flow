@@ -1,52 +1,103 @@
 ---
 /**
- * Site footer: crawlable links to every live Phase 1 pillar and company page,
- * plus the affiliate disclosure one-liner. No email opt-in in Phase 1.
+ * Site footer: the brand, crawlable links to every live pillar, guide index,
+ * free tool, company and legal page, and the affiliate disclosure one-liner.
+ *
+ * The link groups come from FOOTER_NAV, so the footer cannot fall behind the
+ * page registry. No email opt-in and no form of any kind: the site has none.
  */
+import { Image } from "astro:assets";
+
 import { FOOTER_NAV } from "@/config/navigation";
+import { BRAND_LOGO } from "@/config/media";
 import { getPage } from "@/config/pages";
 import { SITE } from "@/config/site";
+import { AUTHOR } from "@/config/author";
 
 const year = new Date().getFullYear();
 const disclosurePath = getPage("affiliate-disclosure").path;
+const aboutPath = getPage("about").path;
+
+const logoWidth = Math.round((BRAND_LOGO.src.width / BRAND_LOGO.src.height) * 32);
 ---
 
-<footer class="mt-auto border-t border-ink-200 bg-ink-50 text-sm text-ink-600">
-  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3 md:gap-8">
-    <div class="max-w-xs">
-      <p class="text-base font-extrabold tracking-display text-ink-900">{SITE.name}</p>
-      <p class="mt-2.5 leading-relaxed">{SITE.tagline}</p>
-    </div>
+<footer class="mt-auto border-t border-ink-200 bg-ink-50">
+  <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16">
+    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-[minmax(0,1.15fr)_repeat(4,minmax(0,1fr))] lg:gap-8">
+      {/* Brand column */}
+      <div class="md:col-span-2 lg:col-span-1">
+        <a href="/" class="group inline-flex items-center gap-2.5">
+          <Image
+            src={BRAND_LOGO.src}
+            alt={BRAND_LOGO.alt}
+            width={logoWidth}
+            height={32}
+            densities={[1, 2]}
+            loading="lazy"
+            decoding="async"
+            class="h-8 w-auto shrink-0"
+          />
+          <span class="font-display text-lg font-extrabold tracking-[-0.02em] text-ink-900 group-hover:text-brand-800">
+            {SITE.name.split(" ")[0]}{" "}
+            <span class="text-brand-700">{SITE.name.split(" ").slice(1).join(" ")}</span>
+          </span>
+        </a>
+        <p class="mt-4 max-w-sm text-sm leading-relaxed text-ink-600">
+          Research-based guides to AI tools, prompts, and automation workflows for solopreneurs,
+          freelancers, and small business owners. Written and researched by{" "}
+          <a
+            href={AUTHOR.path}
+            class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-800 hover:decoration-current"
+          >
+            {AUTHOR.name}
+          </a>
+          .
+        </p>
+        <p class="mt-4 text-sm leading-relaxed text-ink-500">
+          Guides state when prices were last checked, and say so when a tool has not been hands-on
+          tested.{" "}
+          <a
+            href={aboutPath}
+            class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-800 hover:decoration-current"
+          >
+            How we work
+          </a>
+        </p>
+      </div>
 
-    {FOOTER_NAV.map(({ heading, links }) => (
-      <nav aria-label={heading}>
-        <h2 class="text-xs font-bold tracking-[0.08em] text-ink-900 uppercase">{heading}</h2>
-        <ul class="mt-4 space-y-1">
-          {links.map(({ label, href }) => (
-            <li>
-              <a
-                href={href}
-                class="-mx-2 inline-block rounded px-2 py-1.5 hover:text-brand-700 hover:underline"
-              >
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    ))}
+      {FOOTER_NAV.map(({ heading, links }) => (
+        <nav aria-label={heading}>
+          <h2 class="eyebrow">{heading}</h2>
+          <ul class="mt-4 space-y-0.5 text-sm">
+            {links.map(({ label, href }) => (
+              <li>
+                <a
+                  href={href}
+                  class="-mx-2 inline-block rounded px-2 py-1.5 text-ink-600 transition-colors duration-180 ease-ui hover:text-brand-700 motion-reduce:transition-none"
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))}
+    </div>
   </div>
 
   <div class="border-t border-ink-200">
-    <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 sm:px-6 md:flex-row-reverse md:items-center md:justify-between">
-      <p class="text-ink-500">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm sm:px-6 md:flex-row-reverse md:items-center md:justify-between">
+      <p class="max-w-2xl text-ink-500">
         Some links on this site may be affiliate links. If you buy through them, we may earn a
         commission at no extra cost to you.{" "}
-        <a href={disclosurePath} class="font-medium text-brand-700 underline hover:text-brand-800">
+        <a
+          href={disclosurePath}
+          class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-800 hover:decoration-current"
+        >
           Read our affiliate disclosure
         </a>
       </p>
-      <p class="shrink-0 text-ink-500">
+      <p class="shrink-0 font-mono text-xs text-ink-500">
         &copy; {year} {SITE.name}
       </p>
     </div>

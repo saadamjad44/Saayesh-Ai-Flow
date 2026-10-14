@@ -1,33 +1,40 @@
 ---
 /**
- * Visible breadcrumb trail. The matching BreadcrumbList JSON-LD is emitted
- * in <head> by the layout from the same items.
+ * Visible breadcrumb trail, rendered inside a page's own header so it lines up
+ * with that page's measured column rather than with a container of its own.
+ * The matching BreadcrumbList JSON-LD is emitted in <head> by BaseLayout from
+ * the same items, so the two can never disagree.
+ *
+ * On a phone the trail is a single scrollable row: wrapping a four-level trail
+ * over three lines pushed the <h1> down the screen for no benefit, and the last
+ * crumb is the page you are already on.
  */
 import type { BreadcrumbItem } from "@/lib/seo";
 
 interface Props {
   items: readonly BreadcrumbItem[];
+  class?: string;
 }
 
-const { items } = Astro.props;
+const { items, class: className } = Astro.props;
 ---
 
 {items.length > 1 && (
-  <nav aria-label="Breadcrumb" class="mx-auto w-full max-w-6xl px-4 pt-6 text-sm sm:px-6">
-    <ol class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-ink-500">
+  <nav aria-label="Breadcrumb" class:list={["-mx-4 px-4 sm:mx-0 sm:px-0", className]}>
+    <ol class="flex items-center gap-x-1 overflow-x-auto font-mono text-[0.6875rem] tracking-[0.04em] whitespace-nowrap text-ink-500 uppercase [scrollbar-width:none] sm:flex-wrap sm:whitespace-normal [&::-webkit-scrollbar]:hidden">
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
         return (
-          <li class="flex min-w-0 items-center gap-1.5">
+          <li class="flex min-w-0 items-center gap-1">
             {isLast ? (
-              <span aria-current="page" class="truncate font-medium text-ink-800">
+              <span aria-current="page" class="font-medium text-ink-700">
                 {item.label}
               </span>
             ) : (
               <>
                 <a
                   href={item.path}
-                  class="-mx-1.5 rounded px-1.5 py-1 hover:text-brand-700 hover:underline"
+                  class="-mx-1 rounded px-1 py-1 transition-colors duration-180 ease-ui hover:text-brand-700 motion-reduce:transition-none"
                 >
                   {item.label}
                 </a>
@@ -35,7 +42,7 @@ const { items } = Astro.props;
                   aria-hidden="true"
                   viewBox="0 0 20 20"
                   fill="currentColor"
-                  class="size-3.5 text-ink-300"
+                  class="size-3 shrink-0 text-ink-300"
                 >
                   <path
                     fill-rule="evenodd"

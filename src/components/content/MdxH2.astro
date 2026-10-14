@@ -1,0 +1,14 @@
+---
+/** Markdown `##` inside an MDX body. See MdxHeading for why. */
+import MdxHeading from "./MdxHeading.astro";
+
+interface Props {
+  id?: string;
+}
+
+const { id } = Astro.props;
+---
+
+<MdxHeading as="h2" {id}>
+  <slot />
+</MdxHeading>

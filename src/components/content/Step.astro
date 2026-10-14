@@ -1,0 +1,28 @@
+---
+/**
+ * One step of a <Steps> walkthrough: a numbered marker, a title, and a body.
+ *
+ * The marker is a CSS counter on the parent list rather than an authored
+ * number, and it is drawn with `::before` on an aria-hidden element — the <li>
+ * is already announced as item N of M by a screen reader, so a second spoken
+ * number would be noise.
+ */
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<li class="relative flex gap-4 [counter-increment:step] sm:gap-5">
+  <span
+    aria-hidden="true"
+    class="flex size-9 shrink-0 items-center justify-center rounded-full border border-brand-200 bg-brand-50 font-display text-sm font-extrabold text-brand-700 before:content-[counter(step)]"
+  ></span>
+  <div class="min-w-0 pt-1 pb-1">
+    <p class="font-display text-[1.0625rem] font-bold text-ink-900">{title}</p>
+    <div class="mt-2 leading-relaxed text-ink-600 [&>*+*]:mt-3 [&_a]:font-medium [&_a]:text-brand-700 [&_a]:underline [&_a]:decoration-brand-300 [&_a]:underline-offset-2 [&_a:hover]:decoration-current [&_code]:rounded [&_code]:border [&_code]:border-ink-200 [&_code]:bg-ink-50 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em] [&_li]:mt-1.5 [&_strong]:font-semibold [&_strong]:text-ink-900 [&_ul]:list-disc [&_ul]:pl-5">
+      <slot />
+    </div>
+  </div>
+</li>

@@ -1,44 +1,80 @@
 ---
-// Custom 404. Astro emits dist/404.html, which Netlify serves for unknown URLs.
+/**
+ * Custom 404. Astro emits dist/404.html, which the host serves for unknown URLs.
+ *
+ * The suggestions are the six categories plus the archive and the homepage —
+ * built from the registry and the published collections, so this page can never
+ * offer a route that does not exist.
+ */
+import PillarIcon from "@/components/layout/PillarIcon.astro";
+import SearchBox from "@/components/layout/SearchBox.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { PRIMARY_NAV } from "@/config/navigation";
+import { FALLBACK_NAV, PILLAR_NAV } from "@/config/navigation";
+import { getPage } from "@/config/pages";
+import { getPillarPresentation } from "@/config/pillars";
+import { getPublishedEntries } from "@/lib/content";
+
+const pillars = await getPublishedEntries("pillars");
+const titles = new Map(pillars.map(({ entry, page }) => [page.id, entry.data.title]));
+
+const categories = PILLAR_NAV.filter((entry) => titles.has(entry.pillar)).map((entry) => {
+  const page = getPage(entry.pillar);
+  return {
+    title: titles.get(page.id) ?? page.title,
+    href: page.path,
+    icon: getPillarPresentation(entry.pillar).icon,
+  };
+});
 ---
 
 <BaseLayout
   title="Page not found"
   description="The page you were looking for doesn't exist or may have moved."
 >
-  <div class="mx-auto max-w-3xl px-4 py-20 sm:px-6 sm:py-28">
-    <p class="eyebrow">404 error</p>
-    <h1 class="mt-3 text-3xl font-extrabold tracking-display text-ink-900 sm:text-5xl">
-      Page not found
-    </h1>
-    <p class="mt-5 text-lg leading-relaxed text-ink-600">
-      The page you were looking for doesn't exist or may have moved. Check the URL, or start from
+  <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
+    <p class="eyebrow eyebrow-rule">404 error</p>
+    <h1 class="type-title mt-4">Page not found</h1>
+    <p class="type-lead mt-5">
+      The page you were looking for doesn't exist or may have moved. Search for it, or start from
       one of the sections below.
     </p>
 
-    <nav aria-label="Suggested pages" class="mt-10">
-      <ul class="grid gap-3 sm:grid-cols-2">
-        {[{ label: "Homepage", href: "/" }, ...PRIMARY_NAV].map(({ label, href }) => (
+    <div class="mt-8">
+      <SearchBox
+        id="notfound"
+        variant="hero"
+        label="Search guides, tools and prompts"
+        placeholder="Search guides, tools and prompts..."
+      />
+    </div>
+
+    <nav aria-label="Categories" class="mt-12">
+      <h2 class="eyebrow">Browse a category</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+        {categories.map((category) => (
           <li>
             <a
-              href={href}
-              class="card card-link flex min-h-11 items-center justify-between gap-3 px-4 py-3.5 font-semibold text-ink-900 hover:text-brand-700"
+              href={category.href}
+              class="card card-link group flex min-h-14 items-center gap-3.5 px-4 py-3"
             >
+              <span class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none">
+                <PillarIcon icon={category.icon} class="size-5" />
+              </span>
+              <span class="font-display font-bold text-ink-900 group-hover:text-brand-800">
+                {category.title}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav aria-label="Other pages" class="mt-8 border-t border-ink-200 pt-6">
+      <ul class="flex flex-wrap gap-2.5">
+        {FALLBACK_NAV.map(({ label, href }) => (
+          <li>
+            <a href={href} class="chip">
               {label}
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                class="size-4 shrink-0 text-ink-400"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
             </a>
           </li>
         ))}

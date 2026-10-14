@@ -83,15 +83,12 @@ const headingId = "ai-cost-calculator";
 
 <section
   aria-labelledby={headingId}
-  class="not-prose my-10 overflow-hidden rounded-2xl border border-ink-200 bg-surface shadow-card"
+  class="not-prose my-10 overflow-hidden rounded-panel border border-ink-200 bg-surface shadow-panel"
   data-ai-cost-calculator
 >
   <div class="border-b border-ink-200 bg-ink-50 px-4 py-5 sm:px-6 sm:py-6">
-    <p class="eyebrow">Free calculator</p>
-    <h2
-      id={headingId}
-      class="mt-2 text-2xl font-bold tracking-display text-ink-900 sm:text-[1.75rem]"
-    >
+    <p class="eyebrow eyebrow-accent">Free calculator</p>
+    <h2 id={headingId} class="type-section mt-2">
       Work out your AI software costs
     </h2>
     <p class="mt-2.5 leading-relaxed text-ink-600">
@@ -103,7 +100,7 @@ const headingId = "ai-cost-calculator";
         aria-hidden="true"
         viewBox="0 0 20 20"
         fill="currentColor"
-        class="mt-0.5 size-4 shrink-0 text-brand-700"
+        class="mt-0.5 size-4 shrink-0 text-accent-700"
       >
         <path
           fill-rule="evenodd"
@@ -124,7 +121,9 @@ const headingId = "ai-cost-calculator";
       ever failed to run.
     */}
     <fieldset>
-      <legend class="text-base font-bold tracking-display text-ink-900">Your business</legend>
+      <legend class="font-display text-base font-bold tracking-tight text-ink-900">
+        Your business
+      </legend>
       <p class="mt-1 text-sm text-ink-500">
         Used for the per-person and per-unit figures. Leave a field blank to skip that figure.
       </p>
@@ -146,7 +145,7 @@ const headingId = "ai-cost-calculator";
                 inputmode="numeric"
                 autocomplete="off"
                 aria-describedby={`${id}-hint`}
-                class="mt-1.5 block w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none aria-[invalid=true]:border-red-600"
+                class="mt-1.5 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 transition-colors duration-180 ease-ui hover:border-ink-400 focus:border-brand-500 focus:outline-none aria-[invalid=true]:border-red-600 motion-reduce:transition-none"
                 data-field={field.key}
                 data-kind="count"
               />
@@ -185,7 +184,7 @@ const headingId = "ai-cost-calculator";
         <select
           id="ai-cost-currency"
           aria-describedby="ai-cost-currency-hint"
-          class="mt-1.5 block w-full max-w-xs rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
+          class="mt-1.5 block min-h-11 w-full max-w-xs rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
           data-currency
         >
           {CURRENCIES.map((currency) => (
@@ -208,7 +207,9 @@ const headingId = "ai-cost-calculator";
     </fieldset>
 
     <fieldset class="mt-8 border-t border-ink-200 pt-6">
-      <legend class="text-base font-bold tracking-display text-ink-900">Your AI tools</legend>
+      <legend class="font-display text-base font-bold tracking-tight text-ink-900">
+        Your AI tools
+      </legend>
       <p class="mt-1 text-sm text-ink-500">
         One row per subscription. At least one tool row is always kept, and you can add up to{" "}
         {LIMITS.maxRows}.
@@ -234,7 +235,7 @@ const headingId = "ai-cost-calculator";
     </fieldset>
 
     <div class="mt-8 border-t border-ink-200 pt-6">
-      <h3 class="text-xl font-bold tracking-display text-ink-900 sm:text-2xl">Your AI costs</h3>
+      <h3 class="type-subsection">Your AI costs</h3>
 
       <p
         hidden
@@ -258,11 +259,11 @@ const headingId = "ai-cost-calculator";
 
       <dl class="mt-4 grid gap-3 sm:grid-cols-2">
         {HEADLINE_RESULTS.map((result) => (
-          <div class="rounded-xl border border-brand-200 bg-brand-50 p-4 sm:p-5">
-            <dt class="text-sm font-semibold text-brand-900">{result.label}</dt>
+          <div class="rounded-xl border border-accent-200 bg-accent-50 p-4 sm:p-5">
+            <dt class="text-sm font-semibold text-accent-800">{result.label}</dt>
             <dd>
               <p
-                class="mt-1 text-3xl font-extrabold tracking-display text-ink-900 tabular-nums sm:text-4xl"
+                class="mt-1 font-display text-3xl font-extrabold tracking-[-0.026em] text-ink-900 tabular-nums sm:text-4xl"
                 data-result={result.key}
               >
                 —
@@ -285,7 +286,7 @@ const headingId = "ai-cost-calculator";
             <dt class="text-sm font-semibold text-ink-900">{result.label}</dt>
             <dd>
               <p
-                class="mt-1 text-xl font-bold tracking-display text-ink-900 tabular-nums"
+                class="mt-1 font-display text-xl font-bold tracking-tight text-ink-900 tabular-nums"
                 data-result={result.key}
               >
                 —
@@ -298,12 +299,14 @@ const headingId = "ai-cost-calculator";
         ))}
       </dl>
 
-      <h4 class="mt-8 text-base font-bold tracking-display text-ink-900">Cost breakdown by tool</h4>
+      <h4 class="mt-8 font-display text-base font-bold tracking-tight text-ink-900">
+        Cost breakdown by tool
+      </h4>
       <p class="mt-1 text-sm text-ink-500">
         Recurring monthly cost per tool: seats plus usage. One-time setup costs are totalled
         separately above.
       </p>
-      <div class="mt-3 overflow-x-auto">
+      <div tabindex="0" class="mt-3 overflow-x-auto overscroll-x-contain">
         <table class="w-full text-sm">
           <caption class="sr-only">Monthly recurring cost by tool</caption>
           <thead>

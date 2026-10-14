@@ -1,22 +1,32 @@
 ---
 /**
- * Page shell on BaseLayout for core, legal, pillar, and article pages:
- * eyebrow, heading, optional intro, optional legal-draft notice, and a prose body.
- * Slots: default (prose body), "meta" (end of the header), "hero" (below the
- * header), "after" (below the prose), "sidebar" (contextual navigation).
+ * Page shell on BaseLayout for core, legal, pillar, article, and tool pages:
+ * breadcrumbs, eyebrow, heading, optional standfirst, optional legal-draft
+ * notice, and a prose body.
  *
- * With no "sidebar" slot the page is a single measured column, exactly as
- * before. Fill that slot and the page widens at `lg` into a two-column grid —
- * the same measured column, plus contextual navigation on the right. Below `lg`
- * the sidebar sits above the prose (as a collapsed accordion, see
- * ContentSidebar) and the column width is unchanged, so nothing is pushed
- * off-screen and body copy keeps the same measure at every width.
+ * Slots: default (prose body), "meta" (end of the header, e.g. the byline),
+ * "hero" (below the header), "after" (below the prose), "sidebar" (the
+ * contextual rail: table of contents and category navigation).
+ *
+ * With no "sidebar" slot the page is a single measured column. Fill that slot
+ * and the page widens at `lg` into a two-column grid — the same measured
+ * column, plus the rail on the right. Below `lg` the rail sits above the prose
+ * (its parts collapse into accordions; see TableOfContents and ContentSidebar)
+ * and the column width is unchanged, so nothing is pushed off-screen and body
+ * copy keeps the same measure at every width.
+ *
+ * The visible breadcrumb trail is rendered here rather than in BaseLayout so it
+ * lines up with this page's measured column. The matching BreadcrumbList schema
+ * is emitted by BaseLayout from the same getBreadcrumbs() call.
  */
 import BaseLayout from "./BaseLayout.astro";
+import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
+import PillarIcon from "@/components/layout/PillarIcon.astro";
+import type { PillarIconId } from "@/config/pillars";
 import ContentGap from "@/components/content/ContentGap.astro";
 import type { OpenGraphArticle } from "@/components/seo/SeoHead.astro";
-import type { PageId } from "@/config/pages";
-import type { JsonLd } from "@/lib/seo";
+import { getPage, type PageId } from "@/config/pages";
+import { getBreadcrumbs, type JsonLd } from "@/lib/seo";
 
 interface Props {
   pageId: PageId;
@@ -26,6 +36,12 @@ interface Props {
   heading?: string;
   /** Small uppercase label above the <h1>, e.g. the parent category. */
   eyebrow?: string;
+  /** Makes the eyebrow a link, e.g. a category label pointing at its hub. */
+  eyebrowHref?: string;
+  /** Teal eyebrow, for the free interactive tools. */
+  eyebrowAccent?: boolean;
+  /** Category glyph above the eyebrow. Pillar hubs only. */
+  icon?: PillarIconId;
   intro?: string;
   /** Legal pages: shows the draft notice and effective-date placeholder. */
   legalDraft?: boolean;
@@ -41,6 +57,9 @@ const {
   description,
   heading = title,
   eyebrow,
+  eyebrowHref,
+  eyebrowAccent = false,
+  icon,
   intro,
   legalDraft = false,
   ogType,
@@ -49,6 +68,7 @@ const {
 } = Astro.props;
 
 const hasSidebar = Astro.slots.has("sidebar");
+const breadcrumbs = getBreadcrumbs(getPage(pageId));
 ---
 
 <BaseLayout
@@ -61,24 +81,38 @@ const hasSidebar = Astro.slots.has("sidebar");
 >
   <article
     class:list={[
-      "mx-auto max-w-3xl px-4 pb-16 sm:px-6 sm:pb-20",
+      "mx-auto max-w-3xl px-4 pb-16 sm:px-6 sm:pb-24",
       // Only the grid row widens; the prose column keeps its measure.
       hasSidebar && "lg:max-w-6xl",
     ]}
   >
-    <header class:list={["pt-8 pb-8 sm:pt-12 sm:pb-10", hasSidebar && "lg:max-w-3xl"]}>
-      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-      <h1
-        class:list={[
-          "text-3xl font-extrabold tracking-display text-balance text-ink-900 sm:text-[2.75rem] sm:leading-[1.1]",
-          eyebrow && "mt-3",
-        ]}
-      >
-        {heading}
-      </h1>
-      {intro && (
-        <p class="mt-5 text-lg leading-relaxed text-pretty text-ink-600 sm:text-xl">{intro}</p>
+    <header class:list={["pt-6 pb-8 sm:pt-8 sm:pb-10", hasSidebar && "lg:max-w-3xl"]}>
+      <Breadcrumbs items={breadcrumbs} class="mb-6" />
+
+      {icon && (
+        <span class="mb-5 flex size-12 items-center justify-center rounded-xl border border-ink-200 bg-surface text-brand-700 shadow-card">
+          <PillarIcon icon={icon} class="size-6" />
+        </span>
       )}
+
+      {eyebrow && (
+        <p class:list={["eyebrow", eyebrowAccent && "eyebrow-accent"]}>
+          {eyebrowHref ? (
+            <a
+              href={eyebrowHref}
+              class="-my-1 inline-block py-1 transition-colors duration-180 ease-ui hover:text-ink-900 motion-reduce:transition-none"
+            >
+              {eyebrow}
+            </a>
+          ) : (
+            eyebrow
+          )}
+        </p>
+      )}
+
+      <h1 class:list={["type-title", eyebrow && "mt-3"]}>{heading}</h1>
+
+      {intro && <p class="type-lead mt-5">{intro}</p>}
 
       {legalDraft && (
         <>
@@ -100,7 +134,7 @@ const hasSidebar = Astro.slots.has("sidebar");
       )}
 
       {Astro.slots.has("meta") && (
-        <div class="mt-8 space-y-3 border-t border-ink-200 pt-6">
+        <div class="mt-8 space-y-4 border-t border-ink-200 pt-6">
           <slot name="meta" />
         </div>
       )}
@@ -110,11 +144,11 @@ const hasSidebar = Astro.slots.has("sidebar");
 
     <div
       class:list={[
-        hasSidebar && "lg:grid lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start lg:gap-12",
+        hasSidebar && "lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-x-12",
       ]}
     >
       {hasSidebar && (
-        <aside class="mb-8 lg:sticky lg:top-20 lg:order-2 lg:mb-0">
+        <aside class="mb-8 space-y-3 lg:sticky lg:top-24 lg:order-2 lg:mb-0 lg:max-h-[calc(100vh-7.5rem)] lg:space-y-7 lg:overflow-y-auto lg:overscroll-contain lg:border-l lg:border-ink-200 lg:pl-7">
           <slot name="sidebar" />
         </aside>
       )}

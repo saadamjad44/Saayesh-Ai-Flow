@@ -1,0 +1,83 @@
+---
+/**
+ * An important note inside a guide, in one of three registers:
+ *
+ *   note     neutral context a reader needs to read the section correctly
+ *   tip      something that makes the task easier, safely skippable
+ *   warning  something that costs money, data, or trust if ignored
+ *
+ * Each register carries its own icon and its own word in the heading, not just
+ * its own colour, so the distinction survives greyscale and colour-vision
+ * differences. The shape is the shared `.callout` every in-content note on the
+ * site uses, so a tip and an affiliate note read as the same family.
+ *
+ * Warning is deliberately the only one that borrows the amber the affiliate
+ * note uses, because on this site amber already means "read this before you
+ * spend money".
+ */
+import { headingId } from "@/lib/ids";
+
+type Tone = "note" | "tip" | "warning";
+
+interface Props {
+  tone?: Tone;
+  /** Overrides the default word in the heading, e.g. "Before you start". */
+  heading?: string;
+  /** Overrides the generated heading id, for deep links. Must be unique per page. */
+  id?: string;
+}
+
+const TONES: Record<
+  Tone,
+  { label: string; shell: string; headingTone: string; icon: string; iconTone: string }
+> = {
+  note: {
+    label: "Note",
+    shell: "border-ink-200 border-l-ink-400 bg-ink-50",
+    headingTone: "text-ink-900",
+    iconTone: "text-ink-500",
+    // An "i" in a circle.
+    icon: "M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z",
+  },
+  tip: {
+    label: "Tip",
+    shell: "border-accent-200 border-l-accent-600 bg-accent-50",
+    headingTone: "text-accent-800",
+    iconTone: "text-accent-700",
+    // A lightbulb.
+    icon: "M10 1a6 6 0 0 0-3.815 10.631C7.237 12.5 8 13.443 8 14.456v.644a.75.75 0 0 0 .75.75h2.5a.75.75 0 0 0 .75-.75v-.644c0-1.013.763-1.957 1.815-2.825A6 6 0 0 0 10 1ZM8.863 17.414a.75.75 0 0 0-.226 1.483 9.066 9.066 0 0 0 2.726 0 .75.75 0 0 0-.226-1.483 7.553 7.553 0 0 1-2.274 0Z",
+  },
+  warning: {
+    label: "Watch out",
+    shell: "border-amber-200 border-l-amber-500 bg-amber-50",
+    headingTone: "text-amber-900",
+    iconTone: "text-amber-600",
+    // A triangle with an exclamation mark.
+    icon: "M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.63-1.516 2.63H3.72c-1.347 0-2.189-1.463-1.515-2.63L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z",
+  },
+};
+
+const { tone = "note", heading, id } = Astro.props;
+const style = TONES[tone];
+const label = heading ?? style.label;
+const labelId = id ?? headingId(label, `callout-${tone}`);
+---
+
+<aside aria-labelledby={labelId} class:list={["callout not-prose my-8 flex gap-3.5", style.shell]}>
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    class:list={["mt-0.5 size-5 shrink-0", style.iconTone]}
+  >
+    <path fill-rule="evenodd" d={style.icon} clip-rule="evenodd" />
+  </svg>
+  <div class="min-w-0">
+    <p id={labelId} class:list={["font-display text-sm font-bold", style.headingTone]}>
+      {label}
+    </p>
+    <div class="mt-1.5 leading-relaxed text-ink-700 [&>*+*]:mt-2.5 [&_a]:font-medium [&_a]:text-brand-700 [&_a]:underline [&_a]:decoration-brand-300 [&_a]:underline-offset-2 [&_a:hover]:decoration-current [&_strong]:font-semibold [&_strong]:text-ink-900">
+      <slot />
+    </div>
+  </div>
+</aside>

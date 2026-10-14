@@ -1,0 +1,14 @@
+---
+/**
+ * A numbered walkthrough. Wraps <Step> children and numbers them with a CSS
+ * counter, so inserting a step never means renumbering the others by hand.
+ *
+ * Use it for a procedure the reader follows in order. An ordered Markdown list
+ * is the right choice for anything shorter or less sequential — the prose
+ * styling in global.css already gives those a display-weight brand numeral.
+ */
+---
+
+<ol class="not-prose my-9 space-y-6 [counter-reset:step]" data-steps>
+  <slot />
+</ol>

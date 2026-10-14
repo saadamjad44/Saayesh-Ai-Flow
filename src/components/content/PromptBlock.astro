@@ -1,0 +1,98 @@
+---
+/**
+ * A reusable prompt, in a container built to be copied.
+ *
+ * Only for prompts a reader is meant to take away and run: the text is rendered
+ * verbatim in a <pre>, so nothing is reformatted or re-wrapped on the way to
+ * the clipboard, and the copy button lifts exactly what is on the page.
+ *
+ * `label` names the job the prompt does. `note` is the one-line caveat these
+ * guides attach to a prompt — what it will not do, or what to replace first.
+ * Neither is required.
+ *
+ * The copy button is progressive: with no scripting, or where the Clipboard API
+ * is unavailable, it is removed and the prompt is still fully selectable text.
+ */
+interface Props {
+  /** What the prompt is for, e.g. "Summarising a long document". */
+  label?: string;
+  /** Short caveat shown under the prompt. */
+  note?: string;
+  /** The prompt itself. Rendered verbatim. */
+  prompt: string;
+}
+
+const { label, note, prompt } = Astro.props;
+---
+
+<figure class="not-prose my-8 overflow-hidden rounded-card border border-ink-200 bg-surface shadow-card">
+  <figcaption class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-ink-200 bg-ink-50 px-4 py-2.5">
+    <span class="eyebrow">{label ?? "Prompt"}</span>
+    <button
+      type="button"
+      hidden
+      class="inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-ink-300 bg-surface px-2.5 py-1 font-display text-xs font-bold text-ink-700 transition-colors duration-180 ease-ui hover:border-brand-300 hover:text-brand-700 motion-reduce:transition-none"
+      data-copy-prompt
+    >
+      <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-3.5">
+        <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h5A1.5 1.5 0 0 1 15 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 7 12.5v-9Z" />
+        <path d="M5 6a1.5 1.5 0 0 0-1.5 1.5v9A1.5 1.5 0 0 0 5 18h5a1.5 1.5 0 0 0 1.5-1.5V15.5h-3A3 3 0 0 1 5.5 12.5V6H5Z" />
+      </svg>
+      <span aria-live="polite" data-copy-label>
+        Copy
+      </span>
+    </button>
+  </figcaption>
+
+  <pre
+    class="overflow-x-auto overscroll-x-contain px-4 py-4 font-mono text-[0.8125rem] leading-[1.75] break-words whitespace-pre-wrap text-ink-800 sm:text-sm"
+    data-prompt-text
+  >{prompt}</pre>
+
+  {note && (
+    <p class="border-t border-ink-200 bg-paper px-4 py-3 text-sm leading-relaxed text-ink-600">
+      <span class="font-semibold text-ink-900">Note:</span> {note}
+    </p>
+  )}
+</figure>
+
+<script>
+  /**
+   * Clipboard support for every prompt on the page. The buttons are rendered
+   * `hidden`, so a browser without the Clipboard API — or with scripting off —
+   * never shows a button that cannot work.
+   */
+  if (navigator.clipboard?.writeText) {
+    const RESET_MS = 2000;
+
+    for (const button of document.querySelectorAll<HTMLButtonElement>("[data-copy-prompt]")) {
+      const figure = button.closest("figure");
+      const source = figure?.querySelector<HTMLElement>("[data-prompt-text]");
+      const label = button.querySelector<HTMLElement>("[data-copy-label]");
+      if (!source || !label) continue;
+
+      button.hidden = false;
+      let reset: number | undefined;
+
+      button.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(source.innerText);
+          label.textContent = "Copied";
+        } catch {
+          label.textContent = "Press Ctrl+C";
+          // Leaves the prompt selected so the keyboard fallback works.
+          const range = document.createRange();
+          range.selectNodeContents(source);
+          const selection = window.getSelection();
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        }
+
+        window.clearTimeout(reset);
+        reset = window.setTimeout(() => {
+          label.textContent = "Copy";
+        }, RESET_MS);
+      });
+    }
+  }
+</script>

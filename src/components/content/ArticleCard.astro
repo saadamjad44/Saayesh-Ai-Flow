@@ -1,0 +1,140 @@
+---
+/**
+ * One guide in a listing. Three shapes, one component, so the homepage, the
+ * blog archive, and the pillar hubs cannot drift apart:
+ *
+ *   lead      the card that opens a section: a wide category image, a long
+ *             summary, and display-size type
+ *   standard  the ordinary grid card: a category glyph and label, then the
+ *             title, summary and metadata
+ *   row       a compact horizontal row: a small glyph chip beside the title
+ *
+ * Only the lead card carries a photograph, and deliberately so. Images on this
+ * site belong to a *category*, not an article, so a twenty-card archive grid of
+ * them showed the same five photographs four times each — the exact repetitive
+ * grid a listing should avoid, and twenty image requests for no information.
+ * The grid and row cards use the category's own glyph instead, which is
+ * distinct per category, legible at 20px, and free.
+ *
+ * Every field comes from ArticleCardData, which is built from the entry's own
+ * frontmatter and the page registry — there is nothing here a template can fill
+ * in differently.
+ *
+ * The whole card is one link target (`.stretch-target` on the title's <a>), so
+ * only the title is in the tab order and the clickable area is still the card.
+ * The category kicker is a separate link, lifted above the overlay with
+ * `relative z-10` so it stays independently clickable.
+ */
+import { Image } from "astro:assets";
+
+import PillarIcon from "@/components/layout/PillarIcon.astro";
+import { getMedia } from "@/config/media";
+import type { ArticleCardData } from "@/lib/content";
+import { formatShortDate, isoDate } from "@/lib/format";
+
+interface Props {
+  article: ArticleCardData;
+  variant?: "lead" | "standard" | "row";
+  /** Loads the lead image eagerly. Use only for an above-the-fold card. */
+  priority?: boolean;
+  /** The `sizes` attribute for a lead card's image. */
+  sizes?: string;
+  /** Heading level, so a card never breaks the page's outline. */
+  as?: "h2" | "h3";
+  class?: string;
+}
+
+const {
+  article,
+  variant = "standard",
+  priority = false,
+  sizes = "(min-width: 1024px) 36rem, 92vw",
+  as: Heading = "h3",
+  class: className,
+} = Astro.props;
+
+const isLead = variant === "lead";
+const isRow = variant === "row";
+const media = isLead ? getMedia(article.mediaId) : undefined;
+---
+
+<article
+  class:list={[
+    "card card-link group relative flex flex-col overflow-hidden",
+    isRow ? "p-4" : isLead ? "" : "p-5",
+    className,
+  ]}
+>
+  {isLead && media && (
+    <Image
+      src={media.src}
+      alt=""
+      widths={[640, 960, 1280]}
+      sizes={sizes}
+      loading={priority ? "eager" : "lazy"}
+      decoding={priority ? "sync" : "async"}
+      fetchpriority={priority ? "high" : "auto"}
+      class="aspect-[16/8] w-full border-b border-ink-200 object-cover"
+    />
+  )}
+
+  <div class:list={["flex min-w-0 flex-1 flex-col", isLead && "p-6 sm:p-7"]}>
+    {/* Category line: the glyph only where there is no photograph above it. */}
+    {article.category && (
+      <p class="flex items-center gap-2">
+        {!isLead && article.icon && (
+          <span
+            class:list={[
+              "flex shrink-0 items-center justify-center rounded-lg border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none",
+              isRow ? "size-7" : "size-8",
+            ]}
+          >
+            <PillarIcon icon={article.icon} class={isRow ? "size-4" : "size-4.5"} />
+          </span>
+        )}
+        <a
+          href={article.category.path}
+          class="eyebrow relative z-10 -my-1 py-1 transition-colors duration-180 ease-ui hover:text-ink-900 motion-reduce:transition-none"
+        >
+          {article.category.title}
+        </a>
+      </p>
+    )}
+
+    <Heading
+      class:list={[
+        article.category && (isRow ? "mt-2.5" : "mt-3"),
+        isLead
+          ? "font-display text-xl font-extrabold tracking-[-0.022em] text-balance text-ink-900 sm:text-2xl"
+          : "type-card-title",
+      ]}
+    >
+      <a href={article.path} class="stretch-target group-hover:text-brand-800">
+        {article.title}
+      </a>
+    </Heading>
+
+    <p
+      class:list={[
+        "mt-2 flex-1 leading-relaxed text-ink-600",
+        isLead ? "text-[1.0625rem]" : "text-[0.9375rem]",
+        isRow && "line-clamp-2",
+      ]}
+    >
+      {article.description}
+    </p>
+
+    <p
+      class:list={[
+        "flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] tracking-[0.04em] text-ink-500 uppercase",
+        isRow ? "mt-2.5" : "mt-5",
+      ]}
+    >
+      <time datetime={isoDate(article.updated)}>{formatShortDate(article.updated)}</time>
+      <span aria-hidden="true" class="text-ink-300">
+        &middot;
+      </span>
+      <span>{article.minutes} min read</span>
+    </p>
+  </div>
+</article>

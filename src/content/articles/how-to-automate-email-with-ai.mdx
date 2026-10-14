@@ -20,7 +20,7 @@ faq:
     answer: Yes, for drafting help inside Gmail. Google's pricing page lists the Gemini AI assistant in Gmail on Google Workspace Business Starter and higher plans, and Google's help pages describe drafting and refining emails with Gemini. Built-in assistants help you write replies; an automation platform is what lets replies be drafted automatically as emails arrive.
 ---
 
-import { ComparisonTable } from "@/components/content";
+import { ComparisonTable, PromptBlock } from "@/components/content";
 
 Answering the same kinds of emails every day is one of the easiest places for AI to help a small business. Pricing questions, booking requests, and "did you receive my order?" messages follow patterns that AI can draft replies for. This tutorial covers three practical methods: **Gmail with Zapier**, **Outlook with Power Automate**, and **dedicated AI email tools**. It also covers the safety checks that stop automated replies from embarrassing you.
 
@@ -128,16 +128,18 @@ In Zapier, create a new Zap. Choose **Gmail** as the trigger app and **New Label
 
 Add an **AI by Zapier** step. Map the email's sender name, subject, and body into it, and paste your playbook into the instructions. Example instructions:
 
-```text
-You draft email replies for [business name].
+<PromptBlock
+  label="Instructions for the AI step"
+  note="Replace every bracketed placeholder before you use it, and keep the escalation rule — it is what stops the automation answering a complaint on its own."
+  prompt={`You draft email replies for [business name].
 Use ONLY the approved answers below. Never invent prices, dates, or policies.
 If the answer is not in the approved answers, write [NEEDS YOUR INPUT] where it belongs.
 If the email is a complaint, refund request, or legal question, output only: ESCALATE
 Write in a friendly, concise tone. Sign off as [your name].
 
 Approved answers:
-[paste your playbook here]
-```
+[paste your playbook here]`}
+/>
 
 ### Step 4: Stop emails that should not get a draft
 

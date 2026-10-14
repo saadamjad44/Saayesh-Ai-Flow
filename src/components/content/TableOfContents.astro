@@ -1,0 +1,201 @@
+---
+/**
+ * "On this page" — the section list for a long guide.
+ *
+ * Built from the H2s Astro returns from render(), which already carry the ids
+ * the headings render with, so the trail can never point at a heading that is
+ * not there. H3s are deliberately left out: these guides have ten to fifteen
+ * sections, and a flat list of those is scannable where a two-level tree of
+ * forty entries is not.
+ *
+ * At `lg` and up it is the top of the sticky rail. Below `lg` it collapses into
+ * an accordion above the body, closed by default, so it never pushes the
+ * article a visitor came for off the screen. Every entry is a plain in-page
+ * <a> at both widths.
+ *
+ * The script marks the section currently being read, from a scroll listener
+ * throttled to one animation frame. If it never runs, the list is still a
+ * complete, usable set of links.
+ */
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: readonly MarkdownHeading[];
+  /** Hide below this many sections: a two-item contents list is just noise. */
+  minimum?: number;
+}
+
+const { headings, minimum = 3 } = Astro.props;
+
+const sections = headings.filter((heading) => heading.depth === 2 && heading.slug);
+const show = sections.length >= minimum;
+const panelId = "table-of-contents-panel";
+---
+
+{show && (
+  <nav aria-labelledby="table-of-contents-heading" class="not-prose" data-toc>
+    <button
+      type="button"
+      class="group flex w-full items-center justify-between gap-3 rounded-xl border border-ink-200 bg-surface px-4 py-3 text-left shadow-card transition-colors duration-180 ease-ui hover:border-ink-300 motion-reduce:transition-none lg:hidden"
+      aria-expanded="false"
+      aria-controls={panelId}
+      data-toc-toggle
+    >
+      <span class="flex items-center gap-2.5">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="size-4.5 shrink-0 text-brand-700"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75Zm0 5A.75.75 0 0 1 2.75 9h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 9.75Zm0 5a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1-.75-.75Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span class="font-display text-sm font-bold text-ink-900">Contents</span>
+        <span class="font-mono text-[0.625rem] text-ink-500">{sections.length}</span>
+      </span>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="size-5 shrink-0 text-ink-400 transition-transform duration-180 ease-ui group-aria-expanded:rotate-180 motion-reduce:transition-none"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </button>
+
+    <div
+      id={panelId}
+      class="max-lg:mt-2 max-lg:hidden max-lg:rounded-xl max-lg:border max-lg:border-ink-200 max-lg:bg-surface max-lg:p-4"
+      data-toc-panel
+    >
+      <p id="table-of-contents-heading" class="eyebrow max-lg:sr-only">
+        On this page
+      </p>
+
+      <ol class="mt-3 space-y-0.5 text-sm max-lg:mt-0">
+        {sections.map((section) => (
+          <li>
+            <a
+              href={`#${section.slug}`}
+              class="-ml-px flex border-l-2 border-ink-200 py-1.5 pl-3 leading-snug text-ink-600 transition-colors duration-180 ease-ui hover:border-ink-400 hover:text-brand-700 aria-[current=true]:border-brand-600 aria-[current=true]:font-semibold aria-[current=true]:text-brand-700 motion-reduce:transition-none"
+              data-toc-link={section.slug}
+            >
+              {section.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    {/* Without scripting the toggle can't open the panel, so show it. */}
+    <noscript>
+      <style>
+        [data-toc-panel] {
+          display: block !important;
+        }
+        [data-toc-toggle] {
+          display: none !important;
+        }
+      </style>
+    </noscript>
+  </nav>
+)}
+
+<script>
+  const toc = document.querySelector<HTMLElement>("[data-toc]");
+
+  if (toc) {
+    const toggle = toc.querySelector<HTMLButtonElement>("[data-toc-toggle]");
+    const panel = toc.querySelector<HTMLElement>("[data-toc-panel]");
+    const links = [...toc.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")];
+
+    /* ---- Accordion below `lg` ------------------------------------------- */
+    // `max-lg:hidden` is inert at desktop, so the same class toggle collapses
+    // the panel on small screens and does nothing on large ones.
+    if (toggle && panel) {
+      const setOpen = (open: boolean) => {
+        toggle.setAttribute("aria-expanded", String(open));
+        panel.classList.toggle("max-lg:hidden", !open);
+      };
+
+      toggle.addEventListener("click", () => {
+        setOpen(toggle.getAttribute("aria-expanded") !== "true");
+      });
+
+      // Tapping a section closes the sheet, so the heading lands in view.
+      for (const link of links) {
+        link.addEventListener("click", () => setOpen(false));
+      }
+
+      toc.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") setOpen(false);
+      });
+
+      // Leaving mobile width: drop the collapsed state so returning starts closed.
+      window.matchMedia("(min-width: 64rem)").addEventListener("change", (event) => {
+        if (event.matches) setOpen(false);
+      });
+
+      window.addEventListener("pageshow", () => setOpen(false));
+    }
+
+    /* ---- Current section ------------------------------------------------ */
+    /**
+     * The section being read is the last heading that has passed under the
+     * sticky header. Recomputed on scroll, throttled to one frame — an
+     * IntersectionObserver was tried first and is the wrong tool here: it only
+     * fires when a heading crosses its band, so scrolling through a long
+     * section left the list showing nothing at all.
+     */
+    const headings = links
+      .map((link) => document.getElementById(link.dataset.tocLink ?? ""))
+      .filter((heading): heading is HTMLElement => heading !== null);
+
+    if (headings.length > 0) {
+      /** Clears the sticky header, so a heading counts once it reaches it. */
+      const HEADER_OFFSET = 96;
+      let queued = false;
+
+      const mark = (id: string | null) => {
+        for (const link of links) {
+          if (link.dataset.tocLink === id) link.setAttribute("aria-current", "true");
+          else link.removeAttribute("aria-current");
+        }
+      };
+
+      const update = () => {
+        queued = false;
+
+        let currentId: string | null = null;
+        for (const heading of headings) {
+          if (heading.getBoundingClientRect().top <= HEADER_OFFSET) currentId = heading.id;
+          else break;
+        }
+
+        // Past the end of the body, keep the last section rather than none.
+        const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 8;
+        if (atBottom) currentId = headings[headings.length - 1]!.id;
+
+        mark(currentId);
+      };
+
+      const schedule = () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(update);
+      };
+
+      update();
+      window.addEventListener("scroll", schedule, { passive: true });
+      window.addEventListener("resize", schedule, { passive: true });
+    }
+  }
+</script>

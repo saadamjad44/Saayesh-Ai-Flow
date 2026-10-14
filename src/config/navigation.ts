@@ -1,14 +1,15 @@
 /**
  * Site navigation.
  *
- * The header carries a short, stable primary nav (Home, Getting Started, Blog,
- * About, Contact). Topic discovery no longer lives up there: the six pillars
- * are reached through /blog/, the footer, the homepage cards, and the
- * contextual sidebar on every pillar and article page. The pillars themselves
- * are unchanged — only their place in the chrome moved.
+ * The header carries a Categories mega menu over the six content pillars, the
+ * site's free tools, and three stable links (Blog, About, Contact). Topic
+ * discovery therefore lives in the header again, alongside /blog/, the footer,
+ * the homepage cards, and the contextual sidebar on every pillar and article
+ * page — so every pillar is reachable from the chrome of every page, and every
+ * one of those links is a plain, crawlable <a> rendered on the server.
  *
  * PILLAR_NAV is still the single ordered list of category sections, so the
- * footer and the sidebar's "Explore other topics" stay in sync with the registry.
+ * header, footer, homepage, and sidebar stay in sync with the registry.
  */
 import { PAGES, getPage, type PageId, type PillarId, type SitePage } from "./pages";
 
@@ -34,13 +35,20 @@ const section = (label: string, pillar: PillarId): NavSection => ({
   pillar,
 });
 
-/** Header navigation. Deliberately short — five links, no dropdowns. */
+/**
+ * Header links beside the Categories mega menu. Deliberately three: the
+ * categories themselves are in the menu, and Home is the wordmark.
+ */
 export const PRIMARY_NAV: readonly PrimaryNavLink[] = [
-  { ...link("Home", "home"), exact: true },
-  link("Getting Started", "getting-started"),
   link("Blog", "blog"),
   link("About", "about"),
   link("Contact", "contact"),
+];
+
+/** Suggested destinations on the 404 page: home, the archive, and the pillars. */
+export const FALLBACK_NAV: readonly NavLink[] = [
+  { label: "Homepage", href: "/" },
+  link("Blog", "blog"),
 ];
 
 /** True when `currentPath` is the nav entry's page or sits beneath it. */
@@ -48,7 +56,7 @@ export function isCurrentSection(entry: PrimaryNavLink, currentPath: string): bo
   return entry.exact ? currentPath === entry.href : currentPath.startsWith(entry.href);
 }
 
-/** Every category pillar, in nav order. Used by the footer and the sidebar. */
+/** Every category pillar, in nav order. Used by the header, footer, and sidebar. */
 export const PILLAR_NAV: readonly NavSection[] = [
   section("Getting Started", "getting-started"),
   section("AI Writing Tools", "ai-writing-tools"),
@@ -84,15 +92,27 @@ export function menuLabel(page: SitePage): string {
   return MENU_LABELS[page.id as PageId] ?? page.title;
 }
 
+/** Registry pages of one type that are actually built, in registry order. */
+function builtPagesOfType(
+  type: SitePage["type"],
+  builtPageIds: ReadonlySet<string>,
+  pillar?: PillarId,
+): SitePage[] {
+  return (PAGES as readonly SitePage[])
+    .filter((page) => page.type === type)
+    .filter((page) => (pillar ? page.pillar === pillar : true))
+    .filter((page) => builtPageIds.has(page.id));
+}
+
 /**
  * Article links for a pillar: its articles in registry order, limited to pages
  * that are actually built (published, non-draft content entries).
  */
 export function getSectionLinks(pillar: PillarId, builtPageIds: ReadonlySet<string>): NavLink[] {
-  return (PAGES as readonly SitePage[])
-    .filter((page) => page.type === "article" && page.pillar === pillar)
-    .filter((page) => builtPageIds.has(page.id))
-    .map((page) => ({ label: menuLabel(page), href: page.path }));
+  return builtPagesOfType("article", builtPageIds, pillar).map((page) => ({
+    label: menuLabel(page),
+    href: page.path,
+  }));
 }
 
 /**
@@ -102,10 +122,23 @@ export function getSectionLinks(pillar: PillarId, builtPageIds: ReadonlySet<stri
  * heading rather than mixed into the category's reading list.
  */
 export function getToolLinks(pillar: PillarId, builtPageIds: ReadonlySet<string>): NavLink[] {
-  return (PAGES as readonly SitePage[])
-    .filter((page) => page.type === "tool" && page.pillar === pillar)
-    .filter((page) => builtPageIds.has(page.id))
-    .map((page) => ({ label: menuLabel(page), href: page.path }));
+  return builtPagesOfType("tool", builtPageIds, pillar).map((page) => ({
+    label: menuLabel(page),
+    href: page.path,
+  }));
+}
+
+/**
+ * Every built free tool, in registry order, regardless of which pillar it sits
+ * under. The header mega menu lists these beside the categories, so a visitor
+ * can reach the site's interactive utilities without first guessing which
+ * category they were filed under.
+ */
+export function getAllToolLinks(builtPageIds: ReadonlySet<string>): NavLink[] {
+  return builtPagesOfType("tool", builtPageIds).map((page) => ({
+    label: menuLabel(page),
+    href: page.path,
+  }));
 }
 
 export const FOOTER_NAV: readonly { heading: string; links: readonly NavLink[] }[] = [
@@ -114,11 +147,23 @@ export const FOOTER_NAV: readonly { heading: string; links: readonly NavLink[] }
     links: PILLAR_NAV,
   },
   {
-    heading: "Company",
+    heading: "Guides & tools",
     links: [
-      link("Blog", "blog"),
-      link("About", "about"),
+      link("All guides", "blog"),
+      link("AI Cost Calculator", "small-business-ai-cost-calculator"),
+    ],
+  },
+  {
+    heading: "About",
+    links: [
+      link("About & editorial process", "about"),
+      link("Saad Amjad", "author-saad-amjad"),
       link("Contact", "contact"),
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
       link("Affiliate Disclosure", "affiliate-disclosure"),
       link("Privacy Policy", "privacy-policy"),
       link("Terms", "terms"),

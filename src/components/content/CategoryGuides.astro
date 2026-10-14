@@ -1,0 +1,48 @@
+---
+/**
+ * The guide list at the foot of a pillar hub: every published article in that
+ * category, as cards rather than the plain link list the clusters use.
+ *
+ * A hub's job is to send a visitor into the right guide, so it gets the fuller
+ * treatment — image, category image, date, and reading estimate — while an
+ * article's "Keep reading" block stays compact (see RelatedPages) so it does
+ * not compete with the article a visitor is already in.
+ */
+import ArticleCard from "./ArticleCard.astro";
+import type { ArticleCardData } from "@/lib/content";
+
+interface Props {
+  heading: string;
+  guides: readonly ArticleCardData[];
+  /** Unique per page, for aria-labelledby. */
+  id: string;
+}
+
+const { heading, guides, id } = Astro.props;
+---
+
+{guides.length > 0 && (
+  <section aria-labelledby={id} class="not-prose my-12 border-t border-ink-200 pt-10">
+    <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+      <h2 id={id} class="type-section">
+        {heading}
+      </h2>
+      <p class="font-mono text-xs tracking-[0.06em] text-ink-500 uppercase">
+        {guides.length} {guides.length === 1 ? "guide" : "guides"}
+      </p>
+    </div>
+
+    <ul class="mt-8 grid gap-5 sm:grid-cols-2">
+      {guides.map((guide) => (
+        <li class="flex">
+          <ArticleCard
+            article={guide}
+            as="h3"
+            class="w-full"
+            sizes="(min-width: 640px) 22rem, 92vw"
+          />
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

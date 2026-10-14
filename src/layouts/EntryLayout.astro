@@ -3,14 +3,17 @@
  * Content entry pages rendered from MDX, on PageLayout: pillar hubs, cluster
  * articles, and the free interactive tools (which share the same editorial
  * frontmatter, so they share this shell too).
- * Header: category eyebrow, last updated, affiliate note, and an optional
- * category image. After the body: related internal pages, then the FAQ (with
- * its own FAQPage schema).
  *
- * Every entry page also gets the contextual sidebar, built from the registry by
- * getContentSidebar(): the current category and its articles, then the other
- * categories. PageLayout switches to its two-column grid because that slot is
- * filled, so no page has to opt in.
+ * Header: category eyebrow linking to its hub, the byline row (author, updated
+ * date, reading estimate, pricing-checked date), the affiliate note where the
+ * page carries affiliate links, and an optional category image. After the body:
+ * related internal pages, then the FAQ (with its own FAQPage schema).
+ *
+ * Every entry page gets the contextual rail: its own table of contents, built
+ * from the H2s of this entry, then the category navigation built from the
+ * registry by getContentSidebar() — the current category and its articles, then
+ * the other categories. PageLayout switches to its two-column grid because that
+ * slot is filled, so no page has to opt in.
  *
  * `testingStatus` stays in frontmatter and is still validated (see
  * content.config.ts and ScoreTable); it is simply not surfaced as a badge.
@@ -18,6 +21,7 @@
  * An entry may set a `heading` in frontmatter when its visible <h1> should read
  * more fully than its <title>; with no `heading` the <h1> is the title.
  */
+import type { MarkdownHeading } from "astro";
 import type { CollectionEntry } from "astro:content";
 import PageLayout from "./PageLayout.astro";
 import AffiliateNote from "@/components/content/AffiliateNote.astro";
@@ -25,11 +29,14 @@ import FaqSection from "@/components/content/FaqSection.astro";
 import FeaturedImage from "@/components/content/FeaturedImage.astro";
 import LastUpdated from "@/components/content/LastUpdated.astro";
 import RelatedPages, { type RelatedPage } from "@/components/content/RelatedPages.astro";
+import TableOfContents from "@/components/content/TableOfContents.astro";
 import ContentSidebar from "@/components/layout/ContentSidebar.astro";
 import { AUTHOR } from "@/config/author";
 import type { MediaId } from "@/config/media";
+import type { PillarIconId } from "@/config/pillars";
 import { getPage } from "@/config/pages";
 import type { EntryCollection } from "@/lib/content";
+import { readingMinutes } from "@/lib/format";
 import { getContentSidebar } from "@/lib/sidebar";
 import { absoluteUrl, type JsonLd } from "@/lib/seo";
 
@@ -39,13 +46,33 @@ interface Props {
   jsonLd: readonly JsonLd[];
   relatedHeading: string;
   related: readonly RelatedPage[];
+  /** Section headings from render(entry), for the table of contents. */
+  headings: readonly MarkdownHeading[];
   /** Small label above the <h1>, e.g. the parent category. */
   eyebrow?: string;
+  /** Where the eyebrow points, e.g. the parent category's hub. */
+  eyebrowHref?: string;
+  /** Teal eyebrow, for the free interactive tools. */
+  eyebrowAccent?: boolean;
+  /** Category glyph above the eyebrow. Pillar hubs only. */
+  icon?: PillarIconId;
   /** Category image shown below the header. Omit where a picture adds nothing. */
   mediaId?: MediaId;
 }
 
-const { entry, ogType, jsonLd, relatedHeading, related, eyebrow, mediaId } = Astro.props;
+const {
+  entry,
+  ogType,
+  jsonLd,
+  relatedHeading,
+  related,
+  headings,
+  eyebrow,
+  eyebrowHref,
+  eyebrowAccent,
+  icon,
+  mediaId,
+} = Astro.props;
 const { data } = entry;
 
 const currentPath = Astro.url.pathname;
@@ -72,13 +99,20 @@ const openGraphArticle =
   heading={data.heading}
   description={data.description}
   eyebrow={eyebrow}
+  eyebrowHref={eyebrowHref}
+  eyebrowAccent={eyebrowAccent}
+  icon={icon}
   intro={data.description}
   ogType={ogType}
   article={openGraphArticle}
   jsonLd={jsonLd}
 >
   <Fragment slot="meta">
-    <LastUpdated updated={data.updatedDate} pricingVerified={data.pricingVerifiedDate} />
+    <LastUpdated
+      updated={data.updatedDate}
+      pricingVerified={data.pricingVerifiedDate}
+      readingMinutes={readingMinutes(entry.body ?? "")}
+    />
     {data.hasAffiliateLinks && <AffiliateNote />}
   </Fragment>
 
@@ -91,16 +125,23 @@ const openGraphArticle =
     </Fragment>
   )}
 
-  {sidebar && (
-    <Fragment slot="sidebar">
-      <ContentSidebar sidebar={sidebar} currentPath={currentPath} />
-    </Fragment>
-  )}
+  <Fragment slot="sidebar">
+    <TableOfContents headings={headings} />
+    {sidebar && <ContentSidebar sidebar={sidebar} currentPath={currentPath} />}
+  </Fragment>
 
   <slot />
 
   <Fragment slot="after">
-    <RelatedPages id="related-pages" heading={relatedHeading} items={related} />
+    {/*
+      A route may replace the related block entirely — pillar hubs pass a card
+      grid of their own guides, where a cluster page wants the compact list.
+    */}
+    {Astro.slots.has("related") ? (
+      <slot name="related" />
+    ) : (
+      <RelatedPages id="related-pages" heading={relatedHeading} items={related} />
+    )}
     {data.faq && <FaqSection items={data.faq} />}
   </Fragment>
 </PageLayout>
