@@ -89,7 +89,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 19,
+  2: 20,
 };
 
 export const PAGES = [
@@ -419,6 +419,22 @@ export const PAGES = [
     type: "tool",
     phase: 2,
     pillar: "ai-business-tools",
+  },
+
+  // Phase 2F — the automation cluster's free interactive utility, and the
+  // counterpart to the cost calculator above: that one totals what AI costs,
+  // this one estimates what an AI email workflow saves, net of the human review
+  // time such a workflow still needs. It sits under /ai-automation/ because the
+  // intent it serves already lives there — the cluster has a tutorial on
+  // automating email replies and a Zapier examples guide, both of which ask the
+  // reader to judge whether the saving is worth the setup.
+  {
+    id: "ai-email-time-savings-calculator",
+    title: "AI Email Time Savings & ROI Calculator",
+    path: "/ai-automation/ai-email-time-savings-calculator/",
+    type: "tool",
+    phase: 2,
+    pillar: "ai-automation",
   },
 ] as const satisfies readonly SitePage[];
 

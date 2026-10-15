@@ -1,0 +1,432 @@
+---
+/**
+ * The eight-slide presentation viewer.
+ *
+ * What it is: a horizontal scroll-snap track of eight images, the slides of the
+ * approved PDF, plus a control bar and an optional full-screen mode. What it is
+ * deliberately not: a PDF renderer. No pdf.js, no viewer service, no iframe —
+ * the pages were rasterised once (see src/config/presentation.ts) and the
+ * browser is handed flat images, so the only JavaScript that ships is the
+ * seventy-odd lines at the bottom of this file.
+ *
+ * Why a scroll-snap track rather than show-one-hide-seven:
+ *   - touch swiping is the browser's, not ours: no gesture handling, no
+ *     pointer-event maths, and it behaves exactly as the platform does;
+ *   - with scripting off or still loading, all eight slides and their captions
+ *     are present, scrollable and readable, rather than one slide and six dead
+ *     buttons — so the control bar starts hidden and the script reveals it;
+ *   - off-screen slides are off-screen *horizontally*, which is precisely the
+ *     case `loading="lazy"` handles, so seven of the eight images are never
+ *     fetched until someone actually moves to them.
+ *
+ * Full-screen mode moves this component's own body element into a <dialog> and
+ * back, rather than rendering the slides a second time. One copy of the markup,
+ * one set of images already in memory, the current slide preserved across the
+ * transition, and `showModal()` supplies the parts that are easy to get wrong
+ * by hand: the top layer, focus containment, inert page behind, and Escape.
+ *
+ * Every figure the deck shows is the deck's own artwork. Nothing here restates
+ * a claim, and the original PDF stays one click away as the accessible,
+ * downloadable source.
+ */
+import { Image } from "astro:assets";
+import {
+  PRESENTATION_PDF_FILENAME,
+  PRESENTATION_PDF_PATH,
+  SLIDES,
+  SLIDE_COUNT,
+} from "@/config/presentation";
+
+interface Props {
+  /** Labels the carousel for assistive technology. */
+  label: string;
+}
+
+const { label } = Astro.props;
+
+/** Two-digit slide number, as the deck prints it in its own footer ("02 / 08"). */
+const pad = (value: number) => String(value).padStart(2, "0");
+
+/**
+ * The slot the images are displayed in. Bumped to `100vw` by the script when
+ * full-screen opens, so the viewer fetches a larger variant only for the one
+ * person who asked for a larger view.
+ */
+const SIZES = "(min-width: 1024px) 1120px, 100vw";
+
+const iconClass = "size-5";
+---
+
+<div data-presentation>
+  <div class="panel overflow-hidden" data-viewer-home>
+    <div data-viewer-body>
+      <div
+        data-track
+        tabindex="0"
+        role="group"
+        aria-roledescription="carousel"
+        aria-label={label}
+        class="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain bg-ink-950"
+      >
+        {SLIDES.map((slide, index) => (
+          <figure data-slide class="w-full shrink-0 snap-center">
+            <Image
+              src={slide.image}
+              alt={slide.alt}
+              widths={[640, 960, 1280, 1920]}
+              sizes={SIZES}
+              loading={index === 0 ? "eager" : "lazy"}
+              decoding={index === 0 ? "sync" : "async"}
+              class="aspect-video w-full object-contain"
+            />
+            <figcaption class="flex items-baseline gap-3 border-t border-ink-200 bg-surface px-4 py-3.5 sm:px-5">
+              <span class="font-mono text-[0.6875rem] tracking-[0.06em] whitespace-nowrap text-ink-500 tabular-nums">
+                {pad(index + 1)} / {pad(SLIDE_COUNT)}
+              </span>
+              <span class="font-display text-[0.9375rem] font-bold text-ink-900 sm:text-base">
+                {slide.title}
+              </span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      {/*
+        Hidden until the script takes over: every control in here needs it.
+        Without scripting the track above is still a scrollable, swipeable list
+        of all eight captioned slides, which is the honest fallback.
+      */}
+      <div
+        data-controls
+        hidden
+        class="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-ink-200 bg-paper px-4 py-3 sm:px-5"
+      >
+        <p
+          data-counter
+          aria-live="polite"
+          class="font-mono text-xs tracking-[0.04em] text-ink-600 tabular-nums"
+        >
+          Slide 1 of {SLIDE_COUNT}
+        </p>
+
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            data-prev
+            class="btn btn-secondary size-11 min-h-0 p-0 disabled:pointer-events-none disabled:opacity-40"
+            aria-label="Previous slide"
+          >
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class={iconClass}>
+              <path
+                fill-rule="evenodd"
+                d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            data-next
+            class="btn btn-secondary size-11 min-h-0 p-0 disabled:pointer-events-none disabled:opacity-40"
+            aria-label="Next slide"
+          >
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class={iconClass}>
+              <path
+                fill-rule="evenodd"
+                d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+          </button>
+
+          <button type="button" data-fullscreen class="btn btn-secondary">
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+              <path d="M3 3.75A.75.75 0 0 1 3.75 3h3.5a.75.75 0 0 1 0 1.5H4.5v2.75a.75.75 0 0 1-1.5 0v-3.5Zm9.25-.75a.75.75 0 0 0 0 1.5h2.75v2.75a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5ZM3.75 12a.75.75 0 0 1 .75.75v2.75h2.75a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75v-3.5a.75.75 0 0 1 .75-.75Zm13.25.75a.75.75 0 0 0-1.5 0v2.75h-2.75a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 .75-.75v-3.5Z"></path>
+            </svg>
+            <span data-fullscreen-label>Full screen</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/*
+    Empty until full-screen is opened: the viewer body above is moved in here
+    and moved back out on close, so the slides exist exactly once in the page.
+  */}
+  <dialog data-dialog aria-label={label}></dialog>
+
+  <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+    <a
+      class="btn btn-primary"
+      href={PRESENTATION_PDF_PATH}
+      download={PRESENTATION_PDF_FILENAME}
+      data-download
+    >
+      <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+        <path
+          fill-rule="evenodd"
+          d="M10 2.75a.75.75 0 0 1 .75.75v7.44l2.47-2.47a.75.75 0 1 1 1.06 1.06l-3.75 3.75a.75.75 0 0 1-1.06 0L5.72 9.53a.75.75 0 0 1 1.06-1.06l2.47 2.47V3.5a.75.75 0 0 1 .75-.75ZM3.5 14a.75.75 0 0 1 .75.75v1a.75.75 0 0 0 .75.75h10a.75.75 0 0 0 .75-.75v-1a.75.75 0 0 1 1.5 0v1A2.25 2.25 0 0 1 15 18H5a2.25 2.25 0 0 1-2.25-2.25v-1A.75.75 0 0 1 3.5 14Z"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+      Download presentation (PDF)
+    </a>
+
+    <a class="btn btn-secondary" href={PRESENTATION_PDF_PATH} target="_blank" rel="noopener">
+      View full presentation
+      <span class="sr-only">(opens the PDF in a new tab)</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+        <path d="M11.5 3a.75.75 0 0 0 0 1.5h2.44l-6.22 6.22a.75.75 0 1 0 1.06 1.06L15 5.56V8a.75.75 0 0 0 1.5 0V3.75a.75.75 0 0 0-.75-.75H11.5Z"></path>
+        <path d="M5 4.5A2 2 0 0 0 3 6.5v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V11a.75.75 0 0 0-1.5 0v3.5a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5v-8A.5.5 0 0 1 5 6h3.5a.75.75 0 0 0 0-1.5H5Z"></path>
+      </svg>
+    </a>
+
+    <p class="font-mono text-xs text-ink-500">{SLIDE_COUNT} slides. The original PDF, unchanged.</p>
+  </div>
+</div>
+
+<style>
+  /*
+   * The control bar starts hidden and the script reveals it. Written out here
+   * rather than left to the `hidden` attribute alone, because the element also
+   * carries a `flex` utility and the attribute must win over it.
+   */
+  [data-controls][hidden] {
+    display: none;
+  }
+
+  /* The control bar is the affordance; the scrollbar would only add chrome. */
+  [data-track] {
+    scrollbar-width: none;
+  }
+
+  [data-track]::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ---- Full-screen presentation mode ---------------------------------- */
+  dialog[data-dialog] {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: var(--color-ink-950);
+  }
+
+  dialog[data-dialog][open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  dialog[data-dialog]::backdrop {
+    background-color: rgb(7 12 22 / 0.92);
+  }
+
+  /*
+   * In full screen the slide is sized to the space available rather than to
+   * the page column: the track takes the leftover height and each image is
+   * contained inside it, so a slide never crops and never pushes the controls
+   * off the bottom of a short laptop screen.
+   */
+  [data-viewer-body][data-fullscreen] {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+  }
+
+  [data-viewer-body][data-fullscreen] [data-track] {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  [data-viewer-body][data-fullscreen] [data-slide] {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    min-height: 0;
+  }
+
+  /*
+   * `:global` because the <img> is rendered by astro:assets' own component, so
+   * it does not carry this component's scoping attribute.
+   */
+  [data-viewer-body][data-fullscreen] [data-slide] :global(img) {
+    height: auto;
+    max-height: 100%;
+    width: auto;
+    max-width: 100%;
+    margin-inline: auto;
+  }
+</style>
+
+<script>
+  /**
+   * Viewer behaviour: which slide is showing, moving between them, and the
+   * full-screen dialog. It writes to no storage, makes no network request of
+   * its own, and sends analytics only the fact that full screen was opened or
+   * the PDF downloaded — never anything about the content.
+   */
+  import { trackEvent } from "@/lib/analytics";
+
+  const root = document.querySelector<HTMLElement>("[data-presentation]");
+  const body = root?.querySelector<HTMLElement>("[data-viewer-body]");
+  const home = root?.querySelector<HTMLElement>("[data-viewer-home]");
+  const track = root?.querySelector<HTMLElement>("[data-track]");
+  const controls = root?.querySelector<HTMLElement>("[data-controls]");
+  const counter = root?.querySelector<HTMLElement>("[data-counter]");
+  const prevButton = root?.querySelector<HTMLButtonElement>("[data-prev]");
+  const nextButton = root?.querySelector<HTMLButtonElement>("[data-next]");
+  const fullscreenButton = root?.querySelector<HTMLButtonElement>("[data-fullscreen]");
+  const fullscreenLabel = root?.querySelector<HTMLElement>("[data-fullscreen-label]");
+  const dialog = root?.querySelector<HTMLDialogElement>("[data-dialog]");
+  const download = root?.querySelector<HTMLAnchorElement>("[data-download]");
+
+  if (
+    root &&
+    body &&
+    home &&
+    track &&
+    controls &&
+    counter &&
+    prevButton &&
+    nextButton &&
+    fullscreenButton &&
+    fullscreenLabel &&
+    dialog
+  ) {
+    const slides = Array.from(track.querySelectorAll<HTMLElement>("[data-slide]"));
+    const total = slides.length;
+    let current = 0;
+
+    /** Honour the visitor's motion setting for every programmatic scroll. */
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const behavior = (): ScrollBehavior => (motion.matches ? "auto" : "smooth");
+
+    function render() {
+      counter!.textContent = `Slide ${current + 1} of ${total}`;
+      prevButton!.disabled = current === 0;
+      nextButton!.disabled = current === total - 1;
+    }
+
+    /** Scrolls the track so `index` is the slide in view. */
+    function goTo(index: number, scroll: ScrollBehavior | "none" = behavior()) {
+      const next = Math.min(Math.max(index, 0), total - 1);
+      const slide = slides[next];
+      if (!slide) return;
+      current = next;
+      track!.scrollTo({
+        left: slide.offsetLeft - track!.offsetLeft,
+        behavior: scroll === "none" ? "auto" : scroll,
+      });
+      render();
+    }
+
+    /*
+     * The counter follows the track rather than the buttons, so a swipe, a
+     * trackpad flick and a keyboard scroll all keep it accurate.
+     *
+     * The ratio is tested, not just `isIntersecting`. A slide one pixel inside
+     * the track counts as intersecting, and so does every slide in the moment
+     * before the track has become a scroll container — which made the viewer
+     * settle on whichever slide was reported last, i.e. the eighth, on a page
+     * that had not been touched. Only a slide filling most of the track counts,
+     * and within one batch the fullest wins, so the answer is the same however
+     * the entries arrive.
+     */
+    const VISIBLE = 0.6;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let best: IntersectionObserverEntry | undefined;
+        for (const entry of entries) {
+          if (entry.intersectionRatio < VISIBLE) continue;
+          if (!best || entry.intersectionRatio > best.intersectionRatio) best = entry;
+        }
+        if (!best) return;
+        const index = slides.indexOf(best.target as HTMLElement);
+        if (index >= 0 && index !== current) {
+          current = index;
+          render();
+        }
+      },
+      { root: track, threshold: [VISIBLE] },
+    );
+    for (const slide of slides) observer.observe(slide);
+
+    prevButton.addEventListener("click", () => goTo(current - 1));
+    nextButton.addEventListener("click", () => goTo(current + 1));
+
+    body.addEventListener("keydown", (event) => {
+      const keys: Record<string, number | undefined> = {
+        ArrowLeft: current - 1,
+        ArrowRight: current + 1,
+        Home: 0,
+        End: total - 1,
+      };
+      const target = keys[event.key];
+      if (target === undefined) return;
+      event.preventDefault();
+      goTo(target);
+    });
+
+    /* ---- Full screen -------------------------------------------------- */
+
+    /**
+     * Opening moves the viewer body into the dialog; closing moves it back.
+     * The images are the same elements either way, so nothing is re-fetched and
+     * the slide on screen stays the slide on screen — but moving an element
+     * resets its scroll offset, so the index is read before the move and the
+     * track is scrolled back to it afterwards.
+     *
+     * "Afterwards" has to mean *while the new parent is visible*: a closed
+     * <dialog> is display:none, so a scroll restored before showModal() is a
+     * scroll against a zero-width box, and the viewer silently reopens on slide
+     * one. Hence the two steps, and hence their order at each call site below.
+     */
+    function moveViewer(into: HTMLElement, fullscreen: boolean) {
+      into.appendChild(body!);
+      body!.toggleAttribute("data-fullscreen", fullscreen);
+      fullscreenLabel!.textContent = fullscreen ? "Exit full screen" : "Full screen";
+      if (fullscreen) {
+        fullscreenButton!.setAttribute("aria-label", "Exit full screen");
+        // A larger view deserves a larger variant; only fetched on demand.
+        for (const image of track!.querySelectorAll("img")) image.sizes = "100vw";
+      } else {
+        fullscreenButton!.removeAttribute("aria-label");
+      }
+    }
+
+    fullscreenButton.addEventListener("click", () => {
+      if (dialog.open) {
+        dialog.close();
+        return;
+      }
+      const index = current;
+      moveViewer(dialog, true);
+      dialog.showModal();
+      goTo(index, "none");
+      trackEvent("presentation_open", { location: "homepage" });
+    });
+
+    // Covers Escape as well as the button, which is why the move-back lives here.
+    dialog.addEventListener("close", () => {
+      const index = current;
+      moveViewer(home, false);
+      goTo(index, "none");
+    });
+
+    controls.hidden = false;
+    render();
+  }
+
+  download?.addEventListener("click", () => {
+    trackEvent("presentation_download", { location: "homepage" });
+  });
+</script>

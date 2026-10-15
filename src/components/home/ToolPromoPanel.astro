@@ -1,0 +1,177 @@
+---
+/**
+ * The homepage's promotional panel for one free interactive tool.
+ *
+ * The site has two calculators and will have more, so the shell they share —
+ * rounded panel, grid wash, a copy column with an eyebrow, heading, standfirst
+ * and ticked feature list, an actions row, and a preview column beside it —
+ * lives here once rather than being pasted per tool. What differs per tool is
+ * passed in: its copy, its links, and (through the `preview` slot) the little
+ * panel showing what that tool actually outputs, which is always built from
+ * that tool's own calculation module and never from numbers typed by hand.
+ *
+ * `tone` is the one visual variant. The cost calculator keeps the dark ink
+ * panel it already had; the email calculator takes the light teal one, so the
+ * two sit side by side as clearly different things rather than as the same
+ * block printed twice — and so the page never stacks two large dark slabs. Teal
+ * is already the site's "a thing you can use" colour (see global.css), which is
+ * why the light variant is teal and not a second indigo.
+ *
+ * `reverse` puts the preview first on large screens. Used by the second panel
+ * for the same reason: the eye should not run down two identical columns.
+ *
+ * The heading is an <h2> and the caller supplies its id, because the caller
+ * owns the <section> that points `aria-labelledby` at it.
+ */
+import type { AnalyticsEventName } from "@/lib/analytics";
+
+interface Props {
+  tone: "dark" | "light";
+  /** Preview column before the copy column from `lg` up. */
+  reverse?: boolean;
+  eyebrow: string;
+  heading: string;
+  /** Must match the caller's `aria-labelledby`. */
+  headingId: string;
+  description: string;
+  /** Four short lines on what the tool reports. Not claims about outcomes. */
+  features: readonly string[];
+  /** `event` names a GA4 event sent when the primary action is clicked. */
+  primary: { href: string; label: string; event?: AnalyticsEventName };
+  secondary?: { href: string; label: string };
+  /** Small print beside the actions, e.g. "No sign-up." */
+  note?: string;
+  /**
+   * Free tools that have no panel of their own, listed under the actions so
+   * every tool still has a route in from the homepage. Empty renders nothing.
+   */
+  alsoFree?: readonly { href: string; label: string }[];
+}
+
+const {
+  tone,
+  reverse = false,
+  eyebrow,
+  heading,
+  headingId,
+  description,
+  features,
+  primary,
+  secondary,
+  note,
+  alsoFree = [],
+} = Astro.props;
+
+const dark = tone === "dark";
+
+/**
+ * Every tone-dependent class, resolved once. Keeping them in one object rather
+ * than inline ternaries is what makes it obvious at a glance that the two tones
+ * differ only in colour — the structure below is identical for both.
+ */
+const t = {
+  panel: dark ? "bg-ink-950 shadow-panel" : "border border-accent-100 bg-accent-50 shadow-panel",
+  wash: dark ? "bg-grid-inverse" : "bg-grid opacity-50",
+  eyebrow: dark ? "text-accent-200" : "eyebrow-accent",
+  heading: dark ? "text-white" : "",
+  description: dark ? "text-ink-300" : "text-ink-600",
+  feature: dark ? "text-ink-200" : "text-ink-700",
+  tick: dark ? "text-accent-200" : "text-accent-600",
+  button: dark ? "btn-inverse" : "btn-accent",
+  secondary: dark ? "btn-inverse" : "btn-secondary",
+  note: dark ? "text-ink-400" : "text-ink-500",
+  footerRule: dark ? "border-white/10" : "border-accent-100",
+};
+---
+
+<div class:list={["overflow-hidden rounded-panel", t.panel]}>
+  <div class="relative">
+    <div aria-hidden="true" class:list={["pointer-events-none absolute inset-0", t.wash]}></div>
+
+    <div
+      class:list={[
+        "relative grid gap-10 p-7 sm:p-10 lg:gap-14 lg:p-12",
+        reverse ? "lg:grid-cols-[22rem_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)_22rem]",
+      ]}
+    >
+      <div class:list={[reverse && "lg:order-2"]}>
+        <p class:list={["eyebrow", t.eyebrow]}>{eyebrow}</p>
+        <h2 id={headingId} class:list={["type-section mt-3 [text-wrap:balance]", t.heading]}>
+          {heading}
+        </h2>
+        <p class:list={["mt-4 max-w-xl text-[1.0625rem] leading-relaxed", t.description]}>
+          {description}
+        </p>
+
+        <ul class="mt-7 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+          {features.map((item) => (
+            <li class:list={["flex gap-2.5 text-[0.9375rem] leading-relaxed", t.feature]}>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class:list={["mt-0.5 size-4.5 shrink-0", t.tick]}
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {item}
+            </li>
+          ))}
+        </ul>
+
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <a
+            href={primary.href}
+            class:list={["btn", t.button]}
+            data-analytics-event={primary.event}
+          >
+            {primary.label}
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+              <path
+                fill-rule="evenodd"
+                d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+          {secondary && (
+            <a href={secondary.href} class:list={["btn", t.secondary]}>
+              {secondary.label}
+            </a>
+          )}
+          {note && <p class:list={["font-mono text-xs", t.note]}>{note}</p>}
+        </div>
+
+        {alsoFree.length > 0 && (
+          <p class:list={["mt-6 border-t pt-5 text-sm", t.footerRule, t.description]}>
+            Also free:{" "}
+            {alsoFree.map((tool, index) => (
+              <>
+                {index > 0 && <span aria-hidden="true">, </span>}
+                <a
+                  href={tool.href}
+                  class:list={[
+                    "font-semibold underline underline-offset-[3px] transition-colors duration-180 ease-ui hover:decoration-current motion-reduce:transition-none",
+                    dark
+                      ? "text-accent-200 decoration-accent-200/40"
+                      : "text-accent-700 decoration-accent-600/40",
+                  ]}
+                >
+                  {tool.label}
+                </a>
+              </>
+            ))}
+          </p>
+        )}
+      </div>
+
+      <div class:list={[reverse && "lg:order-1"]}>
+        <slot name="preview" />
+      </div>
+    </div>
+  </div>
+</div>

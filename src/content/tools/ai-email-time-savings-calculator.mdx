@@ -1,0 +1,228 @@
+---
+pageId: ai-email-time-savings-calculator
+title: "AI Email Time Savings & ROI Calculator"
+description: Estimate how much time and money AI-assisted email workflows could save your business. Compare manual replies, human review time, and AI software costs.
+publishedDate: 2026-10-15
+updatedDate: 2026-10-15
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: How much time can AI save on email replies?
+    answer: There is no honest single figure, and any calculator that gives you one has invented it. The saving depends on how many emails you answer, how many of them are suitable for AI drafting, how long you currently spend per reply, and how long you then spend reviewing the draft. That last number is the one most estimates leave out. Put your own figures into the calculator above and it will show you the arithmetic rather than a borrowed average.
+  - question: Is an AI email assistant worth the cost?
+    answer: It is worth it when the value of the time you stop spending on email is larger than what the software costs you, and when that freed-up time goes to work that actually earns or saves money. The calculator gives you both halves of that comparison, the estimated value of the time saved and the monthly operating cost. If the net benefit is negative, the usual causes are too few eligible emails, review time that is nearly as long as writing the reply yourself, or a per-email usage fee that eats the saving.
+  - question: How do you calculate email automation ROI?
+    answer: Work out the active human time the current process takes, work out the active human time the AI-assisted process would take including review and corrections, and multiply the difference by what an hour of that time is worth. That gives you an estimated gross value. Subtract the recurring software and usage costs to get a net monthly figure, then divide that net figure by the costs to express it as a percentage. Keep one-time setup costs out of the recurring number and put them into your first-month and first-year figures instead.
+  - question: Does AI email automation still require human review?
+    answer: For anything a customer sees, assume yes. An AI draft can be fluent and still be wrong about your prices, your policies, your availability, or what you agreed last week. The calculator makes that review time a required input rather than an optional one, because leaving it out is the single biggest reason AI savings estimates come out too high. A narrow set of low-risk messages, such as acknowledging that something was received, can reasonably be sent without review.
+  - question: Can small businesses calculate AI email savings for free?
+    answer: Yes. This calculator is free, needs no account and no email address, and runs entirely in your browser. You can also do the same arithmetic in a spreadsheet, because every formula it uses is written out in full on this page, with a worked example you can check it against.
+  - question: What if AI takes more human time than writing replies myself?
+    answer: That is a real outcome, and the calculator will show it as a loss rather than dressing it up as a saving. It usually happens when the emails you are automating are short, when review and correction time add up to nearly as much as writing the reply, or when per-email prompting overhead is high. If you see a negative figure, the useful response is to narrow the share of emails you send through AI to the ones where drafting genuinely takes a long time.
+  - question: Does time saved mean money saved?
+    answer: Not automatically. Time saved only becomes money if the hours are redeployed into work that earns revenue, or if they genuinely reduce an expense such as overtime or a contractor's hours. If the time simply disappears into other admin, the value of the time saved is real as a productivity figure and zero as a cash figure. The calculator reports it as an estimated value of time and says so wherever it shows the number.
+  - question: Do my figures get sent anywhere?
+    answer: No. Everything is calculated in your browser. Your email volumes, hourly rate, costs, and results are never submitted to a server, posted to a form, sent to analytics, or saved on your device, and they disappear when you close the tab. The share button copies the address of this page only, never your figures.
+---
+
+import { Callout, ComparisonTable } from "@/components/content";
+import { AiEmailSavingsCalculator } from "@/components/tools";
+
+Most estimates of what AI saves on email are too optimistic for the same reason: they count the typing and forget the reading. An AI draft still has to be checked against what you actually charge, what you actually promised, and what the customer actually asked. That review is real work, and once it is in the arithmetic the picture changes.
+
+This calculator keeps it in. Enter your email volume, how much of it is genuinely suitable for AI drafting, your current reply time, and the human review and correction time an AI workflow would still need. It returns your estimated monthly hours saved, the value of that time, what the software costs to run, and the email volume at which the two cross over.
+
+<AiEmailSavingsCalculator />
+
+## How to use the AI email savings calculator
+
+Every field opens with an illustrative placeholder so the page shows a complete worked example straight away. Those placeholders are not averages, benchmarks, or figures from any study — replace them with your own.
+
+### Your current email workload
+
+- **Emails needing a reply per working day.** Messages you actually answer on an average day. Do not count newsletters, notifications, or anything you delete unread, because AI does not save you time on email you never reply to.
+- **Working days per month.** Days you are at work and answering email. Twenty is a typical five-day month with some time off.
+- **Share of emails suitable for AI assistance.** The honest number here is well below 100%. Exclude negotiations, complaints, anything legal, medical or financial, personal messages, and anything where a wrong answer costs you a customer. A good way to set it: look at yesterday's replies and count how many you would have been comfortable sending from a draft you did not write.
+- **Average time to write one reply by hand.** Active minutes on one eligible email: reading it, working out the answer, typing, checking, sending. Time the next five you answer rather than guessing — most people's guess is low.
+
+### Your AI-assisted workflow
+
+- **Human review time per AI draft.** Active minutes to read the draft, check it against what is true, and approve it. This is where most of the remaining time goes, and setting it to something implausibly small is the fastest way to produce a meaningless result.
+- **Extra prompting or handling time per email.** The per-email overhead around the draft itself: opening the tool, pasting context, picking a template, filing the result.
+- **Share of AI drafts needing further correction.** Drafts that need real rewriting rather than a quick read.
+- **Extra correction time, when correction is needed.** How long that rewriting takes. The calculator applies this only to the share above, not to every email, so the per-email figure it uses is an expected average rather than a worst case.
+
+### Your costs and time value
+
+- **Value of an hour of this working time.** Your billable rate, a loaded hourly employment cost, or simply what an hour of this work is worth to the business. If you are not sure, use the figure you would pay someone else to do it.
+- **Monthly AI software cost.** Every recurring subscription the workflow needs, including seats. If an automation platform sits between your inbox and the AI, include that too.
+- **Extra AI usage cost per eligible email.** For usage-based plans: API spend, credits, or per-task fees. Leave it at zero on a flat subscription.
+- **One-time implementation or setup cost.** Configuration, writing templates, training, or a consultant's time. The calculator keeps this out of your recurring monthly figures and applies it to the first-month and first-year results only.
+
+<Callout tone="warning" heading="Set review time honestly">
+  The calculator cannot tell whether your review-time figure is realistic, and it is the input that
+  most changes the answer. If you enter thirty seconds of review for an email that takes five
+  minutes to write by hand, you will get a large saving that your inbox will never produce.
+</Callout>
+
+## How the calculations work
+
+Nothing is weighted, estimated, or hidden. Every figure is arithmetic on the numbers you entered, in this order:
+
+- **Monthly emails** = emails per working day × working days per month
+- **AI-eligible emails** = monthly emails × (eligible share ÷ 100)
+- **Manual active time** = AI-eligible emails × manual minutes per email
+- **Active minutes per AI-assisted email** = review minutes + handling minutes + (correction share ÷ 100 × correction minutes)
+- **AI-assisted active time** = AI-eligible emails × active minutes per AI-assisted email
+- **Time saved** = manual active time − AI-assisted active time
+- **Estimated value of time saved** = hours saved × value of an hour
+- **Monthly operating cost** = monthly software cost + (AI-eligible emails × usage cost per email)
+- **Monthly net estimated benefit** = estimated value of time saved − monthly operating cost
+- **First-month net benefit** = monthly net benefit − one-time setup cost
+- **First-year net benefit** = (monthly value × 12) − (monthly operating cost × 12) − one-time setup cost
+- **Recurring ROI** = (monthly net benefit ÷ monthly operating cost) × 100
+- **Per-email net contribution** = ((manual minutes − AI minutes) ÷ 60 × value of an hour) − usage cost per email
+- **Break-even eligible emails** = monthly software cost ÷ per-email net contribution, rounded up
+
+Several deliberate choices follow from those formulas:
+
+- **Only eligible emails count.** The emails you decided are unsuitable for AI are unchanged by it, so including them would invent a saving on work nobody automated.
+- **Only active human time counts.** The seconds a model spends generating a draft are not your time, so they are not in the arithmetic. If you sit and wait for a tool, add that waiting to the handling-time field, where it belongs.
+- **Correction time is weighted, not universal.** A 20% correction rate at three minutes adds 0.6 minutes to every eligible email, not three.
+- **One-time costs stay out of recurring figures.** Setup appears in the first-month and first-year results and nowhere else, so your ongoing monthly number is not inflated by money you spend once.
+- **Negative results stay negative.** If the AI workflow needs more human time than replying by hand, the calculator says so instead of relabelling the loss.
+- **No cost means no ROI.** With nothing modelled as a cost there is nothing to return on, so the ROI reads "N/A" rather than an infinite percentage.
+
+### Worked example
+
+These inputs are the illustrative placeholders the calculator opens with. They are invented to show the arithmetic, not an estimate of what a typical business experiences.
+
+Forty emails a day across twenty working days is 800 emails a month. At 60% eligible, 480 of them are candidates for AI drafting. At five minutes each, replying to those by hand is 40 active hours a month.
+
+The AI-assisted workflow needs two minutes of review, 0.25 minutes of prompting, and three minutes of correction on 20% of drafts: `2 + 0.25 + (0.2 × 3) = 2.85` minutes per email. Across 480 emails that is 22.8 active hours.
+
+<ComparisonTable
+  caption="Worked example using the calculator's illustrative defaults (invented figures)"
+  rowHeader="Figure"
+  columns={["Working", "Result"]}
+  rows={[
+    { label: "Emails a month", cells: ["40 per day × 20 days", "800"] },
+    { label: "AI-eligible emails", cells: ["800 × 60%", "480"] },
+    { label: "Manual active time", cells: ["480 × 5 min", "40 hours"] },
+    { label: "AI-assisted active time", cells: ["480 × 2.85 min", "22.8 hours"] },
+    { label: "Monthly time saved", cells: ["40 − 22.8", "17.2 hours"] },
+    { label: "Estimated value of that time", cells: ["17.2 hours × $25", "$430"] },
+    { label: "Monthly operating cost", cells: ["$30 software + $0 usage", "$30"] },
+    { label: "Monthly net estimated benefit", cells: ["$430 − $30", "$400"] },
+    { label: "First-month net benefit", cells: ["$400 − $120 setup", "$280"] },
+    { label: "First-year net benefit", cells: ["($430 × 12) − ($30 × 12) − $120", "$4,680"] },
+    { label: "Recurring ROI", cells: ["$400 ÷ $30 × 100", "1,333.3%"] },
+    { label: "Break-even eligible emails", cells: ["$30 ÷ $0.896 per email", "34 a month"] },
+  ]}
+/>
+
+That ROI figure is worth pausing on, because it shows why a percentage on its own is nearly useless. It is large because the denominator is small: a $30 subscription. The number that actually matters to the business is the $400, and whether those 17.2 hours turn into anything. A percentage computed against a tiny cost will always look spectacular, and it is not a promise of anything.
+
+The break-even line is the most practical output here. At these assumptions, 34 eligible emails a month cover the software cost — so a business answering 480 is far past the threshold, and one answering twenty is not. Add the one-time setup cost and the first month needs 168 eligible emails to break even.
+
+## How AI can save time on business email
+
+AI is useful on email that is frequent, text-heavy, and answerable from information you already have. The realistic candidates:
+
+- **Customer inquiries.** Repeat questions about what you offer, how long something takes, or whether you cover an area. These are drafted well when the AI is restricted to answers you have approved.
+- **Routine follow-ups.** Chasing a quote, checking in after a job, or nudging an unanswered thread. Short, formulaic, and low-risk.
+- **Scheduling replies.** Proposing times, confirming, or rescheduling. The time saving is small per email and adds up because the volume is high.
+- **Invoice and payment reminders.** Highly templated, and the facts come from your accounting system rather than from the model.
+- **Support email drafts.** First drafts for known issues, with the diagnosis and the policy details filled in by a human before sending.
+
+The pattern across all five is that the AI drafts and a person approves. Higher-risk messages need more than a quick read: a complaint, a refund decision, a negotiated price, anything legal, medical or financial, and anything going to your most important customer. For those, either keep the human writing or accept that the review is the work and set your review time accordingly.
+
+Our tutorial on [how to automate email responses with AI](/ai-automation/how-to-automate-email-with-ai/) walks through building the drafting workflow in Gmail and in Outlook, including the reply playbook the AI drafts from. For the wider set of automations around it, see our [Zapier AI automation examples](/ai-automation/zapier-ai-automation-examples/).
+
+## AI-assisted vs manual email workflows
+
+<ComparisonTable
+  caption="Trade-offs between writing replies by hand and drafting them with AI"
+  rowHeader="Consideration"
+  columns={["Manual replies", "AI-assisted drafts"]}
+  rows={[
+    {
+      label: "Time per eligible email",
+      cells: [
+        "The full reply time, every time",
+        "Review, prompting, and correction on the share that needs it",
+      ],
+    },
+    {
+      label: "Setup effort",
+      cells: [
+        "None beyond what you already do",
+        "Templates, approved answers, connections, and testing",
+      ],
+    },
+    {
+      label: "Quality control",
+      cells: [
+        "You wrote it, so you know what it says",
+        "Fluent drafts that can be confidently wrong; review is mandatory",
+      ],
+    },
+    {
+      label: "Consistency",
+      cells: [
+        "Varies with how tired and busy you are",
+        "More consistent, as long as the source answers are correct",
+      ],
+    },
+    {
+      label: "Recurring cost",
+      cells: ["Your time only", "Subscriptions, usage fees, and the review time that remains"],
+    },
+    {
+      label: "Privacy exposure",
+      cells: [
+        "Messages stay in your email system",
+        "Message content passes through the AI services you connect",
+      ],
+    },
+    {
+      label: "Fails by",
+      cells: [
+        "Getting slower as volume grows",
+        "Inventing details, or drifting as your facts change",
+      ],
+    },
+  ]}
+/>
+
+The honest summary: AI shifts email work from writing to checking. That is a genuine saving when writing is the expensive part, and it is no saving at all when the reply was two lines you could type faster than you can verify someone else's version of it.
+
+## Common mistakes when calculating AI ROI
+
+**Ignoring human review time.** The most common error, and the largest. A workflow that drafts in three seconds still costs you however long it takes to read the draft. A savings estimate that omits review is not an estimate, it is a sales figure.
+
+**Counting every email as automatable.** Inboxes contain negotiations, complaints, personal notes, and messages where being wrong is expensive. Applying an eligibility percentage of 90% to a real inbox is how a calculator produces a number nobody can reproduce.
+
+**Overestimating productivity gains.** Even on eligible email, the first weeks are slower while you build templates, learn what the tool gets wrong, and work out which messages to exclude. The steady state arrives later than the pilot suggests.
+
+**Ignoring recurring software costs.** The subscription is easy to remember; the automation platform in the middle, the per-task fees, and the plan upgrade a busy month forces are easy to forget. All three belong in the monthly operating cost.
+
+**Confusing the value of time with cash saved.** An estimated $400 of time value is not $400 in the bank. It becomes money only if those hours produce revenue or remove a cost. If they go into other admin, the cash saving is zero and the productivity figure is still real — they are just different claims, and should not be mixed.
+
+**Mixing one-time and recurring costs.** Averaging a setup fee across every month makes your ongoing cost look permanently higher than it is. Keep it in the first-month and first-year figures.
+
+**Neglecting accuracy and privacy risk.** A wrong price in a sent email costs more than the time it saved. So does routing customer messages through a service whose data terms you have not read. Neither cost appears in any ROI formula, which is exactly why they need deciding separately.
+
+## Where to go next
+
+- **Ready to build the workflow?** Our step-by-step guide to [automating email responses with AI](/ai-automation/how-to-automate-email-with-ai/) covers Gmail with Zapier, Outlook with Power Automate, and dedicated AI email tools.
+- **Want the wider set of automations?** [Zapier AI automation examples](/ai-automation/zapier-ai-automation-examples/) breaks down eight workflows, including email triage and drafting replies to common questions.
+- **Running the whole business solo?** Email is one of seven workflows in our [AI workflows for solopreneurs](/ai-automation/best-ai-workflows-for-solopreneurs/) guide.
+- **Need the fundamentals first?** Start with the [AI automation and workflows hub](/ai-automation/).
+- **Totalling what the software costs?** Our free [small business AI cost calculator](/ai-business-tools/small-business-ai-cost-calculator/) adds up monthly, annual and first-year spend across every tool, seat and usage fee.
+
+## About this calculator
+
+It is free, needs no account, and takes no email address. Every formula it uses is published above, every default is an illustrative placeholder rather than a market figure, and every result is arithmetic on numbers you entered. Nothing is submitted: the calculations run in your browser, and the share button copies this page's address only.
+
+It deliberately does not tell you whether to adopt AI email drafting. It cannot know how good the drafts will be for your business, how much your inbox will change, or what you will do with the time. What it can do is make the trade-off explicit — including the review time most estimates quietly leave out — so the decision is made against your own numbers.

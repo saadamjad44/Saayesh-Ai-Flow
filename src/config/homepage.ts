@@ -7,6 +7,7 @@
  * statistic, a popularity ranking, or a "most read" claim: these are editor's
  * picks, and the homepage labels them as such.
  */
+import type { AnalyticsEventName } from "@/lib/analytics";
 import type { PageId, PillarId } from "./pages";
 
 /**
@@ -84,3 +85,78 @@ export const CALCULATOR_PREVIEW = {
   ],
   business: { employees: 3, activeUsers: 3, businessUnits: null },
 } as const;
+
+/* ---------------------------------------------------------------------------
+ * Free-tool promotions
+ * ------------------------------------------------------------------------- */
+
+export interface ToolPromo {
+  /** The tool page this promotes. Typed to the registry, like every pick above. */
+  tool: PageId;
+  eyebrow: string;
+  heading: string;
+  /** DOM id of the panel's <h2>, used by its section's `aria-labelledby`. */
+  headingId: string;
+  description: string;
+  /**
+   * Four short lines on what the tool *reports*. Never an outcome claim: these
+   * describe the output of a calculator, not a result anyone is promised.
+   */
+  features: readonly string[];
+  primaryLabel: string;
+  /** GA4 event sent when the primary action is clicked. Omit to track nothing. */
+  primaryEvent?: AnalyticsEventName;
+  /** An optional second action, always to a page that already exists. */
+  secondary?: { page: PageId; label: string };
+  /** Small print beside the actions. */
+  note?: string;
+}
+
+/**
+ * The homepage's two free-tool panels, as data rather than as two near-copies
+ * of the same 150 lines of markup. <ToolPromoPanel> renders both from this;
+ * what it cannot take from here is the preview panel beside the copy, because
+ * each preview is built by running that tool's own calculation module at build
+ * time — which is the point of it, and why no figure in either preview is typed
+ * by hand anywhere in this repository.
+ *
+ * Order is display order. The cost calculator keeps the dark panel and the lead
+ * position it already had; the email calculator takes the light teal variant
+ * below it, so the two read as two tools rather than as one tool twice.
+ */
+export const TOOL_PROMOS: readonly ToolPromo[] = [
+  {
+    tool: "small-business-ai-cost-calculator",
+    eyebrow: "Free tool",
+    heading: "Work out what AI will actually cost you",
+    headingId: "calculator-heading",
+    description:
+      "Add the tools you are paying for — or thinking about — and the calculator totals your monthly and annual spend, adds one-off setup costs for a first-year figure, and divides it across your team.",
+    features: [
+      "Monthly recurring cost across every tool",
+      "Annual cost, and first-year cost with setup",
+      "Cost per employee and per active user",
+      "Six currencies, and nothing leaves your browser",
+    ],
+    primaryLabel: "Use the AI Cost Calculator",
+    note: "No sign-up. No data sent anywhere.",
+  },
+  {
+    tool: "ai-email-time-savings-calculator",
+    eyebrow: "Free productivity calculator",
+    heading: "How much time could AI save on your emails?",
+    headingId: "email-calculator-heading",
+    description:
+      "Estimate your monthly email workload, human review time, AI software costs, and potential productivity savings with our free interactive calculator.",
+    features: [
+      "Monthly active hours saved, after review time",
+      "The value of that time, net of what the AI costs",
+      "Break-even email volume and recurring ROI",
+      "Losses shown as losses, never dressed up as gains",
+    ],
+    primaryLabel: "Try the free email savings calculator",
+    primaryEvent: "email_calculator_cta_click",
+    secondary: { page: "how-to-automate-email-with-ai", label: "Learn about AI email automation" },
+    note: "No sign-up. Your figures stay in the browser.",
+  },
+];

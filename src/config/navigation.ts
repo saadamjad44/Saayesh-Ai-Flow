@@ -85,6 +85,7 @@ const MENU_LABELS: Partial<Record<PageId, string>> = {
   "claude-for-small-business": "Claude for Small Business",
   "claude-vs-chatgpt-for-small-business": "Claude vs ChatGPT",
   "small-business-ai-cost-calculator": "AI Cost Calculator",
+  "ai-email-time-savings-calculator": "AI Email Savings Calculator",
 };
 
 /** Short nav label for a page: the override if there is one, else its title. */
@@ -151,6 +152,7 @@ export const FOOTER_NAV: readonly { heading: string; links: readonly NavLink[] }
     links: [
       link("All guides", "blog"),
       link("AI Cost Calculator", "small-business-ai-cost-calculator"),
+      link("AI Email Savings Calculator", "ai-email-time-savings-calculator"),
     ],
   },
   {

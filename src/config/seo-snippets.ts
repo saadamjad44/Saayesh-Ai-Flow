@@ -289,6 +289,22 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Informational",
     note: "Title 57 characters, description 151. No change.",
   },
+  "ai-email-time-savings-calculator": {
+    title: "AI Email Time Savings Calculator: Free ROI Tool",
+    brand: "omit",
+    description:
+      "Estimate how much time AI email automation could save your business. Compare manual replies, human review time and software costs with our free calculator.",
+    primaryKeyword: "ai email time savings calculator",
+    supportingKeywords: [
+      "email automation time savings calculator",
+      "ai email automation roi calculator",
+      "email reply time savings calculator",
+      "ai email productivity calculator",
+      "email automation roi for small business",
+    ],
+    intent: "Informational",
+    note: 'The <h1> is "AI Email Time Savings & ROI Calculator"; the search title drops the ampersand, which search results render inconsistently, and leads on the saving a searcher is looking for. "Free" is factually true — no sign-up, runs in the browser — and is the first thing a searcher decides. The brand suffix is dropped because the title is 46 characters and the suffix would push it to 64. The ROI framing is carried in the title rather than the description so the description can spend its length on the three inputs that make this calculator different from a naive savings estimate: manual reply time, human review time, and software cost.',
+  },
 
   // ---- Getting Started cluster -------------------------------------------
   "getting-started": {

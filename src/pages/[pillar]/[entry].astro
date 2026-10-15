@@ -22,25 +22,37 @@ import { articleSchema, getSocialImage, webApplicationSchema, type JsonLd } from
 
 export async function getStaticPaths() {
   /**
-   * The guides a tool page points to after the body, in this order. A chosen
-   * shortlist, not every guide in the cluster: for the cost calculator these
-   * answer the three questions a visitor has the moment they see their total —
-   * what those prices look like across the market, which tools belong in the
-   * stack, and whether to spend on software or on a person.
+   * The guides each tool page points to after the body, in this order. A chosen
+   * shortlist per tool, not every guide in the cluster: the cards answer the
+   * questions a visitor has the moment they see their own figures.
    *
-   * The category hub is deliberately not in here. It is linked from the tool's
-   * own body, in context, so adding it again as a card would only dilute these
-   * three. Ids are typed to the registry, so renaming or unpublishing one of
-   * these guides fails the build rather than silently dropping a card.
+   * For the cost calculator that is what those prices look like across the
+   * market, which tools belong in the stack, and whether to spend on software
+   * or on a person. For the email savings calculator it is how to actually
+   * build the workflow the estimate assumes, what other AI automations look
+   * like, and where email sits in a solo operator's wider set of workflows.
+   *
+   * The category hub is deliberately not in here. It is linked from each tool's
+   * own body, in context, so adding it again as a card would only dilute the
+   * shortlist. Both the tool ids and the guide ids are typed to the registry,
+   * so renaming or unpublishing any of them fails the build rather than
+   * silently dropping a card. A tool with no shortlist also fails the build.
    *
    * Declared inside getStaticPaths because Astro hoists that function into its
    * own scope, where module-level consts from this frontmatter are not visible.
    */
-  const TOOL_RELATED_GUIDES: readonly PageId[] = [
-    "how-much-does-ai-cost-small-business",
-    "best-ai-tools-for-small-business",
-    "ai-tools-vs-virtual-assistant",
-  ];
+  const TOOL_RELATED_GUIDES: Partial<Record<PageId, readonly PageId[]>> = {
+    "small-business-ai-cost-calculator": [
+      "how-much-does-ai-cost-small-business",
+      "best-ai-tools-for-small-business",
+      "ai-tools-vs-virtual-assistant",
+    ],
+    "ai-email-time-savings-calculator": [
+      "how-to-automate-email-with-ai",
+      "zapier-ai-automation-examples",
+      "best-ai-workflows-for-solopreneurs",
+    ],
+  };
 
   const [pillars, articles, tools] = await Promise.all([
     getPublishedEntries("pillars"),
@@ -93,16 +105,24 @@ export async function getStaticPaths() {
   });
 
   /**
-   * A tool's related block is the TOOL_RELATED_GUIDES shortlist above, so a
-   * visitor who has just totalled their spend lands on the few guides that
-   * explain the numbers rather than on the whole cluster.
+   * A tool's related block is its own TOOL_RELATED_GUIDES shortlist above, so a
+   * visitor who has just seen their own figures lands on the few guides that
+   * explain them rather than on the whole cluster.
    */
   const toolRoutes = tools.map(({ entry, page }) => {
     // Fails the build if the cluster's hub is unpublished: the tool's
     // breadcrumb and contextual sidebar both resolve through it.
     hubOf(page.id, page.pillar);
 
-    const guides = TOOL_RELATED_GUIDES.map((guideId): RelatedPage => {
+    const shortlist = TOOL_RELATED_GUIDES[page.id as PageId];
+    if (!shortlist) {
+      throw new Error(
+        `Tool "${page.id}" has no related-guide shortlist: add one to ` +
+          "TOOL_RELATED_GUIDES in src/pages/[pillar]/[entry].astro",
+      );
+    }
+
+    const guides = shortlist.map((guideId): RelatedPage => {
       const guide = articles.find((article) => article.page.id === guideId);
       if (!guide) {
         throw new Error(`Tool "${page.id}" links to unpublished guide "${guideId}"`);

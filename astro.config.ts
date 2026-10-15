@@ -6,9 +6,17 @@ import { SITE, isPlaceholderDomain } from "./src/config/site";
 import { assertValidPageRegistry } from "./src/config/pages";
 import { assertValidSeoSnippets } from "./src/config/seo-snippets";
 import { seoAudit } from "./src/lib/seo-audit.mjs";
+import { assertEmailSavingsCalculator } from "./src/components/tools/ai-email-savings-calculator.spec";
 
 assertValidPageRegistry();
 assertValidSeoSnippets();
+/**
+ * The email calculator's arithmetic, checked against its published worked
+ * example and its edge cases before anything is built. Same idea as the two
+ * asserts above: an invariant the project refuses to ship without, verified
+ * with no test runner and no extra dependency.
+ */
+assertEmailSavingsCalculator();
 
 if (isPlaceholderDomain) {
   console.warn(

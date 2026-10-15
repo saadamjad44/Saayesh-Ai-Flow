@@ -2,24 +2,27 @@
 /**
  * Homepage.
  *
- * Seven sections, in the order a visitor needs them: what this site is and a
+ * Eight sections, in the order a visitor needs them: what this site is and a
  * way to search it, the six categories, a short editorial selection of guides,
- * four routes in for someone who does not know which category they want, the
- * free cost calculator, the newest guides, and how the site works.
+ * four routes in for someone who does not know which category they want, both
+ * free calculators, an eight-slide introduction to the site, the newest guides,
+ * and how the site works.
  *
  * Nothing on this page is hand-listed. The categories come from PILLAR_NAV
  * filtered to published pillars; the featured and "start here" selections are
  * editor's picks in src/config/homepage.ts, typed to the registry so an
  * unpublished pick fails the build; the latest row is the collections sorted by
- * date; and the calculator preview is produced by the calculator's own
- * computeTotals() at build time, so the figures shown cannot be arithmetic the
- * real tool would not do.
+ * date; the tool panels are rendered from TOOL_PROMOS; and each calculator
+ * preview is produced by that calculator's own function at build time, so the
+ * figures shown cannot be arithmetic the real tool would not do.
  *
  * Deliberately absent: visitor counts, "most popular" claims, review scores,
  * testimonials, partner logos, and any email opt-in. The site has none of them.
  */
 import ArticleCard from "@/components/content/ArticleCard.astro";
 import FlowDiagram from "@/components/home/FlowDiagram.astro";
+import PresentationViewer from "@/components/home/PresentationViewer.astro";
+import ToolPromoPanel from "@/components/home/ToolPromoPanel.astro";
 import PillarIcon from "@/components/layout/PillarIcon.astro";
 import SearchBox from "@/components/layout/SearchBox.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -29,8 +32,9 @@ import {
   FEATURED_GUIDES,
   LATEST_GUIDE_COUNT,
   START_HERE,
+  TOOL_PROMOS,
 } from "@/config/homepage";
-import { PILLAR_NAV } from "@/config/navigation";
+import { PILLAR_NAV, menuLabel } from "@/config/navigation";
 import { getPage, type PageId } from "@/config/pages";
 import { getPillarPresentation } from "@/config/pillars";
 import { SITE } from "@/config/site";
@@ -39,6 +43,14 @@ import {
   formatMoney,
   DEFAULT_CURRENCY,
 } from "@/components/tools/ai-cost-calculator";
+import {
+  DEFAULTS as EMAIL_DEFAULTS,
+  computeEmailSavings,
+  formatCount,
+  formatHours,
+  formatSignedMoney,
+} from "@/components/tools/ai-email-savings-calculator";
+import { SLIDE_COUNT } from "@/config/presentation";
 import { getPublishedEntries, toArticleCard } from "@/lib/content";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 
@@ -104,14 +116,37 @@ const aboutPath = getPage("about").path;
 
 /* ---- Free tools ------------------------------------------------------- */
 
-const toolPages = tools.map(({ entry, page }) => ({
-  href: page.path,
-  title: entry.data.heading ?? entry.data.title,
+/**
+ * Both calculators get a panel, rendered from TOOL_PROMOS rather than written
+ * out twice. A promo for a tool that is not published is skipped rather than
+ * rendered as a dead card, which matters because a tool can be unpublished by
+ * its own frontmatter without the registry changing.
+ *
+ * Any free tool with no panel of its own is listed under the first panel's
+ * actions instead, so every tool keeps a route in from the homepage however the
+ * promo list changes. With both current tools promoted, that list is empty and
+ * nothing is rendered. Tools are also reachable from the header's Free tools
+ * menu, the footer, the blog archive and each category sidebar.
+ */
+const publishedToolIds = new Set(tools.map(({ page }) => page.id));
+
+const promos = TOOL_PROMOS.filter((promo) => publishedToolIds.has(promo.tool)).map((promo) => ({
+  ...promo,
+  page: getPage(promo.tool),
+  secondary: promo.secondary
+    ? { href: getPage(promo.secondary.page).path, label: promo.secondary.label }
+    : undefined,
 }));
 
+const promotedToolIds = new Set<string>(promos.map((promo) => promo.tool));
+
+const alsoFree = tools
+  .filter(({ page }) => !promotedToolIds.has(page.id))
+  .map(({ page }) => ({ href: page.path, label: menuLabel(page) }));
+
 /**
- * The calculator preview's figures, from the calculator's own function. The
- * inputs are round illustrative numbers, labelled as such on the page — no
+ * The cost calculator preview's figures, from the calculator's own function.
+ * The inputs are round illustrative numbers, labelled as such on the page — no
  * vendor price appears anywhere.
  */
 const preview = computeTotals(
@@ -119,6 +154,64 @@ const preview = computeTotals(
   { ...CALCULATOR_PREVIEW.business },
 );
 const money = (value: number | null) => formatMoney(value, DEFAULT_CURRENCY.symbol);
+
+/**
+ * The email calculator preview, computed the same way — from that tool's own
+ * engine, run on its own published defaults, so the homepage shows exactly the
+ * worked example a visitor sees when the calculator first opens. Those defaults
+ * are illustrative placeholders, not averages or benchmarks, and the panel says
+ * so; deriving the figures here rather than typing them means the two pages
+ * cannot drift apart, and the homepage can never claim arithmetic the
+ * calculator would not produce.
+ */
+const emailPreview = computeEmailSavings(EMAIL_DEFAULTS);
+const emailMoney = (value: number) => formatSignedMoney(value, DEFAULT_CURRENCY.symbol);
+
+/** Headline figure first, then the volume it came from. Four rows, no more. */
+const EMAIL_PREVIEW_ROWS = [
+  {
+    label: "Hours saved, monthly",
+    value: `${formatHours(emailPreview.hoursSaved)} hours`,
+    size: "text-2xl font-extrabold text-ink-900",
+  },
+  {
+    label: "Net benefit, monthly",
+    value: emailMoney(emailPreview.monthlyNetBenefit),
+    size: "text-xl font-bold text-accent-700",
+  },
+  {
+    label: "Emails a month",
+    value: formatCount(emailPreview.monthlyEmails),
+    size: "text-base font-bold text-ink-900",
+  },
+  {
+    label: "AI-eligible",
+    value: formatCount(emailPreview.eligibleEmails),
+    size: "text-base font-bold text-ink-900",
+  },
+];
+
+/* ---- Presentation ----------------------------------------------------- */
+
+/**
+ * Where the eight-slide introduction sends people next. Three destinations that
+ * already exist: the guide archive, the category grid further up this page, and
+ * the free tools band directly above the presentation. No new page is invented
+ * to give a button somewhere to point.
+ */
+const EXPLORE_ACTIONS = [
+  { href: blogPath, label: "Explore AI guides", summary: "Every published guide, newest first." },
+  {
+    href: "#categories",
+    label: "Browse categories",
+    summary: "Six topics, from first steps to industry use cases.",
+  },
+  {
+    href: "#free-tools",
+    label: "Try our free tools",
+    summary: "Two calculators, no sign-up, nothing stored.",
+  },
+];
 
 /* ---- Editorial method ------------------------------------------------- */
 
@@ -362,131 +455,191 @@ const METHOD = [
     </div>
   </section>
 
-  {/* ---- 5. Free cost calculator ------------------------------------ */}
-  {toolPages.length > 0 && (
-    <section aria-labelledby="calculator-heading" class="border-y border-ink-200 bg-surface">
-      <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-        <div class="overflow-hidden rounded-panel bg-ink-950 shadow-panel">
-          <div class="relative">
-            <div
-              aria-hidden="true"
-              class="bg-grid-inverse pointer-events-none absolute inset-0"
-            ></div>
+  {/* ---- 5. Free tools ----------------------------------------------- */}
+  {/*
+    Both calculators, one band. Each panel is its own <section> with its own
+    <h2>, so neither tool is demoted to a sub-heading of the other and the
+    heading outline stays flat under the page's single <h1>. The band itself is
+    a plain wrapper: it groups them visually without inventing a heading of its
+    own that would say nothing a visitor needs.
+  */}
+  {promos.length > 0 && (
+    <div id="free-tools" class="scroll-mt-20 border-y border-ink-200 bg-surface">
+      <div class="mx-auto grid max-w-6xl gap-6 px-4 py-16 sm:px-6 sm:py-20">
+        {promos.map((promo, index) => (
+          <section aria-labelledby={promo.headingId}>
+            <ToolPromoPanel
+              tone={index === 0 ? "dark" : "light"}
+              reverse={index > 0}
+              eyebrow={promo.eyebrow}
+              heading={promo.heading}
+              headingId={promo.headingId}
+              description={promo.description}
+              features={promo.features}
+              primary={{
+                href: promo.page.path,
+                label: promo.primaryLabel,
+                event: promo.primaryEvent,
+              }}
+              secondary={promo.secondary}
+              note={promo.note}
+              alsoFree={index === 0 ? alsoFree : []}
+            >
+              <Fragment slot="preview">
+                {promo.tool === "small-business-ai-cost-calculator" ? (
+                  /*
+                    Preview of the output, computed at build time by the
+                    calculator's own computeTotals() from the illustrative
+                    inputs in src/config/homepage.ts.
+                  */
+                  <div class="rounded-card border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm">
+                    <p class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-400 uppercase">
+                      Example — not vendor prices
+                    </p>
 
-            <div class="relative grid gap-10 p-7 sm:p-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-14 lg:p-12">
-              <div>
-                <p class="eyebrow text-accent-200">Free tool</p>
-                <h2
-                  id="calculator-heading"
-                  class="type-section mt-3 text-white [text-wrap:balance]"
-                >
-                  Work out what AI will actually cost you
-                </h2>
-                <p class="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-ink-300">
-                  Add the tools you are paying for — or thinking about — and the calculator totals
-                  your monthly and annual spend, adds one-off setup costs for a first-year figure,
-                  and divides it across your team.
-                </p>
+                    <dl class="mt-5 space-y-4">
+                      <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
+                        <dt class="text-sm text-ink-300">Monthly</dt>
+                        <dd class="font-display text-2xl font-extrabold text-white tabular-nums">
+                          {money(preview.monthlyRecurring)}
+                        </dd>
+                      </div>
+                      <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
+                        <dt class="text-sm text-ink-300">Annual</dt>
+                        <dd class="font-display text-xl font-bold text-white tabular-nums">
+                          {money(preview.annualRecurring)}
+                        </dd>
+                      </div>
+                      <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
+                        <dt class="text-sm text-ink-300">First year, with setup</dt>
+                        <dd class="font-display text-xl font-bold text-accent-200 tabular-nums">
+                          {money(preview.firstYearTotal)}
+                        </dd>
+                      </div>
+                      <div class="flex items-baseline justify-between gap-4">
+                        <dt class="text-sm text-ink-300">Per employee, monthly</dt>
+                        <dd class="font-display text-base font-bold text-white tabular-nums">
+                          {money(preview.perEmployee)}
+                        </dd>
+                      </div>
+                    </dl>
 
-                <ul class="mt-7 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-                  {[
-                    "Monthly recurring cost across every tool",
-                    "Annual cost, and first-year cost with setup",
-                    "Cost per employee and per active user",
-                    "Six currencies, and nothing leaves your browser",
-                  ].map((item) => (
-                    <li class="flex gap-2.5 text-[0.9375rem] leading-relaxed text-ink-200">
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        class="mt-0.5 size-4.5 shrink-0 text-accent-200"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-
-                <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                  {toolPages.map((tool) => (
-                    <a href={tool.href} class="btn btn-inverse">
-                      Use the AI Cost Calculator
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        class="size-4"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </a>
-                  ))}
-                  <p class="font-mono text-xs text-ink-400">No sign-up. No data sent anywhere.</p>
-                </div>
-              </div>
-
-              {/*
-                Preview of the output, computed at build time by the
-                calculator's own computeTotals() from the illustrative inputs
-                in src/config/homepage.ts.
-              */}
-              <div class="rounded-card border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm">
-                <p class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-400 uppercase">
-                  Example — not vendor prices
-                </p>
-
-                <dl class="mt-5 space-y-4">
-                  <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
-                    <dt class="text-sm text-ink-300">Monthly</dt>
-                    <dd class="font-display text-2xl font-extrabold text-white tabular-nums">
-                      {money(preview.monthlyRecurring)}
-                    </dd>
+                    <p class="mt-6 border-t border-white/10 pt-4 text-xs leading-relaxed text-ink-400">
+                      From {preview.perTool.length} example tools at{" "}
+                      {money(preview.monthlyRecurring)} a month plus {money(preview.totalSetup)} of
+                      one-off setup, across {CALCULATOR_PREVIEW.business.employees} people. Your own
+                      figures replace all of these.
+                    </p>
                   </div>
-                  <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
-                    <dt class="text-sm text-ink-300">Annual</dt>
-                    <dd class="font-display text-xl font-bold text-white tabular-nums">
-                      {money(preview.annualRecurring)}
-                    </dd>
-                  </div>
-                  <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
-                    <dt class="text-sm text-ink-300">First year, with setup</dt>
-                    <dd class="font-display text-xl font-bold text-accent-200 tabular-nums">
-                      {money(preview.firstYearTotal)}
-                    </dd>
-                  </div>
-                  <div class="flex items-baseline justify-between gap-4">
-                    <dt class="text-sm text-ink-300">Per employee, monthly</dt>
-                    <dd class="font-display text-base font-bold text-white tabular-nums">
-                      {money(preview.perEmployee)}
-                    </dd>
-                  </div>
-                </dl>
+                ) : (
+                  /*
+                    The same idea for the email calculator: every figure below is
+                    computeEmailSavings() run on that tool's own published
+                    defaults, so this panel shows exactly what the calculator
+                    shows on a visitor's first look at it.
+                  */
+                  <div class="rounded-card border border-ink-200 bg-surface p-6 shadow-card">
+                    <p class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-500 uppercase">
+                      Example — the calculator's opening figures
+                    </p>
 
-                <p class="mt-6 border-t border-white/10 pt-4 text-xs leading-relaxed text-ink-400">
-                  From {preview.perTool.length} example tools at {money(preview.monthlyRecurring)} a
-                  month plus {money(preview.totalSetup)} of one-off setup, across{" "}
-                  {CALCULATOR_PREVIEW.business.employees} people. Your own figures replace all of
-                  these.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+                    <dl class="mt-5 space-y-4">
+                      {EMAIL_PREVIEW_ROWS.map((row, rowIndex) => (
+                        <div
+                          class:list={[
+                            "flex items-baseline justify-between gap-4",
+                            rowIndex < EMAIL_PREVIEW_ROWS.length - 1 &&
+                              "border-b border-ink-100 pb-4",
+                          ]}
+                        >
+                          <dt class="text-sm text-ink-600">{row.label}</dt>
+                          <dd
+                            class:list={["font-display whitespace-nowrap tabular-nums", row.size]}
+                          >
+                            {row.value}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+
+                    <p class="mt-6 border-t border-ink-100 pt-4 text-xs leading-relaxed text-ink-500">
+                      From {EMAIL_DEFAULTS.emailsPerDay} emails a working day at{" "}
+                      {EMAIL_DEFAULTS.manualMinutes} minutes each, {EMAIL_DEFAULTS.reviewMinutes}{" "}
+                      minutes to review an AI draft, and {money(EMAIL_DEFAULTS.monthlySoftwareCost)}{" "}
+                      a month of software. Illustrative placeholders, not averages — your own
+                      figures replace all of them.
+                    </p>
+                  </div>
+                )}
+              </Fragment>
+            </ToolPromoPanel>
+          </section>
+        ))}
       </div>
-    </section>
+    </div>
   )}
 
-  {/* ---- 6. Latest guides ------------------------------------------- */}
+  {/* ---- 6. The site in eight slides --------------------------------- */}
+  {/*
+    An orientation piece for a first-time visitor: the same introduction the
+    owner's PDF gives, readable in place and downloadable as the original file.
+    It sits after the tools and before the latest guides so the page ends on
+    editorial content rather than on promotional blocks, and it takes the sunken
+    surface tone — the one ground the homepage was not already using — so three
+    substantial sections in a row still read as three separate sections.
+  */}
+  <section aria-labelledby="presentation-heading" class="border-b border-ink-200 bg-surface-sunken">
+    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+      <div class="max-w-2xl">
+        <p class="eyebrow eyebrow-rule">Presentation</p>
+        <h2 id="presentation-heading" class="type-section mt-3">
+          Discover {SITE.name} in {SLIDE_COUNT} slides
+        </h2>
+        <p class="type-body mt-3">
+          Explore our AI guides, practical workflows, comparisons, and free tools through a quick
+          visual introduction.
+        </p>
+      </div>
+
+      <div class="mt-9">
+        <PresentationViewer label={`${SITE.name} in ${SLIDE_COUNT} slides`} />
+      </div>
+
+      <div class="mt-10 border-t border-ink-200 pt-8">
+        <h3 class="font-display text-[1.0625rem] font-bold text-ink-900">Where to go from here</h3>
+        <ul class="mt-4 grid gap-4 sm:grid-cols-3">
+          {EXPLORE_ACTIONS.map((action) => (
+            <li class="card card-link group relative flex flex-col p-5">
+              <p class="font-display text-[0.9375rem] font-bold text-ink-900">
+                <a href={action.href} class="stretch-target group-hover:text-brand-800">
+                  {action.label}
+                </a>
+              </p>
+              <p class="mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{action.summary}</p>
+              <span
+                aria-hidden="true"
+                class="mt-4 inline-flex items-center gap-1.5 font-display text-sm font-bold text-brand-700"
+              >
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="size-4 transition-transform duration-180 ease-ui group-hover:translate-x-0.5 motion-reduce:transition-none"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {/* ---- 7. Latest guides ------------------------------------------- */}
   <section aria-labelledby="latest-heading">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
@@ -521,7 +674,7 @@ const METHOD = [
     </div>
   </section>
 
-  {/* ---- 7. How these guides are made ------------------------------- */}
+  {/* ---- 8. How these guides are made ------------------------------- */}
   <section aria-labelledby="method-heading" class="border-t border-ink-200 bg-surface">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <div class="grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
@@ -558,3 +711,22 @@ const METHOD = [
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  /**
+   * The homepage's only analytics listener: a call to action that declares an
+   * event name gets one, and nothing else on the page is instrumented.
+   *
+   * What is sent is that the click happened, and where. Never a value — the
+   * calculators' own figures are not touched here and must never be; see the
+   * contract in src/lib/analytics.ts. The presentation viewer tracks its own
+   * two events in its own script, so nothing below fires twice.
+   */
+  import { trackEvent, type AnalyticsEventName } from "@/lib/analytics";
+
+  for (const element of document.querySelectorAll<HTMLElement>("[data-analytics-event]")) {
+    const name = element.dataset.analyticsEvent as AnalyticsEventName | undefined;
+    if (!name) continue;
+    element.addEventListener("click", () => trackEvent(name, { location: "homepage" }));
+  }
+</script>

@@ -7,3 +7,4 @@
  * components/content so a calculator is never mistaken for a prose component.
  */
 export { default as AiCostCalculator } from "./AiCostCalculator.astro";
+export { default as AiEmailSavingsCalculator } from "./AiEmailSavingsCalculator.astro";
