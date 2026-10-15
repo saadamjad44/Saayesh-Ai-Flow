@@ -48,16 +48,12 @@ const groups = PILLAR_NAV.map((section) => hubs.get(section.pillar))
 const blogPath = getPage("blog").path;
 const aboutPath = getPage("about").path;
 const contactPath = getPage("contact").path;
-
-const description = `${AUTHOR.name} runs ${SITE.name} and writes its guides to AI tools, automation, prompts, and small business workflows. Background, research approach, and published articles.`;
 ---
 
 <PageLayout
   pageId="author-saad-amjad"
-  title={`${AUTHOR.name}, Author at ${SITE.name}`}
   heading={AUTHOR.name}
   eyebrow="Author"
-  description={description}
   intro={AUTHOR.role}
   jsonLd={[profilePageSchema({ path: page.path, description: AUTHOR.role })]}
 >

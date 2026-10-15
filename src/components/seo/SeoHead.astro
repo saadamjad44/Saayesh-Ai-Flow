@@ -4,13 +4,7 @@
  * Open Graph, Twitter card, JSON-LD, and Search Console verification.
  */
 import { INTEGRATIONS, SITE } from "@/config/site";
-import {
-  absoluteUrl,
-  formatTitle,
-  serializeJsonLd,
-  type JsonLd,
-  type SocialImage,
-} from "@/lib/seo";
+import { absoluteUrl, serializeJsonLd, type JsonLd, type SocialImage } from "@/lib/seo";
 
 /**
  * The Open Graph article profile, for `ogType: "article"` pages only. Dates are
@@ -28,8 +22,16 @@ export interface OpenGraphArticle {
 }
 
 interface Props {
+  /**
+   * The finished <title>, brand suffix already applied. BaseLayout resolves it
+   * through the SEO snippet registry, so this component formats nothing.
+   */
   title: string;
   description: string;
+  /** og:title / twitter:title. Defaults to `title`. */
+  ogTitle?: string;
+  /** og:description / twitter:description. Defaults to `description`. */
+  ogDescription?: string;
   /** Trailing-slash path of the canonical URL. Omit for pages without one (e.g. 404). */
   canonicalPath?: string;
   noindex?: boolean;
@@ -44,6 +46,8 @@ interface Props {
 const {
   title,
   description,
+  ogTitle = title,
+  ogDescription = description,
   canonicalPath,
   noindex = false,
   ogType = "website",
@@ -52,7 +56,6 @@ const {
   jsonLd = [],
 } = Astro.props;
 
-const fullTitle = formatTitle(title);
 const canonicalUrl = canonicalPath ? absoluteUrl(canonicalPath) : undefined;
 
 /**
@@ -68,7 +71,7 @@ gtag('js', new Date());
 gtag('config', ${JSON.stringify(ga4Id).replace(/</g, "\\u003c")});`;
 ---
 
-<title>{fullTitle}</title>
+<title>{title}</title>
 <meta name="description" content={description} />
 {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 <meta
@@ -79,8 +82,8 @@ gtag('config', ${JSON.stringify(ga4Id).replace(/</g, "\\u003c")});`;
 <meta property="og:site_name" content={SITE.name} />
 <meta property="og:locale" content={SITE.locale} />
 <meta property="og:type" content={ogType} />
-<meta property="og:title" content={fullTitle} />
-<meta property="og:description" content={description} />
+<meta property="og:title" content={ogTitle} />
+<meta property="og:description" content={ogDescription} />
 {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
 {ogType === "article" && article && (
   <>
@@ -98,8 +101,8 @@ gtag('config', ${JSON.stringify(ga4Id).replace(/</g, "\\u003c")});`;
   </>
 )}
 <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
-<meta name="twitter:title" content={fullTitle} />
-<meta name="twitter:description" content={description} />
+<meta name="twitter:title" content={ogTitle} />
+<meta name="twitter:description" content={ogDescription} />
 {image && (
   <>
     <meta name="twitter:image" content={image.url} />

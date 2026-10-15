@@ -1,0 +1,608 @@
+---
+/**
+ * /seo-preview/ — the editorial snippet preview: every page's search result as
+ * Google would lay it out, with the planning data behind it.
+ *
+ * DEV ONLY. getStaticPaths() returns no paths unless `import.meta.env.DEV`, so
+ * `astro build` emits nothing for this route: there is no file in dist/, no URL
+ * to crawl, and nothing in the sitemap. Run `npm run dev` and open
+ * http://localhost:4321/seo-preview/ to use it.
+ *
+ * It is a preview and not an editor on purpose. The snippets live in
+ * src/config/seo-snippets.ts, which means they are reviewed in a pull request,
+ * typed against the page registry, and validated on every build — none of which
+ * a form writing to a database would give. This page is the read side: it shows
+ * what the registry currently produces, flags what is likely to truncate, and
+ * says which pages still have no snippet of their own.
+ *
+ * Everything here is computed from the same resolveSnippet() the <head> uses,
+ * so the preview cannot show something the page does not emit.
+ */
+import { getCollection } from "astro:content";
+
+import { PAGES, type PageId, type SitePage } from "@/config/pages";
+import { PAGE_SNIPPETS, SNIPPET_LIMITS, resolveSnippet } from "@/config/seo-snippets";
+import { SITE } from "@/config/site";
+
+export function getStaticPaths() {
+  // Production builds emit no page for this route at all.
+  if (!import.meta.env.DEV) return [];
+  return [{ params: { path: undefined } }];
+}
+
+/** Frontmatter title and description for every content-backed page, by pageId. */
+async function entryFallbacks(): Promise<Map<string, { title: string; description: string }>> {
+  const collections = await Promise.all([
+    getCollection("pillars"),
+    getCollection("articles"),
+    getCollection("tools"),
+  ]);
+
+  return new Map(
+    collections
+      .flat()
+      .map((entry) => [
+        entry.data.pageId,
+        { title: entry.data.title, description: entry.data.description },
+      ]),
+  );
+}
+
+const fallbacks = await entryFallbacks();
+
+interface Row {
+  page: SitePage;
+  /** The finished <title>, exactly as the page emits it. */
+  title: string;
+  description: string;
+  ogTitle: string;
+  ogDescription: string;
+  /** Breadcrumb-style URL, the way Google renders it above a result. */
+  displayUrl: string;
+  primaryKeyword?: string;
+  supportingKeywords: readonly string[];
+  /** Primary-keyword words present in the title / description, as "4/6". */
+  titleCoverage?: string;
+  descriptionCoverage?: string;
+  intent?: string;
+  note?: string;
+  /** True where the snippet registry supplied the value, not the page. */
+  overridden: { title: boolean; description: boolean };
+  /** Whether this page has any entry in the snippet registry at all. */
+  hasSnippet: boolean;
+  flags: string[];
+}
+
+/** "/ai-business-tools/claude-for-small-business/" → "saayeshaiflow.com › ai-business-tools › …" */
+function displayUrl(path: string): string {
+  const host = SITE.url.replace(/^https?:\/\//, "");
+  const segments = path.split("/").filter(Boolean);
+  return [host, ...segments].join(" › ");
+}
+
+/**
+ * Words carrying no topical meaning on their own. Dropped before the keyword
+ * check so grammar does not decide whether a title is on topic.
+ */
+const STOP_WORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "are",
+  "by",
+  "can",
+  "do",
+  "does",
+  "for",
+  "from",
+  "in",
+  "is",
+  "it",
+  "my",
+  "of",
+  "on",
+  "or",
+  "the",
+  "to",
+  "what",
+  "with",
+  "you",
+  "your",
+]);
+
+const words = (value: string): string[] =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean);
+
+/**
+ * How much of a primary keyword a piece of text actually covers, by word rather
+ * than by exact phrase.
+ *
+ * Exact-substring matching is the wrong test and produces almost nothing but
+ * false alarms: "AI business tools" does not appear verbatim in "AI Business &
+ * Productivity Tools for Small Business", and the cost guide drops one "for" on
+ * purpose so its title matches a real Search Console query. Both are fine, and
+ * a check that calls them problems is a check an editor learns to ignore.
+ *
+ * It is also deliberately not a target to max out. A description exists to earn
+ * a click, not to restate the query — writing to push this to 100% is keyword
+ * stuffing, which is why only a complete miss is ever flagged below.
+ */
+function coverage(text: string, keyword: string): { covered: number; missing: string[] } {
+  const haystack = new Set(words(text));
+  const needles = [...new Set(words(keyword).filter((word) => !STOP_WORDS.has(word)))];
+  const missing = needles.filter((word) => !haystack.has(word));
+  return { covered: needles.length - missing.length, missing };
+}
+
+const rows: Row[] = (PAGES as readonly SitePage[]).map((page) => {
+  const fallback = fallbacks.get(page.id);
+  const snippet = resolveSnippet({
+    pageId: page.id as PageId,
+    title: fallback?.title,
+    description: fallback?.description,
+  });
+
+  const flags: string[] = [];
+
+  if (snippet.title.length > SNIPPET_LIMITS.titleWarn) {
+    flags.push(`Title ${snippet.title.length} chars — may truncate`);
+  }
+  if (snippet.description.length > SNIPPET_LIMITS.descriptionMax) {
+    flags.push(`Description ${snippet.description.length} chars — may truncate`);
+  }
+  if (snippet.description.length < SNIPPET_LIMITS.descriptionMin) {
+    flags.push(`Description only ${snippet.description.length} chars`);
+  }
+  /**
+   * Keyword coverage is reported for both the title and the description, but
+   * only two cases are worth flagging: a title that misses part of the query it
+   * is written for, and a description that does not mention it at all.
+   */
+  const titleCoverage = snippet.primaryKeyword
+    ? coverage(snippet.title, snippet.primaryKeyword)
+    : undefined;
+  const descriptionCoverage = snippet.primaryKeyword
+    ? coverage(snippet.description, snippet.primaryKeyword)
+    : undefined;
+
+  if (snippet.primaryKeyword) {
+    if (titleCoverage && titleCoverage.missing.length > 0) {
+      flags.push(`Title does not say: ${titleCoverage.missing.join(", ")}`);
+    }
+    if (descriptionCoverage && descriptionCoverage.covered === 0) {
+      flags.push("Description does not mention the primary keyword at all");
+    }
+  } else if (!page.noindex && page.type !== "core" && page.type !== "utility") {
+    flags.push("No primary keyword");
+  }
+
+  return {
+    page,
+    title: snippet.title,
+    description: snippet.description,
+    ogTitle: snippet.ogTitle,
+    ogDescription: snippet.ogDescription,
+    displayUrl: displayUrl(page.path),
+    primaryKeyword: snippet.primaryKeyword,
+    supportingKeywords: snippet.supportingKeywords,
+    titleCoverage: titleCoverage
+      ? `${titleCoverage.covered}/${titleCoverage.covered + titleCoverage.missing.length}`
+      : undefined,
+    descriptionCoverage: descriptionCoverage
+      ? `${descriptionCoverage.covered}/${descriptionCoverage.covered + descriptionCoverage.missing.length}`
+      : undefined,
+    intent: snippet.intent,
+    note: snippet.note,
+    overridden: snippet.overridden,
+    hasSnippet: PAGE_SNIPPETS[page.id as PageId] !== undefined,
+    flags,
+  };
+});
+
+/** Values shared by more than one indexable page — the cannibalization check. */
+function duplicateValues(pick: (row: Row) => string): Set<string> {
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    if (row.page.noindex) continue;
+    const value = pick(row);
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+  return new Set([...counts.entries()].filter(([, count]) => count > 1).map(([value]) => value));
+}
+
+const duplicateTitles = duplicateValues((row) => row.title);
+const duplicateDescriptions = duplicateValues((row) => row.description);
+
+for (const row of rows) {
+  if (!row.page.noindex && duplicateTitles.has(row.title)) row.flags.push("Duplicate title");
+  if (!row.page.noindex && duplicateDescriptions.has(row.description)) {
+    row.flags.push("Duplicate description");
+  }
+}
+
+const indexable = rows.filter((row) => !row.page.noindex);
+const flagged = indexable.filter((row) => row.flags.length > 0);
+const withoutSnippet = rows.filter((row) => !row.hasSnippet);
+const overriddenTitles = rows.filter((row) => row.overridden.title).length;
+const overriddenDescriptions = rows.filter((row) => row.overridden.description).length;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* Belt and braces: the route emits nothing in production, and says so if it ever did. */}
+    <meta name="robots" content="noindex, nofollow" />
+    <title>SEO snippet preview — {SITE.name} (dev only)</title>
+    <style>
+      :root {
+        --ink: #1f2328;
+        --muted: #5f6368;
+        --line: #dfe1e5;
+        --link: #1a0dab;
+        --url: #202124;
+        --warn: #8a5a00;
+        --warn-bg: #fff8e1;
+        --ok: #137333;
+        --bg: #f6f7f8;
+        --card: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 2rem 1rem 6rem;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.55 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Arial,
+          sans-serif;
+      }
+
+      .wrap {
+        max-width: 56rem;
+        margin: 0 auto;
+      }
+
+      header.page {
+        margin-bottom: 2rem;
+      }
+
+      h1 {
+        margin: 0 0 0.35rem;
+        font-size: 1.5rem;
+        letter-spacing: -0.015em;
+      }
+
+      .lede {
+        margin: 0;
+        color: var(--muted);
+        max-width: 46rem;
+      }
+
+      .summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1.25rem 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .summary li {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8125rem;
+        color: var(--muted);
+      }
+
+      .summary b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      h2.group {
+        margin: 2.5rem 0 1rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0.4rem;
+      }
+
+      article {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 1.1rem 1.25rem 1.25rem;
+        margin-bottom: 0.85rem;
+      }
+
+      /* ---- The Google-style result itself ---- */
+      .serp .url {
+        color: var(--url);
+        font-size: 0.8125rem;
+        line-height: 1.3;
+        word-break: break-word;
+      }
+
+      .serp .title {
+        margin: 0.2rem 0 0.15rem;
+        color: var(--link);
+        font-size: 1.25rem;
+        line-height: 1.3;
+        font-weight: 400;
+      }
+
+      .serp .snippet {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.875rem;
+        line-height: 1.58;
+      }
+
+      .meta {
+        margin-top: 0.9rem;
+        padding-top: 0.8rem;
+        border-top: 1px dashed var(--line);
+        display: grid;
+        gap: 0.4rem;
+        font-size: 0.8125rem;
+      }
+
+      .meta dl {
+        display: grid;
+        grid-template-columns: 9.5rem minmax(0, 1fr);
+        gap: 0.2rem 0.75rem;
+        margin: 0;
+      }
+
+      .meta dt {
+        color: var(--muted);
+      }
+
+      .meta dd {
+        margin: 0;
+      }
+
+      .counts {
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+      }
+
+      .counts b {
+        color: var(--ink);
+      }
+
+      .tag {
+        display: inline-block;
+        border-radius: 4px;
+        padding: 0.05rem 0.4rem;
+        font-size: 0.6875rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        margin-right: 0.3rem;
+      }
+
+      .tag.override {
+        border-color: #c6dafc;
+        background: #e8f0fe;
+        color: #174ea6;
+      }
+
+      .tag.noindex {
+        border-color: #f1c9c0;
+        background: #fce8e6;
+        color: #a50e0e;
+      }
+
+      .flags {
+        margin: 0.7rem 0 0;
+        padding: 0.5rem 0.7rem;
+        list-style: none;
+        background: var(--warn-bg);
+        border: 1px solid #f3e3b3;
+        border-radius: 6px;
+        font-size: 0.8125rem;
+        color: var(--warn);
+      }
+
+      .flags li + li {
+        margin-top: 0.2rem;
+      }
+
+      .note {
+        margin: 0.7rem 0 0;
+        font-size: 0.8125rem;
+        color: var(--muted);
+        font-style: italic;
+      }
+
+      .keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .keywords li {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 0.05rem 0.4rem;
+        font-size: 0.75rem;
+      }
+
+      .keywords li.primary {
+        border-color: #b7dfc0;
+        background: #e6f4ea;
+        color: var(--ok);
+        font-weight: 600;
+      }
+
+      @media (max-width: 34rem) {
+        .meta dl {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .meta dt {
+          margin-top: 0.3rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <header class="page">
+        <h1>SEO snippet preview</h1>
+        <p class="lede">
+          Every page's search result, built from <code>src/config/seo-snippets.ts</code> through the
+          same <code>resolveSnippet()</code> the <code>&lt;head&gt;</code> uses. Edit that file to
+          change anything here. This page exists in <code>npm run dev</code> only — a production
+          build emits no file for it.
+        </p>
+
+        <ul class="summary">
+          <li>
+            <b>{rows.length}</b> registry pages
+          </li>
+          <li>
+            <b>{indexable.length}</b> indexable
+          </li>
+          <li>
+            <b>{overriddenTitles}</b> titles from the registry
+          </li>
+          <li>
+            <b>{overriddenDescriptions}</b> descriptions from the registry
+          </li>
+          <li>
+            <b>{withoutSnippet.length}</b> with no snippet entry
+          </li>
+          <li>
+            <b>{flagged.length}</b> flagged
+          </li>
+        </ul>
+      </header>
+
+      {["core", "utility", "pillar", "article", "tool", "review"].map((type) => {
+        const group = rows.filter((row) => row.page.type === type);
+        if (group.length === 0) return null;
+
+        return (
+          <section>
+            <h2 class="group">
+              {type} — {group.length}
+            </h2>
+
+            {group.map((row) => (
+              <article>
+                <div class="serp">
+                  <p class="url">{row.displayUrl}</p>
+                  <p class="title">{row.title}</p>
+                  <p class="snippet">{row.description}</p>
+                </div>
+
+                <div class="meta">
+                  <p class="counts">
+                    <span>
+                      Title <b>{row.title.length}</b>/{SNIPPET_LIMITS.titleWarn}
+                    </span>
+                    {" · "}
+                    <span>
+                      Description <b>{row.description.length}</b>/{SNIPPET_LIMITS.descriptionMax}
+                    </span>
+                    {" · "}
+                    <code>{row.page.id}</code>{" "}
+                    {row.overridden.title && <span class="tag override">title override</span>}
+                    {row.overridden.description && (
+                      <span class="tag override">description override</span>
+                    )}
+                    {row.page.noindex && <span class="tag noindex">noindex</span>}
+                  </p>
+
+                  <dl>
+                    <dt>Primary keyword</dt>
+                    <dd>
+                      {row.primaryKeyword ? (
+                        <ul class="keywords">
+                          <li class="primary">{row.primaryKeyword}</li>
+                        </ul>
+                      ) : (
+                        <span style="color:var(--muted)">—</span>
+                      )}
+                    </dd>
+
+                    <dt>Supporting</dt>
+                    <dd>
+                      {row.supportingKeywords.length > 0 ? (
+                        <ul class="keywords">
+                          {row.supportingKeywords.map((keyword) => (
+                            <li>{keyword}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span style="color:var(--muted)">—</span>
+                      )}
+                    </dd>
+
+                    {row.titleCoverage && (
+                      <>
+                        <dt>Keyword coverage</dt>
+                        <dd>
+                          Title <b>{row.titleCoverage}</b> words · description{" "}
+                          <b>{row.descriptionCoverage}</b>
+                        </dd>
+                      </>
+                    )}
+
+                    <dt>Intent</dt>
+                    <dd>{row.intent ?? "—"}</dd>
+
+                    {(row.ogTitle !== row.title || row.ogDescription !== row.description) && (
+                      <>
+                        <dt>Social title</dt>
+                        <dd>{row.ogTitle}</dd>
+                        <dt>Social description</dt>
+                        <dd>{row.ogDescription}</dd>
+                      </>
+                    )}
+                  </dl>
+                </div>
+
+                {row.flags.length > 0 && (
+                  <ul class="flags">
+                    {row.flags.map((flag) => (
+                      <li>{flag}</li>
+                    ))}
+                  </ul>
+                )}
+
+                {row.note && <p class="note">{row.note}</p>}
+              </article>
+            ))}
+          </section>
+        );
+      })}
+    </div>
+  </body>
+</html>

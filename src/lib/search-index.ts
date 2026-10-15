@@ -16,6 +16,7 @@
 import { render, type CollectionEntry } from "astro:content";
 
 import { PAGES, getPage, type PageId, type SitePage } from "@/config/pages";
+import { snippetKeywords } from "@/config/seo-snippets";
 import { getPublishedEntries, type EntryCollection } from "@/lib/content";
 
 export interface SearchDoc {
@@ -26,8 +27,9 @@ export interface SearchDoc {
   /** Result label: the parent pillar for articles, else the kind of page. */
   category: string;
   /**
-   * Extra match terms. Matched against, never rendered — the registry's
-   * `primaryKeyword` is internal prioritization data and must stay off the page.
+   * Extra match terms, from the SEO snippet registry's planning keywords.
+   * Matched against, never rendered: those fields are internal prioritization
+   * data and must stay off the page.
    */
   keywords: string[];
   /** H2/H3 text from the entry body, so a query can hit a section name. */
@@ -90,14 +92,14 @@ export async function buildSearchIndex(): Promise<SearchDoc[]> {
         description: STATIC_PAGE_SUMMARIES[page.id as PageId] ?? "",
         url: page.path,
         category: "Site",
-        keywords: [],
+        keywords: snippetKeywords(page.id as PageId),
         headings: [],
       };
     });
 
   const entryDocs = await Promise.all(
     [...pillars, ...articles, ...tools].map(async ({ entry, page }): Promise<SearchDoc> => {
-      const keywords = page.primaryKeyword ? [page.primaryKeyword] : [];
+      const keywords = snippetKeywords(page.id as PageId);
       return {
         title: entry.data.title,
         description: entry.data.description,

@@ -147,12 +147,7 @@ const METHOD = [
 ];
 ---
 
-<BaseLayout
-  pageId="home"
-  title={`${SITE.name}: AI Tools, Automation & Workflow Guides`}
-  description="Research-based guides to AI tools, workflows, prompts, and business use cases for solopreneurs and small business owners."
-  jsonLd={[websiteSchema(), organizationSchema()]}
->
+<BaseLayout pageId="home" jsonLd={[websiteSchema(), organizationSchema()]}>
   {/* ---- 1. Hero ---------------------------------------------------- */}
   <section class="relative overflow-hidden border-b border-ink-200 bg-surface">
     <div

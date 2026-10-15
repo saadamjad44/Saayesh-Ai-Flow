@@ -30,9 +30,16 @@ import { getBreadcrumbs, type JsonLd } from "@/lib/seo";
 
 interface Props {
   pageId: PageId;
-  title: string;
-  description: string;
-  /** Visible <h1>; defaults to `title`. */
+  /**
+   * The page's own SEO title, where it is not declared in the snippet registry
+   * (src/config/seo-snippets.ts). Content entries pass their frontmatter title
+   * here; the registry overrides it for the <title> and leaves the visible page
+   * untouched.
+   */
+  title?: string;
+  /** The page's own meta description, same. Never the visible intro — that is `intro`. */
+  description?: string;
+  /** Visible <h1>; defaults to `title`, then to the registry page title. */
   heading?: string;
   /** Small uppercase label above the <h1>, e.g. the parent category. */
   eyebrow?: string;
@@ -55,7 +62,7 @@ const {
   pageId,
   title,
   description,
-  heading = title,
+  heading,
   eyebrow,
   eyebrowHref,
   eyebrowAccent = false,
@@ -68,7 +75,15 @@ const {
 } = Astro.props;
 
 const hasSidebar = Astro.slots.has("sidebar");
-const breadcrumbs = getBreadcrumbs(getPage(pageId));
+const page = getPage(pageId);
+const breadcrumbs = getBreadcrumbs(page);
+
+/**
+ * The visible heading: an explicit `heading`, else the page's own title, else
+ * the registry title. The last fallback is what lets a page leave its metadata
+ * entirely to the snippet registry and still render an <h1>.
+ */
+const pageHeading = heading ?? title ?? page.title;
 ---
 
 <BaseLayout
@@ -110,7 +125,7 @@ const breadcrumbs = getBreadcrumbs(getPage(pageId));
         </p>
       )}
 
-      <h1 class:list={["type-title", eyebrow && "mt-3"]}>{heading}</h1>
+      <h1 class:list={["type-title", eyebrow && "mt-3"]}>{pageHeading}</h1>
 
       {intro && <p class="type-lead mt-5">{intro}</p>}
 

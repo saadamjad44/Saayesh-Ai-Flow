@@ -10,10 +10,15 @@
  * /blog/ was deferred at Phase 1 and approved as a Phase 2 page: it is the
  * central index of published article content, generated from this registry and
  * the MDX collections rather than a hand-maintained list.
+ *
+ * This file owns a page's *identity*: its id, URL, type, parent and
+ * indexability. It deliberately owns none of its search metadata — SEO titles,
+ * meta descriptions, Open Graph overrides and keyword planning all live in
+ * src/config/seo-snippets.ts, so there is one place to review how the site
+ * appears in a result page.
  */
 
 export type PageType = "core" | "utility" | "pillar" | "article" | "review" | "tool";
-export type SearchIntent = "Commercial" | "Informational" | "Transactional" | "Info / Commercial";
 
 /** Roadmap phase that approved a page. */
 export type SitePhase = 1 | 2;
@@ -76,9 +81,6 @@ export interface SitePage {
    */
   parent?: string;
   noindex?: boolean;
-  /** Internal prioritization only. Never render keyword data on the site. */
-  primaryKeyword?: string;
-  intent?: SearchIntent;
 }
 
 /**
@@ -147,8 +149,6 @@ export const PAGES = [
     phase: 1,
     week: "2–3",
     pillar: "ai-writing-tools",
-    primaryKeyword: "best AI writing tools",
-    intent: "Commercial",
   },
   {
     id: "jasper-vs-claude-vs-chatgpt",
@@ -158,8 +158,6 @@ export const PAGES = [
     phase: 1,
     week: "2–3",
     pillar: "ai-writing-tools",
-    primaryKeyword: "Jasper vs Claude vs ChatGPT for business",
-    intent: "Commercial",
   },
 
   // Weeks 4–5 — AI Business cluster
@@ -179,8 +177,6 @@ export const PAGES = [
     phase: 1,
     week: "4–5",
     pillar: "ai-business-tools",
-    primaryKeyword: "best AI tools for small business owners",
-    intent: "Commercial",
   },
   {
     id: "ai-tools-vs-virtual-assistant",
@@ -190,8 +186,6 @@ export const PAGES = [
     phase: 1,
     week: "4–5",
     pillar: "ai-business-tools",
-    primaryKeyword: "AI tools vs hiring a virtual assistant",
-    intent: "Informational",
   },
 
   // Weeks 6–7 — AI Automation cluster
@@ -211,8 +205,6 @@ export const PAGES = [
     phase: 1,
     week: "6–7",
     pillar: "ai-automation",
-    primaryKeyword: "Zapier AI automation examples",
-    intent: "Informational",
   },
   {
     id: "best-ai-workflows-for-solopreneurs",
@@ -222,8 +214,6 @@ export const PAGES = [
     phase: 1,
     week: "6–7",
     pillar: "ai-automation",
-    primaryKeyword: "best AI workflows for solopreneurs",
-    intent: "Info / Commercial",
   },
 
   // Week 8 — Fill gaps
@@ -235,8 +225,6 @@ export const PAGES = [
     phase: 1,
     week: "8",
     pillar: "ai-business-tools",
-    primaryKeyword: "how much does AI cost for a small business",
-    intent: "Transactional",
   },
   {
     id: "how-to-automate-email-with-ai",
@@ -246,8 +234,6 @@ export const PAGES = [
     phase: 1,
     week: "8",
     pillar: "ai-automation",
-    primaryKeyword: "how to automate email responses with AI",
-    intent: "Informational",
   },
 
   // Phase 2 — Blog index: the chronological hub for every published article.
@@ -286,8 +272,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "getting-started",
-    primaryKeyword: "how to use AI tools",
-    intent: "Informational",
   },
   {
     id: "how-to-write-effective-ai-prompts",
@@ -296,8 +280,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "getting-started",
-    primaryKeyword: "how to write effective AI prompts",
-    intent: "Informational",
   },
   {
     id: "ai-tools-for-beginners",
@@ -306,8 +288,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "getting-started",
-    primaryKeyword: "AI tools for beginners",
-    intent: "Info / Commercial",
   },
 
   // Phase 2B — AI by Industry pillar (topical hub)
@@ -327,8 +307,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-by-industry",
-    primaryKeyword: "AI tools for marketing",
-    intent: "Informational",
   },
   {
     id: "ai-tools-for-ecommerce",
@@ -337,8 +315,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-by-industry",
-    primaryKeyword: "AI tools for e-commerce",
-    intent: "Informational",
   },
   {
     id: "ai-tools-for-small-business",
@@ -347,8 +323,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-by-industry",
-    primaryKeyword: "AI tools for small business",
-    intent: "Informational",
   },
 
   // Phase 2B — AI Prompts pillar (skills hub; the Prompt Library at
@@ -369,8 +343,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-prompts",
-    primaryKeyword: "AI prompt examples",
-    intent: "Informational",
   },
   {
     id: "chatgpt-prompts-for-small-business",
@@ -379,8 +351,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-prompts",
-    primaryKeyword: "ChatGPT prompts for small business",
-    intent: "Info / Commercial",
   },
   {
     id: "ai-prompts-for-content-writing",
@@ -389,8 +359,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-prompts",
-    primaryKeyword: "AI prompts for content writing",
-    intent: "Informational",
   },
 
   // Phase 2D — AI Writing cluster expansion (narrower intents than the
@@ -402,8 +370,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-writing-tools",
-    primaryKeyword: "best AI copywriting tools",
-    intent: "Commercial",
   },
   {
     id: "ai-tools-for-blog-writing",
@@ -412,8 +378,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-writing-tools",
-    primaryKeyword: "AI tools for blog writing",
-    intent: "Info / Commercial",
   },
 
   // Phase 2E — AI Business cluster expansion: a single-product deep dive, for
@@ -426,8 +390,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-business-tools",
-    primaryKeyword: "claude for small business",
-    intent: "Info / Commercial",
   },
   // Phase 2E — the head-to-head that follows the single-product deep dive: a
   // buyer who has shortlisted the two general assistants and needs to pick one
@@ -440,8 +402,6 @@ export const PAGES = [
     type: "article",
     phase: 2,
     pillar: "ai-business-tools",
-    primaryKeyword: "claude vs chatgpt for small business",
-    intent: "Commercial",
   },
 
   // Phase 2F — the cluster's first free interactive utility, and a deliberately
@@ -459,8 +419,6 @@ export const PAGES = [
     type: "tool",
     phase: 2,
     pillar: "ai-business-tools",
-    primaryKeyword: "small business AI cost calculator",
-    intent: "Informational",
   },
 ] as const satisfies readonly SitePage[];
 
@@ -530,8 +488,8 @@ export function assertValidPageRegistry(): void {
         break;
       }
       case "article": {
-        if (!page.pillar || !page.primaryKeyword) {
-          problems.push(`${page.id}: articles need a pillar and primaryKeyword`);
+        if (!page.pillar) {
+          problems.push(`${page.id}: articles need a pillar`);
         } else if (!page.path.startsWith(`/${page.pillar}/`) || segments.length !== 2) {
           problems.push(`${page.id}: article path must be /${page.pillar}/[slug]/`);
         }

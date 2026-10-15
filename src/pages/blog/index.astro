@@ -18,6 +18,7 @@ import PillarIcon from "@/components/layout/PillarIcon.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { PILLAR_NAV } from "@/config/navigation";
 import { getPage } from "@/config/pages";
+import { resolveSnippet } from "@/config/seo-snippets";
 import { getPillarPresentation } from "@/config/pillars";
 import { getPublishedEntries, toArticleCard } from "@/lib/content";
 import { collectionPageSchema, getBreadcrumbs } from "@/lib/seo";
@@ -58,17 +59,18 @@ const toolLinks = tools.map(({ entry, page: tool }) => ({
   description: entry.data.description,
 }));
 
-const description =
-  "Every published guide on Saayesh AI Flow, newest first: AI writing tools, " +
-  "business and productivity tools, automation workflows, prompts, and beginner guides.";
+/**
+ * The archive's own description, read from the snippet registry so the
+ * CollectionPage schema below and the meta description are the same sentence.
+ * BaseLayout resolves the <head> values from the same place.
+ */
+const { description } = resolveSnippet({ pageId: "blog" });
 
 const breadcrumbs = getBreadcrumbs(page);
 ---
 
 <BaseLayout
   pageId="blog"
-  title="Blog: AI Tool Guides, Prompts & Automation Workflows"
-  description={description}
   jsonLd={[
     collectionPageSchema(
       { name: "Blog", description, path: page.path },

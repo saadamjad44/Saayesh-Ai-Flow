@@ -4,8 +4,11 @@ import tailwindcss from "@tailwindcss/vite";
 
 import { SITE, isPlaceholderDomain } from "./src/config/site";
 import { assertValidPageRegistry } from "./src/config/pages";
+import { assertValidSeoSnippets } from "./src/config/seo-snippets";
+import { seoAudit } from "./src/lib/seo-audit.mjs";
 
 assertValidPageRegistry();
+assertValidSeoSnippets();
 
 if (isPlaceholderDomain) {
   console.warn(
@@ -22,13 +25,18 @@ export default defineConfig({
     format: "directory",
   },
   /**
-   * The XML sitemap is src/pages/sitemap.xml.ts, not @astrojs/sitemap: the
-   * integration can only write a sitemap *index* (/sitemap-index.xml plus
-   * /sitemap-0.xml) and has no option for a single /sitemap.xml, which is the
-   * URL Search Console and every other tool expect. The endpoint builds the
-   * same list from the page registry and the content collections.
+   * There is deliberately no @astrojs/sitemap here: the integration can only
+   * write a sitemap *index* (/sitemap-index.xml plus /sitemap-0.xml) and has no
+   * option for a single /sitemap.xml, which is the URL Search Console and every
+   * other tool expect. src/pages/sitemap.xml.ts builds the same list from the
+   * page registry and the content collections instead.
+   *
+   * seoAudit() re-reads the emitted HTML after a build and fails it on a
+   * missing or duplicated title, description or canonical. The snippet registry
+   * is validated before the build starts (above); the audit proves those values
+   * actually reached the page.
    */
-  integrations: [mdx()],
+  integrations: [mdx(), seoAudit()],
   vite: {
     plugins: [tailwindcss()],
   },

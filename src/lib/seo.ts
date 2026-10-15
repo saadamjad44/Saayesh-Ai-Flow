@@ -27,11 +27,6 @@ export function absoluteUrl(path: string): string {
   return new URL(path, `${SITE.url}/`).href;
 }
 
-/** "Page title | Saayesh AI Flow", unless the title already carries the brand. */
-export function formatTitle(title: string): string {
-  return title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
-}
-
 /**
  * Home → parent → current page. The parent is the page's pillar (articles) or
  * its explicit `parent` (e.g. a review under the /reviews/ hub); pages with

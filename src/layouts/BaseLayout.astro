@@ -8,6 +8,13 @@
  * breadcrumbs then come from src/config/pages.ts. Pages outside the registry
  * (only the 404 page) omit `pageId` and are always noindexed with no canonical.
  *
+ * This is also the one place the SEO snippet registry is applied. Every page on
+ * the site renders through here, so resolveSnippet() gives
+ * src/config/seo-snippets.ts authority over the <title>, meta description and
+ * Open Graph pair without a single page template having to know it exists. A
+ * page's own `title` and `description` remain the fallback, which is why pillar,
+ * article and tool pages still read theirs from frontmatter.
+ *
  * The BreadcrumbList JSON-LD is emitted here, but the *visible* trail is not:
  * it is rendered by each page template inside that page's own header, so it
  * lines up with the measured column instead of a container of its own. Both are
@@ -31,11 +38,18 @@ import SiteHeader from "@/components/layout/SiteHeader.astro";
 import SiteFooter from "@/components/layout/SiteFooter.astro";
 import { SITE } from "@/config/site";
 import { getPage, type PageId } from "@/config/pages";
+import { resolveSnippet } from "@/config/seo-snippets";
 import { breadcrumbSchema, getBreadcrumbs, getSocialImage, type JsonLd } from "@/lib/seo";
 
 interface Props {
-  title: string;
-  description: string;
+  /**
+   * The page's own title, used when the snippet registry declares none. Pages
+   * with no content entry behind them declare their title in the registry
+   * instead, which assertValidSeoSnippets() enforces.
+   */
+  title?: string;
+  /** The page's own meta description, used when the registry declares none. */
+  description?: string;
   pageId?: PageId;
   /** Forces noindex. Registry pages marked `noindex` are always noindexed. */
   noindex?: boolean;
@@ -53,6 +67,8 @@ const currentPath = Astro.url.pathname;
 if (page && page.path !== currentPath) {
   throw new Error(`Layout pageId "${pageId}" expects ${page.path} but is rendering ${currentPath}`);
 }
+
+const snippet = resolveSnippet({ pageId, title, description });
 
 const breadcrumbs = page ? getBreadcrumbs(page) : [];
 const schemas = breadcrumbs.length > 1 ? [...jsonLd, breadcrumbSchema(breadcrumbs)] : jsonLd;
@@ -75,8 +91,10 @@ const socialImage = await getSocialImage(page);
     <link rel="preload" href={displayFontUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={bodyFontUrl} as="font" type="font/woff2" crossorigin />
     <SeoHead
-      title={title}
-      description={description}
+      title={snippet.title}
+      description={snippet.description}
+      ogTitle={snippet.ogTitle}
+      ogDescription={snippet.ogDescription}
       canonicalPath={page?.path}
       noindex={noindex || page?.noindex === true || !page}
       ogType={ogType}
