@@ -21,7 +21,14 @@ faq:
     answer: Yes, but not by default. Anthropic states that every workflow starts in approval mode, where Claude drafts and stages the work and nothing sends, posts or pays until you say so. You can let a workflow run on its own once you trust it, you make that choice one workflow at a time, and you can switch it back whenever you want.
 ---
 
-import { ComparisonTable, VerdictBox } from "@/components/content";
+import {
+  Callout,
+  ComparisonTable,
+  PromptBlock,
+  Step,
+  Steps,
+  VerdictBox,
+} from "@/components/content";
 
 Claude for Small Business is a plugin that runs inside Claude Cowork and connects Claude to the business software you already pay for, so it can pull real numbers, draft real work, and hold it for your approval. Anthropic launched it on 13 May 2026 with 15 workflows and seven integrations. The [September 2026 update](https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs) took it to 43 workflows, added 27 new integrations, and reported more than 900,000 installs since launch.
 
@@ -304,6 +311,149 @@ Each uses the same frame: the problem, what Claude does, what stays with you, th
 **Limitation.** This is preparation only. It is not a payroll service, it is not tax advice, and it does not take on your obligations as an employer. If your payroll has unusual elements - variable hours across jurisdictions, complex benefits, contractor classification questions - keep your payroll provider or accountant closely involved.
 
 **Suggested control.** Approval, and Anthropic has made that the design here rather than a setting.
+
+## How to Analyze Small Business Sales Data with Claude
+
+If your sales history sits in a spreadsheet export rather than connected software, you are not locked out: Anthropic's solutions page says the plugin's own workflows still run "from a spreadsheet, a PDF, or a forwarded email." A simple sales read needs neither the plugin nor Cowork: Anthropic's [upload documentation](https://support.claude.com/en/articles/8241126-upload-files-to-claude) lists CSV among the file types you can attach to an ordinary chat, and its [code execution and file creation](https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude) article - the part doing the arithmetic - says the feature "is available to all Claude users (Free, Pro, Max, Team, and Enterprise)."
+
+### What a sales CSV is enough to answer
+
+Four columns - date, product, quantity, unit price - cover most of what an owner wants at month end:
+
+- **Total revenue**, without building a formula.
+- **Month-on-month comparison**, so you see direction, not one number.
+- **Top products by units and by revenue**, often not the same product.
+- **Unusual changes** - a month breaking the pattern, a line that stops.
+- **A plain summary** for a bookkeeper, a partner, or your future self.
+
+None of it is difficult arithmetic; it is tedious enough that it does not get done. That is the honest case for Claude data analytics at this scale: one file, one prompt, no integration project.
+
+### A fictional sample dataset
+
+These rows are invented for this walkthrough, not a real business's figures. Revenue is quantity multiplied by unit price throughout.
+
+```
+date,product,quantity,unit_price
+2026-07-03,Notebook,10,15
+2026-07-10,Planner,6,20
+2026-08-03,Notebook,8,15
+2026-08-11,Planner,9,20
+2026-09-05,Notebook,12,15
+2026-09-13,Planner,10,20
+```
+
+### The steps
+
+<Steps>
+  <Step title="Prepare a CSV you are allowed to share">
+    Export from your till, store or spreadsheet, then cut it to the columns the question needs.
+    Totalling revenue needs no customer name, so remove it.
+  </Step>
+  <Step title="Open Claude">
+    An ordinary chat is enough; Anthropic documents code execution and file creation on every plan,
+    including Free.
+  </Step>
+  <Step title="Attach the file">
+    Anthropic's upload documentation describes the "+" button in the lower left of the chat box and
+    **Add files or photos**, or dragging the file in. CSV is on the supported list; XLSX needs code
+    execution switched on first.
+  </Step>
+  <Step title="Paste the analysis prompt">
+    The prompt below asks for the workings, not only the answers - which is what makes the next step
+    possible.
+  </Step>
+  <Step title="Check the arithmetic before the conclusions">
+    Recalculate one month and one product yourself. If both match, the method held; if not, nothing
+    below is safe to use.
+  </Step>
+  <Step title="Decide what to do with the verified figures">
+    Pricing, stock and promotion decisions stay with you. The analysis says what happened, not what
+    to do.
+  </Step>
+</Steps>
+
+### A reusable prompt
+
+<PromptBlock
+  label="Analysing a CSV of sales data"
+  note="Written for a file you have attached. Without the file, a model will still produce a confident-looking analysis - of nothing."
+  prompt={`Act as a small-business sales analyst.
+
+Analyze the attached CSV sales data.
+
+1. Calculate total revenue by month.
+2. Identify the best-selling products by units and by revenue.
+3. Compare monthly sales trends.
+4. Highlight unusual changes or patterns.
+5. Summarize three actionable business insights.
+
+Use only the supplied data.
+
+Show the calculations used to produce your results.
+
+Clearly separate verified findings from hypotheses or recommendations.
+
+Do not invent missing values.
+
+If any required information is unavailable, explain what additional data is needed.
+
+Present the results in a readable table followed by a concise summary.`}
+/>
+
+### What the sample data adds up to
+
+Our own arithmetic on the fictional rows, so you have something to check an answer against. It is not output we are presenting as Claude's.
+
+<ComparisonTable
+  caption="Revenue in the fictional dataset, with the working shown (quantity x unit price)"
+  rowHeader="Grouping"
+  columns={["Units", "Revenue", "How it is calculated"]}
+  rows={[
+    {
+      label: "July 2026",
+      cells: ["16", "$270", "(10 x $15) + (6 x $20)"],
+    },
+    {
+      label: "August 2026",
+      cells: ["17", "$300", "(8 x $15) + (9 x $20)"],
+    },
+    {
+      label: "September 2026",
+      cells: ["22", "$380", "(12 x $15) + (10 x $20)"],
+    },
+    {
+      label: "Notebook, all three months",
+      cells: ["30", "$450", "(10 + 8 + 12) x $15"],
+    },
+    {
+      label: "Planner, all three months",
+      cells: ["25", "$500", "(6 + 9 + 10) x $20"],
+    },
+    {
+      label: "Total",
+      cells: ["55", "$950", "$270 + $300 + $380, which equals $450 + $500"],
+    },
+  ]}
+/>
+
+The disagreement in the middle is the point: Notebook wins on units, 30 against 25, and Planner on revenue, $500 against $450. "What is my best product?" has two correct answers here, and they are different products.
+
+All of that is arithmetic, and it reconciles or it does not: the months total $950 and so do the products - the cross-check to run on a real file. What to do about it - reprice the notebook, ask why September jumped - is a recommendation, not a finding, and the prompt separates them.
+
+<Callout tone="warning" heading="Before you upload anything">
+  **Never upload confidential data.** Customer records, card details or anything under a
+  confidentiality obligation need authorisation and a lawful basis first.
+
+**Treat the output as a draft.** Models make arithmetic and interpretation mistakes, and a wrong
+total sounds exactly like a right one. Check what matters against the CSV.
+
+**An upload is not an integration.** Claude gets a snapshot of that file - no connection to your
+accounting, store or till - and it goes stale as the data changes.
+
+**Review recommendations before acting.** Anthropic also warns that external files can carry
+hidden instructions, so use trusted ones.
+
+</Callout>
 
 ## What Claude for Small Business is not good for
 
