@@ -365,7 +365,7 @@ export const PAGES = [
   // Phase 1 roundup: copy specifically, and blog-writing workflows)
   {
     id: "best-ai-copywriting-tools",
-    title: "Best AI Copywriting Tools",
+    title: "AI Copywriting Tools: How to Choose One",
     path: "/ai-writing-tools/best-ai-copywriting-tools/",
     type: "article",
     phase: 2,

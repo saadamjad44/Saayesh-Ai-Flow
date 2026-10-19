@@ -147,10 +147,16 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: 'The hub <h1> stays "AI Writing Tools"; the search title adds what the hub actually answers, which a bare category label cannot signal.',
   },
   "best-ai-writing-tools": {
+    title: "6 Best AI Writing Tools for 2026, Compared by Use Case",
+    brand: "omit",
     primaryKeyword: "best AI writing tools",
-    supportingKeywords: ["AI writing tools 2026", "AI writing software comparison"],
+    supportingKeywords: [
+      "AI writing tools 2026",
+      "AI writing tools comparison",
+      "free AI writing tools",
+    ],
     intent: "Commercial",
-    note: "Title 44 and description 146 characters, both unique and accurate. No change.",
+    note: 'Every page ranking for this query leads with a count ("The 6 Best…", "8 AI writing tools compared", "10 Best…"), and the old title led with nothing — the brand suffix took the characters a number would have. Six is the real number of tools on the page and "Compared by Use Case" is what the page does. "free AI writing tools" is a high-demand variant the page already answers in its own FAQ (ChatGPT, Claude and Grammarly free plans, Notion AI trial), so it needs no page of its own.',
   },
   "jasper-vs-claude-vs-chatgpt": {
     title: "Jasper vs Claude vs ChatGPT: Which Is Best for Business?",
@@ -165,16 +171,35 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: 'A bare three-way "X vs Y vs Z" names the contenders but not the question. The page has a "Which should you choose?" section with an explicit verdict, so the title now promises what it delivers. Description unchanged — it already names the comparison axes.',
   },
   "best-ai-copywriting-tools": {
-    primaryKeyword: "best AI copywriting tools",
-    supportingKeywords: ["AI copywriting software", "AI tools for sales copy"],
-    intent: "Commercial",
-    note: "Title 43 characters, description 152. No change.",
+    title: "AI Copywriting Tools: How to Choose the Right One",
+    brand: "omit",
+    primaryKeyword: "how to choose an AI copywriting tool",
+    supportingKeywords: [
+      "best AI copywriting tools",
+      "AI copywriting software",
+      "AI tools for sales copy",
+    ],
+    intent: "Info / Commercial",
+    /**
+     * A deliberate retarget, not a demotion. "best AI copywriting tools" returns
+     * ranked listicles end to end — "19 Best … (Ranked & Compared)", "The 10 Best
+     * …: Features, Pricing, and Verdicts", "Tested & Ranked" — and this page is
+     * not one and must not become one: it gives no scores and no rankings on
+     * purpose, because the site has no testing evidence for them. A title
+     * promising "best" would win a click and lose the reader. What the page
+     * actually delivers is the criteria, the tool categories, and a one-week way
+     * to test a shortlist, which is a different and winnable query. The head term
+     * stays as a supporting keyword, so the page still serves it.
+     */
+    note: 'Was targeting "best AI copywriting tools" with a page that has no ranked list; that SERP is all numbered listicles and the page gives no scores by design. Retargeted at the question it does answer, which its own H2s ("The criteria that separate them", "A one-week way to test a shortlist") deliver. The page\'s own title was changed with it, in the registry and in its frontmatter, so the <h1>, the cards, the breadcrumb label and Article.headline stopped claiming "Best" too — headline comes from the registry title, not from this override, so a snippet change alone would have left the claim in the structured data. Inbound anchor text in other entries still reads "best AI copywriting tools" deliberately: that is how the topic is referred to mid-sentence and it keeps the relevance signal for the supporting keyword, which is a different thing from the page calling itself the best.',
   },
   "ai-tools-for-blog-writing": {
+    title: "AI Tools for Blog Writing: Workflow, Limits & Refreshes",
+    brand: "omit",
     primaryKeyword: "AI tools for blog writing",
-    supportingKeywords: ["AI for blog posts", "AI blog writing workflow"],
+    supportingKeywords: ["AI tools for blog posts", "AI blog writing workflow"],
     intent: "Info / Commercial",
-    note: "Title 43 characters, description 148. No change.",
+    note: 'The old title was the bare keyword plus the brand suffix and promised nothing a competing listicle does not. The three nouns are the page\'s three strongest sections, including the refresh section it calls the highest-value use of AI on an existing blog — and "refreshes" is a promise no competitor in this SERP makes. "AI tools for blog posts" replaces "AI for blog posts": it is the variant that actually autocompletes.',
   },
 
   // ---- AI Business cluster -----------------------------------------------
@@ -187,15 +212,17 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: 'The hub <h1> stays "AI Business & Productivity". The search title adds the audience the hub is written for.',
   },
   "best-ai-tools-for-small-business": {
-    title: "Best AI Tools for Small Business in 2026, by Use Case",
+    title: "11 Best AI Tools for Small Business in 2026, by Use Case",
     brand: "omit",
     primaryKeyword: "best AI tools for small business",
     supportingKeywords: [
       "best AI tools for small business owners",
       "AI software for small business",
+      "free AI tools for small business",
+      "best AI tools for small business automation",
     ],
     intent: "Commercial",
-    note: 'Rendered at 77 characters and truncated mid-phrase. Same promise, 53 characters. The commercial "Best … in 2026" framing also separates it from the task-led use-case guide at /ai-by-industry/ai-tools-for-small-business/.',
+    note: 'Rendered at 77 characters and truncated mid-phrase; the "Best … in 2026" framing also separates it from the task-led use-case guide at /ai-by-industry/ai-tools-for-small-business/. Now leads with the count, because every result on page one of this query does ("10 best", "12 Best", "15 Best", "18 best", "25 Best") and a title without one reads as the shorter list. Eleven is the real number of tools, already stated in the description. The two added keywords are both answered on the page — a free-plans FAQ naming eight tools with free tiers, and a "Connecting everything" section for automation — so neither needs a page of its own.',
   },
   "ai-tools-vs-virtual-assistant": {
     primaryKeyword: "AI tools vs hiring a virtual assistant",
@@ -213,9 +240,10 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
       "how much does ai cost a small business",
       "ai software pricing",
       "AI pricing for small business",
+      "how much does AI cost per month",
     ],
     intent: "Transactional",
-    note: 'Dropping "for" matches the observed Search Console query verbatim and reads identically. "2026 Prices" signals the freshness this query wants and is accurate: every price on the page is vendor-checked and dated. "AI software" in the description serves the ai-software-pricing query without a second page.',
+    note: 'Dropping "for" matches the observed Search Console query verbatim and reads identically. "2026 Prices" signals the freshness this query wants and is accurate: every price on the page is vendor-checked and dated. "AI software" in the description serves the ai-software-pricing query without a second page. "per month" is the strongest autocomplete variant of the head term and the description already answers it in those words ("$100+ a month"), so the page needs no change to serve it.',
   },
   "claude-for-small-business": {
     title: "Claude for Small Business: 8 Workflows, Limits & Pricing",
@@ -227,16 +255,31 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
       "claude for small businesses",
       "claude small business pricing",
       "claude business workflows",
+      "claude for small business owners",
     ],
     intent: "Info / Commercial",
     note: 'The old description opened on "Explore", spending the first word on nothing, and repeated the keyword mid-sentence. The page has dedicated sections for limits and for cost that the old title never advertised. Also covers the plural query variant without a second page.',
   },
   "claude-vs-chatgpt-for-small-business": {
     brand: "omit",
+    description:
+      "Claude vs ChatGPT for small business in 2026, compared across real daily workflows: documents, support, spreadsheets, integrations, team plans and pricing.",
     primaryKeyword: "claude vs chatgpt for small business",
-    supportingKeywords: ["claude or chatgpt for business", "claude vs chatgpt pricing"],
+    supportingKeywords: [
+      "claude or chatgpt for business",
+      "claude vs chatgpt pricing",
+      "claude vs chatgpt which is better",
+    ],
     intent: "Commercial",
-    note: "Title wording is good and the description is strong; it only truncated at 72 characters because of the brand suffix. Dropping the suffix fixes it with no copy change.",
+    /**
+     * The year goes in the description, not the title. Every result on page one
+     * of this query carries 2026 in its title, so the freshness cue is worth
+     * having — but the title is already 54 characters and "Which Is Better?" is
+     * the part that matches the question being asked. Adding the year there
+     * would push it to 62 and put the answer-promise in the truncation zone,
+     * which trades the stronger signal for the weaker one.
+     */
+    note: 'Title wording is good; it only truncated at 72 characters because of the brand suffix, and dropping the suffix fixes it with no copy change. The description now carries "in 2026" — accurate (published and price-checked in October 2026) and the freshness cue this SERP is saturated with — at the cost of "current" before "pricing", which the date already implies.',
   },
   "small-business-ai-cost-calculator": {
     title: "Free Small Business AI Cost Calculator: Monthly & Annual",
@@ -258,10 +301,22 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
   "ai-automation": {
     title: "AI Automation & Workflows for Small Business",
     brand: "omit",
-    primaryKeyword: "AI automation",
-    supportingKeywords: ["AI automation for small business", "AI workflow automation"],
+    primaryKeyword: "AI automation for small business",
+    supportingKeywords: [
+      "AI workflow automation for small business",
+      "AI automation tools for small business",
+      "AI automation use cases",
+    ],
     intent: "Informational",
-    note: "Hub title gains the audience qualifier; the visible <h1> is unchanged.",
+    /**
+     * Retargeted off the bare head term. "AI automation" on its own is a career
+     * query — every autocomplete variant is jobs, agency, course, specialist,
+     * engineer or certification — and this hub explains what AI automation is
+     * and how to build it, which is not what those searchers want. The qualified
+     * term was already a supporting keyword here; it is simply the honest
+     * primary, and the title has said so since it gained the audience qualifier.
+     */
+    note: 'Hub title gains the audience qualifier; the visible <h1> is unchanged. Primary moved from "AI automation" to the qualified term: the bare head term is dominated by job and agency intent this hub does not serve, while the qualified term matches both the title and the page.',
   },
   "zapier-ai-automation-examples": {
     title: "8 Zapier AI Automation Examples for Small Business",
@@ -278,16 +333,37 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: 'A leading count is the most reliable improvement available on an "examples" query, and eight is the real number of examples on the page. The description trades the abstract "broken down into" for two named examples, so the kind of automation is visible before the click.',
   },
   "best-ai-workflows-for-solopreneurs": {
-    primaryKeyword: "best AI workflows for solopreneurs",
-    supportingKeywords: ["AI workflows for freelancers", "solopreneur AI setup"],
+    title: "7 AI Workflows for Solopreneurs & Freelancers",
+    brand: "omit",
+    primaryKeyword: "AI workflows for solopreneurs",
+    supportingKeywords: [
+      "AI workflows for freelancers",
+      "AI automation for freelancers",
+      "AI tools for freelancers",
+      "solopreneur AI setup",
+    ],
     intent: "Info / Commercial",
-    note: 'Title 47 characters, description 139. No change. The snippet preview flags that the title does not say "best" — accepted: the page is a set of seven workflows, not a ranked list, so claiming "best" in the title would oversell what it is.',
+    /**
+     * "solopreneur" has almost no autocomplete surface of its own — the phrase
+     * returns no suggestions at all, which is as close to a demand signal as a
+     * free tool gives. "freelancer" does: AI tools, AI automation and AI agents
+     * for freelancers all autocomplete. The page serves both audiences
+     * identically — its seven workflows are email, content, invoicing,
+     * scheduling, research, social and support, and invoicing in particular is
+     * freelancer work — so naming the second audience in the title costs the
+     * page nothing and reaches a query that is actually searched.
+     */
+    note: 'Dropped "best" from the primary keyword rather than from the title, which never claimed it: the page is seven workflows, not a ranked list. The count now leads, and "& Freelancers" reaches the audience term with demand — "solopreneur" autocompletes to nothing.',
   },
   "how-to-automate-email-with-ai": {
     primaryKeyword: "how to automate email responses with AI",
-    supportingKeywords: ["AI email automation", "automate Gmail replies with AI"],
+    supportingKeywords: [
+      "AI email automation",
+      "automate Gmail replies with AI",
+      "how to automate Outlook emails with AI",
+    ],
     intent: "Informational",
-    note: "Title 57 characters, description 151. No change.",
+    note: 'Title 57 characters, description 151. No change — the title is already the verbatim autocomplete variant of this query. Outlook added as a supporting keyword because it autocompletes separately from Gmail and the page has a full method for it ("Method 2: Outlook and Power Automate"), which the description already names.',
   },
   "ai-email-time-savings-calculator": {
     title: "AI Email Time Savings Calculator: Free ROI Tool",
@@ -300,9 +376,19 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
       "ai email automation roi calculator",
       "email reply time savings calculator",
       "ai email productivity calculator",
-      "email automation roi for small business",
+      "email automation break-even calculator",
+      "hours saved on email per month",
     ],
     intent: "Informational",
+    /**
+     * "email automation roi for small business" was dropped from the supporting
+     * list: its autocomplete surface is email *marketing* ROI — campaign open
+     * rates and revenue per send — which is a different product and a different
+     * reader. This calculator models reply and triage time, so chasing that
+     * query would bring in traffic the page cannot serve. The two replacements
+     * are figures the calculator actually returns: a break-even monthly email
+     * volume and monthly hours saved.
+     */
     note: 'The <h1> is "AI Email Time Savings & ROI Calculator"; the search title drops the ampersand, which search results render inconsistently, and leads on the saving a searcher is looking for. "Free" is factually true — no sign-up, runs in the browser — and is the first thing a searcher decides. The brand suffix is dropped because the title is 46 characters and the suffix would push it to 64. The ROI framing is carried in the title rather than the description so the description can spend its length on the three inputs that make this calculator different from a naive savings estimate: manual reply time, human review time, and software cost.',
   },
 
@@ -310,30 +396,56 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
   "getting-started": {
     title: "Getting Started with AI: A Small Business Guide",
     brand: "omit",
-    primaryKeyword: "getting started with AI",
-    supportingKeywords: ["how to start using AI", "AI basics for business"],
+    primaryKeyword: "how to start using AI in a small business",
+    supportingKeywords: [
+      "getting started with AI",
+      "how to start using AI",
+      "AI basics for business",
+    ],
     intent: "Informational",
-    note: "Hub title gains the audience qualifier; the visible <h1> is unchanged.",
+    /**
+     * "getting started with AI" is a navigational collision, not a topic: its
+     * autocomplete is almost entirely other products that begin with the same
+     * letters — Airbnb, Airtable, Airflow, AirPods — plus "AI agents", which is
+     * a different subject. The hub is a first-month guide for a small business
+     * owner, so the primary is the qualified query it can actually answer. The
+     * bare term stays supporting; the title already carries both.
+     */
+    note: 'Hub title gains the audience qualifier; the visible <h1> is unchanged. Primary moved to the qualified query: the bare "getting started with AI" autocompletes mostly to unrelated "air…" products and to AI agents, so it is not a term this hub should be measured against.',
   },
   "how-to-use-ai-tools": {
     brand: "omit",
     primaryKeyword: "how to use AI tools",
-    supportingKeywords: ["how to use AI for work", "AI tools beginner guide"],
+    supportingKeywords: [
+      "how to use AI tools effectively",
+      "how to use AI tools at work",
+      "how to use AI for work",
+      "AI tools beginner guide",
+    ],
     intent: "Informational",
-    note: "Title and description are both good; the page only truncated at 71 characters because of the brand suffix. Dropping it fixes the title with no copy change.",
+    note: "Title and description are both good; the page only truncated at 71 characters because of the brand suffix. Dropping it fixes the title with no copy change. The two added keywords are the strongest autocomplete variants of the head term and both describe this page exactly — it is a working process for using AI on real work tasks, not a tool list.",
   },
   "how-to-write-effective-ai-prompts": {
     brand: "omit",
     primaryKeyword: "how to write effective AI prompts",
-    supportingKeywords: ["how to write AI prompts", "prompt writing guide"],
+    supportingKeywords: [
+      "how to write good AI prompts",
+      "how to write AI prompts",
+      "prompt writing guide",
+    ],
     intent: "Informational",
-    note: "Same as above: 75 characters rendered, entirely from the suffix. Copy unchanged.",
+    note: 'Same as above: 75 characters rendered, entirely from the suffix. Copy unchanged. "good" rather than "effective" is the variant people actually type — it autocompletes where "effective" barely does — and the page answers the identical question, so it is a supporting keyword rather than a retarget.',
   },
   "ai-tools-for-beginners": {
     primaryKeyword: "AI tools for beginners",
-    supportingKeywords: ["best AI tools for beginners", "first AI tool to try"],
+    supportingKeywords: [
+      "best AI tools for beginners",
+      "AI tools for beginners 2026",
+      "free AI tools for beginners",
+      "first AI tool to try",
+    ],
     intent: "Info / Commercial",
-    note: "Title 56 characters, description 153. No change.",
+    note: 'Title 56 characters, description 153. No change. Both added keywords are already answered on the page — it has a "Free versus paid" section, and the description names free versus paid explicitly — so neither is a promise the page cannot keep.',
   },
 
   // ---- AI by Industry cluster --------------------------------------------
@@ -349,17 +461,28 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     title: "AI Tools for Marketing: Use Cases & Workflows",
     brand: "omit",
     primaryKeyword: "AI tools for marketing",
-    supportingKeywords: ["AI for marketing teams", "AI marketing workflows"],
+    supportingKeywords: [
+      "AI for marketing teams",
+      "AI tools for marketing teams",
+      "AI tools for marketing research",
+      "AI tools for marketing content creation",
+      "AI marketing workflows",
+    ],
     intent: "Informational",
-    note: 'Rendered at 75 characters. Shortening "Practical Use Cases and Workflows" to "Use Cases & Workflows" keeps the meaning at 45 characters.',
+    note: 'Rendered at 75 characters. Shortening "Practical Use Cases and Workflows" to "Use Cases & Workflows" keeps the meaning at 45 characters. The marketing head term has an unusually deep modifier set in autocomplete; the three added here are the ones with their own H2s on the page ("Research", "Drafting copy", "Repurposing content"). "and sales" and "agencies" autocomplete too and are deliberately absent: the page covers neither.',
   },
   "ai-tools-for-ecommerce": {
     title: "AI Tools for E-commerce: Practical Use Cases",
     brand: "omit",
     primaryKeyword: "AI tools for e-commerce",
-    supportingKeywords: ["AI for online stores", "AI ecommerce use cases"],
+    supportingKeywords: [
+      "AI tools for ecommerce business",
+      "AI tools for ecommerce marketing",
+      "AI for online stores",
+      "AI ecommerce use cases",
+    ],
     intent: "Informational",
-    note: 'Rendered at 67 characters. "Practical Ways to Use AI" duplicates what "AI Tools for E-commerce" already says; "Practical Use Cases" is shorter and clearer.',
+    note: 'Rendered at 67 characters. "Practical Ways to Use AI" duplicates what "AI Tools for E-commerce" already says; "Practical Use Cases" is shorter and clearer. Both added keywords use the unhyphenated "ecommerce", which is how autocomplete returns every variant of this query and how the URL slug is already written; the hyphenated form stays in the title because it reads better and Google treats the two as the same word.',
   },
   "ai-tools-for-small-business": {
     title: "AI Tools for Small Business: 7 Everyday Tasks",
@@ -380,22 +503,44 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: 'The hub <h1> stays "AI Prompts" — 10 characters, and nothing a searcher can act on.',
   },
   "ai-prompt-examples": {
+    title: "AI Prompt Examples for Work: 10 Tasks, Before & After",
+    brand: "omit",
     primaryKeyword: "AI prompt examples",
-    supportingKeywords: ["example AI prompts", "good AI prompts"],
+    supportingKeywords: ["AI prompts for business", "example AI prompts", "good AI prompts"],
     intent: "Informational",
-    note: "Title 36 characters, description 141. No change.",
+    /**
+     * The one case on this site where the title has to filter the SERP rather
+     * than win all of it. "ai prompt examples" autocompletes almost entirely to
+     * image generation — for images, for photo editing, for video, for portraits
+     * — and this page is text prompts for office work, which its own first
+     * section says ("Who this is for, and who it is not"). The term is still the
+     * right primary: the page is a genuine answer for the text half of the
+     * query, and no other page here owns it. But "for Work" in the title lets
+     * the wrong half of the traffic self-select out before the click, which is
+     * worth more than the impressions it costs.
+     */
+    note: 'Was the bare keyword plus the brand suffix at 36 characters, the shortest title on the site, with nothing in it a searcher could act on. "for Work" disambiguates from the image-generation intent that dominates this query; "10 Tasks" is the real count of numbered examples; "Before & After" is what the page shows for each one, already described as the thin version and the rewritten version.',
   },
   "chatgpt-prompts-for-small-business": {
     primaryKeyword: "ChatGPT prompts for small business",
-    supportingKeywords: ["ChatGPT prompts for business owners", "business ChatGPT prompts"],
+    supportingKeywords: [
+      "best ChatGPT prompts for small business",
+      "ChatGPT prompts for business owners",
+      "business ChatGPT prompts",
+    ],
     intent: "Info / Commercial",
-    note: "Title 58 characters, description 147. No change.",
+    note: 'Title 58 characters, description 147. No change — the title is the verbatim head term and there is no room for a modifier. "best …" is added as a supporting keyword because it autocompletes alongside the head term and resolves to the same page; the title does not claim it, which is correct for a task-grouped set of prompts rather than a ranked list.',
   },
   "ai-prompts-for-content-writing": {
     primaryKeyword: "AI prompts for content writing",
-    supportingKeywords: ["AI prompts for writers", "AI editing prompts"],
+    supportingKeywords: [
+      "AI prompts for article writing",
+      "best AI prompts for content writing",
+      "AI prompts for writers",
+      "AI editing prompts",
+    ],
     intent: "Informational",
-    note: "Title 60 characters, description 144. No change.",
+    note: 'Title 60 characters, description 144. No change. "article writing" is a near-equal autocomplete sibling of "content writing" on this query and the page serves both without a word of change; adding it here records that rather than inviting a second, near-duplicate page.',
   },
 
   // ---- Phase 2 core pages ------------------------------------------------

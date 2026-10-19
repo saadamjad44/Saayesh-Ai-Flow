@@ -61,6 +61,24 @@ export const SUPPORT = {
 export const INTEGRATIONS = {
   /** GA4 Measurement ID ("G-XXXXXXXXXX"). Loaded once per page by SeoHead. */
   ga4MeasurementId: "G-VFBKW7YSWG",
+  /**
+   * Empty ON PURPOSE — do not fill this in. The domain is already verified with
+   * Google by DNS, not by this meta tag: a `google-site-verification=` TXT
+   * record is live on the apex through Cloudflare DNS (confirmed 2026-10-19),
+   * which is what a Search Console **Domain** property uses.
+   *
+   * That is the stronger of the two methods and the reason this stays empty. A
+   * Domain property covers the apex, `www`, every other subdomain and both
+   * protocols in one property, so it keeps reporting even if the host or the
+   * HTML changes; the meta tag verifies one URL prefix and disappears the moment
+   * a page stops rendering it. Adding the tag here would verify the same
+   * property a second time, by a weaker route, and emit a tag on all 38 pages
+   * that nothing reads.
+   *
+   * Set this only if the DNS record is ever removed and a URL-prefix property
+   * becomes the only option. Check the record before changing anything:
+   *   nslookup -type=TXT saayeshaiflow.com 8.8.8.8
+   */
   searchConsoleVerification: "",
   /**
    * Web3Forms access key for the contact form, from the build environment
