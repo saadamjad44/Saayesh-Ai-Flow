@@ -88,6 +88,10 @@ const MENU_LABELS: Partial<Record<PageId, string>> = {
   "best-ai-agents-for-small-business": "Best AI Agents for Small Business",
   "ai-agents-vs-automation": "AI Agents vs Automation",
   "ai-agent-use-cases": "AI Agent Use Cases",
+  "ai-chatbot-for-small-business": "AI Chatbot for Small Business",
+  "ai-customer-service-automation": "AI Customer Service Automation",
+  "n8n-vs-zapier-vs-make": "n8n vs Zapier vs Make",
+  "best-ai-automation-tools": "Best AI Automation Tools",
   "small-business-ai-cost-calculator": "AI Cost Calculator",
   "ai-email-time-savings-calculator": "AI Email Savings Calculator",
 };

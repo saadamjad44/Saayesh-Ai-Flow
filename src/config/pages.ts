@@ -91,7 +91,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 4,
+  3: 8,
 };
 
 export const PAGES = [
@@ -490,6 +490,58 @@ export const PAGES = [
     type: "article",
     phase: 3,
     pillar: "ai-agents",
+  },
+
+  /**
+   * Phase 3 — support and chatbots, approved 2026-10-20.
+   *
+   * The /ai-agents/ cluster above names help-centre support agents as the one
+   * genuinely mature agent category, and then had nowhere to send that intent.
+   * These two pages are that destination, split by the question being asked
+   * rather than by product: what to buy (a chatbot, under the business pillar,
+   * where purchasing intent lives) and how the automation behind it works (under
+   * the automation pillar, beside the other workflow tutorials).
+   */
+  {
+    id: "ai-chatbot-for-small-business",
+    title: "AI Chatbot for Small Business: What It Can Actually Do",
+    path: "/ai-business-tools/ai-chatbot-for-small-business/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-business-tools",
+  },
+  {
+    id: "ai-customer-service-automation",
+    title: "AI Customer Service Automation: How It Works",
+    path: "/ai-automation/ai-customer-service-automation/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-automation",
+  },
+
+  /**
+   * Phase 3 — the automation cluster's buying layer, approved 2026-10-20.
+   *
+   * Two different intents that the pillar was previously answering in passing,
+   * in a "Choosing tools" section that has now been slimmed to an orientation
+   * and a link: the head-to-head for someone who has already shortlisted the
+   * three named platforms, and the category roundup for someone who has not.
+   */
+  {
+    id: "n8n-vs-zapier-vs-make",
+    title: "n8n vs Zapier vs Make: Which Automation Platform?",
+    path: "/ai-automation/n8n-vs-zapier-vs-make/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-automation",
+  },
+  {
+    id: "best-ai-automation-tools",
+    title: "Best AI Automation Tools: How to Choose by Category",
+    path: "/ai-automation/best-ai-automation-tools/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-automation",
   },
 ] as const satisfies readonly SitePage[];
 

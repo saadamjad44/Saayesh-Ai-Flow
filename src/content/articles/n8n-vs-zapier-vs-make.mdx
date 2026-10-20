@@ -1,0 +1,198 @@
+---
+pageId: n8n-vs-zapier-vs-make
+title: "n8n vs Zapier vs Make: Which Automation Platform?"
+heading: "n8n vs Zapier vs Make: Which Automation Platform Fits Your Business?"
+description: n8n, Zapier and Make compared on what actually differs - how each one bills you, app coverage, the learning curve, AI steps, and self-hosting.
+publishedDate: 2026-10-20
+updatedDate: 2026-10-20
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What is the main difference between n8n, Zapier and Make?
+    answer: The billing unit, and it is the difference that decides most bills. Zapier charges per task, meaning each completed action step inside a workflow. Make charges per operation, which is each module run. n8n charges per execution, meaning one whole workflow run regardless of how many steps it contains. A five-step workflow is therefore five billable units on Zapier and one on n8n, which is why the three can differ enormously in cost for identical work. Beyond that, Zapier has the widest app coverage, Make has the strongest visual branching, and n8n is open-source and can be self-hosted.
+  - question: Which is cheapest?
+    answer: For multi-step workflows at volume, n8n, and by a wide margin if you self-host - the licence is free and you pay only for a small server. Zapier is usually the most expensive at volume precisely because every step bills separately. But cheapest per unit is not cheapest overall. Self-hosting means you own the uptime, the updates and the debugging, and if your workflows are few and simple the difference may be a rounding error against the hours you would spend running a server.
+  - question: Which is best for a non-technical small business owner?
+    answer: Zapier, in most cases. It has the widest app coverage, the shallowest learning curve and the largest library of ready-made templates, which matters more than the headline price when you have a handful of simple workflows and no appetite for maintenance. The usual reason to move off it later is cost at volume, and that is a good problem to have because by then you know exactly what your workflows do.
+  - question: Should I self-host n8n?
+    answer: Only if someone will own the server. Self-hosting removes the licence cost and the execution limits, which is genuinely compelling at volume, but you take on updates, backups, uptime and debugging when something breaks at an inconvenient moment. If that person is you and you are comfortable with it, the savings are real. If nobody owns it, a cloud plan on any of the three is cheaper than a broken automation nobody can fix.
+  - question: Do I need one of these if my apps already have AI features?
+    answer: Often not, and it is worth checking first. Email suites, support platforms, meeting recorders and workspace tools increasingly include the AI step you were planning to build, and a built-in feature is simpler and more reliable than a custom workflow. Reach for a platform when the job spans apps that do not know about each other, which is the thing none of them can do alone.
+  - question: Can I move my workflows between them later?
+    answer: Not cleanly. There is no meaningful portability between these platforms - workflows are rebuilt rather than migrated, and the effort is roughly what it took to build them the first time. That is an argument for choosing on your expected volume rather than only your current volume, and a stronger argument for documenting what each workflow does so a rebuild is a translation job rather than an archaeology project.
+---
+
+import { ComparisonTable, Callout, KeyTakeaways, VerdictBox } from "@/components/content";
+
+Comparisons of these three usually open with integration counts and close with a recommendation that happens to match whoever wrote it. The integration count is close to irrelevant once you have checked that your own handful of apps is covered, and the thing that will actually decide your bill is further down most pages, if it appears at all.
+
+So this one starts with billing, because it is where the three genuinely diverge — not by a few percent, but by a multiple.
+
+<KeyTakeaways>
+
+- **They bill on different units:** Zapier per task (each action step), Make per operation (each module run), n8n per execution (one whole workflow run).
+- **That means a five-step workflow costs five units on Zapier and one on n8n,** which is the real source of the cost gap people report.
+- **Zapier wins on app coverage and ease;** Make on visual multi-branch logic; n8n on flexibility, AI work and self-hosting.
+- **Self-hosted n8n is the cheapest option and the only one with an ops cost** — free licence, your server, your 2am debugging.
+- **There is no clean migration path between them,** so choose for the volume you expect, not only the volume you have.
+
+</KeyTakeaways>
+
+<VerdictBox
+  heading="The short answer"
+  bestFor="Choosing on your billing unit and your own app list, not on integration counts"
+  notFor="Expecting a single winner, or switching platforms to save money you are not yet spending"
+>
+  **Zapier** if you are non-technical, your workflows are few and simple, and you want them working
+  this afternoon. **Make** if your workflows branch, loop and need to be seen on a canvas to be
+  understood. **n8n** if you are running multi-step work at volume, want AI steps without per-step
+  billing, or have someone who will own a server. If you are not sure, Zapier costs the least to be
+  wrong about — and you will know your real volume within a month.
+</VerdictBox>
+
+<Callout tone="note" heading="Why there are no prices on this page">
+  All three reprice regularly and each prices on a different unit, so a figure here would be stale
+  within months and would invite exactly the wrong comparison. What is stable is the billing
+  *model*, which is what this page explains — and the model is what decides your bill at your
+  volume. Take the current numbers from each vendor's own pricing page, then use the arithmetic
+  below.
+</Callout>
+
+## The difference that decides your bill
+
+<ComparisonTable
+  caption="How each platform counts what you owe"
+  rowHeader="Platform"
+  columns={["Billing unit", "What that means in practice"]}
+  rows={[
+    {
+      label: "Zapier",
+      cells: [
+        "Per task — each completed action step",
+        "A workflow with five actions bills five times every run. Filters that stop early cost less",
+      ],
+    },
+    {
+      label: "Make",
+      cells: [
+        "Per operation — each module run",
+        "Similar in spirit to Zapier, but operations are typically cheaper per unit",
+      ],
+    },
+    {
+      label: "n8n",
+      cells: [
+        "Per execution — one whole workflow run",
+        "Step count is free. A twenty-step workflow costs the same as a two-step one",
+      ],
+    },
+  ]}
+/>
+
+This single row explains most of the dramatic cost comparisons you will read. They are not marketing exaggerations, but they are not universal either — they are a consequence of **step count**, and they only apply if your workflows are long.
+
+Do the arithmetic for your own case before anything else:
+
+1. **Count the action steps** in your typical workflow. Not the trigger — the actions after it.
+2. **Estimate how many times a month it runs.** Use your busy month.
+3. **Multiply.** Steps × runs is roughly your Zapier task consumption and your Make operation consumption. Runs alone is your n8n execution count.
+4. **Compare that against each vendor's current tiers.**
+
+If your workflows are two or three steps and run a few hundred times a month, the three will land close together and you should choose on ease of use. If you are running ten-step workflows thousands of times a month, the per-step platforms get expensive quickly and the gap is the whole decision.
+
+<Callout tone="warning" heading="Ask how failures are billed">
+  A workflow that errors halfway through has still consumed the steps it completed. On per-step
+  billing, a flaky integration that retries can quietly cost real money, and retry behaviour differs
+  between the three. Check it before you commit — it is rarely on the pricing page, and it is the
+  detail that makes a busy month expensive.
+</Callout>
+
+## What else actually differs
+
+### App coverage
+
+Zapier connects to the most apps by a clear margin, Make is next, n8n has the fewest ready-made integrations but can call any HTTP API, which covers most gaps if you are willing to read documentation.
+
+The useful way to assess this is not the headline number. **Write down the five apps you actually need connected and check each platform for those five.** A platform with 7,000 integrations that lacks your booking system is worse for you than one with 400 that has it. For most small businesses using mainstream software, all three will cover the list.
+
+### The learning curve
+
+Zapier is the easiest to start with: linear workflows, plain-language setup, and a large template library you can adapt rather than build from nothing. For a first automation this matters more than anything else on this page.
+
+Make puts your workflow on a visual canvas, which is genuinely clearer once logic branches — two paths, conditional routes, loops over lists. The canvas is the reason to choose it, and it is a real reason.
+
+n8n expects more of you. The trade is control: more capable branching and data handling, and a model where complexity does not increase your bill.
+
+### AI steps
+
+All three can call an AI model inside a workflow. The differences that matter:
+
+- **n8n** goes furthest, with purpose-built nodes for agent-style loops and retrieval work, and no per-step penalty for the extra calls those patterns need.
+- **Make** sits in the middle with straightforward model modules.
+- **Zapier** covers the common cases — summarise, classify, draft — which is genuinely most of what a small business needs.
+
+Note the interaction with billing. AI patterns are step-heavy by nature, so the platform that does not charge per step is structurally better suited to them. If AI steps are the point of your automation rather than a garnish, that is an argument for n8n beyond the price.
+
+### Self-hosting
+
+This is n8n's distinctive feature and the source of its biggest savings: it is open-source, so you can run it on your own server with no licence fee and no execution cap.
+
+The cost does not disappear, it changes shape. You own updates, backups, uptime and debugging. A broken automation at the wrong moment is now your problem to fix rather than a support ticket.
+
+That is a good deal if you are technical and running real volume. It is a bad deal if nobody owns the server, and "I'll learn it" is not ownership. Both Zapier and Make are cloud-only, and n8n also sells a cloud plan if you want its billing model without the operations.
+
+## Who should choose which
+
+<ComparisonTable
+  caption="Choosing on your actual situation"
+  rowHeader="If this is you"
+  columns={["Start with", "Why"]}
+  rows={[
+    {
+      label: "First automation, non-technical",
+      cells: ["Zapier", "Shallowest curve, widest app list, templates to copy rather than build"],
+    },
+    {
+      label: "A few simple workflows, low volume",
+      cells: ["Any of the three", "At this scale cost is a rounding error — choose on ease"],
+    },
+    {
+      label: "Workflows that branch and loop",
+      cells: ["Make", "The canvas is the reason, and it is a real one once logic gets complex"],
+    },
+    {
+      label: "Long multi-step workflows at volume",
+      cells: ["n8n", "Per-execution billing is the structural advantage, not a discount"],
+    },
+    {
+      label: "AI steps are the point of the workflow",
+      cells: ["n8n", "Agent-style patterns are step-heavy, and steps are free here"],
+    },
+    {
+      label: "Someone technical will own a server",
+      cells: ["n8n self-hosted", "Cheapest by a wide margin, if the ownership is genuine"],
+    },
+    {
+      label: "Nobody will own a server",
+      cells: ["Zapier or Make", "A cloud plan is cheaper than an automation nobody can fix"],
+    },
+  ]}
+/>
+
+## Switching, and why to think about it now
+
+There is no meaningful portability between these platforms. Workflows get rebuilt, not migrated, and the rebuild costs roughly what the original build cost.
+
+Two practical conclusions. **Choose partly on the volume you expect**, not only the volume you have today, because the switch is expensive enough that people stay on an overpriced plan rather than face it. And **document what each workflow does** — trigger, steps, what it touches, why it exists — so that if you do switch, you are translating a specification rather than reverse-engineering your own past decisions.
+
+Do not, however, switch to save money you are not currently spending. A cheaper platform you have not learned is not cheaper.
+
+## Before you buy any of them
+
+Two checks that often remove the need entirely:
+
+**Does one of your apps already do this?** Support platforms, email suites, meeting tools and workspace apps increasingly include the AI step you were about to build. A built-in feature needs no connection to break. The [AI automation and workflows](/ai-automation/) hub covers how to tell.
+
+**Have you done the task by hand first?** Automating a process you have not yet understood is how people build workflows that reliably do the wrong thing. [AI prompts](/ai-prompts/) is the cheaper first step for anything you are still working out.
+
+If you are ready, [Zapier AI automation examples](/ai-automation/zapier-ai-automation-examples/) walks through eight workflows step by step, [how to automate email responses with AI](/ai-automation/how-to-automate-email-with-ai/) covers the most common first build, and [best AI automation tools](/ai-automation/best-ai-automation-tools/) widens the field beyond these three. If what you are really considering is software that decides its own steps rather than following yours, start with [AI agents vs automation](/ai-agents/ai-agents-vs-automation/).

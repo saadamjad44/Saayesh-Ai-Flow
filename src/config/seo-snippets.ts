@@ -281,6 +281,28 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
      */
     note: 'Title wording is good; it only truncated at 72 characters because of the brand suffix, and dropping the suffix fixes it with no copy change. The description now carries "in 2026" — accurate (published and price-checked in October 2026) and the freshness cue this SERP is saturated with — at the cost of "current" before "pricing", which the date already implies.',
   },
+  /**
+   * Added 2026-10-20. The commercial end of the support topic, and the page the
+   * /ai-agents/ cluster sends its strongest use case to. Every result currently
+   * ranking for this query is published by a chatbot vendor, so the angle here
+   * is the one they cannot take: that the work is mostly writing your help
+   * centre, and the software is the easy part.
+   */
+  "ai-chatbot-for-small-business": {
+    title: "AI Chatbot for Small Business: What It Can Do",
+    brand: "omit",
+    primaryKeyword: "AI chatbot for small business",
+    supportingKeywords: [
+      "best AI chatbot for small business",
+      "AI chatbot for website",
+      "free AI chatbot for website",
+      "how to add an AI chatbot to your website",
+      "how much does an AI chatbot cost",
+      "chatbot for small business website",
+    ],
+    intent: "Commercial",
+    note: 'Rendered at 45 characters. "What It Can Do" rather than a number or a ranking, because the page has no hands-on testing behind it and sets expectations instead. All six supporting terms have their own section on the page — the website-embed question, the free tiers and their caps, and the cost models are each answered directly — so none of them is a promise the page cannot keep. "AI chatbot" alone is deliberately not the primary: that query is dominated by consumer chat apps and developer frameworks, neither of which this page serves.',
+  },
   "small-business-ai-cost-calculator": {
     title: "Free Small Business AI Cost Calculator: Monthly & Annual",
     brand: "omit",
@@ -364,6 +386,54 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     ],
     intent: "Informational",
     note: 'Title 57 characters, description 151. No change — the title is already the verbatim autocomplete variant of this query. Outlook added as a supporting keyword because it autocompletes separately from Gmail and the page has a full method for it ("Method 2: Outlook and Power Automate"), which the description already names.',
+  },
+  /**
+   * Added 2026-10-20. Three pages that take over work the pillar was doing in
+   * passing. The pillar's "Choosing tools" section has been slimmed to an
+   * orientation that links here, so the hub no longer competes with its own
+   * cluster on platform-selection queries.
+   */
+  "ai-customer-service-automation": {
+    title: "AI Customer Service Automation: How It Works",
+    brand: "omit",
+    primaryKeyword: "AI customer service automation",
+    supportingKeywords: [
+      "how to automate customer service",
+      "automate customer support",
+      "AI ticket deflection",
+      "customer service automation examples",
+      "AI support automation",
+    ],
+    intent: "Informational",
+    note: '"How It Works" is the honest framing and the differentiator: the ranking results for this query are vendor pages selling a deflection rate, and none of them explains the mechanism a buyer is actually agreeing to. Deflection is kept as a supporting keyword rather than the primary because it is industry vocabulary — the people searching it already work in support, while the owner this page is written for searches the plainer phrasing.',
+  },
+  "n8n-vs-zapier-vs-make": {
+    title: "n8n vs Zapier vs Make: Which Automation Platform?",
+    brand: "omit",
+    primaryKeyword: "n8n vs Zapier vs Make",
+    supportingKeywords: [
+      "Zapier vs Make vs n8n",
+      "n8n vs Zapier",
+      "Make vs Zapier",
+      "best automation platform for small business",
+      "n8n self-hosted vs cloud",
+      "Zapier alternatives",
+    ],
+    intent: "Commercial",
+    note: "Rendered at 49 characters. The highest commercial intent of anything left in this cluster, and the site already has standing on the topic through the Zapier examples guide. The word-order variants are listed separately because all three orderings autocomplete and resolve to the same comparison. No prices on the page: all three vendors price on different units and change them often, so the page explains the billing models instead and says why that matters more than the headline figure.",
+  },
+  "best-ai-automation-tools": {
+    title: "Best AI Automation Tools: How to Choose by Category",
+    brand: "omit",
+    primaryKeyword: "best AI automation tools",
+    supportingKeywords: [
+      "AI workflow automation tools",
+      "AI automation software",
+      "best automation tools for small business",
+      "AI workflow automation",
+    ],
+    intent: "Info / Commercial",
+    note: 'Rendered at 51 characters. Deliberately a category guide rather than a ranked list, for the same reason as the agents buying guide: no hands-on testing evidence. "AI automation for small business" is absent from the supporting list on purpose — that term belongs to the pillar, and claiming it here would put a cluster page in competition with its own hub.',
   },
   "ai-email-time-savings-calculator": {
     title: "AI Email Time Savings Calculator: Free ROI Tool",
