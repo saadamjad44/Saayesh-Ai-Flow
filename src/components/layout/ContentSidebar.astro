@@ -47,7 +47,7 @@ const panelId = "content-sidebar-panel";
           clip-rule="evenodd"
         ></path>
       </svg>
-      <span class="font-display text-sm font-bold text-ink-900">Browse this category</span>
+      <span class="font-sans text-sm font-bold text-ink-900">Browse this category</span>
     </span>
     <svg
       aria-hidden="true"
@@ -72,9 +72,7 @@ const panelId = "content-sidebar-panel";
       <div class:list={[index > 0 && "mt-7 border-t border-ink-200 pt-6"]}>
         {section.eyebrow && <p class="eyebrow">{section.eyebrow}</p>}
 
-        <h2
-          class:list={["font-display text-sm font-bold text-ink-900", section.eyebrow && "mt-1.5"]}
-        >
+        <h2 class:list={["font-sans text-sm font-bold text-ink-900", section.eyebrow && "mt-1.5"]}>
           {section.headingHref ? (
             <a
               href={section.headingHref}

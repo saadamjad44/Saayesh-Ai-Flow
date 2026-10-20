@@ -92,7 +92,7 @@ const inCategories = categories.some(({ href }) => currentPath.startsWith(href))
         decoding="sync"
         class="h-7 w-auto shrink-0 sm:h-[30px]"
       />
-      <span class="font-display text-[1.0625rem] font-extrabold tracking-[-0.02em] text-ink-900 transition-colors duration-180 ease-ui group-hover:text-brand-800 sm:text-lg motion-reduce:transition-none">
+      <span class="font-display text-[1.0625rem] font-extrabold tracking-[-0.01em] text-ink-900 transition-colors duration-180 ease-ui group-hover:text-brand-800 sm:text-lg motion-reduce:transition-none">
         {brandLead} <span class="text-brand-700">{brandTail.join(" ")}</span>
       </span>
     </a>
@@ -214,7 +214,7 @@ const inCategories = categories.some(({ href }) => currentPath.startsWith(href))
                     <PillarIcon icon={category.icon} class="size-5" />
                   </span>
                   <span class="min-w-0">
-                    <span class="block font-display text-[0.9375rem] font-bold text-ink-900 group-hover:text-brand-800">
+                    <span class="block font-sans text-[0.9375rem] font-bold text-ink-900 group-hover:text-brand-800">
                       {category.title}
                     </span>
                     <span class="mt-0.5 block text-[0.8125rem] leading-snug text-ink-500">
@@ -239,7 +239,7 @@ const inCategories = categories.some(({ href }) => currentPath.startsWith(href))
                       aria-current={currentPath === tool.href ? "page" : undefined}
                       class="group flex items-center justify-between gap-3 rounded-xl border border-ink-200 bg-paper p-3 transition-colors duration-180 ease-ui hover:border-accent-200 hover:bg-accent-50 motion-reduce:transition-none"
                     >
-                      <span class="font-display text-[0.9375rem] font-bold text-ink-900 group-hover:text-accent-800">
+                      <span class="font-sans text-[0.9375rem] font-bold text-ink-900 group-hover:text-accent-800">
                         {tool.label}
                       </span>
                       <svg
@@ -263,7 +263,7 @@ const inCategories = categories.some(({ href }) => currentPath.startsWith(href))
 
           <a
             href={blogPath}
-            class="mt-5 inline-flex items-center gap-1.5 py-1.5 font-display text-sm font-bold text-brand-700 hover:text-brand-800"
+            class="mt-5 inline-flex items-center gap-1.5 py-1.5 font-sans text-sm font-bold text-brand-700 hover:text-brand-800"
           >
             Browse every guide
             <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
@@ -302,7 +302,7 @@ const inCategories = categories.some(({ href }) => currentPath.startsWith(href))
                 <span class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-ink-200 bg-paper text-brand-700">
                   <PillarIcon icon={category.icon} class="size-5" />
                 </span>
-                <span class="font-display text-[0.9375rem] font-bold text-ink-900">
+                <span class="font-sans text-[0.9375rem] font-bold text-ink-900">
                   {category.title}
                 </span>
               </a>
@@ -320,7 +320,7 @@ const inCategories = categories.some(({ href }) => currentPath.startsWith(href))
                 <a
                   href={tool.href}
                   aria-current={currentPath === tool.href ? "page" : undefined}
-                  class="flex min-h-12 items-center rounded-xl border border-ink-200 bg-paper px-3.5 font-display text-[0.9375rem] font-bold text-ink-900 hover:border-accent-200 hover:bg-accent-50"
+                  class="flex min-h-12 items-center rounded-xl border border-ink-200 bg-paper px-3.5 font-sans text-[0.9375rem] font-bold text-ink-900 hover:border-accent-200 hover:bg-accent-50"
                 >
                   {tool.label}
                 </a>

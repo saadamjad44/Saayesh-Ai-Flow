@@ -14,9 +14,15 @@
  * and unfilled content gaps.
  *
  * Typography is a three-family system:
- *   display  Plus Jakarta Sans  — headings, the wordmark, numbers in figures
- *   body     Inter              — paragraphs, UI, metadata
+ *   display  Fraunces           — headings and the wordmark, nothing else
+ *   body     Inter              — paragraphs, UI, buttons, metadata, figures
  *   mono     JetBrains Mono     — eyebrow labels, prompts, code, table units
+ *
+ * The split is deliberate: one editorial serif carries the voice of the page
+ * — the headline, the section heads, the card titles, the brand — and a single
+ * sans does all the work, so a button, a nav item, a table header, and a
+ * calculator read as interface rather than as writing. A serif at 13px inside
+ * a badge would be neither. Emphasis in UI comes from weight, not family.
  *
  * All three are self-hosted variable subsets (below), so there is no
  * third-party font request and no render-blocking external stylesheet.
@@ -35,23 +41,31 @@
  * is only fetched by a page that actually needs those glyphs, and the variable
  * axis means one file covers every weight the site uses.
  * ------------------------------------------------------------------------- */
+/*
+ * Fraunces carries two variable axes here, weight and optical size. `opsz` is
+ * the reason it is worth its file size: the browser tracks it to the rendered
+ * font-size on its own (font-optical-sizing is `auto` by default), so the
+ * 60px hero headline gets the high-contrast, tight-fitting cut and a 17px card
+ * title gets the sturdier one with open spacing — one file, two real designs.
+ * The quirkier SOFT and WONK axes are left at their defaults.
+ */
 @font-face {
-  font-family: "Plus Jakarta Sans";
+  font-family: "Fraunces";
   font-style: normal;
-  font-weight: 500 800;
+  font-weight: 400 800;
   font-display: swap;
-  src: url("../assets/fonts/plus-jakarta-sans-latin.woff2") format("woff2");
+  src: url("../assets/fonts/fraunces-latin.woff2") format("woff2");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: "Plus Jakarta Sans";
+  font-family: "Fraunces";
   font-style: normal;
-  font-weight: 500 800;
+  font-weight: 400 800;
   font-display: swap;
-  src: url("../assets/fonts/plus-jakarta-sans-latin-ext.woff2") format("woff2");
+  src: url("../assets/fonts/fraunces-latin-ext.woff2") format("woff2");
   unicode-range:
     U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
     U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F,
@@ -155,16 +169,19 @@
   --font-sans:
     "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
     "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  --font-display:
-    "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono:
     "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
     monospace;
 
-  /* Editorial rhythm: tracking tightens as type grows. */
-  --tracking-display: -0.022em;
-  --tracking-tight: -0.014em;
+  /*
+   * Editorial rhythm: tracking tightens as type grows. These are set for
+   * Fraunces, which already fits tightly at high optical sizes — a negative
+   * track sized for a geometric sans would close its counters up — so they
+   * stay modest and all but vanish by card-title size.
+   */
+  --tracking-display: -0.012em;
+  --tracking-tight: -0.004em;
   --tracking-label: 0.08em;
 
   /* Radius scale. `card` is the shared surface radius. */
@@ -265,7 +282,7 @@
     font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.75rem);
     font-weight: 800;
     line-height: 1.04;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.018em;
     color: var(--color-ink-900);
     text-wrap: balance;
   }
@@ -275,7 +292,7 @@
     font-size: clamp(1.9375rem, 1.45rem + 2vw, 3rem);
     font-weight: 800;
     line-height: 1.1;
-    letter-spacing: -0.026em;
+    letter-spacing: -0.016em;
     color: var(--color-ink-900);
     text-wrap: balance;
   }
@@ -394,7 +411,7 @@
     min-height: 2.875rem;
     padding: 0.6875rem 1.25rem;
     border-radius: 0.625rem;
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     font-size: 0.9375rem;
     font-weight: 700;
     letter-spacing: -0.005em;
@@ -776,7 +793,7 @@
 
 /* Ordered lists are often step sequences here, so the number is emphasised. */
 .prose :where(ol > li):not(:where(.not-prose, .not-prose *))::marker {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-weight: 700;
   color: var(--color-brand-700);
 }

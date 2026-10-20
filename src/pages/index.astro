@@ -19,8 +19,9 @@
  * Deliberately absent: visitor counts, "most popular" claims, review scores,
  * testimonials, partner logos, and any email opt-in. The site has none of them.
  */
+import { Image } from "astro:assets";
+
 import ArticleCard from "@/components/content/ArticleCard.astro";
-import FlowDiagram from "@/components/home/FlowDiagram.astro";
 import PresentationViewer from "@/components/home/PresentationViewer.astro";
 import ToolPromoPanel from "@/components/home/ToolPromoPanel.astro";
 import PillarIcon from "@/components/layout/PillarIcon.astro";
@@ -34,6 +35,7 @@ import {
   START_HERE,
   TOOL_PROMOS,
 } from "@/config/homepage";
+import { getMedia } from "@/config/media";
 import { PILLAR_NAV, menuLabel } from "@/config/navigation";
 import { getPage, type PageId } from "@/config/pages";
 import { getPillarPresentation } from "@/config/pillars";
@@ -110,6 +112,14 @@ const latest = [...articles]
   })
   .slice(0, LATEST_GUIDE_COUNT)
   .map((article) => toArticleCard(article, categoryTitles));
+
+/*
+ * The hero background. Its own `alt` in the registry describes the picture
+ * for the social card; here it is decorative — the h1 beside it already says
+ * what the page is — so it is given an empty alt and hidden from assistive
+ * technology.
+ */
+const heroArt = getMedia("home");
 
 const blogPath = getPage("blog").path;
 const aboutPath = getPage("about").path;
@@ -242,15 +252,22 @@ const METHOD = [
 
 <BaseLayout pageId="home" jsonLd={[websiteSchema(), organizationSchema()]}>
   {/* ---- 1. Hero ---------------------------------------------------- */}
-  <section class="relative overflow-hidden border-b border-ink-200 bg-surface">
-    <div
+  <section class="hero relative isolate overflow-hidden border-b border-ink-200 bg-surface">
+    <Image
+      src={heroArt.src}
+      alt=""
       aria-hidden="true"
-      class="bg-grid pointer-events-none absolute inset-0 opacity-60"
-      style="mask-image: radial-gradient(ellipse 75% 65% at 70% 0%, black, transparent);"
-    ></div>
+      widths={[640, 960, 1280, 1920]}
+      sizes="100vw"
+      loading="eager"
+      decoding="sync"
+      fetchpriority="high"
+      class="hero-art absolute inset-0 -z-10 size-full object-cover"
+    />
+    <div aria-hidden="true" class="hero-scrim absolute inset-0 -z-10"></div>
 
-    <div class="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:py-24">
-      <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.85fr)] lg:gap-14">
+    <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:py-28">
+      <div class="lg:grid lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]">
         <div>
           <p class="eyebrow eyebrow-rule">Independent AI tool guides</p>
 
@@ -287,10 +304,6 @@ const METHOD = [
             </a>
           </div>
         </div>
-
-        <div class="max-lg:hidden">
-          <FlowDiagram />
-        </div>
       </div>
     </div>
   </section>
@@ -307,7 +320,7 @@ const METHOD = [
         </div>
         <a
           href={blogPath}
-          class="-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-display text-sm font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
+          class="-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-sans text-sm font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
         >
           All guides
           <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
@@ -343,7 +356,7 @@ const METHOD = [
               </span>
               <span
                 aria-hidden="true"
-                class="inline-flex items-center gap-1.5 font-display text-sm font-bold text-brand-700"
+                class="inline-flex items-center gap-1.5 font-sans text-sm font-bold text-brand-700"
               >
                 Explore
                 <svg
@@ -421,7 +434,7 @@ const METHOD = [
                 <PillarIcon icon={path.icon} class="size-5" />
               </span>
               <div class="min-w-0">
-                <h3 class="font-display text-lg font-bold tracking-[-0.018em] text-ink-900">
+                <h3 class="font-display text-lg font-bold tracking-[-0.008em] text-ink-900">
                   “{path.question}”
                 </h3>
                 <p class="mt-2 text-[0.9375rem] leading-relaxed text-ink-600">{path.summary}</p>
@@ -431,7 +444,7 @@ const METHOD = [
             <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-ink-100 pt-4 text-sm">
               <a
                 href={path.hub.path}
-                class="inline-flex items-center gap-1.5 font-display font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
+                class="inline-flex items-center gap-1.5 font-sans font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
               >
                 {path.hubTitle}
                 <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
@@ -500,25 +513,25 @@ const METHOD = [
                     <dl class="mt-5 space-y-4">
                       <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
                         <dt class="text-sm text-ink-300">Monthly</dt>
-                        <dd class="font-display text-2xl font-extrabold text-white tabular-nums">
+                        <dd class="font-sans text-2xl font-extrabold text-white tabular-nums">
                           {money(preview.monthlyRecurring)}
                         </dd>
                       </div>
                       <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
                         <dt class="text-sm text-ink-300">Annual</dt>
-                        <dd class="font-display text-xl font-bold text-white tabular-nums">
+                        <dd class="font-sans text-xl font-bold text-white tabular-nums">
                           {money(preview.annualRecurring)}
                         </dd>
                       </div>
                       <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
                         <dt class="text-sm text-ink-300">First year, with setup</dt>
-                        <dd class="font-display text-xl font-bold text-accent-200 tabular-nums">
+                        <dd class="font-sans text-xl font-bold text-accent-200 tabular-nums">
                           {money(preview.firstYearTotal)}
                         </dd>
                       </div>
                       <div class="flex items-baseline justify-between gap-4">
                         <dt class="text-sm text-ink-300">Per employee, monthly</dt>
-                        <dd class="font-display text-base font-bold text-white tabular-nums">
+                        <dd class="font-sans text-base font-bold text-white tabular-nums">
                           {money(preview.perEmployee)}
                         </dd>
                       </div>
@@ -553,9 +566,7 @@ const METHOD = [
                           ]}
                         >
                           <dt class="text-sm text-ink-600">{row.label}</dt>
-                          <dd
-                            class:list={["font-display whitespace-nowrap tabular-nums", row.size]}
-                          >
+                          <dd class:list={["font-sans whitespace-nowrap tabular-nums", row.size]}>
                             {row.value}
                           </dd>
                         </div>
@@ -610,7 +621,7 @@ const METHOD = [
         <ul class="mt-4 grid gap-4 sm:grid-cols-3">
           {EXPLORE_ACTIONS.map((action) => (
             <li class="card card-link group relative flex flex-col p-5">
-              <p class="font-display text-[0.9375rem] font-bold text-ink-900">
+              <p class="font-sans text-[0.9375rem] font-bold text-ink-900">
                 <a href={action.href} class="stretch-target group-hover:text-brand-800">
                   {action.label}
                 </a>
@@ -618,7 +629,7 @@ const METHOD = [
               <p class="mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{action.summary}</p>
               <span
                 aria-hidden="true"
-                class="mt-4 inline-flex items-center gap-1.5 font-display text-sm font-bold text-brand-700"
+                class="mt-4 inline-flex items-center gap-1.5 font-sans text-sm font-bold text-brand-700"
               >
                 <svg
                   viewBox="0 0 20 20"
@@ -651,7 +662,7 @@ const METHOD = [
         </div>
         <a
           href={blogPath}
-          class="-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-display text-sm font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
+          class="-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-sans text-sm font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
         >
           Browse every guide
           <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
@@ -711,6 +722,59 @@ const METHOD = [
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  /*
+   * The hero background.
+   *
+   * The artwork is composed with its subject on the right and open sky on the
+   * left, so the copy sits in the empty half and the picture is never asked to
+   * carry text on its busy side. The scrim is the part that guarantees it: an
+   * opaque wash of the surface colour under the copy, fading out before the
+   * subject, so the headline keeps full ink-on-surface contrast no matter how
+   * the image crops at a given viewport.
+   */
+  .hero-art {
+    /*
+     * A narrow viewport crops this hard horizontally — roughly a sixth of the
+     * picture survives — so hold the subject rather than the empty sky, or the
+     * hero is a blank wash on a phone.
+     */
+    object-position: 68% 50%;
+  }
+
+  /*
+   * Phones have no empty column to put the copy in, so the wash covers the
+   * whole frame: heaviest under the headline, easing off down the page where
+   * only buttons sit, which lets the artwork read without ever costing the
+   * text its contrast.
+   */
+  .hero-scrim {
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-surface) 93%, transparent) 0%,
+      color-mix(in oklab, var(--color-surface) 88%, transparent) 55%,
+      color-mix(in oklab, var(--color-surface) 62%, transparent) 100%
+    );
+  }
+
+  @media (min-width: 1024px) {
+    .hero-art {
+      /* Wide boxes crop vertically only, so centre is the whole composition. */
+      object-position: 50% 50%;
+    }
+
+    .hero-scrim {
+      background: linear-gradient(
+        to right,
+        var(--color-surface) 0%,
+        color-mix(in oklab, var(--color-surface) 90%, transparent) 32%,
+        color-mix(in oklab, var(--color-surface) 45%, transparent) 54%,
+        transparent 72%
+      );
+    }
+  }
+</style>
 
 <script>
   /**

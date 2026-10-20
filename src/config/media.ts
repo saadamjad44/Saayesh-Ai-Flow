@@ -11,22 +11,24 @@
  *   2. Import it and add an entry below, including source and licence.
  *   3. Reference it with <FeaturedImage id="..." /> or MEDIA[id].
  *
- * Licence check (verified 2026-09-19): every photo below is from Pexels under
- * the Pexels Licence — free for commercial use, no attribution required, no
- * usage here that implies endorsement. https://www.pexels.com/license/
- * Credit is therefore recorded here rather than printed on the page. An image
- * from a source that does require visible attribution must not be added until
- * FeaturedImage can render that credit again.
+ * Provenance (last reviewed 2026-10-20): every picture below is original
+ * artwork supplied by the site owner, so the site holds the rights and no
+ * third-party attribution is owed — credit is recorded here rather than printed
+ * on the page. If an image is ever swapped for one from a stock library or any
+ * other source that requires visible credit, record that here and do not ship
+ * it until FeaturedImage can render the credit line again.
  */
 import type { ImageMetadata } from "astro";
 
 import logo from "@/assets/brand/saayesh-ai-flow-logo.png";
+import aiAgents from "@/assets/images/ai-agents.jpg";
 import aiAutomation from "@/assets/images/ai-automation.jpg";
 import aiBusinessTools from "@/assets/images/ai-business-tools.jpg";
 import aiByIndustry from "@/assets/images/ai-by-industry.jpg";
 import aiPrompts from "@/assets/images/ai-prompts.jpg";
 import aiWritingTools from "@/assets/images/ai-writing-tools.jpg";
 import gettingStarted from "@/assets/images/getting-started.jpg";
+import homeHero from "@/assets/images/home-hero.jpg";
 
 /**
  * The brand logo, declared once so the header — and anything else that needs
@@ -58,11 +60,14 @@ export const BRAND_LOGO = {
 } as const;
 
 export interface MediaCredit {
-  photographer: string;
+  /** Who holds the rights to the picture. */
+  rightsHolder: string;
+  /** Where it came from — a library name, or how it reached the project. */
   source: string;
-  sourceUrl: string;
+  /** The terms this site relies on to publish it. */
   license: string;
-  licenseUrl: string;
+  /** Source or licence page, when the provenance has one to link. */
+  url?: string;
 }
 
 export interface MediaAsset {
@@ -72,12 +77,11 @@ export interface MediaAsset {
   credit: MediaCredit;
 }
 
-const pexels = (photographer: string, sourceUrl: string): MediaCredit => ({
-  photographer,
-  source: "Pexels",
-  sourceUrl,
-  license: "Pexels Licence",
-  licenseUrl: "https://www.pexels.com/license/",
+/** Original artwork supplied by the owner: site-owned, no attribution owed. */
+const owned = (): MediaCredit => ({
+  rightsHolder: "Saayesh AI Flow",
+  source: "Owner-supplied original artwork",
+  license: "Site-owned — no third-party attribution required",
 });
 
 /** All images share a 16:9 master so heroes and cards line up across the site. */
@@ -86,59 +90,62 @@ export const MEDIA_ASPECT_RATIO = 16 / 9;
 export const MEDIA = {
   "ai-writing-tools": {
     src: aiWritingTools,
-    alt: "A person typing on a laptop with an AI chat assistant open on screen.",
-    credit: pexels(
-      "Matheus Bertelli",
-      "https://www.pexels.com/photo/man-working-with-chatgpt-ai-system-16094048/",
-    ),
+    alt: "An open blue book with a fountain pen writing on a page floating above it, crumpled paper scraps on one side turning into a stream of light and clean finished pages on the other.",
+    credit: owned(),
   },
   "ai-business-tools": {
     src: aiBusinessTools,
-    alt: "A small business owner working at a laptop beside stacked parcels and handwritten notes.",
-    credit: pexels(
-      "RDNE Stock project",
-      "https://www.pexels.com/photo/a-man-looking-at-a-website-on-the-internet-7309483/",
-    ),
+    alt: "A desk holding a laptop that shows a rising bar chart, a glowing blue sphere, a stack of reports, a clock, and three ticked checkboxes, all linked by trails of light.",
+    credit: owned(),
   },
   "ai-automation": {
     src: aiAutomation,
-    alt: "A hand drawing a workflow flowchart on a whiteboard, with steps connected by arrows.",
-    credit: pexels(
-      "Christina Morillo",
-      "https://www.pexels.com/photo/white-dry-erase-board-with-red-diagram-1181311/",
-    ),
+    alt: "A conveyor belt carrying document cards into a glass machine full of gears and out the other side, where the finished documents stack up with a tick on each one.",
+    credit: owned(),
+  },
+  "ai-agents": {
+    src: aiAgents,
+    alt: "A glowing blue crystal cube on a plinth, joined by curved connectors to five surrounding tiles: an email, a spreadsheet, a calendar, a document, and a tick.",
+    credit: owned(),
   },
   "ai-by-industry": {
     src: aiByIndustry,
-    alt: "Three people working separately on laptops at shared desks in an open coworking space.",
-    credit: pexels("Kindel Media", "https://www.pexels.com/photo/people-busy-working-7651637/"),
+    alt: "A miniature model of a business district — a shop under a blue awning, a glass office showing a chart, and a meeting room — strung together by one glowing blue line.",
+    credit: owned(),
   },
   "ai-prompts": {
     src: aiPrompts,
-    alt: "A computer monitor showing an AI chat assistant's start screen, with example questions listed under headings for examples, capabilities, and limitations.",
-    credit: pexels(
-      "Matheus Bertelli",
-      "https://www.pexels.com/photo/chat-gpt-welcome-screen-on-computer-16027824/",
-    ),
+    alt: "A glass control panel of four labelled sliders focusing a beam of light into a cut blue gemstone.",
+    credit: owned(),
   },
   "getting-started": {
     src: gettingStarted,
-    alt: "An open laptop with a blank screen on a white desk, beside an empty notebook, a pen, and a glass of water.",
-    credit: pexels(
-      "Tatiana Syrikova",
-      "https://www.pexels.com/photo/from-above-laptop-with-blank-notebook-before-working-day-in-office-3975574/",
-    ),
+    alt: "An open book on a round plinth with a glowing archway rising from its pages, a path running through the arch towards a distant city, and small tiles for ideas and clicks floating alongside.",
+    credit: owned(),
+  },
+  /**
+   * The homepage hero. Composed with its subject on the right and open sky on
+   * the left, so the hero copy sits in the empty half; see src/pages/index.astro.
+   * Its master is 1920x1080 rather than the usual 1600x900 because it is the
+   * only full-bleed background on the site and has no content column to sit in.
+   */
+  home: {
+    src: homeHero,
+    alt: "A human profile in blue light whose head opens into a branching neural network, surrounded by floating panels showing a document, a three-step workflow, and a rising chart.",
+    credit: owned(),
   },
 } as const satisfies Record<string, MediaAsset>;
 
 export type MediaId = keyof typeof MEDIA;
 
 /**
- * Social preview fallback for pages with no image of their own — home, about,
- * contact, the legal pages, and 404. Pillars and articles resolve to their own
- * category image first; see getSocialImage() in src/lib/seo.ts.
+ * Social preview fallback for pages with no image of their own — about,
+ * contact, the legal pages, and 404. The homepage hero carries the brand name,
+ * so it is the right stand-in anywhere a page has nothing more specific.
+ * Pillars and articles resolve to their own category image first; see
+ * getSocialImage() in src/lib/seo.ts.
  */
-export const DEFAULT_SOCIAL_MEDIA_ID: MediaId = "ai-writing-tools";
+export const DEFAULT_SOCIAL_MEDIA_ID: MediaId = "home";
 
 export function getMedia(id: MediaId): MediaAsset {
   return MEDIA[id];

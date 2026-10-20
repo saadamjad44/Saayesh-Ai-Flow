@@ -164,11 +164,11 @@ const fieldId = (field: FieldSpec) => `ai-email-${field.key}`;
       class="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 rounded-lg border border-ink-200 bg-surface px-3 py-2.5 text-sm font-semibold text-ink-700 lg:hidden"
       data-mobile-summary
     >
-      <span class="font-display tabular-nums" data-result="hoursSaved">
+      <span class="font-sans tabular-nums" data-result="hoursSaved">
         —
       </span>
       <span class="font-normal text-ink-500">hours saved a month ·</span>
-      <span class="font-display tabular-nums" data-result="monthlyNet">
+      <span class="font-sans tabular-nums" data-result="monthlyNet">
         —
       </span>
       <span class="font-normal text-ink-500">estimated net benefit</span>
@@ -185,7 +185,7 @@ const fieldId = (field: FieldSpec) => `ai-email-${field.key}`;
     <div class="min-w-0 space-y-7">
       {SECTIONS.map((section, sectionIndex) => (
         <fieldset class:list={[sectionIndex > 0 && "border-t border-ink-200 pt-6"]}>
-          <legend class="font-display text-base font-bold tracking-tight text-ink-900">
+          <legend class="font-sans text-base font-bold tracking-tight text-ink-900">
             {section.title}
           </legend>
           <p class="mt-1 text-sm text-ink-500">{section.note}</p>
@@ -270,7 +270,7 @@ const fieldId = (field: FieldSpec) => `ai-email-${field.key}`;
       ))}
 
       <fieldset class="border-t border-ink-200 pt-6">
-        <legend class="font-display text-base font-bold tracking-tight text-ink-900">
+        <legend class="font-sans text-base font-bold tracking-tight text-ink-900">
           Display currency
         </legend>
         <select
@@ -335,7 +335,7 @@ const fieldId = (field: FieldSpec) => `ai-email-${field.key}`;
               {figure.label}
             </dt>
             <dd
-              class="mt-0.5 font-display text-base font-bold text-ink-900 tabular-nums"
+              class="mt-0.5 font-sans text-base font-bold text-ink-900 tabular-nums"
               data-result={figure.key}
             >
               —
@@ -354,7 +354,7 @@ const fieldId = (field: FieldSpec) => `ai-email-${field.key}`;
             <dd>
               <p class="mt-1 flex items-baseline gap-1.5">
                 <span
-                  class="font-display text-3xl font-extrabold tracking-[-0.026em] text-ink-900 tabular-nums"
+                  class="font-sans text-3xl font-extrabold tracking-[-0.026em] text-ink-900 tabular-nums"
                   data-result={result.key}
                 >
                   —
@@ -378,14 +378,14 @@ const fieldId = (field: FieldSpec) => `ai-email-${field.key}`;
         anyone who cannot see them, and the bars themselves are aria-hidden.
       */}
       <div class="mt-5 border-t border-ink-200 pt-4">
-        <h4 class="font-display text-sm font-bold tracking-tight text-ink-900">
+        <h4 class="font-sans text-sm font-bold tracking-tight text-ink-900">
           Active email hours a month
         </h4>
         <dl class="mt-3 space-y-3">
           <div>
             <div class="flex items-baseline justify-between gap-3">
               <dt class="text-sm font-medium text-ink-700">Manual replies</dt>
-              <dd class="font-display text-sm font-bold text-ink-900 tabular-nums">
+              <dd class="font-sans text-sm font-bold text-ink-900 tabular-nums">
                 <span data-result="manualHours">—</span> h
               </dd>
             </div>
@@ -400,7 +400,7 @@ const fieldId = (field: FieldSpec) => `ai-email-${field.key}`;
           <div>
             <div class="flex items-baseline justify-between gap-3">
               <dt class="text-sm font-medium text-ink-700">AI-assisted, with review</dt>
-              <dd class="font-display text-sm font-bold text-ink-900 tabular-nums">
+              <dd class="font-sans text-sm font-bold text-ink-900 tabular-nums">
                 <span data-result="aiHours">—</span> h
               </dd>
             </div>
@@ -426,7 +426,7 @@ const fieldId = (field: FieldSpec) => `ai-email-${field.key}`;
               </p>
             </div>
             <dd
-              class="shrink-0 pt-0.5 text-right font-display text-sm font-bold text-ink-900 tabular-nums"
+              class="shrink-0 pt-0.5 text-right font-sans text-sm font-bold text-ink-900 tabular-nums"
               data-result={row.key}
             >
               —
