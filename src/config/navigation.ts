@@ -1,7 +1,7 @@
 /**
  * Site navigation.
  *
- * The header carries a Categories mega menu over the six content pillars, the
+ * The header carries a Categories mega menu over the content pillars, the
  * site's free tools, and three stable links (Blog, About, Contact). Topic
  * discovery therefore lives in the header again, alongside /blog/, the footer,
  * the homepage cards, and the contextual sidebar on every pillar and article
@@ -62,6 +62,7 @@ export const PILLAR_NAV: readonly NavSection[] = [
   section("AI Writing Tools", "ai-writing-tools"),
   section("Business & Productivity", "ai-business-tools"),
   section("Automation", "ai-automation"),
+  section("AI Agents", "ai-agents"),
   section("AI Prompts", "ai-prompts"),
   section("By Industry", "ai-by-industry"),
 ];
@@ -84,6 +85,9 @@ const MENU_LABELS: Partial<Record<PageId, string>> = {
   "how-much-does-ai-cost-small-business": "How Much Does AI Cost?",
   "claude-for-small-business": "Claude for Small Business",
   "claude-vs-chatgpt-for-small-business": "Claude vs ChatGPT",
+  "best-ai-agents-for-small-business": "Best AI Agents for Small Business",
+  "ai-agents-vs-automation": "AI Agents vs Automation",
+  "ai-agent-use-cases": "AI Agent Use Cases",
   "small-business-ai-cost-calculator": "AI Cost Calculator",
   "ai-email-time-savings-calculator": "AI Email Savings Calculator",
 };

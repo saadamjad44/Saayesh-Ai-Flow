@@ -1,0 +1,196 @@
+---
+pageId: ai-agent-use-cases
+title: AI Agent Use Cases for Small Business
+heading: "AI Agent Use Cases: 8 Jobs Worth Handing Over, and What Each Still Needs"
+description: Eight practical AI agent use cases for a small business, with what each one needs to work, the supervision it still requires, and three tasks not to hand over.
+publishedDate: 2026-10-20
+updatedDate: 2026-10-20
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What are the most practical AI agent use cases for a small business?
+    answer: The ones that repeat often, vary case by case, and can be checked in seconds. Customer support first replies from a help centre is the strongest, followed by inbox triage, research and list enrichment, scheduling back-and-forth, extracting data from inconsistent documents, drafting follow-ups after meetings, chasing missing information, and routing incoming enquiries. Each of those shares the same property - you can glance at the output and know whether it is right.
+  - question: What makes a task a bad fit for an AI agent?
+    answer: Three things, any one of which is enough. The output cannot be checked quickly, so supervision costs as much as the work. The task needs knowledge that has never been written down anywhere the agent can reach. Or getting it wrong is expensive and hard to reverse, such as anything that commits a price, a legal position, or money leaving your account.
+  - question: Should an AI agent be allowed to send things to customers?
+    answer: Not on day one, and for some tasks not ever. The sensible default is draft mode - the agent prepares, you release - until you have a few weeks of evidence on how it handles the awkward cases. Where you do allow it to send, scope it to the narrowest category you can, such as acknowledgements and answers your help centre explicitly covers, with everything else escalated to you.
+  - question: Can one agent do several of these jobs?
+    answer: It can be configured to, but it is usually a mistake early on. A single-task agent is far easier to judge, because when the output is wrong you know which instruction caused it. Once a task is running reliably and you understand its failure modes, adding a second is reasonable. Widening scope and raising autonomy at the same time is how people lose track of what went wrong.
+  - question: How do I know whether an agent is actually saving me time?
+    answer: Count the review time, not just the task time. An agent that removes twenty minutes of work and adds fifteen minutes of checking and correcting has saved five minutes. Measure it over a fortnight against doing the task as you normally would, and include the occasions you had to redo its work. For email specifically, our AI email time savings calculator does this arithmetic including review time.
+  - question: Are these use cases different from AI automation use cases?
+    answer: Yes, though they overlap. An automation use case has a fixed sequence of steps - on this trigger, do these things in this order. An agent use case is one where the route varies case by case and judgement is needed each time. Several tasks on this page would be better served by an automation with a single AI step inside it, and the page says so where that is true.
+---
+
+import { ComparisonTable, Callout, KeyTakeaways } from "@/components/content";
+
+Most lists of AI agent use cases are lists of what is theoretically possible. This one is organised around a harder question: which of these jobs can a small business actually hand over, and what does it still have to do afterwards?
+
+That second half is the part usually left out, and it is where the time goes. An agent that drafts eight replies you then have to read carefully has not saved you eight replies' worth of work. So every use case below states what it needs in place, what supervision it still requires, and whether an [automation](/ai-automation/) would do the job better.
+
+<KeyTakeaways>
+
+- **The pattern that makes a task suitable** is always the same: it happens often, each instance varies, and you can check the result in seconds.
+- **Support replies from your own help centre** is the strongest use case there is, because the answers already exist and escalation to a person is built in.
+- **Several tasks on this list want an automation with one AI step,** not an agent — each entry says which.
+- **Draft mode first, every time.** The agent prepares, you release, until you have evidence.
+- **Count review time as cost,** or you will conclude an agent saved you time it did not save.
+
+</KeyTakeaways>
+
+## The test every use case below passes
+
+Before the list, the property they share — because it is more useful than the list itself, and it lets you judge a task that is not on here.
+
+A task suits an agent when all three of these are true:
+
+1. **It recurs often enough to be worth configuring.** Weekly at minimum, ideally daily.
+2. **Each instance differs enough that a fixed sequence would break.** If it does not differ, build an automation and spend less.
+3. **You can verify the output in seconds.** This is the one people skip, and it is the one that decides whether the economics work.
+
+A task that fails the third test is not disqualified from AI altogether — it may be a good fit for a prompt you run yourself, where you are reading the output anyway. It is disqualified from being _delegated_, which is what an agent is for.
+
+## 1. Customer support first replies
+
+**The job:** a question arrives by email or chat. The agent finds the answer in your help centre, drafts or sends a reply, and escalates anything the documentation does not cover.
+
+**Why it fits:** this is the strongest case in the whole subject, and the reason is structural. The questions vary in wording but not in kind, the source of truth is a document you control, a wrong answer is visible, and there is always an obvious next step — a person.
+
+**What it needs in place:** written answers. An agent cannot invent your refund policy, and if your help centre is three thin pages, fixing that is the actual project. Most disappointing support-agent trials are documentation problems wearing a software costume.
+
+**Supervision it still needs:** read a sample of conversations weekly, not just the escalated ones — the failures that matter are the confident wrong answers nobody flagged. Watch the escalation rate: if it climbs, something in your documentation has gone stale.
+
+**Would an automation do it better?** No. This is genuine agent territory.
+
+## 2. Inbox triage
+
+**The job:** sort incoming mail by topic and urgency, summarise the long ones, flag what needs you today, and draft replies to the routine ones.
+
+**Why it fits:** the variety of incoming mail is exactly what defeats rule-based filters. You cannot write a rule for "this customer sounds like they are about to leave".
+
+**What it needs in place:** your own categories, written down. "Urgent" means something specific in your business and nothing in general.
+
+**Supervision it still needs:** check what it put in the low-priority pile for the first fortnight. The expensive error here is a misfiled important message, and you will only find it by looking.
+
+**Would an automation do it better?** Partly — and this is worth knowing. If your rules are genuinely stable, an automation with one AI classification step is cheaper and more predictable. See [how to automate email responses with AI](/ai-automation/how-to-automate-email-with-ai/) for that shape, and our [AI email time savings calculator](/ai-automation/ai-email-time-savings-calculator/) for whether the saving survives review time.
+
+## 3. Research and list enrichment
+
+**The job:** take a list of companies, people or products and fill in a structured sheet — what they do, size, location, a named contact, a relevant recent detail.
+
+**Why it fits:** tedious, well-defined, variable in where the information lives, and trivially spot-checkable.
+
+**What it needs in place:** a fixed output format, and an explicit instruction to leave a field blank or marked unknown rather than guess. Without that instruction you will get plausible invented values, which is worse than empty cells because they look finished.
+
+**Supervision it still needs:** verify a random sample of rows against the source. Ten per cent is enough to tell you whether to trust the rest.
+
+**Would an automation do it better?** No, but a one-off prompt often would. If you do this quarterly rather than weekly, run it by hand.
+
+## 4. Scheduling and coordination
+
+**The job:** find a time, propose it, handle the replies, book it, send the confirmation.
+
+**Why it fits:** the negotiation is genuinely variable, and the outcome is self-evidently right or wrong.
+
+**What it needs in place:** calendar access, and hard rules about your boundaries — no evenings, buffer between calls, which people get priority.
+
+**Supervision it still needs:** little, once the rules are right. This is one of the few use cases that becomes close to hands-off, because a mistake is visible immediately and cheap to fix.
+
+**Would an automation do it better?** A scheduling link solves most of this without AI at all, and is the cheaper first answer. The agent earns its place when you are coordinating several people, or working mostly over email with clients who will not use a link.
+
+## 5. Extracting data from inconsistent documents
+
+**The job:** pull figures and fields out of invoices, receipts, forms or statements that all arrive in different layouts, into one consistent format.
+
+**Why it fits:** the inconsistency is the whole problem, and it is precisely what rule-based extraction cannot cope with.
+
+**What it needs in place:** a validation rule you can check against — totals that must reconcile, dates in range, a required field. Something that makes a wrong extraction fail arithmetic rather than merely look odd.
+
+**Supervision it still needs:** reconcile the totals. Always. Transcription errors here are quiet and compound, and this is the use case where a mistake is most likely to become a real financial problem.
+
+**Would an automation do it better?** An automation with one extraction step is the usual right answer, because the route does not vary — only the reading does.
+
+## 6. Meeting follow-ups
+
+**The job:** from a transcript, produce the summary, the decisions, the action items with owners, and a draft follow-up email.
+
+**Why it fits:** every meeting is different, the output is short, and you were there — so you can check it instantly.
+
+**What it needs in place:** a transcript, and an instruction to flag ambiguity rather than resolve it. "Someone will look at pricing" should stay vague in the notes, not get assigned to a name the agent picked.
+
+**Supervision it still needs:** read it once before it goes anywhere. Invented or misattributed commitments are the standard failure, and they are embarrassing in a way most AI errors are not.
+
+**Would an automation do it better?** Yes, usually: a fixed trigger, a fixed destination, one AI step. Most meeting tools now include this, so check what you already pay for before buying anything.
+
+## 7. Chasing missing information
+
+**The job:** notice that something required has not arrived — a document, an approval, a form, a payment — and follow it up, escalating if it stays missing.
+
+**Why it fits:** the chasing is repetitive, but the tone and the escalation decision vary by who you are chasing.
+
+**What it needs in place:** a clear definition of what "missing" means and a cap on how many times it chases. Without a cap you have built a nuisance.
+
+**Supervision it still needs:** see the list of who is being chased before the second reminder goes out. Chasing someone who already replied elsewhere is the characteristic failure.
+
+**Would an automation do it better?** For invoices and anything on a fixed schedule, yes, clearly — a rule-based sequence is the right tool and it is a standard workflow. The agent only earns its place when the judgement about whether to chase at all is real.
+
+## 8. Routing incoming enquiries
+
+**The job:** read a new enquiry, work out what it is about and how qualified it is, route it to the right place, and record it with a summary.
+
+**Why it fits:** enquiries arrive in free text, and the routing decision is a judgement you make the same way each time but cannot express as a rule.
+
+**What it needs in place:** written criteria for your categories. If you cannot explain to a new employee what makes an enquiry worth a call, the agent cannot either.
+
+**Supervision it still needs:** audit the ones it rejected or deprioritised. Nobody complains about a misrouted enquiry — it just quietly does not happen.
+
+**Would an automation do it better?** An automation with one classification step, in most cases. The agent is justified when routing involves looking things up across several systems first.
+
+<Callout tone="note" heading="The pattern in those eight answers">
+  Five of the eight say an automation with a single AI step would do the job as well or better. That
+  is not a hedge — it is the honest shape of this subject today. The tasks where an agent is clearly
+  the right tool are the ones where the *route* varies, not just the words: support replies,
+  multi-party coordination, and research that has to go looking. [AI agents vs
+  automation](/ai-agents/ai-agents-vs-automation/) has a short test for telling them apart.
+</Callout>
+
+## Three jobs not to hand over
+
+Not a warning about AI in general — a specific list of tasks where delegation to an agent goes wrong for predictable reasons.
+
+<ComparisonTable
+  caption="Tasks to keep away from an agent, and why"
+  rowHeader="Task"
+  columns={["Why it fails", "What to do instead"]}
+  rows={[
+    {
+      label: "Quoting bespoke work",
+      cells: [
+        "The pricing judgement lives in your head and has never been written down, so there is nothing for the agent to reach",
+        "Draft with a prompt and your own notes, and set the number yourself",
+      ],
+    },
+    {
+      label: "Anything that commits money or a legal position",
+      cells: [
+        "The failure is expensive and hard to reverse, and a plausible wrong answer looks exactly like a right one",
+        "Keep a person in the loop for the decision, and use the agent for the paperwork around it",
+      ],
+    },
+    {
+      label: "Handling an upset customer",
+      cells: [
+        "Judging what someone actually needs when they are angry is the part that cannot be delegated",
+        "Let it draft a factual summary for you, then write the reply yourself",
+      ],
+    },
+  ]}
+/>
+
+What these three share: the output cannot be checked in seconds by looking at it, because knowing whether it is right requires the judgement you were trying to delegate.
+
+## How to start, in one paragraph
+
+Pick the one task above that most resembles your week, write down what a correct result looks like before you configure anything, run the agent in draft mode on ten real cases including two awkward ones, and compare the result against doing it yourself — counting your review time as part of the cost. If it wins on that evidence, widen one setting at a time. If it does not, you have learned something cheaply, which is the point of running it this way.
+
+The [AI agents hub](/ai-agents/) covers what these products are and how they are priced, [best AI agents for small business](/ai-agents/best-ai-agents-for-small-business/) covers choosing between them, and [AI tools vs a virtual assistant](/ai-business-tools/ai-tools-vs-virtual-assistant/) is worth reading if what you actually want is for someone to take the task away entirely.

@@ -1,0 +1,172 @@
+---
+pageId: ai-agents
+title: AI Agents
+description: What an AI agent is, how it differs from an automation, where handing a task over works today, and what it still gets wrong. For owners, not builders.
+publishedDate: 2026-10-20
+updatedDate: 2026-10-20
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What is an AI agent?
+    answer: An AI agent is software given a goal, a set of instructions, and access to tools it can use - your inbox, a calendar, a help centre, a database - which then decides for itself what steps to take to reach that goal. The difference from ordinary software is that the sequence is not written down in advance. You describe the outcome and the boundaries; the agent picks the route each time it runs.
+  - question: What is the difference between an AI agent and an automation?
+    answer: An automation follows steps you defined, in the order you defined them, every time. An agent is given an objective and chooses the steps itself. That makes an automation predictable and easy to audit, and an agent flexible but variable - two runs on similar inputs can take different routes. Most tasks that people describe as needing an agent are actually repeatable enough for an automation, which is cheaper to run and far easier to trust.
+  - question: Do small businesses actually need AI agents?
+    answer: Most do not need one yet, and that is not a criticism of the technology. An agent earns its place when a task is frequent, involves judgement that varies case by case, and touches more than one system - customer support triage being the clearest example. If the task is the same every time, an automation is the better tool. If it happens occasionally, a prompt is enough.
+  - question: How much do AI agents cost?
+    answer: Prices change too often for a figure here to be reliable, but the pricing model matters more than the number, and it differs from the per-seat software most owners are used to. Agent products are commonly sold per resolution, per run, per action, or on credits consumed, which means your bill scales with volume rather than headcount. Before buying, work out what one busy month would cost at the top of your expected range, not the average.
+  - question: Are AI agents safe to let loose on customer emails?
+    answer: Not without boundaries, and the sensible default is to start with the agent drafting rather than sending. The specific risks worth planning for are an agent acting on a misread request, inventing a policy you do not have, and failing quietly when a connected app changes. Decide in advance which actions it may take alone, which need your approval, and what it should do when it is unsure - and check the vendor's data terms before any customer information reaches it.
+  - question: What can AI agents not do?
+    answer: They cannot be relied on to produce the same result twice, to know anything you have not given them access to, or to recognise the moment a task has moved outside what they were set up for. They also cannot carry accountability. If an agent sends a wrong quote or a wrong promise to a customer, that is your business's problem, which is why the useful question is never whether an agent can do a task but what happens on the occasions it does it badly.
+---
+
+import { ComparisonTable } from "@/components/content";
+
+"AI agent" is the term the industry settled on in 2026, and it is doing a lot of work. It is used for a help-centre chatbot, for a scheduled task in a general assistant, for a node inside an automation platform, and for software that is supposed to run an entire sales function. Those are not the same product, and the gap between the pitch and the thing you can actually buy is wider here than anywhere else in AI right now.
+
+This section is written for someone running a business, not building agent software. It covers what the word means once you strip the marketing off it, which tasks are genuinely suited to handing over, how these products are sold and billed, and how to test one without discovering the hard way what it does when it is wrong.
+
+One honest warning before any of it: a large share of people searching for an AI agent want an [AI automation](/ai-automation/), which is cheaper, more predictable, and easier to fix. That is not a consolation prize. It is usually the correct answer, and [AI agents vs automation](/ai-agents/ai-agents-vs-automation/) exists to help you work out which of the two your task needs.
+
+## What an AI agent actually is
+
+An agent is software given three things: a goal, instructions and limits, and access to tools it can use. From there it decides the steps itself.
+
+That last part is the whole distinction. Ordinary software, including every automation you have ever set up, runs a sequence somebody wrote down. An agent is handed an objective — answer this customer's question from our help centre, reconcile these invoices against the bank feed, research these ten companies and fill in this sheet — and works out the route at run time. It may use a tool, read the result, decide that was not what it needed, and try something else.
+
+The tools are what make it more than a chat window. An agent that can only talk is a chatbot. An agent that can read your inbox, search your documentation, look up an order, and write to your CRM is doing work, and the quality of those connections usually matters more to the result than which model sits underneath.
+
+It follows that an agent is only as capable as its access, and only as safe as its limits. Both of those are configuration rather than intelligence, and both are your responsibility rather than the vendor's.
+
+### Why the word is used so loosely
+
+Four quite different things are sold as agents, and knowing which one you are being shown saves a lot of time:
+
+<ComparisonTable
+  caption="What gets called an AI agent"
+  rowHeader="What you are shown"
+  columns={["What it really is", "What that means for you"]}
+  rows={[
+    {
+      label: "A support assistant on a website",
+      cells: [
+        "A chatbot answering from your help centre, with a defined escalation path to a human",
+        "The most mature and most measurable category, and the easiest of the four to judge honestly.",
+      ],
+    },
+    {
+      label: "An agent step in an automation platform",
+      cells: [
+        "One node inside a workflow you still designed, choosing between a few defined options",
+        "Lower risk, because the automation around it sets the boundaries. A sensible first experiment.",
+      ],
+    },
+    {
+      label: "An assistant that runs tasks for you",
+      cells: [
+        "A general AI tool given memory, connections to your apps, and a schedule or a trigger",
+        "Useful, and you may already be paying for it inside a subscription you hold.",
+      ],
+    },
+    {
+      label: "An autonomous digital worker",
+      cells: [
+        "Largely a roadmap, demonstrated in controlled conditions rather than on your data",
+        "Treat claims here as claims. Ask what it does when it is wrong, and who notices.",
+      ],
+    },
+  ]}
+/>
+
+The first three are real and buyable today. The fourth is where most of the hype lives, and where the distance between a demo and your actual business is largest.
+
+## Where agents genuinely help today
+
+The pattern behind every task that suits an agent is the same: it happens often, each instance differs enough that a fixed sequence would break, and a person can check the result quickly.
+
+- **Customer support triage and first replies.** The strongest case by a distance. Questions arrive in unpredictable wording, the answers already exist in your help centre, and anything the agent cannot handle has an obvious next step — a person.
+- **Inbox triage.** Sorting, labelling, summarising and drafting, where the variety of incoming mail is exactly what defeats a rule-based filter.
+- **Research and enrichment.** Looking up a list of companies, people or products and filling in a structured sheet. Tedious, well-defined, and easy to spot-check.
+- **Scheduling and coordination.** Finding a slot, proposing it, and handling the back-and-forth, where the negotiation is the variable part.
+- **Document and data wrangling.** Pulling figures out of inconsistent invoices or forms into one consistent format.
+
+[AI agent use cases](/ai-agents/ai-agent-use-cases/) works through eight of these task by task, including the supervision each one still needs.
+
+Notice what these share beyond the pattern: in every case you can look at the output and know within seconds whether it is right. That is not incidental. It is the property that makes an agent affordable to supervise, and a task that lacks it is a poor candidate however repetitive it feels.
+
+## What agents are still bad at
+
+This is the half of the subject that vendor content tends to skip, and it is the half that decides whether an agent is worth it.
+
+**They are not consistent.** The same request can take a different route and produce a different result on a different day. For advisory or creative work that is tolerable. For anything that has to match last month's output exactly, it is disqualifying.
+
+**They fail without announcing it.** An automation that breaks usually stops. An agent that has lost the thread carries on and produces something plausible. Plausible-but-wrong is the characteristic failure of this whole technology, and it is far harder to catch than an error message.
+
+**They do not know what they were not told.** No agent knows your pricing exceptions, the client who gets different treatment, or the thing you decided in a meeting. Anything not written down somewhere it can reach does not exist.
+
+**They are unreliable at knowing when to stop.** An agent will rarely say "this is outside what I was set up for". It will attempt the task. Deciding in advance which cases must come to a person is your job, not something it will work out.
+
+**They can be expensive in the wrong month.** Because billing usually tracks volume rather than seats, a busy period costs more precisely when you are least likely to be watching.
+
+**Accountability does not transfer.** A wrong promise sent to a customer by your agent is a promise your business made. No vendor term sheet changes that.
+
+## How agents are sold and priced
+
+This is the part most likely to catch out an owner used to per-seat software, and it is worth understanding before you look at any product.
+
+Per-seat pricing scales with how many people you employ. Agent pricing usually scales with how much work the agent does: per resolved conversation, per run or execution, per action taken, or against a pool of credits that different operations consume at different rates. Some products combine a platform fee with one of those.
+
+Three consequences follow, and all three are easy to miss at the point of signing up:
+
+1. **Your bill tracks your busiest month, not your average one.** Model the peak. A support agent costs most during the week something goes wrong, which is also the week you are least likely to be reading invoices.
+2. **A retry can cost the same as a success.** Ask explicitly how failed, abandoned and escalated runs are counted. The answer varies by vendor and is rarely on the pricing page.
+3. **Cheaper per unit is not cheaper.** A low per-run price on a product that needs four runs to get something right is worse than a higher price that gets it in one.
+
+Specific prices are deliberately absent from this page, because agent pricing is changing faster than any page can honestly track. [Best AI agents for small business](/ai-agents/best-ai-agents-for-small-business/) covers how to compare products on this basis, and our free [small business AI cost calculator](/ai-business-tools/small-business-ai-cost-calculator/) totals a stack once you have real quotes in front of you. For the wider budgeting picture, see [how much AI costs a small business](/ai-business-tools/how-much-does-ai-cost-small-business/).
+
+## How to try one without betting the business
+
+1. **Pick one task you can check in seconds.** Not your most painful task — your most verifiable one. You are testing the agent, and you cannot test what you cannot grade.
+2. **Write down what good looks like first.** Before the agent sees anything, decide what a correct result is and what an unacceptable one is. Doing this afterwards means grading against whatever it happened to produce.
+3. **Start in draft mode.** Let it prepare, not send. Almost every serious product supports this, and the ones that do not are telling you something.
+4. **Give it the narrowest access that works.** Read-only before write. One mailbox, not all of them. Access is the main thing that turns a small mistake into a large one.
+5. **Decide the escalation rule explicitly.** State which cases must come to a person, and what the agent should do when it is unsure. "Say you do not know and hand it over" has to be an instruction; it is not a default.
+6. **Run it alongside yourself for a fortnight.** Do the task as you always did and compare. This is the only part of the process that produces real evidence, and it is the part most people skip.
+7. **Count the review time.** An agent that saves twenty minutes of work and adds fifteen minutes of checking has saved you five minutes, not twenty. Our [AI email time savings calculator](/ai-automation/ai-email-time-savings-calculator/) does this arithmetic for email workflows specifically.
+8. **Only then widen it.** More autonomy, more volume, or more access — one change at a time, so you can tell which change caused the problem.
+
+The order matters. Autonomy multiplies whatever it is given, mistakes included, so the sensible sequence is always draft before send, narrow before broad, and supervised before not.
+
+## Questions to ask before you buy
+
+- What exactly counts as a billable unit, and how are retries and escalations counted?
+- Can it run in draft or approval mode, and can I choose which actions need approval?
+- What does it do when it does not know — and can I see that behaviour before I buy?
+- Where does my data go, is it used for training, and how long is it kept?
+- What can I see after the fact? Is there a log of what it did and why it did it?
+- How do I stop it mid-run, and what happens to work already in progress?
+- What breaks when one of my connected apps changes, and will I be told?
+
+If a vendor cannot answer the first three plainly, that is information. These are not unusual questions; they are the ordinary ones you would ask about any process that touches customers.
+
+## When an agent is right, and when you never needed one
+
+There is a progression here worth being explicit about, because skipping steps is the most common and most expensive mistake in this subject.
+
+Do the task by hand with a good prompt until it is boring. If it stays variable and keeps needing judgement, an agent may fit. If it becomes identical every time, you have described an automation, and you should build one — it will be cheaper, faster, and it will not surprise you. If it becomes identical every time _and_ high volume, the right answer may be neither: it may be a change to the process that removes the task.
+
+Going straight to an agent for a task you have never done by hand means automating a process you do not yet understand, at the one layer of the stack that is hardest to debug.
+
+## Guides in this category
+
+- **[AI agents vs automation](/ai-agents/ai-agents-vs-automation/)** — the distinction in practical terms, with a test you can apply to your own task to work out which of the two you need.
+- **[Best AI agents for small business](/ai-agents/best-ai-agents-for-small-business/)** — how to compare these products, the categories that exist, and why every ranked list on this topic is published by someone selling an entry on it.
+- **[AI agent use cases](/ai-agents/ai-agent-use-cases/)** — eight jobs worth handing over, what each one needs to work, and the supervision each still requires.
+
+## Related categories
+
+- **The task repeats identically every time.** [AI automation and workflows](/ai-automation/) is the right hub, and probably the right answer.
+- **You are retyping the same instruction rather than delegating a task.** [AI prompts](/ai-prompts/) covers briefing a model properly, which is the cheapest fix available.
+- **You are still choosing the software underneath.** [AI business and productivity tools](/ai-business-tools/) covers the subscriptions, and [best AI tools for small business](/ai-business-tools/best-ai-tools-for-small-business/) the picks by use case.
+- **You are new to all of this.** [Getting started with AI](/getting-started/) is the place to begin, and agents are not where anyone should start.

@@ -392,6 +392,72 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: 'The <h1> is "AI Email Time Savings & ROI Calculator"; the search title drops the ampersand, which search results render inconsistently, and leads on the saving a searcher is looking for. "Free" is factually true — no sign-up, runs in the browser — and is the first thing a searcher decides. The brand suffix is dropped because the title is 46 characters and the suffix would push it to 64. The ROI framing is carried in the title rather than the description so the description can spend its length on the three inputs that make this calculator different from a naive savings estimate: manual reply time, human review time, and software cost.',
   },
 
+  // ---- AI Agents cluster -------------------------------------------------
+  /**
+   * The newest cluster, and the one whose SERP is least trustworthy: on the
+   * head term and on every commercial variant of it, the ranking results are
+   * published by companies selling an agent. That shapes the metadata here. The
+   * titles lead on the distinction and the limits rather than on a ranking,
+   * because "independent" is the only thing this cluster can offer that the
+   * incumbents structurally cannot.
+   */
+  "ai-agents": {
+    title: "AI Agents: What They Are & When to Use One",
+    brand: "omit",
+    primaryKeyword: "AI agents",
+    supportingKeywords: ["what are AI agents", "AI agents explained", "AI agents for business"],
+    intent: "Informational",
+    note: 'The hub <h1> stays "AI Agents" — 9 characters, and nothing a searcher can act on. The head term is extremely broad and much of it is developer intent (frameworks, SDKs, building one); "When to Use One" points the title at the operator rather than the builder, which is who the page is written for. "what are AI agents" is kept as a supporting keyword rather than given its own page on purpose: the hub answers it in its first section, and a separate definition page would compete with the hub for the same query.',
+  },
+  "best-ai-agents-for-small-business": {
+    title: "Best AI Agents for Small Business: How to Choose",
+    brand: "omit",
+    primaryKeyword: "best AI agents for small business",
+    supportingKeywords: [
+      "AI agents for small business",
+      "AI agent tools for business",
+      "AI agent pricing",
+      "AI agents for customer support",
+    ],
+    intent: "Commercial",
+    /**
+     * The title deliberately does not promise a ranked list, and the page does
+     * not contain one. Every competing result does, and all of them are vendor
+     * blogs ranking their own product first. A numbered list here would be
+     * either dishonest — this site has no hands-on testing evidence for agent
+     * products — or a copy of theirs. Selection criteria plus categories is
+     * what the page can actually stand behind, so that is what the snippet
+     * sells. It costs some clicks from searchers who wanted a table.
+     */
+    note: 'Rendered at 48 characters. "How to Choose" rather than a number, because the page is criteria and categories rather than a ranking — there is no hands-on testing behind this cluster, and a ranked table would imply there is. The pricing variant is worth keeping: agent products are priced per resolution or per run far more often than per seat, which the page explains and which is the detail that surprises buyers.',
+  },
+  "ai-agents-vs-automation": {
+    title: "AI Agents vs Automation: The Real Difference",
+    brand: "omit",
+    primaryKeyword: "AI agents vs automation",
+    supportingKeywords: [
+      "AI agent vs workflow automation",
+      "difference between AI agent and automation",
+      "AI agents vs RPA",
+      "do I need an AI agent or an automation",
+    ],
+    intent: "Informational",
+    note: "Rendered at 44 characters. The most useful page in the cluster and the one most likely to earn links, because the distinction is genuinely muddled in the market and the honest answer — most people searching for an agent want a workflow — is one no vendor will publish. It is also the cluster's main bridge into /ai-automation/, which is where a large share of this traffic should end up.",
+  },
+  "ai-agent-use-cases": {
+    title: "AI Agent Use Cases: 8 Jobs Worth Handing Over",
+    brand: "omit",
+    primaryKeyword: "AI agent use cases",
+    supportingKeywords: [
+      "AI agent examples",
+      "what can AI agents do",
+      "AI agent use cases for business",
+      "real world AI agent examples",
+    ],
+    intent: "Informational",
+    note: 'Rendered at 45 characters. Eight is the real count of task sections on the page. "Worth Handing Over" is doing the same filtering job as "for Work" on the prompt-examples page: this query returns a lot of enterprise and developer content, and the page is written for an owner deciding which of their own tasks to delegate. Each section states the supervision the task still needs, which is what separates it from the example lists that dominate this SERP.',
+  },
+
   // ---- Getting Started cluster -------------------------------------------
   "getting-started": {
     title: "Getting Started with AI: A Small Business Guide",

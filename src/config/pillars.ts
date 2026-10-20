@@ -16,7 +16,8 @@
  */
 import type { PillarId } from "./pages";
 
-export type PillarIconId = "compass" | "nib" | "briefcase" | "workflow" | "prompt" | "industry";
+export type PillarIconId =
+  "compass" | "nib" | "briefcase" | "workflow" | "prompt" | "industry" | "agent";
 
 export interface PillarPresentation {
   /** Card-length description, for the homepage grid and archive headers. */
@@ -50,6 +51,12 @@ export const PILLAR_PRESENTATION: Readonly<Record<PillarId, PillarPresentation>>
       "Step-by-step automation examples and workflows for email, scheduling, and other repeat tasks.",
     menu: "Workflows for email, scheduling and repeat work",
     icon: "workflow",
+  },
+  "ai-agents": {
+    summary:
+      "What an AI agent actually is, how it differs from an automation, and where handing a task over is worth the supervision it still needs.",
+    menu: "What they are, and when to trust one",
+    icon: "agent",
   },
   "ai-prompts": {
     summary:

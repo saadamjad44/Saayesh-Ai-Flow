@@ -3,9 +3,9 @@
  * approved Phase 2 roadmap. Do not add pages here without explicit approval.
  *
  * Every page declares the `phase` that approved it, and PAGE_COUNTS locks the
- * total per phase: Phase 1 stays at exactly 17 pages forever, and each Phase 2
- * batch bumps its count deliberately. Phase 3 URLs (/compare/) must not appear
- * in this file.
+ * total per phase: Phase 1 stays at exactly 17 pages forever, and each later
+ * batch bumps its count deliberately. The /compare/ hub is still unbuilt and
+ * must not appear in this file until it is approved.
  *
  * /blog/ was deferred at Phase 1 and approved as a Phase 2 page: it is the
  * central index of published article content, generated from this registry and
@@ -21,7 +21,7 @@
 export type PageType = "core" | "utility" | "pillar" | "article" | "review" | "tool";
 
 /** Roadmap phase that approved a page. */
-export type SitePhase = 1 | 2;
+export type SitePhase = 1 | 2 | 3;
 
 /**
  * Every category pillar, in nav order. A pillar's id is always its URL slug.
@@ -32,6 +32,7 @@ export const PILLAR_IDS = [
   "ai-writing-tools",
   "ai-business-tools",
   "ai-automation",
+  "ai-agents",
   "getting-started",
   "ai-by-industry",
   "ai-prompts",
@@ -85,11 +86,12 @@ export interface SitePage {
 
 /**
  * Approved page count per phase. Phase 1 is frozen at its launch scope; the
- * Phase 2 number is raised one batch at a time as pages are approved.
+ * later numbers are raised one batch at a time as pages are approved.
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
+  3: 4,
 };
 
 export const PAGES = [
@@ -435,6 +437,59 @@ export const PAGES = [
     type: "tool",
     phase: 2,
     pillar: "ai-automation",
+  },
+
+  /**
+   * Phase 3 — the AI Agents pillar and its first cluster.
+   *
+   * The seventh pillar, and the first one added because the vocabulary of the
+   * subject moved rather than because the site had a hole in its own plan. The
+   * six existing hubs cover tools you operate (writing, business, prompts) and
+   * workflows you configure once (automation). An agent is neither: it decides
+   * the steps itself at run time, which is a different thing to buy, a
+   * different thing to supervise, and a different thing to get wrong. Filing it
+   * under /ai-automation/ would have implied the two are the same — the exact
+   * confusion the cluster's middle guide exists to clear up — so it gets its own
+   * top-level segment and links across to automation rather than sitting in it.
+   */
+  {
+    id: "ai-agents",
+    title: "AI Agents",
+    path: "/ai-agents/",
+    type: "pillar",
+    phase: 3,
+  },
+  // The commercial end of the cluster: a reader who has accepted the idea and
+  // now has to choose. Written as selection criteria plus categories rather
+  // than a ranked table, because every ranked list on this query today is
+  // published by a vendor that sells one of the entries.
+  {
+    id: "best-ai-agents-for-small-business",
+    title: "Best AI Agents for Small Business in 2026",
+    path: "/ai-agents/best-ai-agents-for-small-business/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-agents",
+  },
+  // The distinction guide, and the bridge to /ai-automation/. Most people
+  // searching for an agent want a workflow and would be better served by one.
+  {
+    id: "ai-agents-vs-automation",
+    title: "AI Agents vs Automation: What's the Difference?",
+    path: "/ai-agents/ai-agents-vs-automation/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-agents",
+  },
+  // The practical end: what the work actually looks like, task by task, with
+  // the supervision each one needs stated rather than implied.
+  {
+    id: "ai-agent-use-cases",
+    title: "AI Agent Use Cases for Small Business",
+    path: "/ai-agents/ai-agent-use-cases/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-agents",
   },
 ] as const satisfies readonly SitePage[];
 
