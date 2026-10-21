@@ -2,11 +2,11 @@
 /**
  * Homepage.
  *
- * Eight sections, in the order a visitor needs them: what this site is and a
- * way to search it, the six categories, a short editorial selection of guides,
- * four routes in for someone who does not know which category they want, both
- * free calculators, an eight-slide introduction to the site, the newest guides,
- * and how the site works.
+ * Eight sections, in the order a visitor needs them: a dark masthead that says
+ * what this site is and gives a way to search it, the categories, a short
+ * editorial selection of guides, four routes in for someone who does not know
+ * which category they want, both free calculators, an eight-slide introduction
+ * to the site, the newest guides, and how the site works.
  *
  * Nothing on this page is hand-listed. The categories come from PILLAR_NAV
  * filtered to published pillars; the featured and "start here" selections are
@@ -15,6 +15,9 @@
  * date; the tool panels are rendered from TOOL_PROMOS; and each calculator
  * preview is produced by that calculator's own function at build time, so the
  * figures shown cannot be arithmetic the real tool would not do.
+ *
+ * The one set of figures on the page — the colophon under the hero headline —
+ * is counted from the published collections at build time for the same reason.
  *
  * Deliberately absent: visitor counts, "most popular" claims, review scores,
  * testimonials, partner logos, and any email opt-in. The site has none of them.
@@ -31,6 +34,7 @@ import { AUTHOR } from "@/config/author";
 import {
   CALCULATOR_PREVIEW,
   FEATURED_GUIDES,
+  FEATURED_GUIDES_INTRO,
   LATEST_GUIDE_COUNT,
   START_HERE,
   TOOL_PROMOS,
@@ -54,6 +58,7 @@ import {
 } from "@/components/tools/ai-email-savings-calculator";
 import { SLIDE_COUNT } from "@/config/presentation";
 import { getPublishedEntries, toArticleCard } from "@/lib/content";
+import { formatShortDate, isoDate } from "@/lib/format";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 
 const [pillars, articles, tools] = await Promise.all([
@@ -80,6 +85,25 @@ const categories = PILLAR_NAV.filter((entry) => publishedPillarIds.has(entry.pil
     };
   },
 );
+
+/**
+ * How many columns the last category card takes.
+ *
+ * The grid is two columns from `sm` and three from `lg`, and the number of
+ * published categories is whatever the pillars happen to be — seven today,
+ * which divides evenly by neither. Left alone that ends the section on a
+ * half-empty row, which is the most visible sign of a layout nobody looked at.
+ *
+ * So the final card absorbs whatever columns its row has spare. It is derived
+ * from the count rather than written for seven, so publishing or retiring a
+ * pillar can never bring the ragged row back.
+ */
+const spareColumns = {
+  sm: ["", "sm:col-span-2"][categories.length % 2],
+  lg: ["", "lg:col-span-3", "lg:col-span-2"][categories.length % 3],
+};
+
+const lastCategory = categories.length - 1;
 
 /** Articles by registry id, for the editor's picks below. */
 const articlesById = new Map(articles.map((article) => [article.page.id, article]));
@@ -123,6 +147,33 @@ const heroArt = getMedia("home");
 
 const blogPath = getPage("blog").path;
 const aboutPath = getPage("about").path;
+
+/* ---- Masthead facts --------------------------------------------------- */
+
+/**
+ * The four figures under the hero headline.
+ *
+ * Every one of them is counted from what is actually published in this
+ * repository at build time — guides, category hubs, free tools, and the most
+ * recent `updatedDate` across all three collections. None of them can be
+ * inflated without publishing the thing it counts, which is the only reason
+ * they are allowed on the page at all: the site has no visitor numbers, no
+ * "tools reviewed" total, and no popularity claims to put here instead.
+ *
+ * They are typeset as a colophon rather than as a row of big marketing
+ * numerals, because what makes them worth showing is that they are checkable,
+ * not that they are large.
+ */
+const lastUpdated = [...pillars, ...articles, ...tools]
+  .map(({ entry }) => entry.data.updatedDate)
+  .reduce((latest, date) => (date > latest ? date : latest));
+
+const MASTHEAD: { value: string; label: string; dateTime?: string }[] = [
+  { value: String(articles.length), label: "Guides published" },
+  { value: String(categories.length), label: "Categories" },
+  { value: String(tools.length), label: "Free tools" },
+  { value: formatShortDate(lastUpdated), label: "Last updated", dateTime: isoDate(lastUpdated) },
+];
 
 /* ---- Free tools ------------------------------------------------------- */
 
@@ -252,7 +303,17 @@ const METHOD = [
 
 <BaseLayout pageId="home" jsonLd={[websiteSchema(), organizationSchema()]}>
   {/* ---- 1. Hero ---------------------------------------------------- */}
-  <section class="hero relative isolate overflow-hidden border-b border-ink-200 bg-surface">
+  {/*
+    A dark hero, on purpose, and the one place on the site that is.
+
+    The artwork is cool electric blue, and so is the logo's gradient. On a light
+    ground that picture has to be washed out until almost nothing of it is left
+    before text can sit on it; on midnight it does the opposite — it glows, and
+    the brand mark in the header above it reads as the same family. Everything
+    below this section is warm paper, so the hero also does the job a masthead
+    does in print: it says where the publication starts.
+  */}
+  <section class="hero relative isolate overflow-hidden bg-ink-950">
     <Image
       src={heroArt.src}
       alt=""
@@ -265,46 +326,67 @@ const METHOD = [
       class="hero-art absolute inset-0 -z-10 size-full object-cover"
     />
     <div aria-hidden="true" class="hero-scrim absolute inset-0 -z-10"></div>
+    <div aria-hidden="true" class="bg-grid-inverse absolute inset-0 -z-10 opacity-70"></div>
 
-    <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:py-28">
-      <div class="lg:grid lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]">
-        <div>
-          <p class="eyebrow eyebrow-rule">Independent AI tool guides</p>
+    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
+      <div class="lg:max-w-[34rem]">
+        {/*
+          Iris rather than jade (13.1:1 on the midnight ground). Jade is
+          reserved for the free interactive tools — see global.css — and a
+          masthead kicker is not one of them.
+        */}
+        <p class="eyebrow eyebrow-rule text-brand-200">Independent AI tool guides</p>
 
-          <h1 class="type-display mt-5">{SITE.tagline}</h1>
+        <h1 class="type-display mt-5 text-white">{SITE.tagline}</h1>
 
-          <p class="type-lead mt-6 max-w-2xl">
-            Practical guides to AI tools, workflows, prompts, and business use cases for
-            solopreneurs and small business owners, written to help you choose and use AI with less
-            guesswork.
-          </p>
+        <p class="type-lead mt-6 text-ink-300">
+          Independent guides to AI tools, automation workflows, and prompts for solopreneurs and
+          small business owners — what each tool actually does, what it costs, and when it is not
+          worth paying for.
+        </p>
 
-          <div class="mt-8 max-w-2xl">
-            <SearchBox
-              id="hero"
-              variant="hero"
-              label="Search guides, tools and prompts"
-              placeholder="Search guides, tools and prompts..."
-            />
-          </div>
+        <div class="mt-8">
+          <SearchBox
+            id="hero"
+            variant="hero"
+            label="Search guides, tools and prompts"
+            placeholder="Search guides, tools and prompts..."
+          />
+        </div>
 
-          <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <a href="#categories" class="btn btn-primary">
-              Browse categories
-              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-                <path
-                  fill-rule="evenodd"
-                  d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </a>
-            <a href={blogPath} class="btn btn-secondary">
-              Explore AI guides
-            </a>
-          </div>
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <a href="#categories" class="btn btn-inverse">
+            Browse categories
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+              <path
+                fill-rule="evenodd"
+                d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+          <a href={blogPath} class="btn btn-outline-inverse">
+            Explore AI guides
+          </a>
         </div>
       </div>
+
+      {/*
+        The colophon. A hairline and four counted facts, set in the technical
+        register the rest of the site uses for metadata — not a statistics band.
+      */}
+      <dl class="mt-12 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t border-white/15 pt-7 sm:mt-14 sm:grid-cols-4">
+        {MASTHEAD.map((fact) => (
+          <div>
+            <dt class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-400 uppercase">
+              {fact.label}
+            </dt>
+            <dd class="mt-1.5 font-sans text-lg font-bold text-white tabular-nums">
+              {fact.dateTime ? <time datetime={fact.dateTime}>{fact.value}</time> : fact.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </section>
 
@@ -334,8 +416,13 @@ const METHOD = [
       </div>
 
       <ul class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {categories.map((category) => (
-          <li class="card card-link group relative flex flex-col p-6">
+        {categories.map((category, index) => (
+          <li
+            class:list={[
+              "card card-link group relative flex flex-col p-6",
+              index === lastCategory && [spareColumns.sm, spareColumns.lg],
+            ]}
+          >
             <span class="flex size-11 items-center justify-center rounded-xl border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none">
               <PillarIcon icon={category.icon} class="size-6" />
             </span>
@@ -346,7 +433,9 @@ const METHOD = [
               </a>
             </h3>
 
-            <p class="mt-2.5 flex-1 text-[0.9375rem] leading-relaxed text-ink-600">
+            {/* Capped, so the one card that may span the row does not set a
+                40-word line the six beside it never do. */}
+            <p class="mt-2.5 max-w-2xl flex-1 text-[0.9375rem] leading-relaxed text-ink-600">
               {category.summary}
             </p>
 
@@ -386,10 +475,7 @@ const METHOD = [
         <h2 id="featured-heading" class="type-section mt-3">
           Featured guides
         </h2>
-        <p class="type-body mt-3">
-          Five guides that between them cover choosing a tool, comparing two, budgeting for them,
-          briefing them properly, and putting one to work.
-        </p>
+        <p class="type-body mt-3">{FEATURED_GUIDES_INTRO}</p>
       </div>
 
       <div class="mt-9 grid gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
@@ -727,12 +813,19 @@ const METHOD = [
   /*
    * The hero background.
    *
+   * Two layers over the section's own midnight ground: the artwork, dimmed so
+   * it reads as light in a dark room rather than as a photo with text on top,
+   * and a scrim that keeps the copy column at full white-on-midnight contrast
+   * however the image crops.
+   *
    * The artwork is composed with its subject on the right and open sky on the
    * left, so the copy sits in the empty half and the picture is never asked to
-   * carry text on its busy side. The scrim is the part that guarantees it: an
-   * opaque wash of the surface colour under the copy, fading out before the
-   * subject, so the headline keeps full ink-on-surface contrast no matter how
-   * the image crops at a given viewport.
+   * carry text on its busy side.
+   *
+   * Measured at the worst case — the brightest pixel in the artwork, under the
+   * thinnest part of the scrim that any text reaches — white copy still clears
+   * 16:1. The right-hand third, where the scrim thins out far enough for the
+   * picture to come through properly, has no text over it at any width.
    */
   .hero-art {
     /*
@@ -741,37 +834,48 @@ const METHOD = [
      * hero is a blank wash on a phone.
      */
     object-position: 68% 50%;
+    opacity: 0.42;
   }
 
   /*
    * Phones have no empty column to put the copy in, so the wash covers the
-   * whole frame: heaviest under the headline, easing off down the page where
-   * only buttons sit, which lets the artwork read without ever costing the
-   * text its contrast.
+   * whole frame: heaviest at the top under the headline, lifting through the
+   * middle where the artwork can still be seen behind the search box, and
+   * closing again at the foot so the colophon sits on flat ink.
    */
   .hero-scrim {
     background: linear-gradient(
       to bottom,
-      color-mix(in oklab, var(--color-surface) 93%, transparent) 0%,
-      color-mix(in oklab, var(--color-surface) 88%, transparent) 55%,
-      color-mix(in oklab, var(--color-surface) 62%, transparent) 100%
+      color-mix(in oklab, var(--color-ink-950) 88%, transparent) 0%,
+      color-mix(in oklab, var(--color-ink-950) 78%, transparent) 55%,
+      color-mix(in oklab, var(--color-ink-950) 92%, transparent) 100%
     );
   }
 
   @media (min-width: 1024px) {
     .hero-art {
       /* Wide boxes crop vertically only, so centre is the whole composition. */
-      object-position: 50% 50%;
+      object-position: 55% 50%;
+      opacity: 0.6;
     }
 
+    /*
+     * Horizontal from `lg`, where there is an empty column to work with: flat
+     * midnight under the 34rem copy column, then a fall-off that lets the
+     * picture carry the right-hand third. The second gradient settles the
+     * bottom edge so the colophon rule does not cut across the artwork.
+     */
     .hero-scrim {
-      background: linear-gradient(
-        to right,
-        var(--color-surface) 0%,
-        color-mix(in oklab, var(--color-surface) 90%, transparent) 32%,
-        color-mix(in oklab, var(--color-surface) 45%, transparent) 54%,
-        transparent 72%
-      );
+      background:
+        linear-gradient(
+          to right,
+          var(--color-ink-950) 0%,
+          var(--color-ink-950) 42%,
+          color-mix(in oklab, var(--color-ink-950) 88%, transparent) 56%,
+          color-mix(in oklab, var(--color-ink-950) 45%, transparent) 78%,
+          color-mix(in oklab, var(--color-ink-950) 22%, transparent) 100%
+        ),
+        linear-gradient(to top, var(--color-ink-950) 0%, transparent 35%);
     }
   }
 </style>

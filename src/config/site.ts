@@ -21,8 +21,23 @@ export const isPlaceholderDomain = SITE_DOMAIN.endsWith(".invalid");
 
 export const SITE = {
   name: "Saayesh AI Flow",
-  /** Editorial positioning from revised-blueprint-phase1.jsx (Homepage). */
-  tagline: "Honest AI tool reviews for people who work alone.",
+  /**
+   * Editorial positioning, and the homepage <h1>.
+   *
+   * It carries the three terms the site is actually built around — "AI tools",
+   * "automation", "small business" — because they are the territory the
+   * homepage <title> and every cluster below it already occupy (see the home
+   * entry in src/config/seo-snippets.ts). It deliberately does not claim one of
+   * them as an exact-match target: each head term is owned by the page written
+   * for it, and a hub competing with its own cluster loses.
+   *
+   * The second half is the editorial promise rather than a keyword. "Earn their
+   * place" is the test every guide on this site applies to a tool, and it says
+   * what the old line ("Honest AI tool reviews for people who work alone")
+   * only implied — without using the word "reviews", which would over-promise
+   * against research-based pages that carry no scores.
+   */
+  tagline: "AI tools and automation that earn their place in a small business.",
   url: `https://${SITE_DOMAIN}`,
   lang: "en",
   locale: "en_US",

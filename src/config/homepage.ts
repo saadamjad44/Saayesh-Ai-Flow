@@ -23,6 +23,17 @@ export const FEATURED_GUIDES: readonly PageId[] = [
   "zapier-ai-automation-examples",
 ];
 
+/**
+ * The standfirst printed under "Featured guides", kept here rather than in the
+ * template because it describes the list directly above it. It names the
+ * intents the picks cover and how many there are, so editing the list without
+ * editing this sentence would leave the homepage describing a selection it no
+ * longer shows — and from the template that sentence is nowhere near the array
+ * it is about.
+ */
+export const FEATURED_GUIDES_INTRO =
+  "Five guides that between them cover choosing a tool, comparing two, budgeting for them, briefing them properly, and putting one to work.";
+
 /** How many of the newest guides the "Latest" row shows. */
 export const LATEST_GUIDE_COUNT = 6;
 
