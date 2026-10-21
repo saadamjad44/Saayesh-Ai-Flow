@@ -435,6 +435,47 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Info / Commercial",
     note: 'Rendered at 51 characters. Deliberately a category guide rather than a ranked list, for the same reason as the agents buying guide: no hands-on testing evidence. "AI automation for small business" is absent from the supporting list on purpose — that term belongs to the pillar, and claiming it here would put a cluster page in competition with its own hub.',
   },
+  /**
+   * Added 2026-10-21. A brand query, which is a different search surface from
+   * everything else in this cluster: the people typing it have already heard
+   * the product name and want to know what it does, what it costs and whether
+   * it is worth it. So the title leads on the brand plus the three things they
+   * came for, and the page is written to answer them rather than to rank for a
+   * category term it has no standing on.
+   */
+  "signatoro-email-signature-guide": {
+    title: "Signatoro Email Signature: Setup, Pricing & AI Agents",
+    brand: "omit",
+    primaryKeyword: "Signatoro email signature",
+    supportingKeywords: [
+      "Signatoro review",
+      "Signatoro Gmail setup",
+      "Signatoro Zapier integration",
+      "email signature for AI agents",
+      "AI email automation signature",
+      "automated email signature",
+      "professional email signature",
+    ],
+    intent: "Info / Commercial",
+    /**
+     * The snippet title is 53 characters, which is why the brand suffix is
+     * omitted: appending it would push the rendered title past the truncation
+     * point for the sake of a word Google already prints beside the result.
+     *
+     * "Signatoro review" stays a *supporting* keyword and never appears in the
+     * title, the <h1> or the description. The site has no hands-on testing
+     * evidence for this product, so labelling the page a review would be a
+     * claim it cannot support — see the testing rules in AGENTS.md. The page
+     * carries no ScoreTable for the same reason.
+     *
+     * "Professional email signature" is deliberately last and is not the
+     * target: that is a head term owned by signature-generator products, and a
+     * brand guide would be the wrong result for it. It is listed because the
+     * page genuinely explains what a professional signature contains, not
+     * because it is trying to win the query.
+     */
+    note: 'Brand query. Title 53 characters, so the brand suffix is omitted rather than truncated. "Signatoro review" is a supporting keyword only and must never reach the title, heading or description: the page is research-based with no hands-on testing, so it is written and labelled as a guide. Pricing is on the page with a checked date, which is what this query wants; the complimentary-plan offer is disclosed in the body and the two promotional links are marked sponsored at the point of use.',
+  },
   "ai-email-time-savings-calculator": {
     title: "AI Email Time Savings Calculator: Free ROI Tool",
     brand: "omit",

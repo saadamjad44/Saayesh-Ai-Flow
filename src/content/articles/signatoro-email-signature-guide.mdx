@@ -1,0 +1,517 @@
+---
+pageId: signatoro-email-signature-guide
+title: "Signatoro Email Signature Guide: Setup, Pricing & AI Automation"
+description: What Signatoro does, how to install a signature in Gmail, what the free and Company plans include, and how its API adds a real signature to AI drafts.
+publishedDate: 2026-10-21
+updatedDate: 2026-10-21
+testingStatus: research-based
+hasAffiliateLinks: false
+pricingVerifiedDate: 2026-10-21
+faq:
+  - question: What is Signatoro used for?
+    answer: Signatoro is a tool for building one email signature and reusing it everywhere. You enter your name, title, company and contact links once, pick a layout and colour, then copy the result into Gmail, Outlook, Apple Mail or another mail app. Its documentation also covers fetching the same saved signature over an API or an MCP server, so an AI assistant or an automation can sign a message with it.
+  - question: Is Signatoro free?
+    answer: There is a free plan at $0 for one person with one saved signature, five layouts, one accent colour, a photo or logo, and 50 API or MCP requests a month. Signatoro's pricing page states that free signatures carry a small "Get my signature" link and that a Company plan removes it. Company pricing starts at $9 a month for up to five people. Prices checked on 21 October 2026.
+  - question: Do I need Signatoro if Gmail already has a signature feature?
+    answer: No. Gmail's built-in signature is free, supports multiple signatures, lets you set separate defaults for new emails and replies, and allows up to 10,000 characters, according to Google's own help pages. Signatoro is useful when you want one consistent design across several mail apps, a team on a shared template, or a signature an AI step can fetch over an API. For one person using only Gmail, Gmail's own feature is usually enough.
+  - question: Can Signatoro write my emails for me?
+    answer: No. Signatoro stores and serves a signature; it does not read your mail, draft replies or decide what to send. In an AI workflow the drafting is done by a separate AI step, and Signatoro only supplies the signature block that gets attached to the result.
+  - question: How does the Signatoro API work?
+    answer: Signatoro documents a GET request to https://signatoro.com/api/v1/signature with an Authorization header carrying a Bearer API key. The documented response is JSON containing an html field with the signature markup, a text field for plain-text emails, and a sender object with the saved name, title, company and links. An automation fetches that html and places it after the message body.
+  - question: Does the Signatoro Zapier setup need a paid Zapier plan?
+    answer: It depends on the route. Signatoro's automation documentation says Gmail actions in Zapier can use Gmail's own signature default field, which needs no HTTP step. The API route uses Webhooks by Zapier, and Zapier's help pages list Webhooks by Zapier as unavailable on the Free plan and available on Professional, Team and Enterprise. Multi-step Zaps and AI by Zapier are also listed on paid plans.
+  - question: Will my signature appear twice in an automated reply?
+    answer: It can, and this is the most common mistake in these setups. If Gmail is already appending a default signature to replies and your automation also pastes a fetched signature into the body, the message goes out with two. Pick one source of the signature and switch the other off, then send yourself a test before turning the workflow on.
+---
+
+import {
+  Callout,
+  ComparisonTable,
+  ContentLink,
+  ProsCons,
+  PromptBlock,
+  Step,
+  Steps,
+  ToolCallout,
+  VerdictBox,
+} from "@/components/content";
+
+Most people type their own name at the bottom of an email and never think about it again. That works until the details start to matter: a client needs your phone number, a prospect wants to check that you are real, a teammate sends a quote carrying last year's job title, or an AI step drafts a reply and invents a signature that belongs to nobody. A signature is small, repetitive, and easy to get subtly wrong in a lot of places at once — which is exactly the kind of problem a tool can solve.
+
+Signatoro is one of the tools built for that job, and it has an unusual angle. As well as producing a signature you paste into a mail app, it can serve the same saved signature back over an API, so an automation or an AI assistant uses the real one instead of guessing. This guide explains what it does, how to set it up, what the plans include, and where the honest limits are.
+
+<Callout tone="note" heading="Editorial disclosure">
+  Signatoro offered Saayesh AI Flow a complimentary one-year Company Plan in connection with our
+  consideration of this tool. This guide is intended to provide an independent explanation of its
+  features and limitations. It is research-based: everything below comes from Signatoro's own
+  published documentation and pricing page, checked on 21 October 2026, and from the official
+  Zapier, Microsoft and Google documentation for the platforms involved. We have not run a hands-on
+  test of the product, and nothing here was approved or reviewed by the company.
+</Callout>
+
+<VerdictBox
+  bestFor="People who send from several mail apps, small teams that need one consistent signature, and anyone wiring a saved signature into an AI drafting workflow"
+  notFor="A single person who only uses Gmail and is happy with the signature Gmail already gives them for free"
+>
+  Signatoro is a signature builder with an API attached. The builder part is ordinary and does the
+  job; the API part is the reason it is worth a look, because it turns a signature into something a
+  Zap, an n8n workflow or an AI assistant can fetch rather than something you hardcode into a
+  prompt. It is not an AI email writer, and it does not reply to anything on its own.
+</VerdictBox>
+
+## What Signatoro is
+
+Signatoro is a web app for creating and storing email signatures. Its own positioning line is "One email signature for humans and AI agents," and that split describes the product accurately: one half is a signature editor with installation guides, the other half is a way for software to read the signature you saved.
+
+In the editor you fill in your details — name, title, company, phone, email, website, LinkedIn and extra links — then choose one of five layouts (Line, Mark, Portrait, Stack and Compact), an accent colour and a font, and upload a photo or a logo. It can send you a test email so you can see the result in a real inbox, and it warns about contrast problems in dark mode, which is where a lot of hand-built signatures fall apart.
+
+The output is not a plugin that lives inside your mail app. It is a block you copy — as formatted text, as HTML, or as plain text — and paste into whichever apps you send from. Signatoro publishes separate installation pages for a long list of them, including Gmail, the various versions of Outlook, Apple Mail, iCloud Mail, Yahoo Mail, Proton Mail, Zoho Mail, Fastmail, Thunderbird, HEY, Superhuman, Spark, and shared inboxes such as Front, Missive, Zendesk and Help Scout.
+
+## What an email signature is, and why it matters
+
+An email signature is the fixed block at the end of a message that identifies the sender. It is not the sign-off line itself — "Thanks" or "Best regards" is part of what you wrote — but the identity underneath it.
+
+Here is the same reply without one:
+
+```
+Hi Maria,
+
+Yes, we can take that on next week. I will send the quote tomorrow.
+
+Thanks
+Sam
+```
+
+And with one:
+
+```
+Hi Maria,
+
+Yes, we can take that on next week. I will send the quote tomorrow.
+
+Thanks
+Sam
+
+Sam Okonkwo
+Lead Joiner | Okonkwo Carpentry
++44 20 7946 0000 | okonkwocarpentry.example
+```
+
+Nothing about the message changed. What changed is that the recipient can now phone you, check that the business exists, and forward the thread to a colleague who has no idea who you are. For a freelancer or a small business, that is most of what a signature is for.
+
+The trade-off is restraint. A signature running to six lines, three social icons, a quotation and a legal disclaimer gets collapsed by mail clients and breaks on phones. Name, role, one phone number and one link is usually the whole job.
+
+## How Signatoro works
+
+The flow is short, and it is worth understanding before you decide whether the tool earns its place.
+
+<ComparisonTable
+  caption="How a Signatoro signature gets from the editor into a sent email"
+  rowHeader="Stage"
+  columns={["What happens", "Where it happens"]}
+  rows={[
+    {
+      label: "1. Build",
+      cells: [
+        "You enter your details and choose a layout, accent colour, font, photo and logo",
+        "The Signatoro signature page",
+      ],
+    },
+    {
+      label: "2. Save",
+      cells: [
+        "The signature is stored on your account as the one version everything else reads",
+        "Your Signatoro account",
+      ],
+    },
+    {
+      label: "3. Install",
+      cells: [
+        "You copy the signature and paste it into your mail app's signature settings",
+        "Gmail, Outlook, Apple Mail and the rest, one app at a time",
+      ],
+    },
+    {
+      label: "4. Serve (optional)",
+      cells: [
+        "An automation or AI assistant fetches the same saved signature over the API or MCP server",
+        "Zapier, n8n, Make, Power Automate, or a connected AI assistant",
+      ],
+    },
+    {
+      label: "5. Update",
+      cells: [
+        "Changing the saved signature changes what the API returns; pasted copies must be re-pasted",
+        "Signatoro for the stored version, each mail app for the pasted ones",
+      ],
+    },
+  ]}
+/>
+
+Step five is the one people miss. Installing into a mail app is a copy, not a live link, so a new job title means pasting again in every app. The API route is the opposite: it reads the stored signature at the moment it is called, so a workflow is always using the current one.
+
+## What Signatoro includes
+
+Beyond the editor itself, these are the features worth knowing about:
+
+- **Several export formats:** copy as formatted text, HTML or plain text, or download. PNG export is a Company plan feature.
+- **Per-app installation guides** for several dozen mail apps, shared inboxes and helpdesks.
+- **A Signature API** returning the saved signature as JSON from one documented GET endpoint.
+- **An MCP server** at `https://signatoro.com/mcp`, exposing `get_signature` and `list_signatures` to MCP-compatible AI clients, with setup pages for Claude, ChatGPT, Grok, Gemini and Copilot.
+- **AI assistant and agent signatures.** The free plan includes one AI assistant whose signature carries an AI disclosure line; Company plans add company agents by size, plus three AI assistants per person.
+- **Company branding and team management** on paid plans: one logo, layout, colour, font, review badge and booking button that every member's signature follows, with people invited by email and keeping their own name, title and photo.
+- **A compliance footnote** on every member's signature, listed from the "Up to 15" plan and larger, with footnote history on "Up to 50". Signatoro's own interface notes that this is not legal advice and that the wording is your responsibility.
+
+## How to create a professional email signature
+
+This sequence works whether you build the signature in Signatoro or by hand. The point is to decide the content before you start choosing fonts.
+
+<Steps>
+  <Step title="Write down only what a recipient needs">
+    Your name, your role, the business name, one phone number and one link. Add a booking link only
+    if you genuinely want strangers booking time with you.
+  </Step>
+  <Step title="Check your own job title and phone number">
+    The step that gets skipped, and the one that causes the embarrassment. Confirm the title you
+    want in writing, and a number you actually answer.
+  </Step>
+  <Step title="Build it in the editor">
+    Fill in the details, choose a layout, set the accent colour and font, and upload a photo or a
+    logo — not usually both, unless the layout is designed for it.
+  </Step>
+  <Step title="Keep the image small">
+    Google's Gmail documentation gives a maximum signature image size of 100 pixels high by 1,000
+    wide and says images must be at a public web address to display. An oversized logo is the most
+    common reason a signature looks broken on someone else's screen.
+  </Step>
+  <Step title="Send yourself a test and read it on a phone">
+    Use the test-email feature, then open the result on your phone and in dark mode. Check that the
+    text is legible, the logo is not enormous, and the links work.
+  </Step>
+  <Step title="Install it in every app you send from">
+    Paste it into each mail app's signature settings, including the mobile app if you reply from
+    your phone, and set it as the default for both new emails and replies.
+  </Step>
+  <Step title="Decide where the signature lives for automations">
+    If an AI step will also be drafting mail for you, decide now whether the signature comes from
+    the mail app or from an API call — and make sure it is only one of the two.
+  </Step>
+</Steps>
+
+If you write and send your Gmail replies by hand, you can stop at step six. Everything below is for people whose drafts are produced by something other than themselves.
+
+## How to use Signatoro with Gmail
+
+Signatoro's Gmail page documents the standard Gmail route, which is a paste into Gmail's own settings:
+
+1. In Gmail, click the **Settings** gear at the top right, then **See all settings**.
+2. On the **General** tab, scroll to **Signature** and click **Create new**, type a name for it, and click **Create**.
+3. Paste the signature into the box on the right, as formatted text, exactly as "Copy signature" copied it.
+4. In the **signature defaults**, choose the new signature for new emails _and_ for replies.
+5. Click **Save changes** at the bottom of the page.
+
+The limitations here are Gmail's, not Signatoro's, and they are worth knowing before you blame the tool:
+
+- **Gmail's own cap is 10,000 characters.** A normal signature is nowhere near it.
+- **Images need a public web address.** Signatoro's documentation notes that Google Drive images only work if they are shared publicly.
+- **Gmail may hide the signature behind the three dots in a thread,** so a signature is not a reliable place to put something the reader must see.
+- **The Gmail mobile app has its own signature setting.** Signatoro's guidance is to leave the mobile signature empty so the desktop one is used and the formatting survives.
+
+<Callout tone="note" heading="Gmail already does this for free">
+  Gmail has a built-in signature feature at no extra cost, and Google's help pages document multiple
+  signatures, separate defaults for new mail and replies, a different signature per "send mail as"
+  address, and the 10,000-character allowance. If you use only Gmail, need only one signature, and
+  are happy maintaining it yourself, Signatoro is optional. It starts to pay off when there are
+  several mail apps, several people, or an automation that needs to read the signature
+  programmatically.
+</Callout>
+
+## Signatoro for AI agents and automation
+
+Here is the problem the API is aimed at. In an AI drafting workflow the AI step writes the body of a reply, and then that reply has to be signed. Asking the model to sign it means asking it to produce contact details, which it will sometimes invent. Hardcoding your signature into the prompt instead works until a detail changes, and then you are editing prompts inside automations you had forgotten you built, on every platform, one at a time.
+
+The fix is to keep the two jobs apart: the AI writes the words, and something else supplies the signature. There are four places that something else can be.
+
+<ComparisonTable
+  caption="Where the signature comes from in an AI drafting workflow"
+  rowHeader="Approach"
+  columns={["How it works", "What goes wrong"]}
+  rows={[
+    {
+      label: "The AI invents it",
+      cells: [
+        "The AI step writes a closing block along with the message",
+        "Fabricated phone numbers, wrong titles, different wording every run",
+      ],
+    },
+    {
+      label: "Hardcoded in the prompt",
+      cells: [
+        "Your signature is pasted into the AI step's instructions",
+        "Every change means editing every prompt in every workflow",
+      ],
+    },
+    {
+      label: "The mail app's default",
+      cells: [
+        "Gmail or Outlook appends its own saved signature to the draft",
+        "Nothing, if the draft is created in that mail app — this is the simplest route",
+      ],
+    },
+    {
+      label: "Fetched from an API",
+      cells: [
+        "A step calls Signatoro and the workflow appends the returned HTML",
+        "One more step, one more credential, and a paid plan on some platforms",
+      ],
+    },
+  ]}
+/>
+
+### The documented API
+
+Signatoro documents a single endpoint for fetching a signature:
+
+```http
+GET https://signatoro.com/api/v1/signature
+Authorization: Bearer YOUR_API_KEY
+```
+
+Two optional query parameters are documented: `mode`, which takes `full` (the default) or `short` for a cut-down cold-outreach version, and `signature`, which defaults to `me` and otherwise takes an agent id or name. A second endpoint, `GET /api/v1/signatures`, lists the signatures a key can read.
+
+The documented success response is JSON:
+
+```json
+{
+  "html": "<table>...</table>",
+  "text": "Sam Okonkwo\nLead Joiner\n...",
+  "sender": {
+    "name": "...",
+    "title": "...",
+    "company": "...",
+    "email": "...",
+    "phone": { "display": "...", "e164": "..." },
+    "website": "...",
+    "linkedin": "...",
+    "bookingUrl": "..."
+  },
+  "signature": { "kind": "me", "name": "..." },
+  "mode": "full",
+  "tier": "...",
+  "usage": "..."
+}
+```
+
+For an email workflow, `html` is the field you want: it is the signature markup, ready to go after an HTML message body. Use `text` when the workflow sends plain text, and `sender` when you need the individual fields rather than the rendered block.
+
+The documented errors are worth handling rather than ignoring: `401 invalid_api_key`, `404 no_signature` when nobody has saved one, `403 identity_unavailable`, and `429 quota_exceeded`. That last one matters most in practice — free accounts get 50 API or MCP requests a month and paid plans are unlimited, so a live workflow on a free key will start failing partway through the month.
+
+<Callout tone="warning" heading="Keep the key out of your prompts">
+  The API key is generated once on your signature page, under "For tools and assistants", and
+  Signatoro's documentation says the page shows it only once and that it should be stored in
+  environment variables and kept out of prompts and logs. Put it in your automation platform's
+  credential or secret store — never in the text of an AI step, a shared document, or a committed
+  file.
+</Callout>
+
+## Signatoro with Zapier, step by step
+
+A practical scenario: a labelled email arrives in Gmail, an AI step drafts a reply, and the reply waits in your drafts with your real signature on it, for you to read and send. This is the level-two "automatic drafts" setup from our guide to [automating email responses with AI](/ai-automation/how-to-automate-email-with-ai/) — a person still presses send.
+
+There are two ways to get the signature onto that draft, and Signatoro's automation documentation is explicit that for Gmail the simpler one is usually right.
+
+### Route A: Gmail's own signature default
+
+For Gmail actions in Zapier, Signatoro's automation documentation says to use the Gmail action's **Add signature default** field and select the signature you saved in Gmail. No HTTP request, no API key, and nothing extra to pay for. If you draft from one Gmail account, start here.
+
+### Route B: fetch the signature over the API
+
+The API route is the one Signatoro documents for Outlook in Zapier, and it is what you want when the signature has to come from a central store rather than one mailbox's settings — several senders, several platforms, or signatures managed on behalf of a team.
+
+<Steps>
+  <Step title="Trigger: New Labeled Email">
+    In Zapier, create a Zap with Gmail as the trigger app and **New Labeled Email** as the event,
+    pointing at a label such as "AI draft" that you apply with a Gmail filter or by hand. Test it
+    against a real recent email.
+  </Step>
+  <Step title="Draft the reply with an AI step">
+    Add an **AI by Zapier** step and map the sender name, subject and body into it. Give it your
+    approved answers, and tell it explicitly not to write a signature — see the instruction below.
+  </Step>
+  <Step title="Filter out anything that should not get a draft">
+    Add a **Filter** step that only continues if the AI output does not contain `ESCALATE`.
+    Complaints, refunds and legal questions should reach you unanswered, not pre-drafted.
+  </Step>
+  <Step title="Fetch the signature with Webhooks by Zapier">
+    Add a **Webhooks by Zapier** action with the **GET** event. Set the URL to
+    `https://signatoro.com/api/v1/signature` and add a header with the key `Authorization` and the
+    value `Bearer YOUR_API_KEY`, taken from your credential store. Test the step and confirm the
+    response contains an `html` field.
+  </Step>
+  <Step title="Create the draft reply">
+    Add a **Gmail** action with the **Create Draft Reply** event, mapped to the original thread. In
+    the body, map the AI step's output first and the webhook step's `html` field after it, so the
+    signature lands at the bottom of the message. Make sure the action is set to send HTML.
+  </Step>
+  <Step title="Switch off the second signature">
+    If this route is appending the fetched signature, the Gmail action must not also be adding a
+    signature default, or the draft will carry two. Pick one source and disable the other.
+  </Step>
+  <Step title="Test on real past emails, then turn it on">
+    Run it against several real messages, including an awkward one and one that should escalate, and
+    read every draft. Then turn the Zap on and check its run history and your drafts daily for the
+    first couple of weeks.
+  </Step>
+</Steps>
+
+The AI step's instructions are where the signature problem is actually solved. Tell the model to write the message and stop:
+
+<PromptBlock
+  label="Closing instruction for the AI drafting step"
+  note="This is the line that stops the AI inventing contact details. The signature is attached by a later step, not by the model."
+  prompt={`End with a short professional closing line, but do not generate a name, contact details, or email signature. The signature will be added separately.`}
+/>
+
+<Callout tone="warning" heading="Check the plan requirements before you build">
+  Zapier's help pages list Webhooks by Zapier as unavailable on the Free plan and available on
+  Professional, Team and Enterprise, and multi-step Zaps and AI by Zapier are also listed on paid
+  plans — so Route B is a paid-plan workflow on Zapier whichever signature tool you use. Route A
+  needs neither the webhook step nor an API key. Check the current plan pages before you commit,
+  because plan contents change.
+</Callout>
+
+This walkthrough is an illustrative setup assembled from Signatoro's published automation documentation and Zapier's own documentation for the Gmail and Webhooks steps. We have not built or tested this Zap, and field names in Zapier's editor change from time to time.
+
+The same pattern is documented for the other platforms: in n8n, an HTTP Request node with a Bearer Auth credential before the Gmail node, with the node set to HTML and `html` mapped after the body; in Make, an HTTP "Make a request" module with "Parse response" set to Yes, mapping `html` into the Gmail module's signature content field; and in Power Automate, an HTTP action before **Send an email (V2)** with the expression `body('HTTP')?['html']` after your message. Microsoft's HTTP action is a premium connector, so that last route needs a Power Automate Premium licence for the user, or a Process licence assigned to the flow.
+
+<ToolCallout tool="ai-email-time-savings-calculator" label="AI Email Time Savings & ROI Calculator">
+  A drafting workflow like this still needs you to read every draft, and that review time is the
+  part people forget to count. Put in your own email volume, reply time and review time, and the
+  calculator estimates the hours it actually saves and the volume at which it covers the software.
+</ToolCallout>
+
+## Free plan vs Company plan
+
+Prices and features below come from <ContentLink href="https://signatoro.com/pricing" kind="sponsored">Signatoro's pricing page</ContentLink>, checked on 21 October 2026, in US dollars. Plan contents change, so check the page before you buy.
+
+<ComparisonTable
+  caption="Signatoro Free vs Company plan (USD, list prices checked 21 October 2026)"
+  rowHeader="What you get"
+  columns={["Free", "Company"]}
+  rows={[
+    {
+      label: "Price",
+      cells: [
+        "$0",
+        "$9/month up to 5 people, $19/month up to 15, $49/month up to 50, plus $1.50/month per extra member; over 50 people, by arrangement",
+      ],
+    },
+    {
+      label: "People",
+      cells: ["One person", "Priced by company size, with a five-person minimum at the $9 tier"],
+    },
+    {
+      label: "Saved signatures",
+      cells: [
+        "One",
+        "One per person, invited by email, each keeping their own name, title and photo",
+      ],
+    },
+    {
+      label: "API and MCP access",
+      cells: ["Yes, 50 requests a month", "Unlimited requests, for everyone on the plan"],
+    },
+    {
+      label: "AI assistants and agents",
+      cells: [
+        "1 AI assistant, signing with an AI disclosure line",
+        "3, 10 or 25 company AI agents depending on size, plus 3 AI assistants per person",
+      ],
+    },
+    {
+      label: "Design control",
+      cells: [
+        "Five layouts, one accent colour, a photo or logo",
+        "One company logo, layout, colour, font, review badge and booking button that every signature follows",
+      ],
+    },
+    {
+      label: 'The "Get my signature" link',
+      cells: ["Present on free signatures", "Removed, for everyone on the plan"],
+    },
+    {
+      label: "Export formats",
+      cells: [
+        "Copy, copy as HTML or text, download, or send yourself a test",
+        "The same, plus PNG export",
+      ],
+    },
+    {
+      label: "Compliance footnote",
+      cells: [
+        "Not included",
+        'Listed from the "Up to 15" plan and larger, with footnote history on "Up to 50"',
+      ],
+    },
+  ]}
+/>
+
+The practical reading: the free plan is a genuine free tier rather than a trial, and it is enough for one person who wants a tidy signature and the occasional API call. Two things push you towards paying — the 50-request monthly allowance, which a live automation will exhaust, and the "Get my signature" link on free signatures, which most businesses will not want on outbound mail.
+
+## Advantages and limitations
+
+<ProsCons
+  subject="Signatoro, from its documentation and pricing pages"
+  pros={[
+    "One saved signature that an API, an MCP server or a person can all read",
+    "A documented GET endpoint with clear error codes, so failures can be handled rather than guessed at",
+    "Installation guides for several dozen mail apps, shared inboxes and helpdesks",
+    "A real free tier that includes API access, rather than a time-limited trial",
+    "Company plans priced by company band rather than strictly per seat, which suits small teams",
+    "AI assistant signatures carry a disclosure line, which is the honest default for agent-sent mail",
+  ]}
+  cons={[
+    "Not an AI email writer: it writes nothing and sends nothing on its own",
+    "Installing into a mail app is a paste, so a changed detail means re-pasting everywhere",
+    "The free plan's 50 API requests a month will not carry a live automation",
+    "Free signatures carry a vendor link until you pay",
+    "The API route needs a paid plan on Zapier and a premium licence on Power Automate",
+    "Gmail-only users already have a free built-in signature covering most of the same ground",
+  ]}
+/>
+
+One limitation is worth stating plainly, because the "for AI agents" framing can be read the wrong way: **Signatoro does not automate replies.** It has no view of your inbox, makes no decisions, and writes no text. In every workflow above, something else does the drafting and something else does the sending. Signatoro supplies one block of HTML when it is asked for it.
+
+## Who Signatoro suits
+
+- **Freelancers and solo operators:** useful if you send from more than one app — a desktop client, webmail and a phone — and want them to match. If you live in Gmail alone, Gmail's free signature is probably enough.
+- **Small businesses and teams:** the clearest case. A shared logo, layout, colour and footnote that every signature follows, with each person keeping their own name and photo, is genuinely tedious to maintain by hand, and the Company tiers are priced for small headcounts.
+- **AI automation builders:** the reason to look at this rather than a generic signature generator. If you have ever hardcoded a signature into a prompt, one endpoint returning the current one is the right shape of fix.
+- **Anyone sending mail from an AI assistant or agent:** the disclosure line on assistant signatures is a sensible default, and increasingly something you will want to be able to show you did.
+
+It is not for you if you want software that answers your email. That is a different category — see our guide to [automating email responses with AI](/ai-automation/how-to-automate-email-with-ai/) and the workflows in [Zapier AI automation examples](/ai-automation/zapier-ai-automation-examples/).
+
+## Alternatives to Signatoro
+
+- **Your mail app's built-in signature.** Gmail, Outlook and Apple Mail all include one at no extra cost, and Google's help pages document multiple Gmail signatures, separate defaults for new mail and replies, and a per-address signature for "send mail as". For one person in one app, this is the right answer and costs nothing.
+- **Hardcoding the signature in your automation.** Pasting it into a Zapier step or an n8n node is free and fine for one workflow you rarely touch. It becomes a maintenance problem once there are several.
+- **Storing the signature in your own data source.** A row in Airtable, Zapier Tables or a Google Sheet, fetched by the workflow, gives you the same "one place to change it" benefit without a new subscription — but you maintain the HTML yourself, and getting signature HTML to render identically across mail clients is the part people underestimate.
+- **Dedicated team signature managers.** Enterprise products apply signatures server-side at the mail gateway, covering every device without anybody pasting anything. They are generally aimed at larger organisations and priced accordingly; check their current pricing directly, since we have not compared them here.
+
+We are not claiming Signatoro is better or worse than any of these. They solve overlapping problems at different prices, and which fits depends on how many mail apps, people and automations you are actually dealing with.
+
+## Final verdict
+
+Signatoro does a narrow job and is reasonably clear about it. The editor is unremarkable in a good way: a clean block, a dark-mode warning, and instructions for installing it in whatever you use. What distinguishes it is the API — a documented GET request returning your current signature as HTML, plus an MCP server for AI clients — which is a sensible answer to a problem AI email workflows really do have.
+
+If you are one person using one mail app, Gmail's free signature already covers you and you can stop here. If you run a small team, or you build AI drafting workflows, the free plan costs nothing to try and the Company tiers are priced at small-business scale. Start free, use Route A if your drafts are created in Gmail, and reach for the API and a paid plan only when the request allowance or the team demands it. What it will not do is answer your email: keep a person reading every draft before it goes out.
+
+Product pages: <ContentLink href="https://signatoro.com/" kind="sponsored">Signatoro</ContentLink> and its <ContentLink href="https://signatoro.com/pricing" kind="sponsored">pricing page</ContentLink>. Technical references used for this guide: the [Signature API documentation](https://signatoro.com/docs/install-signature/agent), the [Zapier, n8n and Make automation setup guide](https://signatoro.com/docs/install-signature/agent/automations), the [Power Automate guide](https://signatoro.com/docs/install-signature/agent/power-automate), and the [OpenAPI specification](https://signatoro.com/openapi.json).
+
+## Related guides
+
+- The full tutorial this workflow belongs to: [how to automate email responses with AI](/ai-automation/how-to-automate-email-with-ai/), covering Gmail with Zapier, Outlook with Power Automate, and dedicated AI email tools.
+- Eight more workflows built on the same platform, in [Zapier AI automation examples](/ai-automation/zapier-ai-automation-examples/).
+- Where email drafting sits among the other jobs worth automating when you work alone: [best AI workflows for solopreneurs](/ai-automation/best-ai-workflows-for-solopreneurs/).
+- Whether the drafting workflow saves enough time to be worth running: our free [AI email time savings calculator](/ai-automation/ai-email-time-savings-calculator/).
+- For the fundamentals and choosing a platform, start with our [AI automation and workflows guide](/ai-automation/).

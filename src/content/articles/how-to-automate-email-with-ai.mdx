@@ -3,7 +3,7 @@ pageId: how-to-automate-email-with-ai
 title: How to Automate Email Responses With AI
 description: How to automate email responses with AI using Gmail and Zapier, Outlook and Power Automate, or dedicated AI email tools - with steps and safety checks.
 publishedDate: 2026-09-15
-updatedDate: 2026-10-06
+updatedDate: 2026-10-21
 testingStatus: research-based
 hasAffiliateLinks: true
 pricingVerifiedDate: 2026-09-15
@@ -20,7 +20,13 @@ faq:
     answer: Yes, for drafting help inside Gmail. Google's pricing page lists the Gemini AI assistant in Gmail on Google Workspace Business Starter and higher plans, and Google's help pages describe drafting and refining emails with Gemini. Built-in assistants help you write replies; an automation platform is what lets replies be drafted automatically as emails arrive.
 ---
 
-import { ComparisonTable, PromptBlock, ToolCallout } from "@/components/content";
+import {
+  Callout,
+  ComparisonTable,
+  ContentLink,
+  PromptBlock,
+  ToolCallout,
+} from "@/components/content";
 
 Answering the same kinds of emails every day is one of the easiest places for AI to help a small business. Pricing questions, booking requests, and "did you receive my order?" messages follow patterns that AI can draft replies for. This tutorial covers three practical methods: **Gmail with Zapier**, **Outlook with Power Automate**, and **dedicated AI email tools**. It also covers the safety checks that stop automated replies from embarrassing you.
 
@@ -160,6 +166,49 @@ Add a **Gmail** action with the **Create Draft Reply** event. Map the original e
 
 Test with several real past emails, including an unusual one and one that should be escalated. Turn the Zap on, then check its run history and your drafts daily for the first weeks.
 
+### Optional: add your real email signature to AI-generated replies
+
+The instructions above end with "Sign off as [your name]", which is the simplest thing that works and also the weakest part of the setup. A name written into an AI prompt is a copy of your details frozen at the moment you typed it. Change your job title, your phone number, or your business name, and you now have to remember every prompt in every automation that contains the old one. Worse, if you ask the AI step for a full signature rather than just a name, it will sometimes invent the parts you did not give it — a plausible phone number, a title you have never held.
+
+The fix is to separate the two jobs. The AI step writes the message; something else supplies the signature. Tell the model not to produce one at all:
+
+<PromptBlock
+  label="Signature instruction for the AI step"
+  note="Add this to the instructions in Step 3, in place of a 'Sign off as [your name]' line, when the signature will be attached by a later step or by Gmail itself."
+  prompt={`End with a short professional closing line, but do not generate a name, contact details, or email signature. The signature will be added separately.`}
+/>
+
+That leaves two ways to get the real signature onto the draft.
+
+**The simple way: let Gmail do it.** Gmail has a free built-in signature. Set it up in Settings, then **See all settings**, then **Signature** on the General tab, and choose it as the default for replies as well as new emails. Google's help pages document multiple signatures, separate defaults for new mail and replies, and up to 10,000 characters. Because the draft is created inside Gmail, Gmail appends it for you and the automation needs no extra step. For most people drafting from one Gmail account, stop here.
+
+**The central way: fetch the signature over an API.** This is worth the extra step when the signature has to come from one managed place rather than one mailbox's settings — several senders, several platforms, or a team whose signatures you maintain. A signature tool with an API makes that possible: the workflow adds a **Webhooks by Zapier** GET step that fetches the current signature as HTML, and you map that HTML into the **Create Draft Reply** body after the AI step's output.
+
+<Callout tone="note" heading="Editorial disclosure">
+  The tool we use to illustrate this below is Signatoro, which offered Saayesh AI Flow a
+  complimentary one-year Company Plan in connection with our consideration of it. Our [Signatoro
+  email signature guide](/ai-automation/signatoro-email-signature-guide/) explains the product's
+  features, plans and limits independently, and we have not tested it hands-on. It is one option,
+  not a requirement — the Gmail route above is free and needs no extra software.
+</Callout>
+
+<ContentLink href="https://signatoro.com/" kind="sponsored">
+  Signatoro
+</ContentLink>
+stores one signature per person and documents a `GET` request to
+`https://signatoro.com/api/v1/signature`, authenticated with an `Authorization: Bearer YOUR_API_KEY`
+header, which returns JSON containing an `html` field with the signature markup. Its [automation
+setup documentation](https://signatoro.com/docs/install-signature/agent/automations) covers Zapier,
+n8n and Make, and notably says that for Gmail actions in Zapier you should use Gmail's own **Add
+signature default** field rather than the API — the API route is the one it documents for Outlook
+and for the other platforms. Keep the API key in Zapier's credential store, never in the text of an
+AI step.
+
+Two things to watch whichever route you choose:
+
+- **Never two signatures.** If Gmail is appending a default signature to replies _and_ your automation is pasting a fetched one into the body, every draft goes out signed twice. Pick one source and switch the other off, then send yourself a test.
+- **Webhooks need a paid Zapier plan.** Zapier's help pages list Webhooks by Zapier as unavailable on the Free plan and available on Professional, Team and Enterprise — the same tiers this method already needs for multi-step Zaps and AI by Zapier.
+
 For more Gmail-based workflows, including email triage, see examples 1 and 3 in our [Zapier AI automation examples](/ai-automation/zapier-ai-automation-examples/).
 
 ## Method 2: Outlook and Power Automate
@@ -270,5 +319,6 @@ Keep a human review for pricing negotiations, complaints, refunds, legal, medica
 
 - Weighing up whether the setup is worth it? Our free [AI email time savings calculator](/ai-automation/ai-email-time-savings-calculator/) estimates the hours a drafting workflow saves after review time, and the volume at which it pays for the software.
 - Email is workflow 1 in our [best AI workflows for solopreneurs](/ai-automation/best-ai-workflows-for-solopreneurs/), which shows how it fits with scheduling, invoicing, and support.
+- Want the drafted reply to carry your real contact details rather than a name typed into a prompt? Our [Signatoro email signature guide](/ai-automation/signatoro-email-signature-guide/) covers the setup, the plans, and the free Gmail alternative.
 - For other tools that can plug into your email workflow, see the [best AI tools for small business](/ai-business-tools/best-ai-tools-for-small-business/).
 - For the fundamentals of automation and choosing a platform, start with our [AI automation and workflows guide](/ai-automation/).

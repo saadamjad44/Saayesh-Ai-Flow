@@ -91,7 +91,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 8,
+  3: 9,
 };
 
 export const PAGES = [
@@ -539,6 +539,33 @@ export const PAGES = [
     id: "best-ai-automation-tools",
     title: "Best AI Automation Tools: How to Choose by Category",
     path: "/ai-automation/best-ai-automation-tools/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-automation",
+  },
+
+  /**
+   * Phase 3 — the automation cluster's first single-product guide, approved
+   * 2026-10-21.
+   *
+   * It sits under /ai-automation/ rather than in a /reviews/ hub because it is
+   * not a review: there is no hands-on testing evidence, so it carries no
+   * scores. What it is is the missing piece of the cluster's email tutorial —
+   * that guide tells a reader to have an AI step draft a reply, and then has
+   * nowhere to send them when they ask how the reply gets signed with their
+   * real details instead of invented ones. This page answers that, and the
+   * product it names is the one with a documented API for it.
+   *
+   * The vendor offered the site a complimentary Company Plan in connection
+   * with editorial consideration, which is disclosed on the page itself and is
+   * why its promotional links are marked `sponsored` at the point of use (see
+   * ContentLink and src/lib/links.ts). It is not an affiliate page and must not
+   * claim to be: `hasAffiliateLinks` is false in its frontmatter.
+   */
+  {
+    id: "signatoro-email-signature-guide",
+    title: "Signatoro Email Signature Guide: Setup, Pricing & AI Automation",
+    path: "/ai-automation/signatoro-email-signature-guide/",
     type: "article",
     phase: 3,
     pillar: "ai-automation",
