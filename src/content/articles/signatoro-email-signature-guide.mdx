@@ -3,7 +3,7 @@ pageId: signatoro-email-signature-guide
 title: "Signatoro Email Signature Guide: Setup, Pricing & AI Automation"
 description: What Signatoro does, how to install a signature in Gmail, what the free and Company plans include, and how its API adds a real signature to AI drafts.
 publishedDate: 2026-10-21
-updatedDate: 2026-10-21
+updatedDate: 2026-10-22
 testingStatus: research-based
 hasAffiliateLinks: false
 pricingVerifiedDate: 2026-10-21
@@ -150,6 +150,20 @@ The flow is short, and it is worth understanding before you decide whether the t
 
 Step five is the one people miss. Installing into a mail app is a copy, not a live link, so a new job title means pasting again in every app. The API route is the opposite: it reads the stored signature at the moment it is called, so a workflow is always using the current one.
 
+### Updating a signature without re-pasting it
+
+Not every route is a re-paste, though, and the exceptions are worth knowing before you resign yourself to the work.
+
+Take the ordinary case: a business changes its logo, tidies up its website address or moves to a new phone number. Done by hand, that is one redesign multiplied by every person and every mail app they send from. Signatoro's answer on a Company plan is to hold the branding centrally — its pricing page describes one logo, layout, colour, font, review badge and booking button that every signature follows, and says "Change it once and everyone gets the new signature by email." The owner edits the brand once, and each member is sent their updated signature rather than being asked to rebuild it.
+
+What that email does not do is install itself. One mail app is documented as an exception: Signatoro's Zoho Mail guide has you click "Install into my Zoho Mail" on your signature page and approve access, after which it says "every change reaches Zoho Mail by itself" — your own edits, and on a Company plan the logo, colour, font or details the company changes. Gmail's guide, by contrast, is a copy and a paste, with nothing that propagates a later change.
+
+So there are three different behaviours here, and it is worth knowing which one you are in:
+
+- **Connected install (Zoho Mail):** updates arrive on their own once the account is connected.
+- **Pasted install (Gmail, Outlook, Apple Mail and the rest):** the new signature reaches the person, but someone still has to paste it into each app, including the phone.
+- **API and MCP:** nothing to update at all, because the call reads the stored signature at the moment it runs.
+
 ## What Signatoro includes
 
 Beyond the editor itself, these are the features worth knowing about:
@@ -157,7 +171,7 @@ Beyond the editor itself, these are the features worth knowing about:
 - **Several export formats:** copy as formatted text, HTML or plain text, or download. PNG export is a Company plan feature.
 - **Per-app installation guides** for several dozen mail apps, shared inboxes and helpdesks.
 - **A Signature API** returning the saved signature as JSON from one documented GET endpoint.
-- **An MCP server** at `https://signatoro.com/mcp`, exposing `get_signature` and `list_signatures` to MCP-compatible AI clients, with setup pages for Claude, ChatGPT, Grok, Gemini and Copilot.
+- **An MCP server** at `https://signatoro.com/mcp`, exposing tools that create, fetch, update and install a signature from MCP-compatible AI clients, with setup pages for Claude, ChatGPT, Grok, Gemini and Copilot.
 - **AI assistant and agent signatures.** The free plan includes one AI assistant whose signature carries an AI disclosure line; Company plans add company agents by size, plus three AI assistants per person.
 - **Company branding and team management** on paid plans: one logo, layout, colour, font, review badge and booking button that every member's signature follows, with people invited by email and keeping their own name, title and photo.
 - **A compliance footnote** on every member's signature, listed from the "Up to 15" plan and larger, with footnote history on "Up to 50". Signatoro's own interface notes that this is not legal advice and that the wording is your responsibility.
@@ -268,6 +282,28 @@ The fix is to keep the two jobs apart: the AI writes the words, and something el
   ]}
 />
 
+### Why missing email signatures can create compliance risks
+
+For most senders a missing signature is an inconvenience: the recipient cannot phone you back. For some organisations it is more than that, because the signature block is where a required piece of wording lives. A law firm's confidentiality notice, a regulated adviser's disclosure, a UK company's registered details — if the signature is the only place those appear, a message sent without the signature is sent without them too. That is the failure mode an automated workflow makes easy, because the email still reads perfectly well and nobody notices what is absent.
+
+What is actually required depends on who you are and where you are. Three published examples give a sense of the range:
+
+- **UK companies.** UK government guidance on a limited company's [signs, stationery and promotional material](https://www.gov.uk/running-a-limited-company/signs-stationery-and-promotional-material) says business letters, order forms and websites must show the company's registered number, its registered office address, where the company is registered, and the fact that it is a limited company. That is why so many UK business emails carry those details underneath the name.
+- **Organisations running AI agents in the EU.** Article 50(1) of the [EU AI Act](https://artificialintelligenceact.eu/article/50/) requires providers to design AI systems intended to interact directly with people so that those people are informed they are interacting with an AI system — unless that is already obvious to a reasonably well-informed person in the context.
+- **Regulated and professional services.** Law firms, financial advisers and healthcare organisations commonly add confidentiality or regulatory wording set by their own professional obligations rather than by any single statute.
+
+Signatoro's feature for this is a company-wide compliance footnote: one line a company owner sets that appears on every member's signature. It is not on every paid tier — its pricing page lists the footnote from the "Up to 15" plan upwards, at $19 a month, with footnote history on "Up to 50". Its <ContentLink href="https://signatoro.com/email-signature-compliance" kind="sponsored">email signature compliance page</ContentLink> offers starting templates by industry — law firms, real estate, healthcare, education, financial services, accounting, construction and others — and by jurisdiction, covering UK company requirements, the EU AI Act, and US rules including CAN-SPAM, FINRA and HIPAA.
+
+<Callout tone="warning" heading="A footer is not compliance">
+  Putting a line at the bottom of an email does not make you compliant with anything. What applies
+  to you depends on your jurisdiction, your industry and the type of message, and most real
+  obligations — supervision, record-keeping, consent, disclosures made elsewhere in the
+  communication — cannot be satisfied by a footer at all. Signatoro says the same on its own
+  compliance page: it is "for general educational purposes", "not legal advice", and readers should
+  "consult qualified counsel for your situation". Nothing in this guide is legal advice either.
+  Treat a template as a starting point to take to someone qualified, not as an answer.
+</Callout>
+
 ### The documented API
 
 Signatoro documents a single endpoint for fetching a signature:
@@ -313,6 +349,99 @@ The documented errors are worth handling rather than ignoring: `401 invalid_api_
   credential or secret store — never in the text of an AI step, a shared document, or a committed
   file.
 </Callout>
+
+### What the MCP server can do
+
+The MCP server at `https://signatoro.com/mcp` reaches the same stored signature a different way. Instead of an automation making an HTTP request, an AI client connects to the server and calls named tools. Signatoro's [MCP documentation](https://signatoro.com/docs/install-signature/agent/mcp) lists rather more than fetching:
+
+<ComparisonTable
+  caption="Tools documented on Signatoro's MCP server"
+  rowHeader="Tool"
+  columns={["What it does", "Needs a connected account"]}
+  rows={[
+    {
+      label: "create_signature",
+      cells: [
+        "Builds a signature from a name plus optional title, company, phone, email, website, LinkedIn, layout and colour",
+        "No",
+      ],
+    },
+    {
+      label: "list_templates",
+      cells: ["Lists the layouts, with what each one shows and when it fits", "No"],
+    },
+    {
+      label: "get_install_steps",
+      cells: [
+        "Returns the install steps from Signatoro's guide for a named mail app, such as `gmail`, `outlook-new` or `apple-mail`",
+        "No",
+      ],
+    },
+    {
+      label: "get_signature",
+      cells: ["Returns your saved signature, for the assistant to append to an email", "Yes"],
+    },
+    {
+      label: "list_signatures",
+      cells: [
+        "Lists what the connection can sign as: your own signature (`me`) and your AI assistants'",
+        "Yes",
+      ],
+    },
+    {
+      label: "update_my_signature",
+      cells: [
+        "Changes the fields you name in your saved signature, or creates it if you have none yet",
+        "Yes",
+      ],
+    },
+    {
+      label: "Member management",
+      cells: [
+        "`list_members`, `add_member`, `update_member_field`, `remove_member` and `resend_invite`, for company owners",
+        "Yes",
+      ],
+    },
+  ]}
+/>
+
+Two things are easy to misread here. The first is what `create_signature` does: it generates a signature without an account, but that does not put one in an account. Signatoro's documentation says "Nothing is saved until you do," and that the link it hands back works for seven days — so a signature built in a chat is a draft you still have to claim. The second is scope. Connecting this server does not give the assistant your mailbox: the tools read and write signature data on Signatoro, and none of them opens, reads or sends email.
+
+Signatoro is also listed in Claude's in-app connector catalogue, in the communication category, where it carries the Community badge — published in the catalogue by Anthropic but built by a third party, and not vetted the way curated directory entries are. Anthropic's support documentation describes adding a connector from **Customize → Connectors** in settings, or from the **+** button in a chat and then Connectors. For Claude Code, Signatoro's own documentation gives `claude mcp add --transport http signatoro https://signatoro.com/mcp`. Connector interfaces move around, so check both sets of documentation rather than following a screenshot.
+
+### Branded email signatures for company AI agents
+
+When the sender is an agent rather than a person, whose name goes at the bottom becomes an awkward question. Signing as a colleague who did not write the message is misleading; signing as nobody leaves the recipient with no idea who they are dealing with. Signatoro's answer is to give the agent an identity of its own.
+
+On a Company plan, an owner adds agents under "AI agents" in the company menu, either for the whole company or for one person. Each agent gets its own name and role line, and inherits the company's shared details — the API's `sender` object carries a `companyControlled` field listing the fields the owner sets for everyone, such as the company name, website and booking link. The result looks like the rest of the company's mail, without pretending to be a member of staff.
+
+<ComparisonTable
+  caption="Illustrative agent identities — examples, not agents Saayesh AI Flow runs"
+  rowHeader="AI agent"
+  columns={["Example role"]}
+  rows={[
+    { label: "Customer support agent", cells: ["Answers support enquiries"] },
+    { label: "Partnership agent", cells: ["Handles collaboration enquiries"] },
+    { label: "Sales assistant", cells: ["Responds to sales enquiries"] },
+  ]}
+/>
+
+Two details are worth singling out, one for honesty and one for security:
+
+- **Disclosure can be set centrally.** Signatoro's documentation says a company owner can require one line for every company agent and every member's own assistant, replacing whatever line each one had chosen. Where a transparency obligation applies — the EU AI Act example earlier is one — that line is only worth anything if it is accurate about what actually produced the message.
+- **A key belongs to one identity.** You generate a key for a specific agent, and the documentation says a key made for one agent always signs as that agent; asking it for a different signature returns a `signature_locked` error. Do not work around that. Reusing an agent's key to sign as a person, or one agent's key to sign as another, undoes the only thing a separate identity was for.
+
+Signed with an agent identity and a disclosure line, the block at the bottom of a message looks something like this:
+
+```
+Saayesh AI Flow Support Assistant
+AI Customer Support
+Saayesh AI Flow
+
+This message was prepared by an AI assistant.
+```
+
+That is an illustration of the shape, not a live signature: Saayesh AI Flow does not run an AI agent that answers email. How many you can create depends on the plan — the free plan includes one AI assistant, and the Company tiers list three, ten or twenty-five company agents by size, plus three AI assistants per person. And the same limit applies as everywhere else in this guide: Signatoro supplies the signature. It does not write the agent's replies, and it does not send them.
 
 ## Signatoro with Zapier, step by step
 
