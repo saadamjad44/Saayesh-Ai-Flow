@@ -91,7 +91,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 9,
+  3: 11,
 };
 
 export const PAGES = [
@@ -487,6 +487,50 @@ export const PAGES = [
     id: "ai-agent-use-cases",
     title: "AI Agent Use Cases for Small Business",
     path: "/ai-agents/ai-agent-use-cases/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-agents",
+  },
+
+  /**
+   * Phase 3 - the proactive-agent head-to-head, approved 2026-10-23.
+   *
+   * Three vendors shipped a proactive personal agent inside six weeks (Meta
+   * Muse 8 Sep, OpenAI Dots 29 Sep, Claude Duet 21 Oct 2026) and all three are
+   * gated - by waitlist, by plan tier, or by country. That is the page: not a
+   * ranked winner, which nobody can honestly declare on products that cannot
+   * all be used yet, but which of them a reader is actually eligible for and
+   * whether waiting is the better call. It belongs under /ai-agents/ because it
+   * is the cluster's newest-product end, and it links back into
+   * ai-agents-vs-automation for the large share of this traffic that wants a
+   * workflow rather than an agent.
+   */
+  {
+    id: "claude-duet-vs-openai-dots-vs-meta-muse",
+    title: "Claude Duet vs OpenAI Dots vs Meta Muse",
+    path: "/ai-agents/claude-duet-vs-openai-dots-vs-meta-muse/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-agents",
+  },
+
+  /**
+   * The product explainer behind the comparison, approved 2026-10-23 on the
+   * owner's validated Semrush volume for "what is Claude Duet".
+   *
+   * Distinct from the three-way comparison by intent, not by keyword variant:
+   * the comparison answers "which of these am I eligible for", this answers
+   * "what is this thing and should I join the waitlist". To keep the pair from
+   * converging, the comparison page's Duet detail was deliberately slimmed to
+   * an orientation plus a link when this page shipped, and the operational
+   * detail that only matters once you are choosing Duet specifically - shared
+   * plan usage limits, the approval boundaries, the named connectors - lives
+   * only here.
+   */
+  {
+    id: "what-is-claude-duet",
+    title: "What Is Claude Duet? Anthropic's Proactive AI Agent",
+    path: "/ai-agents/what-is-claude-duet/",
     type: "article",
     phase: 3,
     pillar: "ai-agents",

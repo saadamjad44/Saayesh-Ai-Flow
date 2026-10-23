@@ -1,0 +1,244 @@
+---
+pageId: what-is-claude-duet
+title: "What Is Claude Duet? Anthropic's Proactive AI Agent"
+heading: "What Is Claude Duet? Anthropic's Proactive Agent, Explained for Owners"
+description: Claude Duet explained - what Anthropic's proactive agent does, what it connects to, what it refuses to do, who can get it, and whether it earns the waitlist.
+publishedDate: 2026-10-23
+updatedDate: 2026-10-23
+testingStatus: research-based
+hasAffiliateLinks: false
+pricingVerifiedDate: 2026-10-23
+faq:
+  - question: What is Claude Duet in simple terms?
+    answer: Claude Duet is an Anthropic app in which Claude works as a proactive agent rather than a chat window. It connects to the apps you already use, sends you a short briefing each morning with the things that need your attention, checks those accounts every few hours through the day, and messages you when a decision needs to be yours. It also carries out tasks you hand it in the background, on its own virtual machine with its own browser, so the work continues when your laptop is shut. Anthropic previewed it on 21 October 2026 and says it runs on Claude Opus 5.5.
+  - question: How is Duet different from just using Claude?
+    answer: Direction and persistence. Ordinary Claude waits for you to open it and ask something, and the conversation ends when you leave. Duet starts the conversation, keeps watching your connected accounts between your visits, and keeps working on a task after you have closed the app. Practically, it is the difference between a tool you remember to use and a tool that remembers for you. Everything else - the model, the quality of the writing and reasoning - is the Claude you already know.
+  - question: What can Claude Duet actually do?
+    answer: Two sorts of work. The routine end is scheduling meetings, triaging what arrived overnight, and turning a pile of connected-app activity into a short list of things that matter. The heavier end is building dashboards, putting together forecasts, and prototyping small web apps. Reported integrations include Gmail, Slack, QuickBooks, Stripe, Gusto, LinkedIn, DocuSign, HubSpot, Canva and Shopify, drawn from a marketplace Anthropic puts at over 6,000 connectors and plug-ins. It can also make a purchase through Stripe Link or Shop Pay, but only with your approval.
+  - question: What will Claude Duet refuse to do?
+    answer: Anthropic has drawn the boundaries in public, and they are worth knowing before you connect anything. Human review is required before Duet sends a message, makes a payment, signs a document or deletes anything. It will not trade securities or move money between accounts at all. A classifier blocks it from passing on things like credit card numbers and government ID numbers, it does not access your passwords or sign-in tokens, and health or financial data has to be shared on your explicit instruction rather than picked up on its own.
+  - question: How do I get access to Claude Duet?
+    answer: Join the waitlist, if you qualify. As of 23 October 2026 Duet is a research preview open to Claude Pro and Max subscribers in the United States, through the web at claude.ai and standalone iOS and Android apps. There is no published general-availability date, and no route in at all from outside the US whatever you pay. At general availability Anthropic has indicated Pro will keep access, which puts the entry price at the Pro tier rather than a separate premium plan.
+  - question: Does Claude Duet cost extra on top of Claude Pro?
+    answer: Not as a separate subscription during the preview, but it is not free either, and this is the detail most coverage skips. Duet shares your plan's usage limits with the rest of Claude, including Claude Code - so the background checks it runs on your behalf draw down the same allowance your own work uses. Anthropic has it checking connected accounts every few hours rather than continuously for exactly that reason. If you already push your Pro limits, budget for Duet eating into them.
+  - question: What is Claude Duet bad at?
+    answer: Early reporting points at three things, all of them judgement rather than capability. It can misread a thread and act on the wrong reading. It can rank urgency badly, which matters a great deal in a product whose whole job is deciding what deserves your attention. And personal errands - the book-me-a-table end of the category - are underdeveloped compared with its business work. You also cannot currently watch what its browser is doing, so you are trusting the summary rather than checking the working.
+  - question: Is Claude Duet worth it for a small business?
+    answer: It is the one product in this new category whose vendor names small business owners as the intended user, so it is worth a waitlist place if you are eligible and already pay for Pro. Whether it earns a place in how you work is a different question and nobody can answer it yet, this page included - it is a research preview and this site has not tested it. The honest filter is the one that applies to every agent - if your real problem is one repetitive task that happens the same way every time, an automation will do it more cheaply and more predictably than any proactive agent.
+---
+
+import { ComparisonTable, Callout, KeyTakeaways, ProsCons } from "@/components/content";
+
+**Claude Duet is an Anthropic app in which Claude stops waiting to be asked.** It connects to the apps you already work in, sends you a short briefing each morning of what needs attention, checks those accounts through the day, and messages you when something needs a decision from you. Tasks you hand it continue in the background on its own virtual machine, so they keep running when your laptop is closed.
+
+Anthropic previewed it on 21 October 2026, built on Claude Opus 5.5, and describes the intended user as professionals and small business owners — which makes it the only product in this new category aimed squarely at people running something rather than people running errands.
+
+This page is what Duet is and how it works. If you are weighing it against the two rival products that shipped weeks earlier, [Claude Duet vs OpenAI Dots vs Meta Muse](/ai-agents/claude-duet-vs-openai-dots-vs-meta-muse/) is the comparison, and it starts with who is eligible for what.
+
+<KeyTakeaways>
+
+- **Duet is Claude as a proactive agent:** it contacts you first, instead of waiting in a chat window.
+- **It runs on its own virtual machine with its own browser,** so background work continues when your devices are off.
+- **It connects to the apps a small business already uses** — Gmail, Slack, QuickBooks, Stripe, HubSpot, Shopify and more, from a marketplace Anthropic puts at 6,000+ connectors.
+- **The approval boundaries are explicit:** a human must review before it sends, pays, signs or deletes, and it will not move money between accounts at all.
+- **It shares your plan's usage limits,** Claude Code included — the background checking is not free, it draws on the same allowance as your own work.
+- **Access is a US-only waitlist** for Claude Pro and Max subscribers, with no published general-availability date.
+- **Its weak point is judgement, not capability** — misreading threads and misranking urgency, in a product whose entire job is ranking urgency.
+
+</KeyTakeaways>
+
+<Callout tone="warning" heading="Checked 23 October 2026, two days after launch">
+  Duet is a research preview. Everything below comes from Anthropic's announcement and the reporting
+  around it, not from hands-on use — most people, this site included, cannot open it yet. Previews
+  widen, waitlists open and limits move, so confirm the current position with Anthropic before you
+  plan around any of it.
+</Callout>
+
+## What "proactive" actually means here
+
+The word is doing real work in this case, so it is worth being precise about it.
+
+Ordinary Claude is a tool you go to. You open it, ask for something, get it, and the thread ends when you leave. Everything useful that happens is downstream of you remembering to start.
+
+Duet inverts that. The work it does falls into four modes:
+
+<ComparisonTable
+  caption="How Duet operates through a day"
+  rowHeader="Mode"
+  columns={["What happens", "Why it matters"]}
+  rows={[
+    {
+      label: "The morning briefing",
+      cells: [
+        "A short list of action items pulled from your connected apps",
+        "The one thing in the product you will see every day, and the main reason to keep it",
+      ],
+    },
+    {
+      label: "Periodic checking",
+      cells: [
+        "It looks at connected accounts every few hours, not continuously",
+        "Deliberate: continuous watching would burn through your plan's usage allowance",
+      ],
+    },
+    {
+      label: "Selective interruption",
+      cells: [
+        "It messages you only when it judges a decision is yours to make",
+        "This judgement is the whole product, and it is the part Anthropic says is still being tuned",
+      ],
+    },
+    {
+      label: "Background execution",
+      cells: [
+        "Assigned tasks run on its own virtual machine, with its own browser",
+        "Work continues with your devices off — and you cannot currently watch the browser",
+      ],
+    },
+  ]}
+/>
+
+It all sits in one continuing thread, text or voice, rather than a new conversation each time — so a quick request and a week-long project live in the same place.
+
+That third row is the one to weigh. A product whose job is deciding what deserves your attention is only as good as that decision, and the failure mode of getting it wrong is not a visible error. It is either noise you learn to ignore, or silence about something that mattered.
+
+## What it connects to, and what it can build
+
+An agent is only as capable as its access, and Duet's access is unusually broad: Anthropic puts the Claude marketplace at over 6,000 connectors and plug-ins.
+
+The reported integrations are notable less for their number than for their shape. **Gmail, Slack, QuickBooks, Stripe, Gusto, LinkedIn, DocuSign, HubSpot, Canva and Shopify** is not a consumer list. It is mail, chat, books, payments, payroll, contracts, CRM, design and storefront — which is, roughly, the software stack of a small business.
+
+The work it does with that access spans a wider range than the briefing suggests:
+
+- **Administrative:** scheduling meetings, handling the back-and-forth, triaging what arrived.
+- **Analytical:** building dashboards and putting together forecasts from connected data.
+- **Generative:** prototyping small web apps.
+- **Transactional:** making a purchase through Stripe Link or Shop Pay — with your approval, never alone.
+
+## The boundaries, which matter more than the features
+
+Anthropic has published where Duet stops, and for anything touching your business this is the section that decides whether you connect it to real accounts.
+
+<ComparisonTable
+  caption="Stated limits on what Duet may do"
+  rowHeader="Boundary"
+  columns={["The rule", "What it means in practice"]}
+  rows={[
+    {
+      label: "Actions needing your approval",
+      cells: [
+        "Human review required before sending a message, making a payment, signing a document or deleting anything",
+        "The four irreversible categories. Nothing leaves your name without you seeing it first",
+      ],
+    },
+    {
+      label: "Actions it will not take",
+      cells: [
+        "No securities trading, no moving money between accounts",
+        "A flat refusal, not an approval step — the category is off the table",
+      ],
+    },
+    {
+      label: "Credentials",
+      cells: [
+        "No access to your passwords or sign-in tokens",
+        "Connections are authorised rather than handed your logins",
+      ],
+    },
+    {
+      label: "Sensitive data",
+      cells: [
+        "A classifier blocks things like credit card and government ID numbers; health and financial data only on your explicit instruction",
+        "It will not volunteer your sensitive data, but you can still choose to share it — read that as your decision to make",
+      ],
+    },
+  ]}
+/>
+
+Two honest notes on that table. First, these are the vendor's stated boundaries and this site has not tested them — treat them as a design intention you can hold Anthropic to, not as a verified guarantee. Second, they are better than the category norm and still do not transfer accountability. A message you approved is a message your business sent.
+
+## The cost nobody mentions
+
+During the preview Duet is not a separate subscription — it comes with Claude Pro or Max. But it is not free in the way that sounds.
+
+**Duet shares your plan's usage limits with the rest of Claude, Claude Code included.** The checks it runs on your behalf through the day draw on the same allowance your own work uses. That is why it checks every few hours rather than continuously, and it is the practical fact most launch coverage leaves out.
+
+So the real question is not whether Duet costs extra. It is whether you have headroom. If you already bump against your Pro limits by Thursday, a background agent sharing that budget will be felt. If you use Claude lightly, you will not notice.
+
+<Callout tone="note" heading="On the prices on this page">
+  Plan tiers are stated because during a gated preview the tier is the gate — it decides whether you
+  can use the product at all. The figures were checked on 23 October 2026 and these products reprice
+  often, so take the current numbers from Anthropic's own pricing page rather than from here.
+</Callout>
+
+## Where it is weak
+
+Early reporting is consistent about this, and the pattern is worth noticing: the gaps are in judgement, not capability.
+
+<ProsCons
+  subject="Claude Duet, on what is known so far"
+  pros={[
+    "The only product in this category whose vendor names small business owners as the intended user",
+    "Connector list matches a real small business stack rather than a consumer one",
+    "Approval boundaries are explicit, published, and cover the irreversible actions",
+    "Background work survives your laptop being shut, via its own virtual machine",
+    "Entry at the Pro tier rather than a separate premium plan",
+  ]}
+  cons={[
+    "Can misread a thread and act on the wrong reading",
+    "Can rank urgency badly — in a product whose entire job is ranking urgency",
+    "You cannot currently watch what its browser is doing, only read the result",
+    "Background checking consumes the plan allowance you also need for your own work",
+    "Personal errands are underdeveloped compared with its business work",
+    "US-only waitlist, research preview, no general-availability date",
+  ]}
+/>
+
+The last of those is not a flaw so much as a fact, but it is the one that decides most readers' next step.
+
+## Should you join the waitlist?
+
+A short answer by situation, with no pretence that anyone can yet tell you whether the product is good.
+
+<ComparisonTable
+  caption="Whether to act on Duet now"
+  rowHeader="Your situation"
+  columns={["What to do", "Why"]}
+  rows={[
+    {
+      label: "US, already on Claude Pro or Max",
+      cells: [
+        "Join the waitlist",
+        "It costs nothing beyond a plan you hold, and being early is the only way to form your own opinion",
+      ],
+    },
+    {
+      label: "US, not a Claude subscriber",
+      cells: [
+        "Decide on Claude first, not on Duet",
+        "You would be buying a subscription for a preview you may not get into for some time",
+      ],
+    },
+    {
+      label: "Outside the US",
+      cells: ["Wait — there is no route in", "No plan tier changes this during the preview"],
+    },
+    {
+      label: "Your real problem is one repetitive task",
+      cells: [
+        "Build the automation instead",
+        "Cheaper, predictable, available today, and it fails where you can see it",
+      ],
+    },
+  ]}
+/>
+
+That last row catches more people than the others combined. A proactive agent earns its cost when you have more incoming streams than you can personally watch. If what you actually have is an enquiry that needs logging the same way every time, [AI agents vs automation](/ai-agents/ai-agents-vs-automation/) will save you a subscription.
+
+## Where to go next
+
+If Duet is really your entry point into Claude as a work tool, [Claude for small business](/ai-business-tools/claude-for-small-business/) covers the subscription you would need first, and [Claude vs ChatGPT for small business](/ai-business-tools/claude-vs-chatgpt-for-small-business/) covers the choice before that one.
+
+For the category rather than this product, [AI agents](/ai-agents/) is the hub, [AI agent use cases](/ai-agents/ai-agent-use-cases/) works through eight jobs worth handing over and the supervision each still needs, and [best AI agents for small business](/ai-agents/best-ai-agents-for-small-business/) covers choosing by category instead of by ranked list.
+
+And if the honest conclusion is that you want a workflow rather than an agent, [best AI automation tools](/ai-automation/best-ai-automation-tools/) is the place to start.

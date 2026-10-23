@@ -88,6 +88,8 @@ const MENU_LABELS: Partial<Record<PageId, string>> = {
   "best-ai-agents-for-small-business": "Best AI Agents for Small Business",
   "ai-agents-vs-automation": "AI Agents vs Automation",
   "ai-agent-use-cases": "AI Agent Use Cases",
+  "claude-duet-vs-openai-dots-vs-meta-muse": "Claude Duet vs Dots vs Muse",
+  "what-is-claude-duet": "What Is Claude Duet?",
   "ai-chatbot-for-small-business": "AI Chatbot for Small Business",
   "ai-customer-service-automation": "AI Customer Service Automation",
   "n8n-vs-zapier-vs-make": "n8n vs Zapier vs Make",

@@ -568,6 +568,41 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Informational",
     note: 'Rendered at 45 characters. Eight is the real count of task sections on the page. "Worth Handing Over" is doing the same filtering job as "for Work" on the prompt-examples page: this query returns a lot of enterprise and developer content, and the page is written for an owner deciding which of their own tasks to delegate. Each section states the supervision the task still needs, which is what separates it from the example lists that dominate this SERP.',
   },
+  "claude-duet-vs-openai-dots-vs-meta-muse": {
+    title: "Claude Duet vs OpenAI Dots vs Meta Muse",
+    brand: "append",
+    description:
+      "Claude Duet, OpenAI Dots and Meta Muse compared on what you can actually get: who each one is built for, what it connects to, and who is still locked out.",
+    primaryKeyword: "Claude Duet vs OpenAI Dots vs Meta Muse",
+    supportingKeywords: [
+      "Claude Duet vs Meta Muse",
+      "OpenAI Dots vs Meta Muse",
+      "Claude Duet vs Dots",
+      "Dots vs Duet vs Muse",
+      "proactive AI agent comparison",
+      "best personal AI agent for business",
+    ],
+    intent: "Info / Commercial",
+    note: "Rendered at 39 characters, short enough to take the brand suffix rather than omit it - the three product names are unfamiliar enough that the publisher beside them is doing useful work. The one page in this cluster competing on freshness rather than depth: all three products shipped between 8 September and 21 October 2026, so the SERP is almost entirely launch-day news coverage that answers what each one is and not whether a reader can have it. The eligibility angle is the gap - Duet is a US waitlist, Muse is US and Canada, and Dots excludes Pro users in the EEA, the UK and Switzerland - and it is also why there is no ranked winner on the page: nobody can honestly rank three products they cannot all use. Review this one on a schedule rather than when something breaks; the access rules are the whole value and every one of them is temporary.",
+  },
+  "what-is-claude-duet": {
+    title: "What Is Claude Duet? Anthropic's Proactive AI Agent",
+    brand: "omit",
+    description:
+      "Claude Duet explained: what Anthropic's proactive agent does, what it connects to, what it refuses to do, who can get it, and whether it is worth the waitlist.",
+    primaryKeyword: "what is Claude Duet",
+    supportingKeywords: [
+      "Claude Duet",
+      "Claude Duet explained",
+      "how to get Claude Duet",
+      "Claude Duet waitlist",
+      "Claude Duet features",
+      "Claude Duet for small business",
+      "is Claude Duet worth it",
+    ],
+    intent: "Informational",
+    note: "Rendered at 50 characters, so the brand suffix is omitted rather than truncated. The only page on the site built on the owner's validated Semrush volume for a single product query, and it exists because the intent is genuinely separate from the three-way comparison beside it: this reader has heard the name and wants to know what it is, not which of three rivals they qualify for. The question mark is kept because the query is phrased as one and the H1 answers it in the first line. Scope discipline matters more here than usual - the comparison owns eligibility across the category, this owns Duet's own mechanics, and the operational detail (shared plan usage limits, the approval boundaries, the named SMB connectors) is deliberately unique to this page so the two never converge into near-duplicates.",
+  },
 
   // ---- Getting Started cluster -------------------------------------------
   "getting-started": {
