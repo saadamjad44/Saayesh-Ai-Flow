@@ -329,7 +329,9 @@ const METHOD = [
     <div aria-hidden="true" class="bg-grid-inverse absolute inset-0 -z-10 opacity-70"></div>
 
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
-      <div class="lg:max-w-[34rem]">
+      {/* The copy column holds its 34rem measure from `md` up, so the headline
+          breaks into the same three lines on a tablet as on a desktop. */}
+      <div class="md:max-w-[34rem]">
         {/*
           Iris rather than jade (13.1:1 on the midnight ground). Jade is
           reserved for the free interactive tools — see global.css — and a

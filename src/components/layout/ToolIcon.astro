@@ -1,0 +1,56 @@
+---
+/**
+ * Line glyph for one of the site's free interactive tools, drawn on the same
+ * 24-grid and with the same 1.75 stroke as PillarIcon.astro — the Tools menu
+ * sits beside the Categories menu in the header, so the two sets have to look
+ * like they were cut by the same hand.
+ *
+ * Always decorative: the tool's name is always beside it.
+ */
+import type { ToolIconId } from "@/config/navigation";
+
+interface Props {
+  icon: ToolIconId;
+  class?: string;
+}
+
+const { icon, class: className } = Astro.props;
+
+/** Path data per glyph, on a 24x24 grid. */
+const PATHS: Record<ToolIconId, string[]> = {
+  // A keypad with a readout: adding a monthly bill up.
+  calculator: [
+    "M5.5 3.5h13a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19V5a1.5 1.5 0 0 1 1.5-1.5Z",
+    "M7.5 7h9v2.5h-9z",
+    "M8 13h.01",
+    "M12 13h.01",
+    "M16 13h.01",
+    "M8 16.5h.01",
+    "M12 16.5h.01",
+    "M16 16.5h.01",
+  ],
+  // An envelope with a clock in the corner: time spent on email.
+  "mail-clock": [
+    "M3.5 7a1.5 1.5 0 0 1 1.5-1.5h11.5a1.5 1.5 0 0 1 1.5 1.5v2",
+    "M3.5 7v10A1.5 1.5 0 0 0 5 18.5h8",
+    "M3.5 7.5l7.25 5 3.75-2.6",
+    "M17.5 12a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z",
+    "M17.5 14.2V16l1.4 1",
+  ],
+};
+---
+
+<svg
+  aria-hidden="true"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+>
+  {PATHS[icon].map((d) => (
+    <path d={d} />
+  ))}
+</svg>

@@ -70,7 +70,7 @@ src/
 │   ├── forms/            # ContactForm (Web3Forms)
 │   ├── home/             # FlowDiagram (the hero illustration)
 │   ├── layout/           # SiteHeader, SiteFooter, Breadcrumbs, ContentSidebar,
-│   │                     #   SearchBox, PillarIcon
+│   │                     #   SearchBox, PillarIcon, ToolIcon
 │   └── seo/              # SeoHead
 ├── config/
 │   ├── editorial.ts      # Testing statuses, score categories

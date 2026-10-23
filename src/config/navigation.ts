@@ -36,8 +36,9 @@ const section = (label: string, pillar: PillarId): NavSection => ({
 });
 
 /**
- * Header links beside the Categories mega menu. Deliberately three: the
- * categories themselves are in the menu, and Home is the wordmark.
+ * Header links beside the Categories and Tools menus. Deliberately three: the
+ * categories and the free tools each have their own menu, and Home is the
+ * wordmark.
  */
 export const PRIMARY_NAV: readonly PrimaryNavLink[] = [
   link("Blog", "blog"),
@@ -139,16 +140,44 @@ export function getToolLinks(pillar: PillarId, builtPageIds: ReadonlySet<string>
   }));
 }
 
+/** Glyph ids ToolIcon.astro draws, on the same 24-grid as the pillar icons. */
+export type ToolIconId = "calculator" | "mail-clock";
+
+/** A free-tool nav entry: the link, plus how the header's Tools menu shows it. */
+export interface ToolNavLink extends NavLink {
+  /** One line on what the tool answers — the menu is not a bare list of names. */
+  blurb: string;
+  icon: ToolIconId;
+}
+
+/**
+ * Menu presentation for the free tools. Keyed by page id so a tool that is
+ * added to the registry but not described here still appears in the menu, just
+ * without a blurb — the link is never the thing that goes missing.
+ */
+const TOOL_MENU: Partial<Record<PageId, { blurb: string; icon: ToolIconId }>> = {
+  "small-business-ai-cost-calculator": {
+    blurb: "Total what an AI stack really costs you per month and per year.",
+    icon: "calculator",
+  },
+  "ai-email-time-savings-calculator": {
+    blurb: "Estimate the hours an AI email workflow saves, net of review time.",
+    icon: "mail-clock",
+  },
+};
+
 /**
  * Every built free tool, in registry order, regardless of which pillar it sits
- * under. The header mega menu lists these beside the categories, so a visitor
- * can reach the site's interactive utilities without first guessing which
- * category they were filed under.
+ * under. The header's Tools menu lists these, so a visitor can reach the
+ * site's interactive utilities without first guessing which category they were
+ * filed under.
  */
-export function getAllToolLinks(builtPageIds: ReadonlySet<string>): NavLink[] {
+export function getAllToolLinks(builtPageIds: ReadonlySet<string>): ToolNavLink[] {
   return builtPagesOfType("tool", builtPageIds).map((page) => ({
     label: menuLabel(page),
     href: page.path,
+    blurb: TOOL_MENU[page.id as PageId]?.blurb ?? "",
+    icon: TOOL_MENU[page.id as PageId]?.icon ?? "calculator",
   }));
 }
 
