@@ -312,13 +312,18 @@ const METHOD = [
     the brand mark in the header above it reads as the same family. Everything
     below this section is warm paper, so the hero also does the job a masthead
     does in print: it says where the publication starts.
+
+    From `lg` up the section is split down the middle: a flat midnight panel on
+    the left holding all of the copy, and the picture at full strength on the
+    right, uncropped and undimmed. The styles at the foot of this file do that
+    work; the markup only has to keep every word inside the left half.
   */}
-  <section class="hero relative isolate overflow-hidden bg-ink-950">
+  <section class="hero relative isolate flex items-center overflow-hidden bg-ink-950">
     <Image
       src={heroArt.src}
       alt=""
       aria-hidden="true"
-      widths={[640, 960, 1280, 1920]}
+      widths={[640, 960, 1280, 1672]}
       sizes="100vw"
       loading="eager"
       decoding="sync"
@@ -326,9 +331,12 @@ const METHOD = [
       class="hero-art absolute inset-0 -z-10 size-full object-cover"
     />
     <div aria-hidden="true" class="hero-scrim absolute inset-0 -z-10"></div>
-    <div aria-hidden="true" class="bg-grid-inverse absolute inset-0 -z-10 opacity-70"></div>
+    <div
+      aria-hidden="true"
+      class="hero-grid bg-grid-inverse absolute inset-0 -z-10 opacity-70"
+    ></div>
 
-    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
+    <div class="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
       {/* The copy column holds its 34rem measure from `md` up, so the headline
           breaks into the same three lines on a tablet as on a desktop. */}
       <div class="md:max-w-[34rem]">
@@ -376,8 +384,13 @@ const METHOD = [
       {/*
         The colophon. A hairline and four counted facts, set in the technical
         register the rest of the site uses for metadata — not a statistics band.
+
+        It narrows to the copy column's measure from `lg` up rather than
+        widening, because that is where the artwork starts: past 34rem the row
+        would run out over the picture's right half, which the hero keeps clear
+        of text. Below `lg` the whole frame is washed, so it can have the room.
       */}
-      <dl class="mt-12 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t border-white/15 pt-7 sm:mt-14 sm:grid-cols-4">
+      <dl class="mt-12 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t border-white/15 pt-7 sm:mt-14 sm:grid-cols-4 lg:max-w-[34rem]">
         {MASTHEAD.map((fact) => (
           <div>
             <dt class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-400 uppercase">
@@ -815,69 +828,165 @@ const METHOD = [
   /*
    * The hero background.
    *
-   * Two layers over the section's own midnight ground: the artwork, dimmed so
-   * it reads as light in a dark room rather than as a photo with text on top,
-   * and a scrim that keeps the copy column at full white-on-midnight contrast
-   * however the image crops.
+   * The artwork is composed in halves: open sky on the left, the subject and
+   * its panels on the right, and the copy sits in the empty half. What the
+   * hero must not do is make that into two visible pieces — a flat panel
+   * butted against an untouched photograph, with a seam down the middle where
+   * they meet. Two rules keep it one field instead:
    *
-   * The artwork is composed with its subject on the right and open sky on the
-   * left, so the copy sits in the empty half and the picture is never asked to
-   * carry text on its busy side.
+   * 1. The artwork is dimmed everywhere, not only under the copy. At 0.8 over
+   *    the section's own ink-950 the white sky lands at #CECDD0, so the wash
+   *    has no bright field to collide with and the whole frame sits in the
+   *    same register — light in a dark room rather than a picture with a
+   *    rectangle painted over one end of it.
    *
-   * Measured at the worst case — the brightest pixel in the artwork, under the
-   * thinnest part of the scrim that any text reaches — white copy still clears
-   * 16:1. The right-hand third, where the scrim thins out far enough for the
-   * picture to come through properly, has no text over it at any width.
+   * 2. The wash never reaches zero. It falls from 79% to 16% across the back
+   *    half of the frame and stops there, so even the far corner carries the
+   *    same tint as the copy column. The fall-off is spread over 43% of the
+   *    width for the same reason: a short ramp reads as an edge, a long one as
+   *    depth.
+   *
+   * The arithmetic that 79% has to clear: over #CECDD0 it composites to
+   * #343140 — 12.6:1 under white, 7.9:1 under the lead's ink-300, and 4.67:1
+   * under the colophon labels' ink-400, which is the tightest of the three and
+   * the one that sets the floor. Lifting the artwork or lightening the wash
+   * past these numbers drops those labels below AA; they move together, so
+   * neither can be touched alone. The colophon is held to the copy column's
+   * 34rem measure for the same reason, rather than running on to the 48rem it
+   * uses on narrower screens.
+   */
+
+  /*
+   * Below `lg` there is no empty column to put the copy in, so the whole
+   * frame is washed rather than one end of it. A phone crops this hard
+   * horizontally — roughly a sixth of the picture survives — so hold the head
+   * rather than the empty sky, or the hero is a blank wash.
+   *
+   * `38%` rather than `42%` lifts the crop far enough to hold the top of the
+   * neural network in frame with the face, which is the half of the subject
+   * that says what the picture is about.
    */
   .hero-art {
-    /*
-     * A narrow viewport crops this hard horizontally — roughly a sixth of the
-     * picture survives — so hold the subject rather than the empty sky, or the
-     * hero is a blank wash on a phone.
-     */
-    object-position: 68% 50%;
-    opacity: 0.42;
+    object-position: 70% 38%;
+    opacity: 0.8;
   }
 
   /*
-   * Phones have no empty column to put the copy in, so the wash covers the
-   * whole frame: heaviest at the top under the headline, lifting through the
-   * middle where the artwork can still be seen behind the search box, and
-   * closing again at the foot so the colophon sits on flat ink.
+   * Heaviest at the top under the headline, lifting through the middle where
+   * the artwork can still be seen behind the search box, and closing again at
+   * the foot so the colophon sits on near-flat ink.
+   *
+   * The stops sit under the same arithmetic as the panel from `lg` up: over
+   * the dimmed sky's #CECDD0, the thinnest of them — 72% through the middle —
+   * composites to #413E4A, 10.1:1 under white and 5.9:1 under the lead's
+   * ink-300, and the 86% at the foot gives the colophon labels 5.8:1.
    */
   .hero-scrim {
     background: linear-gradient(
       to bottom,
-      color-mix(in oklab, var(--color-ink-950) 88%, transparent) 0%,
-      color-mix(in oklab, var(--color-ink-950) 78%, transparent) 55%,
-      color-mix(in oklab, var(--color-ink-950) 92%, transparent) 100%
+      color-mix(in oklab, var(--color-ink-950) 82%, transparent) 0%,
+      color-mix(in oklab, var(--color-ink-950) 72%, transparent) 55%,
+      color-mix(in oklab, var(--color-ink-950) 86%, transparent) 100%
     );
   }
 
   @media (min-width: 1024px) {
-    .hero-art {
-      /* Wide boxes crop vertically only, so centre is the whole composition. */
-      object-position: 55% 50%;
-      opacity: 0.6;
+    /*
+     * Hold the master's own 1672x941 ratio, so a box that would otherwise be a
+     * letterbox slice of the picture is tall enough to show all of it. It is a
+     * floor, not a fixed height: the copy sets the height whenever it needs
+     * more, and 86vh keeps the masthead off a full screen on a large monitor.
+     */
+    .hero {
+      min-height: min(56.28vw, 86vh);
     }
 
     /*
-     * Horizontal from `lg`, where there is an empty column to work with: flat
-     * midnight under the 34rem copy column, then a fall-off that lets the
-     * picture carry the right-hand third. The second gradient settles the
-     * bottom edge so the colophon rule does not cut across the artwork.
+     * `12%` rather than `center` pushes the trim that a box wider than 16:9
+     * takes towards the bottom, which is empty light, so both the top of the
+     * neural network and the brand name set into the corner above it survive.
+     */
+    .hero-art {
+      object-position: 35% 12%;
+    }
+
+    /*
+     * Horizontal from `lg`, where there is an empty column to work with. The
+     * plateau has to clear the copy column, which reaches furthest right at
+     * exactly 1024px — 55.5% of the viewport, hence the stop at 57%: the
+     * container is still gutter-to-gutter there, while from `xl` up it is
+     * centred at 72rem and the column sits further left. Past it the wash
+     * thins over four stops and settles at 16% rather than running out, which
+     * is what keeps the back half of the frame in the same field as the copy
+     * column instead of reading as a separate picture beside it.
+     *
+     * The second gradient does the same job for the bottom edge: without it
+     * the artwork stops dead against the warm paper of the section below, and
+     * the colophon's hairline cuts across the picture on its way there.
      */
     .hero-scrim {
       background:
         linear-gradient(
           to right,
-          var(--color-ink-950) 0%,
-          var(--color-ink-950) 42%,
-          color-mix(in oklab, var(--color-ink-950) 88%, transparent) 56%,
-          color-mix(in oklab, var(--color-ink-950) 45%, transparent) 78%,
-          color-mix(in oklab, var(--color-ink-950) 22%, transparent) 100%
+          color-mix(in oklab, var(--color-ink-950) 81%, transparent) 0%,
+          color-mix(in oklab, var(--color-ink-950) 79%, transparent) 57%,
+          color-mix(in oklab, var(--color-ink-950) 60%, transparent) 68%,
+          color-mix(in oklab, var(--color-ink-950) 38%, transparent) 80%,
+          color-mix(in oklab, var(--color-ink-950) 22%, transparent) 91%,
+          color-mix(in oklab, var(--color-ink-950) 16%, transparent) 100%
         ),
-        linear-gradient(to top, var(--color-ink-950) 0%, transparent 35%);
+        linear-gradient(to top, var(--color-ink-950) 0%, transparent 38%);
+    }
+
+    /* The grid is texture for the copy column; it has no business over the
+       subject. Its mask fades out over the same long run as the wash above,
+       because a short one just puts the seam back a layer up. */
+    .hero-grid {
+      mask-image: linear-gradient(to right, #000 0%, #000 46%, transparent 78%);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    /*
+     * Anchored to the right edge, which is the only width band where that
+     * fits: from 1280px up the box is wide enough that what it trims off the
+     * left is sky the wash covers anyway, so the whole subject — face,
+     * network, all four panels and the brand name — is shown uncut. Past
+     * roughly 1400px the ratio floor above wins outright and there is no trim
+     * left to spend.
+     *
+     * Below 1280px the box is far narrower than 16:9 and something has to go.
+     * 35% above spends that on the right edge rather than the left, because a
+     * hero that has lost a corner panel still reads and one whose face has
+     * been pulled back under the plateau does not.
+     */
+    .hero-art {
+      object-position: 100% 12%;
+    }
+
+    /*
+     * The container stops growing at 72rem and centres, so the copy column
+     * ends at a steady ~49.5% of the viewport from here up rather than the
+     * 55.5% it reaches at 1024px. The plateau follows it in, which gives the
+     * fall-off another half-column of frame to spread across on a wide
+     * monitor. The tail still settles at 16% rather than clearing.
+     */
+    .hero-scrim {
+      background:
+        linear-gradient(
+          to right,
+          color-mix(in oklab, var(--color-ink-950) 81%, transparent) 0%,
+          color-mix(in oklab, var(--color-ink-950) 79%, transparent) 51%,
+          color-mix(in oklab, var(--color-ink-950) 60%, transparent) 63%,
+          color-mix(in oklab, var(--color-ink-950) 38%, transparent) 76%,
+          color-mix(in oklab, var(--color-ink-950) 22%, transparent) 89%,
+          color-mix(in oklab, var(--color-ink-950) 16%, transparent) 100%
+        ),
+        linear-gradient(to top, var(--color-ink-950) 0%, transparent 38%);
+    }
+
+    .hero-grid {
+      mask-image: linear-gradient(to right, #000 0%, #000 40%, transparent 72%);
     }
   }
 </style>

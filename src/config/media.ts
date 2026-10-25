@@ -124,14 +124,24 @@ export const MEDIA = {
     credit: owned(),
   },
   /**
-   * The homepage hero. Composed with its subject on the right and open sky on
-   * the left, so the hero copy sits in the empty half; see src/pages/index.astro.
-   * Its master is 1920x1080 rather than the usual 1600x900 because it is the
-   * only full-bleed background on the site and has no content column to sit in.
+   * The homepage hero. Composed with its subject in the right half and open
+   * sky on the left, so the hero copy sits in the empty half; see
+   * src/pages/index.astro, which blacks that half out and leaves the right
+   * half of the picture undimmed.
+   *
+   * Its master is 1672x941 rather than the usual 1600x900 because it is the
+   * only full-bleed background on the site and has no content column to sit
+   * in. Keep any replacement at that same ~16:9 ratio with its subject right
+   * of centre and nothing that matters in the left half or the outer 3% of
+   * any edge: the hero anchors the picture to its right edge, so a narrow
+   * desktop trims the left, and a very wide one trims top and bottom.
+   *
+   * The artwork carries the brand name set into its top-right corner, which
+   * is why the crop is biased towards the top — see .hero-art.
    */
   home: {
     src: homeHero,
-    alt: "A human profile in blue light whose head opens into a branching neural network, surrounded by floating panels showing a document, a three-step workflow, and a rising chart.",
+    alt: "A human profile in blue light whose head opens into a branching neural network, surrounded by floating panels showing a chat thread, a three-step workflow, a checklist and a rising chart.",
     credit: owned(),
   },
 } as const satisfies Record<string, MediaAsset>;
