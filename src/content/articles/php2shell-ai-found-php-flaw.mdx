@@ -1,0 +1,200 @@
+---
+pageId: php2shell-ai-found-php-flaw
+title: "PHP2Shell: AI Found a Critical Flaw in PHP"
+description: Frontier AI models found two critical flaws that had sat in PHP for over a decade. What PHP2Shell is, and what to do if your website runs on PHP.
+publishedDate: 2026-10-26
+updatedDate: 2026-10-26
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What is PHP2Shell?
+    answer: PHP2Shell is the name given to two critical security flaws in PHP itself, tracked as CVE-2026-109618 and CVE-2026-109619 and both rated 9.2 out of 10 on the CVSS 4.0 scale. They allow an attacker with no account and no password to run their own code on a web server. Because the flaws are in the PHP engine rather than in any particular application, they affect a site regardless of what is built on top of PHP - WordPress, Drupal, Joomla or custom code.
+  - question: Which PHP versions fix PHP2Shell?
+    answer: The PHP project released fixes on 21 October 2026 in PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35. Source backports were published for PHP 7.4, 8.0 and 8.1, which are outside normal support, so sites on those versions need a patched build from their Linux distribution or hosting provider rather than from php.net. Every PHP version from 5.4 onwards is affected by at least one of the two flaws.
+  - question: Is my WordPress site affected by PHP2Shell?
+    answer: If it is running an unpatched PHP version, yes. Wiz, the research firm that found the flaws, confirmed unauthenticated remote code execution against WordPress, Drupal and Joomla on representative targets. The flaws are not WordPress bugs and no WordPress plugin or theme update fixes them - the PHP version underneath has to be updated. On managed WordPress hosting the provider usually does this for you; the thing to check is which PHP version your site is actually running today.
+  - question: Can I protect my site without patching?
+    answer: Not reliably, and this is worth being blunt about because several partial mitigations were circulating in the first week. Disabling session.upload_progress, turning off fatal error backtraces on PHP 8.5, and limiting request body sizes at a reverse proxy all reduce the attack surface, but Datadog Security Labs states plainly that only patching fixes these vulnerabilities. Treat any mitigation as something to do while the upgrade is scheduled, not instead of it.
+  - question: Did AI really find the vulnerability on its own?
+    answer: No, and the distinction matters. Wiz researchers used a combination of frontier models to hunt and chain flaws that had been present in PHP for over a decade, and said a single researcher did in a week what a world-class team would previously have needed months to do. A human still chose where to look and what the models worked on. What AI changed was the expensive middle of the job - the painstaking work of turning a theoretical weakness into a working exploit chain.
+  - question: Is PHP2Shell being exploited in the wild?
+    answer: Yes. Amazon's threat intelligence team recorded exploitation attempts on 17 October 2026, four days before the flaws were public, and successful remote code execution against a real server was later confirmed by independent honeypot operators. One widely reported detail did not hold up - Unit 42 retracted its claim that attackers used agentic AI platforms after breaking into a European government agency through these flaws, saying on 25 October that it could not confirm the break-in was linked to PHP2Shell at all.
+---
+
+import { Callout, KeyTakeaways, Step, Steps } from "@/components/content";
+
+<KeyTakeaways>
+
+- **PHP2Shell is two flaws in PHP itself**, CVE-2026-109618 and CVE-2026-109619, both rated 9.2/10 and both allowing code execution by an attacker with no login. PHP runs roughly 70% of the web.
+- **Fixed on 21 October 2026** in PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35. Everything from PHP 5.4 up is affected by at least one of them.
+- **AI is why they were found now.** Wiz researchers used frontier models to chain decade-old weaknesses into a working exploit in about a week.
+- **Attacks started before the patch did.** Amazon logged exploitation attempts on 17 October, four days ahead of disclosure.
+- **One headline claim was withdrawn.** Unit 42 retracted its agentic-AI post-exploitation report on 25 October; most coverage still repeats it.
+
+</KeyTakeaways>
+
+This is a security story, and it would normally sit outside what this site covers. It is here because the interesting part is not the bug. It is that the bug was found by pointing AI models at code that thousands of human researchers had already read, and that the industry's reaction to it says more about where AI is going than any product launch this month.
+
+If you only want the practical part, skip to [what to do if your website runs PHP](#what-to-do-if-your-website-runs-php).
+
+## What happened, in order
+
+- **August 2026** — Researchers at the cloud security firm Wiz begin hunting for flaws in the PHP engine using a combination of frontier AI models.
+- **17 October 2026** — Amazon's MadPot honeypot network records the first exploitation attempt, four days before anyone outside the disclosure process knows the flaws exist.
+- **21 October 2026** — The PHP project ships emergency releases: 8.5.12, 8.4.27, 8.3.36 and 8.2.35. Wiz publishes its research under the name PHP2Shell.
+- **22 October 2026** — Broad, untargeted scanning is reported across the internet. Amazon reveals that attacks predated the patch.
+- **23 October 2026** — Unit 42, Palo Alto Networks' threat intelligence team, reports that attackers used agentic AI platforms for post-exploitation work after breaching a European government agency.
+- **25 October 2026** — Unit 42 retracts that report: "We are unable to confirm that initial access is associated with the specific PHP2Shell CVEs."
+
+## What PHP2Shell actually is
+
+Two separate bugs, given one name because they were disclosed together and fixed in the same release.
+
+**CVE-2026-109618** is triggered by running PHP out of memory at exactly the wrong moment. PHP counts a new entry in an internal table before it allocates the memory for it, so when an allocation fails under memory exhaustion the entry is counted but never filled in. When PHP later cleans up after the request, it reads whatever happened to be in that memory and treats it as a valid internal structure — which an attacker who controls what is in that memory can turn into a function call of their choosing.
+
+**CVE-2026-109619** is the inverse problem: state that should be wiped between requests is not. A pointer to memory belonging to one request survives after that memory has been freed, and the next request handled by the same worker process can use it. Two routes into it have been documented — fatal error backtraces, which only exist in PHP 8.5, and upload-progress session state left behind after an error.
+
+Two details make this worse than the average PHP advisory:
+
+- **Authentication is no defence.** Both flaws are in the engine, and the engine runs before any of your application code does. A login page, a firewall rule that only allows known users, an admin area behind a VPN — none of it is reached before PHP is already compromised.
+- **Every normal way of running PHP is affected.** Apache with mod_php, PHP-FPM, `php-cgi`, FrankenPHP and LiteSpeed are all vulnerable. There is no safe configuration to migrate to, only a patched version to upgrade to.
+
+Wiz also described memory disclosure alongside the code execution — a Heartbleed-style leak of whatever is in the worker process's memory, which in a live application means API keys, passwords, session tokens and certificates. It confirmed unauthenticated code execution against WordPress, Drupal and Joomla on representative targets.
+
+<Callout tone="warning" heading="If you run anything on PHP">
+
+This is not a WordPress problem, a plugin problem, or a theme problem, and no amount of updating those fixes it. The PHP version underneath your site is the thing that has to change. Check which version you are on before you do anything else — most hosting control panels show it on the main dashboard.
+
+</Callout>
+
+## The AI part, and why this story is on this site
+
+Wiz's own framing is the line worth quoting, because it is a claim about AI rather than about PHP:
+
+> With frontier AI models and the right tools, a single researcher completed in a week what previously would have taken a world-class team months of work.
+
+The models involved were Wiz's own Atlas alongside GPT-5.6 Sol and Gemini 4 Argon. The flaws themselves were not new — they had been present in PHP for more than a decade, in some of the most heavily reviewed open-source code in existence. What had kept them theoretical was that demonstrating them required chaining a long sequence of individually unremarkable weaknesses, at the edge of what a human researcher could practically hold in their head.
+
+That is the part AI compressed. Not the insight, and not the choice of where to look — a person still pointed the models at the right history. What changed is the cost of the laborious middle: the hundreds of hours of trying combinations that a researcher would previously have had to spend before knowing whether the idea worked at all.
+
+It is worth being careful about what this does and does not prove. It does not show that AI can find vulnerabilities unsupervised, and Wiz does not claim that. What it shows is that the economics of exploit development have moved, and they have moved for both sides of the fence at once. The same compression that let one defender do a team's work in a week is available to anyone with a frontier model subscription and a target.
+
+Several outlets have reached for the phrase "Black October" for this, and CNBC reported the view that PHP2Shell is the first clear example of a pattern rather than a one-off. That is a forecast rather than a finding, and it should be read as one.
+
+## The claim that was retracted
+
+On 23 October, Unit 42 reported that it had seen attackers use agentic AI platforms for post-exploitation work — the stage after a break-in, where an intruder explores a network and escalates access — following a PHP2Shell compromise at a European government agency. It was the most-shared detail of the whole story, and for an obvious reason: AI finding the flaw and AI exploiting the flaw in the same week is a tidy narrative.
+
+On 25 October, Unit 42 withdrew it. Its updated threat brief states that while the activity it observed did involve a vulnerable PHP application, it is "unable to confirm that initial access is associated with the specific PHP2Shell CVEs", and that it has retracted the 23 October update.
+
+Three things follow from this, and they are the reason it has a section of its own rather than a footnote:
+
+1. **The agentic-AI detail is still circulating.** A great deal of the secondary coverage was written on 23 and 24 October and has not been revised. If you read about AI agents rampaging through a European government network, that is the retracted claim.
+2. **The retraction is narrow.** Unit 42 withdrew the link between that specific intrusion and these specific flaws. It did not say the intrusion was imaginary, and it did not say attackers are not using AI tooling elsewhere.
+3. **It changes nothing about patching.** Exploitation of PHP2Shell is separately confirmed, and the reasons to upgrade were never contingent on this incident.
+
+If you want the background on what "agentic AI" means in that sentence and how much of the category is real today, [AI agents](/ai-agents/) covers it for people running businesses rather than building agent software.
+
+## What is actually confirmed about the attacks
+
+Stripping out the retracted material, this is what stands up:
+
+- **Attempts began before disclosure.** Amazon's threat intelligence team recorded a PHP2Shell exploitation attempt on 17 October 2026, four days before the patch. Someone outside the disclosure process knew.
+- **Successful exploitation has been confirmed.** Honeypot operators recorded genuine remote code execution against an Apache mod_php server running PHP 8.4.26, reported by BleepingComputer. This is not theoretical.
+- **Scanning is broad and mostly indiscriminate.** The bulk of observed traffic is untargeted internet-wide probing for unpatched hosts, which is the normal shape of the week after a critical disclosure.
+- **A state-linked campaign is suspected, not proven.** CYFIRMA attributed a slow, deliberate scanning campaign to a suspected North Korean operator in the Lazarus Group ecosystem, at moderate confidence. Moderate confidence is the analyst's way of saying the evidence fits and is not conclusive.
+- **Exposure counts vary by source.** Unit 42 put the number of exposed PHP instances above 22.6 million; other published figures are considerably higher. Nobody has an exact number, and the difference comes down to how each firm counts.
+
+## What to do if your website runs PHP
+
+<Steps>
+  <Step title="Find out which PHP version you are on">
+    In most hosting control panels this is on the dashboard or under a "PHP settings" or "MultiPHP"
+    section. In WordPress specifically, **Tools → Site Health → Info → Server** shows it without
+    needing anything from your host. Write the number down before you change anything.
+  </Step>
+  <Step title="Upgrade to a patched release">
+    The fixed versions are **8.5.12, 8.4.27, 8.3.36 and 8.2.35**. Move to the patched release in
+    your own version line — 8.2.34 goes to 8.2.35 — rather than jumping a major version, which is a
+    separate project with its own compatibility testing.
+  </Step>
+  <Step title="If you are on PHP 8.1 or older, talk to your host">
+    PHP 8.1, 8.0, 7.x and 5.x get nothing from php.net. Source backports exist for 7.4, 8.0 and 8.1,
+    and most Linux distributions and serious hosting providers have shipped patched builds. Ask
+    yours directly whether PHP2Shell is fixed on your server. If the answer is no or unclear, that
+    is a hosting decision, not a patching one.
+  </Step>
+  <Step title="Treat partial mitigations as a stopgap only">
+    Disabling `session.upload_progress`, setting `fatal_error_backtraces=0` on PHP 8.5, and
+    enforcing request body size limits at a reverse proxy all narrow the attack surface. None of
+    them closes the hole. Datadog Security Labs is explicit that only patching fixes these
+    vulnerabilities.
+  </Step>
+  <Step title="Assume exposure if you were unpatched and internet-facing">
+    Because memory disclosure is part of this, anything that lived in the worker process should be
+    treated as potentially read: API keys, database credentials, session secrets, certificates.
+    Rotating them is cheap. Discovering later that you did not is not.
+  </Step>
+  <Step title="Check your other software, not just your website">
+    PHP ships inside a great deal of infrastructure that nobody thinks of as a website — network
+    appliances, monitoring tools, internal dashboards. Palo Alto Networks confirmed that several of
+    its own products are affected. Vendor status for a long list of software is tracked publicly in
+    the Dutch NCSC's php2shell repository.
+  </Step>
+</Steps>
+
+<Callout tone="note" heading="If you use a managed host">
+
+Managed WordPress and shared hosting providers generally patch PHP for their customers, often within days, and many had done so before most owners heard the name PHP2Shell. That does not mean yours did. One support ticket asking "which PHP version is my site on, and is it patched against CVE-2026-109618 and CVE-2026-109619?" settles it, and the quality of the answer tells you something useful about the host either way.
+
+</Callout>
+
+## What this means beyond one PHP bug
+
+The specific flaws will be patched and forgotten. The pattern behind them is the part worth keeping.
+
+**Old code is no longer safely old.** The industry has long treated heavily reviewed, long-lived code as implicitly safer than new code, on the reasonable grounds that many eyes had been over it. PHP2Shell is evidence that "many eyes have read this" and "this has been thoroughly searched for complex exploit chains" were never the same statement, and AI has made the second one cheap enough to do properly for the first time.
+
+**The advantage is temporary and symmetric.** Defenders got this capability first, by a matter of months at most. The same tooling that found these flaws is available to anyone looking for the next set, and the window between a flaw being findable and being exploited is what shrinks.
+
+**The patch gap is the thing that actually hurts you.** Attempts were logged four days before the patch existed, but the overwhelming majority of damage from a flaw like this comes from servers still unpatched weeks and months later. That part has nothing to do with AI. It is the same operational problem it has always been, and it is the one a small business can actually do something about.
+
+**Be sceptical of fast AI-and-security narratives.** The single most-shared fact about this story in its first week — that AI agents ran the attack — was withdrawn by the firm that reported it. When a story is this good, the correction travels a fraction as far as the claim.
+
+## Sources and further reading
+
+Everything on this page is drawn from the material below, listed so you can check any of it directly. Primary sources first.
+
+**Primary sources**
+
+- [Wiz Research: PHP2Shell — AI uncovers critical RCE vulnerabilities affecting 70% of the Internet](https://www.wiz.io/blog/php2shell-php-rce) — the original research, including how the models were used.
+- [PHP release archive, 2026](https://www.php.net/archive/2026.php) — the project's own release announcements for 8.5.12, 8.4.27, 8.3.36 and 8.2.35.
+- [NVD: CVE-2026-109618](https://nvd.nist.gov/vuln/detail/CVE-2026-109618) and [NVD: CVE-2026-109619](https://nvd.nist.gov/vuln/detail/CVE-2026-109619) — the formal vulnerability records.
+- [Amazon Threat Intelligence: PHP2Shell exploitation prior to public disclosure in MadPot](https://aws.amazon.com/blogs/security/amazon-threat-intelligence-identifies-php2shell-exploitation-prior-to-public-disclosure-in-madpot/) — the 17 October detection.
+
+**Threat intelligence and technical analysis**
+
+- [Unit 42 threat brief: CVE-2026-109618, CVE-2026-109619](https://unit42.paloaltonetworks.com/cve-2026-109618-cve-2026-109619/) — including the 25 October retraction quoted above.
+- [Datadog Security Labs: detection, analysis and remediation](https://securitylabs.datadoghq.com/articles/php2shell-critical-vulnerabilities-in-php/) — the clearest technical write-up of both flaws, plus detection guidance and the limits of each mitigation.
+- [watchTowr: PHP2Shell RCE exploited](https://watchtowr.com/intelligence/php-remote-code-execution-php2shell/) — exploitation analysis.
+- [SOCRadar: affected versions and how to fix them](https://socradar.io/blog/php2shell-cve-2026-109618-cve-2026-109619/) — version matrix and observed exploit tooling.
+- [Tenable: PHP2Shell frequently asked questions](https://www.tenable.com/blog/php2shell-cve-2026-109618-cve-2026-109619-frequently-asked-questions-about-critical-php-remote) — a plain FAQ on scope and remediation.
+- [CYFIRMA: suspected DPRK campaign staging PHP2Shell targeting](https://www.cyfirma.com/research/cyfirma-threat-advisory-suspected-dprk-campaign-staging-php2shell-targeting-against-global-php-infrastructure/) — the moderate-confidence Lazarus attribution.
+- [NCSC-NL php2shell repository](https://github.com/NCSC-NL/php2shell) — the Dutch national CSIRT's operational tracker, including per-vendor software status.
+
+**Reporting**
+
+- [BleepingComputer: PHP2Shell flaws now successfully exploited in the wild](https://www.bleepingcomputer.com/news/security/php2shell-security-flaws-now-sucessfully-exploited-in-the-wild/) — the confirmed remote code execution.
+- [SecurityWeek: PHP2Shell exploitation started days before patches](https://www.securityweek.com/php2shell-exploitation-started-days-before-patches/)
+- [Help Net Security: critical PHP vulnerabilities patched, update now](https://www.helpnetsecurity.com/2026/10/21/php2shell-php-vulnerabilities-patched-cve-2026-109618-cve-2026-109619/) — day-one coverage with the affected SAPI list.
+- [The Register: hackers pile on PHP2Shell as AWS reveals attacks began before disclosure](https://www.theregister.com/cyber-crime/2026/10/22/hackers-pile-on-php2shell-as-aws-reveals-attacks-began-before-disclosure/5304749)
+- [The Hacker News: PHP2Shell exploitation attempts continue amid suspected North Korean scanning](https://thehackernews.com/2026/10/php2shell-exploitation-hits-government.html)
+- [CNBC: AI's "Black October" — critical PHP flaws set off a global security scramble](https://www.cnbc.com/2026/10/23/php-vulnerabilities-ai-cybersecurity.html) — the industry-pattern framing.
+- [NPR: AI found the flaw, hackers found the leak](https://www.npr.org/2026/10/24/nx-s1-6012327/ai-found-the-flaw-hackers-found-the-leak-the-race-to-save-php2shell)
+- [Ubuntu: php2shell vulnerability fixes available](https://ubuntu.com/blog/php2shell-vulnerability-fixes-available) — an example of distribution-level backporting.
+
+## Keep reading
+
+- **[AI News](/ai-news/)** — the rest of this section, and the standard every story in it is held to.
+- **[AI agents](/ai-agents/)** — what "agentic AI" actually refers to, which categories are real today, and what they still get wrong.
+- **[AI agents vs automation](/ai-agents/ai-agents-vs-automation/)** — the distinction most of this coverage blurs, and the one that decides which of the two your own work needs.

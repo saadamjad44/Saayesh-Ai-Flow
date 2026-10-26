@@ -66,6 +66,13 @@ export const PILLAR_NAV: readonly NavSection[] = [
   section("AI Agents", "ai-agents"),
   section("AI Prompts", "ai-prompts"),
   section("By Industry", "ai-by-industry"),
+  /**
+   * Last on purpose. The menu is for topic discovery, and the seven hubs above
+   * are where a visitor with a question should land; news is what they read
+   * once they are already here, so it sits at the end rather than pushing an
+   * evergreen hub down the list.
+   */
+  section("AI News", "ai-news"),
 ];
 
 /**
@@ -91,6 +98,7 @@ const MENU_LABELS: Partial<Record<PageId, string>> = {
   "ai-agent-use-cases": "AI Agent Use Cases",
   "claude-duet-vs-openai-dots-vs-meta-muse": "Claude Duet vs Dots vs Muse",
   "what-is-claude-duet": "What Is Claude Duet?",
+  "php2shell-ai-found-php-flaw": "PHP2Shell: AI Found a PHP Flaw",
   "ai-chatbot-for-small-business": "AI Chatbot for Small Business",
   "ai-customer-service-automation": "AI Customer Service Automation",
   "n8n-vs-zapier-vs-make": "n8n vs Zapier vs Make",

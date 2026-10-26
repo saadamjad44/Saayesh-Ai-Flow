@@ -604,6 +604,57 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: "Rendered at 50 characters, so the brand suffix is omitted rather than truncated. The only page on the site built on the owner's validated Semrush volume for a single product query, and it exists because the intent is genuinely separate from the three-way comparison beside it: this reader has heard the name and wants to know what it is, not which of three rivals they qualify for. The question mark is kept because the query is phrased as one and the H1 answers it in the first line. Scope discipline matters more here than usual - the comparison owns eligibility across the category, this owns Duet's own mechanics, and the operational detail (shared plan usage limits, the approval boundaries, the named SMB connectors) is deliberately unique to this page so the two never converge into near-duplicates.",
   },
 
+  // ---- AI News -----------------------------------------------------------
+  /**
+   * The one hub on the site that is not written for a head term, because its
+   * head term is not available: "AI news" and every near variant of it is held
+   * by the trade press, which publishes more in a day than this site does in a
+   * month and has the domain history to match. Competing there would be a
+   * straightforward waste of the hub's title.
+   *
+   * So the hub is targeted at the qualified query it can answer — what a recent
+   * development means for a small business — and the individual stories are
+   * each targeted at their own named subject, where a specific, honest page has
+   * a real chance against generalist wire coverage.
+   */
+  "ai-news": {
+    title: "AI News for Small Business: What Changed & What to Do",
+    brand: "omit",
+    description:
+      "Recent AI developments explained for people running a business: what is actually confirmed, what was overclaimed, and what it changes for you in practice.",
+    primaryKeyword: "AI news for small business",
+    supportingKeywords: ["latest AI news", "AI news today", "AI industry news", "what's new in AI"],
+    intent: "Informational",
+    note: 'The <h1> stays "AI News" — 7 characters, and a label rather than a promise. The bare head term is not a realistic target here and is deliberately kept as a supporting keyword only: TechCrunch, The Verge and the security press own it on volume and freshness, and a weekly hub cannot out-publish a newsroom. The qualified primary is the gap, because almost nobody covering an AI story writes the paragraph a small business owner actually needs, which is whether it affects them and what to do about it. Review this hub\'s snippet if the publishing cadence ever changes: the copy promises recency, and a hub that goes quiet for a quarter should say less.',
+  },
+  "php2shell-ai-found-php-flaw": {
+    title: "PHP2Shell Explained: The AI-Found PHP Flaw & What to Do",
+    brand: "omit",
+    description:
+      "AI models found two critical PHP flaws hiding for a decade. What PHP2Shell is, which claims were retracted, and the versions to upgrade to if you run PHP.",
+    primaryKeyword: "PHP2Shell explained",
+    supportingKeywords: [
+      "PHP2Shell",
+      "CVE-2026-109618",
+      "CVE-2026-109619",
+      "PHP2Shell WordPress",
+      "AI found PHP vulnerability",
+      "is my website affected by PHP2Shell",
+      "PHP2Shell patched versions",
+    ],
+    intent: "Informational",
+    /**
+     * The bare entity term is a supporting keyword rather than the primary for
+     * the same reason as the hub above: Wiz published the research, and the
+     * security press, the distro vendors and half the scanner companies all
+     * covered it within 48 hours. What none of them wrote is the version aimed
+     * at someone who runs one WordPress site and does not know whether "PHP
+     * 8.2.35" is something they have. That reader is the target, and the
+     * practical variants below are how they ask.
+     */
+    note: 'Rendered at 54 characters. A dated story, which makes this the one page on the site where the snippet should age out: if the exploitation picture changes materially, rewrite the description rather than leaving a promise about "retracted" claims that the page no longer explains. The retraction is in the description on purpose — Unit 42 pulled its agentic-AI post-exploitation claim on 2026-10-25 and most of the coverage still carries it, so the correction is the single most useful thing this page offers a searcher who has already read two other articles about it.',
+  },
+
   // ---- Getting Started cluster -------------------------------------------
   "getting-started": {
     title: "Getting Started with AI: A Small Business Guide",

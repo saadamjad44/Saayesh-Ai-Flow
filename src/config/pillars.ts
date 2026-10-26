@@ -17,7 +17,7 @@
 import type { PillarId } from "./pages";
 
 export type PillarIconId =
-  "compass" | "nib" | "briefcase" | "workflow" | "prompt" | "industry" | "agent";
+  "compass" | "nib" | "briefcase" | "workflow" | "prompt" | "industry" | "agent" | "news";
 
 export interface PillarPresentation {
   /** Card-length description, for the homepage grid and archive headers. */
@@ -57,6 +57,12 @@ export const PILLAR_PRESENTATION: Readonly<Record<PillarId, PillarPresentation>>
       "What an AI agent actually is, how it differs from an automation, and where handing a task over is worth the supervision it still needs.",
     menu: "What they are, and when to trust one",
     icon: "agent",
+  },
+  "ai-news": {
+    summary:
+      "What actually changed in AI recently, what is confirmed rather than claimed, and what it means if you run a small business.",
+    menu: "What changed, and whether it affects you",
+    icon: "news",
   },
   "ai-prompts": {
     summary:

@@ -33,6 +33,7 @@ export const PILLAR_IDS = [
   "ai-business-tools",
   "ai-automation",
   "ai-agents",
+  "ai-news",
   "getting-started",
   "ai-by-industry",
   "ai-prompts",
@@ -91,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 11,
+  3: 13,
 };
 
 export const PAGES = [
@@ -613,6 +614,56 @@ export const PAGES = [
     type: "article",
     phase: 3,
     pillar: "ai-automation",
+  },
+
+  /**
+   * Phase 3 — the AI News hub and its first story, approved by the owner on
+   * 2026-10-26.
+   *
+   * The eighth pillar, and the only one organised by *when* rather than by
+   * what: every other hub answers a question that will read the same in six
+   * months, and this one covers what changed last week. That is a different
+   * editorial contract, so it gets its own top-level segment rather than
+   * scattering dated stories through the evergreen clusters, where they would
+   * age badly next to guides that are kept current.
+   *
+   * It is not a syndication feed and must not become one. The hub earns its
+   * place only while each story does the thing the wire copy does not: say what
+   * is actually confirmed, what was retracted, and what a small business owner
+   * should do on Monday morning. Stories that cannot clear that bar belong
+   * nowhere on this site — a dated page nobody can act on is the thinnest page
+   * there is, whatever the traffic looks like on the day it ships.
+   *
+   * On search: "AI news" as a head term belongs to the trade press and is not
+   * winnable here, which is why the hub is built as a navigational and
+   * freshness surface and the individual stories carry the search load on their
+   * own named subjects. See src/config/seo-snippets.ts for how each is targeted.
+   */
+  {
+    id: "ai-news",
+    title: "AI News",
+    path: "/ai-news/",
+    type: "pillar",
+    phase: 3,
+  },
+  /**
+   * The hub's first story: two critical PHP flaws found with frontier AI
+   * models, disclosed 2026-10-21 and exploited in the wild within days.
+   *
+   * It belongs on this site rather than on a security blog because of the AI
+   * half of it — AI compressed a decade-old theoretical flaw into a working
+   * exploit chain in a week — and because the readership runs WordPress,
+   * Drupal and Joomla sites, all three of which Wiz confirmed pre-auth RCE
+   * against. It also carries the correction the day-one coverage does not:
+   * Unit 42 retracted its agentic-AI post-exploitation claim on 2026-10-25.
+   */
+  {
+    id: "php2shell-ai-found-php-flaw",
+    title: "PHP2Shell: AI Found a Critical Flaw in PHP",
+    path: "/ai-news/php2shell-ai-found-php-flaw/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-news",
   },
 ] as const satisfies readonly SitePage[];
 
