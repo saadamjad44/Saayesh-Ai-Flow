@@ -1,0 +1,185 @@
+---
+pageId: chatgpt-business-vs-plus
+title: "ChatGPT Business vs Plus: Which Plan Do You Need?"
+heading: "ChatGPT Business vs Plus: Which Plan Does Your Business Actually Need?"
+description: "ChatGPT Business vs Plus for a small business: what each tier buys you, how the training default differs, and the one rule that settles which to pay for."
+publishedDate: 2026-10-27
+updatedDate: 2026-10-27
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What is the difference between ChatGPT Plus and ChatGPT Business?
+    answer: Plus is a personal subscription on a personal account. Business is a company workspace sold per seat, with company-owned accounts, an admin who controls membership, and OpenAI not training on workspace content by default. The capability of the assistant is broadly the same on both — what changes is who owns the account, who can administer it, and what the defaults are. Business is the tier OpenAI previously called Team.
+  - question: Do I need ChatGPT Business if I am a one person business?
+    answer: Usually not. If you are the only person using it and you are not putting client or customer records into it, Plus with the training setting switched off covers you, and Business is sold per seat with a seat minimum — so a solo owner tends to pay for more seats than they use. The case for Business as a solo operator is narrower than the marketing suggests and comes down to two situations — a client or insurer who wants business-grade terms in writing, or an intention to add staff soon.
+  - question: Does ChatGPT train on my business data?
+    answer: It depends on the tier and the setting. On Business, OpenAI does not train on workspace content by default. On personal plans the training default is the other way round and you turn it off yourself in settings. The practical problem with relying on that setting is not that it fails — it is that you cannot verify it across other people's personal accounts, which is the real reason a team moves to a workspace.
+  - question: Is ChatGPT Business worth it for a small team?
+    answer: For two or more people doing company work in it, yes, and the reason is usually administration rather than privacy. A workspace gives you company-owned accounts, one bill, an admin who can add and remove people, and shared projects the team can all reach. Without it you are paying several personal subscriptions you do not control, which is both more expensive to manage and impossible to tidy up when somebody leaves.
+  - question: What happens to the chat history when an employee leaves?
+    answer: This is the strongest argument for a workspace and it is rarely made. If your staff use personal Plus accounts, the account is theirs — the history, the saved projects and the instructions they built all leave with them, and you have no route to any of it. In a Business workspace the accounts belong to the company and an admin can remove the person while the work stays. Think of it as the difference between a work email address and somebody using their own.
+  - question: Why does this page not list the prices?
+    answer: Because they change and get renamed, and a stale number is worse than none. OpenAI has repriced and restructured these tiers more than once, Team became Business, and anything printed here would be wrong at some point without the page visibly changing. What does not change is the shape of the billing — Plus is a flat personal subscription, Business is per seat with a seat minimum and a discount for annual commitment — so the page explains that and sends you to OpenAI's pricing page for today's figures.
+  - question: Should I buy ChatGPT Pro instead?
+    answer: Pro is a heavier personal tier for people who hit Plus usage limits, not a business tier. It solves a volume problem, not an ownership or administration one. If your issue is that you run out of capacity on long working sessions, Pro is the answer and the number of seats is irrelevant. If your issue is that two people need accounts or that customer data is involved, Pro does nothing for you and Business is the tier you want.
+  - question: Can I mix plans, with some people on Plus and some on Business?
+    answer: You can, and it is a common accident rather than a plan. It leaves you with the weaknesses of both — unverifiable settings and unowned accounts on one side, a per seat bill on the other — and it makes any honest answer to a client about where their data goes impossible, because the answer differs per employee. If you are going to run a workspace, put everyone doing company work inside it.
+---
+
+import { ComparisonTable, Callout, KeyTakeaways, VerdictBox } from "@/components/content";
+
+**The rule is short: if anyone other than you does company work in ChatGPT, or if customer and client records go into it, you want Business. If you are on your own and only paste things you would be happy to publish, Plus is enough.**
+
+Almost everything else written about this decision turns into a feature list. The features are not what decides it, because the assistant is broadly the same on both tiers. What differs is who owns the account, who can administer it, and what happens by default — and those three are what a small business actually gets wrong.
+
+<KeyTakeaways>
+
+- **Plus is a personal subscription. Business is a company workspace** sold per seat, with an admin and company-owned accounts.
+- **Business is the tier OpenAI used to call Team.** Same idea, renamed — which is a hint about how durable any price you read is.
+- **The training default differs:** Business does not train on workspace content by default, personal plans need you to switch it off yourself.
+- **The stronger argument is offboarding, not privacy.** On a personal account, the work leaves when the person does.
+- **Business has a seat minimum,** so a solo owner usually pays for seats they do not use. Being alone is a reason to stay on Plus.
+- **Pro is a volume tier, not a business tier.** It fixes usage limits and nothing about ownership or administration.
+- **Mixing plans across a team is the worst of both** and makes "where does our client data go" unanswerable.
+
+</KeyTakeaways>
+
+<VerdictBox
+  heading="The short answer"
+  bestFor="Business when a second person does company work in it, or when customer, client or financial records go into it at all"
+  notFor="A solo owner pasting public or low-sensitivity work. Plus with training switched off does that job, and the seat minimum makes Business poor value for one person"
+/>
+
+## What you are actually buying
+
+<ComparisonTable
+  caption="ChatGPT Plus and Business, by what changes"
+  rowHeader="What matters"
+  columns={["Plus", "Business"]}
+  rows={[
+    {
+      label: "Who owns the account",
+      cells: ["The individual", "The company, through an admin"],
+    },
+    {
+      label: "Billing shape",
+      cells: ["Flat personal subscription", "Per seat, with a seat minimum and an annual discount"],
+    },
+    {
+      label: "Training on your content",
+      cells: [
+        "On by default; you turn it off in settings",
+        "Not trained on workspace content by default",
+      ],
+    },
+    {
+      label: "Administration",
+      cells: [
+        "None — there is nothing to administer",
+        "Add and remove people, control membership, see usage",
+      ],
+    },
+    {
+      label: "Sign-in controls",
+      cells: [
+        "Whatever the individual set up",
+        "Workspace-level controls including SSO and enforced MFA",
+      ],
+    },
+    {
+      label: "Shared work",
+      cells: ["Nothing is shared; everything is personal", "Shared projects the team can reach"],
+    },
+    {
+      label: "When someone leaves",
+      cells: [
+        "Their account and its history go with them",
+        "Admin removes the person, the work stays",
+      ],
+    },
+    {
+      label: "What you can tell a client",
+      cells: [
+        "Depends on each person's own settings",
+        "One workspace-level answer that holds for everyone",
+      ],
+    },
+  ]}
+/>
+
+Read that table as two groups. The top half is commercial — how you are billed and by whom. The bottom half is the part that actually changes how your business runs, and it is all about control rather than capability.
+
+<Callout tone="note" heading="Why there are no prices on this page">
+  OpenAI reprices and renames these tiers — Team became Business — and a number printed here would
+  quietly go stale while the page looked unchanged. The durable half of the answer is the billing
+  shape, which is in the table: Plus is a flat personal subscription, Business is per seat with a
+  minimum and a discount for paying annually. Get today's figures from [OpenAI's pricing
+  page](https://openai.com/chatgpt/pricing/), and when you compare, compare the annual per-seat rate
+  against the monthly one — the gap between them is usually larger than people expect. To put your
+  own stack together, our free [small business AI cost
+  calculator](/ai-business-tools/small-business-ai-cost-calculator/) totals seats, usage and setup.
+</Callout>
+
+## The training default, and why it is not the real argument
+
+The headline difference everybody quotes is that Business does not train on your workspace content by default, while personal plans do unless you say otherwise.
+
+That is true, and it matters less than it sounds, because the setting exists on personal plans too. One careful person on Plus who has switched training off is in much the same position as the same person on Business.
+
+The difference appears the moment there are two of you. You cannot see whether a colleague's personal account has training on. You cannot set it for them. You cannot check it after the fact, and you certainly cannot promise a client anything about it. The value of a workspace is not that the setting is better — it is that the setting is **yours, once, for everyone**, and you can answer for it.
+
+That is also the honest framing for anyone weighing this against a client's security questionnaire. "We have a company workspace with training disabled at the workspace level" is a statement you can stand behind. "Everyone on my team has been asked to turn it off" is not.
+
+## The argument nobody makes: whose account the work lives in
+
+Here is the part that has nothing to do with AI and decides the question more often than privacy does.
+
+If your staff use ChatGPT on personal Plus accounts, those accounts are theirs. The chat history is theirs. The projects, the instructions they refined over months, the reference files they uploaded — theirs. When they leave, all of it leaves, and there is no administrative route to any of it, because you were never a party to the account.
+
+Six months of accumulated working knowledge about how your business writes, quotes and answers customers walks out of the door with somebody's personal login. People think about this carefully for email and documents, and then hand the same problem to ChatGPT without noticing.
+
+A workspace fixes it in the dullest possible way: the company owns the accounts, an admin removes the person, the work stays. If you need one reason to move a two-person team off personal subscriptions, it is this one rather than anything on the security page.
+
+<Callout tone="tip" heading="This is also where your retiring custom GPTs land">
+  OpenAI is retiring custom GPTs, and shared projects inside a workspace are one of the places that
+  work is meant to move to. If you are deciding on a tier and migrating a GPT in the same month,
+  decide the tier first — see [what to move a retiring custom GPT
+  to](/ai-business-tools/custom-gpts-retiring/).
+</Callout>
+
+## When Plus is the right answer
+
+Stay on Plus when all of the following are true:
+
+- **You are the only person doing company work in it.** Not "mostly me" — only you.
+- **You can describe what you paste into it as low-sensitivity.** Drafts, public information, your own thinking, things you would be relaxed about seeing elsewhere.
+- **No client has asked you anything in writing** about how you handle their data in AI tools.
+- **You have actually opened settings and turned training off.** If you have not done this, do it before reading on; it is the cheapest improvement available to you today.
+
+The seat minimum is what makes this clear-cut. A solo owner on Business is buying seats nobody sits in, for administration features that administer one person. That is not a privacy upgrade, it is a rounding error in your favour pointing the other way.
+
+## When to move to Business
+
+Move when any single one of these is true — they do not need to stack:
+
+- **A second person does company work in ChatGPT.** This is the usual trigger and the clearest one.
+- **Customer, client, financial or staff records go in.** Anything you would not want in a training set or in a departing employee's account.
+- **A client, insurer or tender has asked** how you handle data in AI tools and expects a verifiable answer.
+- **You need the work to survive the person.** Shared projects, company-owned accounts, one bill.
+- **You have lost track of who is paying for what.** Several personal subscriptions reimbursed through expenses is a workspace with none of the benefits.
+
+## What Business does not fix
+
+Worth saying plainly, because the upgrade gets sold as a compliance solution and it is not one.
+
+A workspace does not stop someone pasting something they should not have pasted. It changes the default and gives you a place to set a rule; it does not enforce judgement. The written rule is still your job — which of your records may go into an AI tool, which may not, and who decides the grey ones.
+
+It does not make the output correct either. Everything on this site about checking AI work before it leaves your business applies identically on every tier. And it does not settle whether ChatGPT is the right assistant for you in the first place — that is a different comparison, and it is the next link below.
+
+## Where to go next
+
+- **Choosing between assistants, not tiers.** [Claude vs ChatGPT for small business](/ai-business-tools/claude-vs-chatgpt-for-small-business/) compares the two across documents, support, spreadsheets, integrations and team plans.
+- **Migrating a custom GPT.** [Custom GPTs are retiring](/ai-business-tools/custom-gpts-retiring/) covers the December deadline and where your GPT should actually go.
+- **What to tell a client about any of this.** [Do you have to tell clients you use AI?](/ai-business-tools/ai-disclosure-to-clients/) separates what the law requires from what your contract does.
+- **Budgeting the whole stack.** [How much does AI cost for a small business?](/ai-business-tools/how-much-does-ai-cost-small-business/) works through the components by budget level.
+- **The wider category.** [AI business and productivity tools](/ai-business-tools/) is the hub for admin, meetings, bookkeeping and support.

@@ -92,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 13,
+  3: 16,
 };
 
 export const PAGES = [
@@ -664,6 +664,94 @@ export const PAGES = [
     type: "article",
     phase: 3,
     pillar: "ai-news",
+  },
+
+  /**
+   * Phase 3 — the business pillar's "which setup, and on whose terms" batch,
+   * approved by the owner on 2026-10-27 off live-SERP keyword research.
+   *
+   * All three sit under /ai-business-tools/ because all three are decisions a
+   * reader makes about their own account before any tool comparison matters:
+   * what to move a retiring custom GPT to, which ChatGPT tier to buy, and what
+   * to tell a client about either. Every one of these SERPs is currently held
+   * by pages with no authority at all — vendor blogs, Medium posts and
+   * template farms — which is why they were picked ahead of the head terms in
+   * the same research.
+   *
+   * The deliberate omission from that research: a standalone "Claude Pro vs
+   * Team" page. claude-for-small-business already carries the full Claude plan
+   * ladder and claude-vs-chatgpt-for-small-business already carries a pricing
+   * section, so a third page on Claude tiers would be the near-duplicate
+   * AGENTS.md forbids. Flagged to the owner rather than shipped.
+   */
+
+  /**
+   * The one page in this batch with a deadline on it. OpenAI announced the
+   * retirement of custom GPTs on 11 September 2026; creation of new ones ended
+   * 26 October 2026, and existing GPTs and their GPT pages stop working on
+   * 11 December 2026 (11 February 2027 for FedRAMP and approved Enterprise
+   * deferrals). Anyone running a small business on a custom GPT has weeks, not
+   * months, and the coverage that owns this query is written for IT
+   * departments migrating dozens of them.
+   *
+   * It belongs under /ai-business-tools/ rather than /ai-news/ because the
+   * story is not the announcement — it is a decision the reader has to make
+   * about their own account, and the page stays useful after the deadline as
+   * the explanation of what replaced GPTs. Needs reviewing on 11 December,
+   * when the present tense in it becomes past tense.
+   */
+  {
+    id: "custom-gpts-retiring",
+    title: "Custom GPTs Are Retiring: What to Do Before 11 December",
+    path: "/ai-business-tools/custom-gpts-retiring/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-business-tools",
+  },
+
+  /**
+   * The tier decision inside one vendor, kept distinct from
+   * claude-vs-chatgpt-for-small-business by what it is about: that page answers
+   * which assistant, this one answers whose account the work happens in and
+   * what the default training setting is on it. Zero H2 overlap, and the
+   * cross-vendor question is a link out rather than a section here.
+   *
+   * It deliberately prints no dollar figures. OpenAI reprices these tiers and
+   * renames them (Team became Business), so the durable half of the answer is
+   * the billing model — per seat, seat minimum, annual versus monthly — plus
+   * the one rule that decides it. The page says that it is doing this and
+   * sends the reader to the pricing page for today's numbers.
+   */
+  {
+    id: "chatgpt-business-vs-plus",
+    title: "ChatGPT Business vs Plus: Which Plan Do You Need?",
+    path: "/ai-business-tools/chatgpt-business-vs-plus/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-business-tools",
+  },
+
+  /**
+   * The site's first page on the trust and disclosure side of AI use, and the
+   * start of closing a gap the 2026-10-20 research flagged: zero data-privacy
+   * or professional-obligation coverage anywhere on the site, on a site whose
+   * readers are the people with client contracts.
+   *
+   * The angle is a correction. Nearly every page ranking for this question
+   * either says "you must disclose, the EU AI Act requires it" or "you never
+   * have to" — and Article 50's text duty actually lands on AI-generated text
+   * published on matters of public interest without human editorial review,
+   * which is not what a freelancer writing a client's marketing copy is doing.
+   * The real constraint for most readers is their own contract. That is the
+   * page.
+   */
+  {
+    id: "ai-disclosure-to-clients",
+    title: "Do You Have to Tell Clients You Use AI?",
+    path: "/ai-business-tools/ai-disclosure-to-clients/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-business-tools",
   },
 ] as const satisfies readonly SitePage[];
 

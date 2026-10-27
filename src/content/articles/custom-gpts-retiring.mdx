@@ -1,0 +1,282 @@
+---
+pageId: custom-gpts-retiring
+title: "Custom GPTs Are Retiring: What to Do Before 11 December"
+heading: "Custom GPTs Are Retiring: What to Move Yours To Before 11 December"
+description: OpenAI is retiring custom GPTs on 11 December 2026. What a plugin is, what migrates and what does not, and how to pick between a plugin, a Project and a Skill.
+publishedDate: 2026-10-27
+updatedDate: 2026-10-27
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Are custom GPTs really going away?
+    answer: Yes. OpenAI announced on 11 September 2026 that it is retiring custom GPTs across ChatGPT plans and moving creators to a new thing called plugins. Creation of new custom GPTs ended on 26 October 2026, and existing custom GPTs and their GPT pages are scheduled to stop working on 11 December 2026. FedRAMP workspaces and Enterprise workspaces with an approved deferral have a later date of 11 February 2027. Your own account or workspace may show a different notice, so check the banner in ChatGPT rather than assuming the standard date applies to you.
+  - question: What replaces custom GPTs?
+    answer: OpenAI has split what a custom GPT did across several features rather than replacing it with one thing. A plugin is the direct successor and bundles reusable instructions, reference files and connected apps. A Skill is a reusable set of instructions for a process you repeat. A Project is a workspace that keeps chats, files and context together. Apps are the connections out to other services. For multi-system, action-heavy GPTs inside a company workspace, OpenAI points at ChatGPT Work and workspace agents instead.
+  - question: What happens automatically when I migrate a custom GPT?
+    answer: Three things come across on their own. The GPT's instructions become a Skill inside the new plugin, its knowledge files are copied in as reference files, and any connected apps are added as the plugin's apps. That covers the majority of what a typical small business GPT was made of.
+  - question: What does not transfer when a custom GPT becomes a plugin?
+    answer: Four things, and all four have bitten people. Your previous conversations with the GPT do not come across. Custom actions are not part of the built-in migration and have to be rebuilt by hand. Sharing permissions do not transfer, so the new plugin starts private even if the GPT was shared with your whole team. And the model you originally picked for the GPT is not carried over either.
+  - question: Will my shared GPT links keep working?
+    answer: No. After the retirement date the GPT pages themselves become inaccessible, which means any link you have handed to a client, put in an onboarding document or pinned in a team chat stops working. If other people use your GPT, migrating it is only half the job — they also need the new plugin installed before the old link dies.
+  - question: Do I need a plugin, or is a Project enough?
+    answer: For most small businesses a Project is enough, and it is the simpler answer. If your custom GPT was a set of instructions plus a few reference files that only you used, a Project holds exactly that and needs no publishing or installing. Build a plugin when other people have to use the same thing, when it has to connect to outside apps, or when you want it callable from any chat rather than only inside one workspace.
+  - question: What if I only use someone else's custom GPT and did not build it?
+    answer: You cannot migrate it — only its creator can. Your options are to ask them whether a plugin replacement is coming and to get it installed before the retirement date, or to rebuild the part you actually rely on yourself. In practice the second is often quicker than it sounds, because what you depend on is usually the instructions rather than anything technical, and you can copy those into a Project of your own.
+  - question: How long does migrating one custom GPT take?
+    answer: A simple one is minutes. Open My GPTs, choose the GPT, pick the migrate option when it appears, then test the result on the prompts you actually use it for before you rely on it. The time goes on the parts that do not migrate — rebuilding custom actions, setting sharing again, and telling whoever used the old link where the new thing lives. Budget an afternoon if your GPT had actions and an audience, and ten minutes if it did not.
+---
+
+import {
+  ComparisonTable,
+  Callout,
+  KeyTakeaways,
+  Steps,
+  Step,
+  VerdictBox,
+} from "@/components/content";
+
+**OpenAI is retiring custom GPTs. Existing ones stop working on 11 December 2026, and you can no longer create new ones — that door closed on 26 October 2026.** If your business runs on a custom GPT, you have weeks to move it, and the move is not a single button for everything it held.
+
+This is the practical version of that job: the dates, what a plugin is, exactly what carries across and what you rebuild by hand, and the decision most coverage skips — whether you need a plugin at all, because for a lot of small businesses a Project is the simpler and better answer.
+
+<KeyTakeaways>
+
+- **The deadline is 11 December 2026** for custom GPTs and their GPT pages. FedRAMP and approved Enterprise deferrals run to 11 February 2027.
+- **Creation of new custom GPTs ended on 26 October 2026,** so anything unbuilt stays unbuilt.
+- **A plugin is the official successor:** instructions, reference files and connected apps in one package.
+- **Instructions, knowledge files and connected apps migrate automatically.** Conversations, custom actions, sharing permissions and the model choice do not.
+- **Shared GPT links die with the GPT pages,** so anyone you gave a link to needs the replacement installed before the date.
+- **Many small business "custom GPTs" were instructions plus a few files for one person.** That is a Project, not a plugin, and a Project is less work.
+- **If you only _use_ someone else's GPT, you cannot migrate it** — ask the creator, or rebuild the part you depend on.
+
+</KeyTakeaways>
+
+<Callout tone="warning" heading="Dates checked 27 October 2026">
+  The timeline below is from OpenAI's retirement guidance and the reporting around it, cross-checked
+  across independent write-ups. OpenAI has said timelines can differ by account and workspace, so
+  the authority on your deadline is the notice in your own ChatGPT account, not this page. If you
+  manage a company workspace, confirm your date with your OpenAI account contact before planning
+  around it.
+</Callout>
+
+## The dates that matter
+
+<ComparisonTable
+  caption="Custom GPT retirement timeline"
+  rowHeader="Date"
+  columns={["What happens", "What it means for you"]}
+  rows={[
+    {
+      label: "11 September 2026",
+      cells: [
+        "OpenAI announces the retirement of custom GPTs across ChatGPT plans",
+        "The decision is made, not under consultation",
+      ],
+    },
+    {
+      label: "26 October 2026",
+      cells: [
+        "Creation of new custom GPTs ends",
+        "Already passed. Anything you were going to build, you now build as a plugin or a Project",
+      ],
+    },
+    {
+      label: "11 December 2026",
+      cells: [
+        "Custom GPTs and their GPT pages become inaccessible",
+        "The hard deadline. Shared links stop working on this date",
+      ],
+    },
+    {
+      label: "11 February 2027",
+      cells: [
+        "Later date for FedRAMP workspaces and Enterprise workspaces with an approved deferral",
+        "Only relevant if someone has told you it applies to you",
+      ],
+    },
+  ]}
+/>
+
+The second row is the one people misread. It has already happened. If you have been meaning to build a custom GPT for your business, that option is gone and nothing on this page brings it back — what follows is about rescuing the ones that exist and choosing where new work goes instead.
+
+## What a plugin actually is
+
+OpenAI's direct successor to the custom GPT is a **plugin**: a package that bundles reusable instructions, reference material and connections to other apps.
+
+The difference is not in what it holds. It is in how you reach it. A custom GPT was a destination — you opened it, and you were in a conversation with that persona. A plugin is a tool you call from inside an ordinary chat. The capability survives; the "go somewhere to use it" shape does not.
+
+That has one genuinely good consequence and one annoyance. The good one: a plugin's instructions are available to you in the chat you are already in, rather than requiring you to leave and start again somewhere else. The annoyance: a plugin starts private and has to be shared and installed deliberately, so the casual "here's a link, just use it" distribution that made GPTs spread does not come across with it.
+
+OpenAI has also split the rest of what a custom GPT used to do across features that already existed:
+
+- **Skills** — a reusable set of instructions for a process you repeat.
+- **Projects** — a workspace that keeps chats, files and standing instructions together.
+- **Apps** — the connections out to services like your mail, storage or CRM.
+- **ChatGPT Work and workspace agents** — where OpenAI points action-heavy, multi-system GPTs inside a company workspace.
+
+This is why "what replaces custom GPTs" has no single answer. The honest answer is that a custom GPT was several things wearing one coat, and you now pick the piece you were actually using.
+
+## What migrates, and what you rebuild by hand
+
+<ComparisonTable
+  caption="Custom GPT to plugin: what carries across"
+  rowHeader="Part of your GPT"
+  columns={["Migrates automatically?", "What you need to do"]}
+  rows={[
+    {
+      label: "Instructions",
+      cells: [
+        "Yes — they become a Skill inside the plugin",
+        "Read them once after migrating; nothing else",
+      ],
+    },
+    {
+      label: "Knowledge files",
+      cells: [
+        "Yes — copied in as reference files",
+        "Check the files you actually still want are there",
+      ],
+    },
+    {
+      label: "Connected apps",
+      cells: ["Yes — added as the plugin's apps", "Confirm each connection still authenticates"],
+    },
+    {
+      label: "Custom actions",
+      cells: ["No", "Rebuild by hand. This is the real work, and it needs whoever set it up"],
+    },
+    {
+      label: "Sharing permissions",
+      cells: [
+        "No — the plugin starts private",
+        "Set sharing again and tell your users to install it",
+      ],
+    },
+    {
+      label: "Previous conversations",
+      cells: ["No", "Copy anything you need out before the retirement date"],
+    },
+    {
+      label: "Model choice",
+      cells: ["No", "Set the model you want in the new plugin and test the output"],
+    },
+  ]}
+/>
+
+Two of those deserve emphasis, because they are the ones that turn a ten-minute job into a bad week.
+
+**Custom actions.** If your GPT called an API — pulled stock levels, looked up a booking, posted to a system of yours — none of that comes across. It has to be rebuilt, and if a developer or agency set it up for you originally, they need to be in the room. Find out now whether that is your situation, not in the first week of December.
+
+**Sharing.** A GPT shared with your team becomes a private plugin. Nobody is told. The failure mode is quiet: you migrate, you test it yourself, it works perfectly, and three colleagues go on using the old GPT until the day it vanishes.
+
+<Callout tone="tip" heading="Save the conversations first">
+  Conversation history does not migrate, and GPT pages go away. If any of those threads contain work
+  you would miss — a worked-out process, a decision and its reasoning, drafts you still refer to —
+  copy them out now. This is the only part of the job that cannot be done late.
+</Callout>
+
+## Most small businesses do not need a plugin
+
+Here is the part the migration guides do not say, because they are written for IT departments moving dozens of GPTs for a whole organisation.
+
+Think about what your custom GPT really was. For the large majority of small businesses, it was a set of instructions — "you are our brand voice, here is how we write, never say these words" — plus two or three reference files, used by exactly one person. No actions. No API. No audience.
+
+If that is yours, **a Project is the better destination.** It holds standing instructions and files in one place, it keeps the related chats with them, there is nothing to publish and nobody has to install anything. You are not migrating a product; you are putting your instructions somewhere they stay.
+
+<ComparisonTable
+  caption="Where to send a retiring custom GPT"
+  rowHeader="If your GPT was…"
+  columns={["Move it to", "Why"]}
+  rows={[
+    {
+      label: "Instructions plus files, used by you alone",
+      cells: [
+        "A Project",
+        "Holds exactly that, with its chats, and needs no publishing or installing",
+      ],
+    },
+    {
+      label: "Used by other people in your business",
+      cells: [
+        "A plugin",
+        "Plugins are the thing that can be shared and installed; Projects are not",
+      ],
+    },
+    {
+      label: "Connected to outside apps",
+      cells: ["A plugin", "The app connections migrate into it, and this is what plugins are for"],
+    },
+    {
+      label: "One repeatable process you invoke",
+      cells: [
+        "A Skill",
+        "The lightest option — the instructions, callable, with no package around them",
+      ],
+    },
+    {
+      label: "Calling your own systems through custom actions",
+      cells: [
+        "A plugin, with help",
+        "Nothing automatic here. Get whoever built the actions involved before December",
+      ],
+    },
+  ]}
+/>
+
+The useful question is not "how do I migrate my GPT" but "which one thing was my GPT doing for me". Answer that and the destination is obvious, and in about half of cases it is less work than the migration path.
+
+## How to migrate one
+
+<Steps>
+  <Step title="Copy out anything in the conversations">
+    History does not come across and the GPT pages disappear. Save the threads that contain work you
+    would miss. Do this first — it is the only step with no second chance.
+  </Step>
+  <Step title="Decide where it should actually go">
+    Use the table above. If it was yours alone and had no app connections, build a Project and stop;
+    you do not need the migration flow at all.
+  </Step>
+  <Step title="Open My GPTs and start the migration">
+    Select the GPT and choose the option to migrate it to a plugin, where that is offered on your
+    account. Instructions, knowledge files and connected apps come across in one go. The original
+    becomes read-only but stays reachable until the retirement date, so you keep a reference copy.
+  </Step>
+  <Step title="Rebuild custom actions, if it had any">
+    These are not in the migration. Involve whoever configured them, and expect a security or
+    permissions review if the actions touch anything of yours that matters.
+  </Step>
+  <Step title="Test it on the prompts you really use">
+    Not one friendly prompt — the three or four requests this thing exists for, including the
+    awkward one. The model choice did not transfer, so output may genuinely read differently.
+  </Step>
+  <Step title="Set sharing, then tell the humans">
+    The plugin starts private. Share it, have your users install it, and send a line telling them
+    the old link stops working in December. Replace the link anywhere it is written down —
+    onboarding docs, pinned chat messages, your own notes.
+  </Step>
+</Steps>
+
+## If you only use someone else's GPT
+
+You cannot migrate it. Only the creator can, and nothing you do in your own account changes that.
+
+Two ways out, and the second is usually faster than people expect:
+
+- **Ask the creator** whether a plugin replacement is coming, and get it installed before the date rather than after. If it is a GPT from the store with no named owner behind it, assume the answer is no.
+- **Rebuild the part you rely on.** You almost certainly depend on the instructions rather than anything technical — the way it formats things, the questions it asks you, the tone it holds. Put that in a Project of your own and you own it permanently, which is the better position anyway.
+
+That second route has a wider lesson in it. A workflow that lives inside somebody else's GPT in somebody else's store was always one product decision away from ending, and this is that decision arriving. Where a process matters to how your business runs, keep the instructions somewhere you control.
+
+<VerdictBox
+  heading="What to do this week"
+  bestFor="Anyone with a custom GPT their business actually uses: copy out the conversations, decide whether it is a Project or a plugin, and find out today whether it has custom actions in it"
+  notFor="Waiting for a reminder. The creation deadline has already passed without most people noticing, and the December date takes the shared links with it"
+/>
+
+## Where to go next
+
+- **Choosing which ChatGPT subscription this happens on.** [ChatGPT Business vs Plus](/ai-business-tools/chatgpt-business-vs-plus/) covers which tier you need, whose account the work sits in, and the training default on each.
+- **Weighing ChatGPT against the alternative.** [Claude vs ChatGPT for small business](/ai-business-tools/claude-vs-chatgpt-for-small-business/) compares the two assistants workflow by workflow.
+- **Writing instructions worth migrating.** [How to write effective AI prompts](/getting-started/how-to-write-effective-ai-prompts/) is the skill that decides whether a Project or plugin is any good.
+- **If the GPT was doing a repetitive job.** [Best AI automation tools](/ai-automation/best-ai-automation-tools/) covers the category that handles repeated work more predictably than any assistant.
+- **The wider category.** [AI business and productivity tools](/ai-business-tools/) is the hub for admin, meetings, bookkeeping and support.

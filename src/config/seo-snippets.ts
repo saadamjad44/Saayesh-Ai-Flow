@@ -282,6 +282,82 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: 'Title wording is good; it only truncated at 72 characters because of the brand suffix, and dropping the suffix fixes it with no copy change. The description now carries "in 2026" — accurate (published and price-checked in October 2026) and the freshness cue this SERP is saturated with — at the cost of "current" before "pricing", which the date already implies.',
   },
   /**
+   * Added 2026-10-27. A dated migration deadline, so the title carries the date
+   * rather than the year: "11 December" is the single most useful thing in the
+   * result for someone who has just seen OpenAI's banner, and no competing
+   * result leads with it. The brand suffix is dropped to keep the date out of
+   * the truncation zone.
+   *
+   * The keyword set spans the two ways people arrive — "are custom GPTs going
+   * away" (panic, from the banner) and "custom GPT to plugin migration"
+   * (already accepted it, wants the steps). Both are answered on one page
+   * because they are the same decision minutes apart, not two intents.
+   */
+  "custom-gpts-retiring": {
+    brand: "omit",
+    description:
+      "OpenAI is retiring custom GPTs on 11 December 2026. What a plugin is, what migrates and what does not, and how to pick between a plugin, a Project and a Skill.",
+    primaryKeyword: "custom GPTs retiring",
+    supportingKeywords: [
+      "OpenAI retiring custom GPTs",
+      "custom GPT to plugin migration",
+      "what replaces custom GPTs",
+      "are custom GPTs going away",
+      "how to migrate a custom GPT to a plugin",
+      "ChatGPT plugins vs custom GPTs",
+      "ChatGPT Projects vs custom GPTs",
+    ],
+    intent: "Informational",
+    note: "Review on 11 December 2026: the title's deadline and the page's present tense both expire that day. If the page is kept past it, the title becomes the explanation of what replaced GPTs rather than a countdown to it.",
+  },
+  /**
+   * Added 2026-10-27. Purely commercial intent — somebody with a card in hand
+   * deciding between two line items — and the whole page one is personal
+   * blogs, so the title's job is simply to match the comparison exactly and
+   * promise the decision rather than a feature dump.
+   *
+   * "which ChatGPT plan for small business" sits in the supporting set rather
+   * than being its own page: it is the same question asked without knowing the
+   * tier names, and splitting them would put two pages of ours on one SERP.
+   */
+  "chatgpt-business-vs-plus": {
+    brand: "omit",
+    description:
+      "ChatGPT Business vs Plus for a small business: what each tier buys you, how the training default differs, and the one rule that settles which to pay for.",
+    primaryKeyword: "ChatGPT Business vs Plus",
+    supportingKeywords: [
+      "ChatGPT Plus vs Business",
+      "which ChatGPT plan for small business",
+      "is ChatGPT Business worth it",
+      "ChatGPT Business plan features",
+      "ChatGPT workspace vs personal account",
+    ],
+    intent: "Commercial",
+  },
+  /**
+   * Added 2026-10-27. The site's first disclosure-and-obligations page, and the
+   * first to target a question phrased in the first person — so the title keeps
+   * the question form rather than converting it to a noun phrase, because that
+   * is what both the query and the AI Overview above it look like.
+   *
+   * No year, no "2026": this answer is not a product that reprices. The one
+   * dated thing on the page is the EU AI Act timing, which belongs in the body.
+   */
+  "ai-disclosure-to-clients": {
+    brand: "omit",
+    description:
+      "Whether you have to disclose AI use to clients: what the law actually requires, why your contract matters more, and how to word it without losing the work.",
+    primaryKeyword: "do I have to tell clients I use AI",
+    supportingKeywords: [
+      "AI disclosure to clients",
+      "should freelancers disclose AI use",
+      "do I need to disclose AI use",
+      "telling clients you use AI",
+      "AI disclosure statement example",
+    ],
+    intent: "Informational",
+  },
+  /**
    * Added 2026-10-20. The commercial end of the support topic, and the page the
    * /ai-agents/ cluster sends its strongest use case to. Every result currently
    * ranking for this query is published by a chatbot vendor, so the angle here
