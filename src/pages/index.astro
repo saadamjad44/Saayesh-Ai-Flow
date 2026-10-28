@@ -2,8 +2,8 @@
 /**
  * Homepage.
  *
- * Eight sections, in the order a visitor needs them: a dark masthead that says
- * what this site is and gives a way to search it, the categories, a short
+ * Eight sections, in the order a visitor needs them: a centred masthead that
+ * says what this site is and gives a way to search it, the categories, a short
  * editorial selection of guides, four routes in for someone who does not know
  * which category they want, both free calculators, an eight-slide introduction
  * to the site, the newest guides, and how the site works.
@@ -304,21 +304,22 @@ const METHOD = [
 <BaseLayout pageId="home" jsonLd={[websiteSchema(), organizationSchema()]}>
   {/* ---- 1. Hero ---------------------------------------------------- */}
   {/*
-    A dark hero, on purpose, and the one place on the site that is.
+    A light masthead, centred on one measure.
 
-    The artwork is cool electric blue, and so is the logo's gradient. On a light
-    ground that picture has to be washed out until almost nothing of it is left
-    before text can sit on it; on midnight it does the opposite — it glows, and
-    the brand mark in the header above it reads as the same family. Everything
-    below this section is warm paper, so the hero also does the job a masthead
-    does in print: it says where the publication starts.
+    The artwork is a bright cool-blue field. It used to carry white copy, which
+    meant dimming the picture to 80% and laying a near-opaque midnight panel
+    over one half of it: the headline read, but what a visitor met first was a
+    black rectangle with a photograph somewhere behind it. So the ink is
+    flipped instead. The picture now runs at full strength and the only thing
+    between it and the copy is one even white veil, thin enough that the face,
+    the network and all four panels still read through it. The styles at the
+    foot of this file hold the arithmetic that sets how thin it can be.
 
-    From `lg` up the section is split down the middle: a flat midnight panel on
-    the left holding all of the copy, and the picture at full strength on the
-    right, uncropped and undimmed. The styles at the foot of this file do that
-    work; the markup only has to keep every word inside the left half.
+    Kicker, headline, lead, search box, both buttons and the colophon are all
+    centred on the same 48rem measure, so the masthead reads as one column down
+    the middle of the picture rather than as a copy half and a picture half.
   */}
-  <section class="hero relative isolate flex items-center overflow-hidden bg-ink-950">
+  <section class="hero relative isolate flex items-center overflow-hidden bg-paper">
     <Image
       src={heroArt.src}
       alt=""
@@ -330,32 +331,28 @@ const METHOD = [
       fetchpriority="high"
       class="hero-art absolute inset-0 -z-10 size-full object-cover"
     />
-    <div aria-hidden="true" class="hero-scrim absolute inset-0 -z-10"></div>
-    <div
-      aria-hidden="true"
-      class="hero-grid bg-grid-inverse absolute inset-0 -z-10 opacity-70"
-    ></div>
+    <div aria-hidden="true" class="hero-veil absolute inset-0 -z-10"></div>
+    <div aria-hidden="true" class="hero-grid bg-grid absolute inset-0 -z-10 opacity-40"></div>
 
     <div class="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
-      {/* The copy column holds its 34rem measure from `md` up, so the headline
-          breaks into the same three lines on a tablet as on a desktop. */}
-      <div class="md:max-w-[34rem]">
+      <div class="mx-auto max-w-3xl text-center">
         {/*
-          Iris rather than jade (13.1:1 on the midnight ground). Jade is
-          reserved for the free interactive tools — see global.css — and a
-          masthead kicker is not one of them.
+          Iris rather than jade. Jade is reserved for the free interactive
+          tools — see global.css — and a masthead kicker is not one of them.
+          The short rule the section heads carry beside their eyebrow is
+          dropped here: on a centred line it would hang off one end only.
         */}
-        <p class="eyebrow eyebrow-rule text-brand-200">Independent AI tool guides</p>
+        <p class="eyebrow">Independent AI tool guides</p>
 
-        <h1 class="type-display mt-5 text-white">{SITE.tagline}</h1>
+        <h1 class="type-display mt-5 text-ink-900">{SITE.tagline}</h1>
 
-        <p class="type-lead mt-6 text-ink-300">
+        <p class="type-lead mx-auto mt-6 max-w-2xl text-ink-700">
           Independent guides to AI tools, automation workflows, and prompts for solopreneurs and
           small business owners — what each tool actually does, what it costs, and when it is not
           worth paying for.
         </p>
 
-        <div class="mt-8">
+        <div class="mx-auto mt-8 max-w-xl">
           <SearchBox
             id="hero"
             variant="hero"
@@ -364,8 +361,8 @@ const METHOD = [
           />
         </div>
 
-        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <a href="#categories" class="btn btn-inverse">
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
+          <a href="#categories" class="btn btn-primary">
             Browse categories
             <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
               <path
@@ -375,7 +372,7 @@ const METHOD = [
               />
             </svg>
           </a>
-          <a href={blogPath} class="btn btn-outline-inverse">
+          <a href={blogPath} class="btn btn-secondary">
             Explore AI guides
           </a>
         </div>
@@ -383,21 +380,37 @@ const METHOD = [
 
       {/*
         The colophon. A hairline and four counted facts, set in the technical
-        register the rest of the site uses for metadata — not a statistics band.
+        register the rest of the site uses for metadata — not a statistics
+        band. It is held to the copy's own measure and centred under it.
 
-        It narrows to the copy column's measure from `lg` up rather than
-        widening, because that is where the artwork starts: past 34rem the row
-        would run out over the picture's right half, which the hero keeps clear
-        of text. Below `lg` the whole frame is washed, so it can have the room.
+        The three figures count up from zero each time the row scrolls into
+        view. The markup is rendered at the final value, so the count is
+        decoration over a number that is already correct — a crawler, a visitor
+        with scripting off, and anyone who has asked for reduced motion all get
+        the figure and no animation. The date does not count: counting a date
+        up from zero would be nonsense, and it is a time element whose text has
+        to stay the date it is marked up as.
       */}
-      <dl class="mt-12 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t border-white/15 pt-7 sm:mt-14 sm:grid-cols-4 lg:max-w-[34rem]">
+      <dl class="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t border-ink-900/15 pt-7 text-center sm:mt-14 sm:grid-cols-4">
         {MASTHEAD.map((fact) => (
           <div>
-            <dt class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-400 uppercase">
+            <dt class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-600 uppercase">
               {fact.label}
             </dt>
-            <dd class="mt-1.5 font-sans text-lg font-bold text-white tabular-nums">
-              {fact.dateTime ? <time datetime={fact.dateTime}>{fact.value}</time> : fact.value}
+            <dd class="mt-1.5 font-sans text-lg font-bold text-ink-900 tabular-nums">
+              {fact.dateTime ? (
+                <time datetime={fact.dateTime}>{fact.value}</time>
+              ) : (
+                /* The reserved width is the final value's own digit count, so
+                   the row cannot reflow as a counter passes 9. */
+                <span
+                  class="inline-block text-center"
+                  style={`min-width:${fact.value.length}ch`}
+                  data-count-to={fact.value}
+                >
+                  {fact.value}
+                </span>
+              )}
             </dd>
           </div>
         ))}
@@ -828,165 +841,68 @@ const METHOD = [
   /*
    * The hero background.
    *
-   * The artwork is composed in halves: open sky on the left, the subject and
-   * its panels on the right, and the copy sits in the empty half. What the
-   * hero must not do is make that into two visible pieces — a flat panel
-   * butted against an untouched photograph, with a seam down the middle where
-   * they meet. Two rules keep it one field instead:
+   * Nothing dark goes over the artwork. It runs at full strength and the only
+   * layer between it and the copy is a flat white veil at 76%.
    *
-   * 1. The artwork is dimmed everywhere, not only under the copy. At 0.8 over
-   *    the section's own ink-950 the white sky lands at #CECDD0, so the wash
-   *    has no bright field to collide with and the whole frame sits in the
-   *    same register — light in a dark room rather than a picture with a
-   *    rectangle painted over one end of it.
+   * Flat, rather than a wash shaped around the copy, because the copy is
+   * centred and the crop moves: between a phone and a wide monitor the box
+   * goes from taller-than-square to nearly 2:1, and any part of the picture
+   * can end up under any line of the masthead. A veil that is only strong
+   * where the text sits today is a veil that fails at some width nobody
+   * checked. One value that holds everywhere cannot.
    *
-   * 2. The wash never reaches zero. It falls from 79% to 16% across the back
-   *    half of the frame and stops there, so even the far corner carries the
-   *    same tint as the copy column. The fall-off is spread over 43% of the
-   *    width for the same reason: a short ramp reads as an edge, a long one as
-   *    depth.
+   * 76% is set by the darkest pixel in the picture — #001536, in the core of
+   * the brain. Under the veil that composites to #c2c7cf, which gives 10.9:1
+   * to the ink-900 headline and figures, 6.8:1 to the ink-700 lead, 5.3:1 to
+   * the iris kicker, and 4.8:1 to the ink-600 colophon labels. Those labels
+   * are the smallest type on the section and the floor for the whole
+   * arrangement: thinning the veil drops them below AA, so the picture cannot
+   * be brought up without darkening them in the same move.
    *
-   * The arithmetic that 79% has to clear: over #CECDD0 it composites to
-   * #343140 — 12.6:1 under white, 7.9:1 under the lead's ink-300, and 4.67:1
-   * under the colophon labels' ink-400, which is the tightest of the three and
-   * the one that sets the floor. Lifting the artwork or lightening the wash
-   * past these numbers drops those labels below AA; they move together, so
-   * neither can be touched alone. The colophon is held to the copy column's
-   * 34rem measure for the same reason, rather than running on to the 48rem it
-   * uses on narrower screens.
-   */
-
-  /*
-   * Below `lg` there is no empty column to put the copy in, so the whole
-   * frame is washed rather than one end of it. A phone crops this hard
-   * horizontally — roughly a sixth of the picture survives — so hold the head
-   * rather than the empty sky, or the hero is a blank wash.
-   *
-   * `38%` rather than `42%` lifts the crop far enough to hold the top of the
-   * neural network in frame with the face, which is the half of the subject
-   * that says what the picture is about.
+   * The second gradient closes the foot of the section into the warm paper
+   * below it, so the picture does not stop dead against the next section.
    */
   .hero-art {
-    object-position: 70% 38%;
-    opacity: 0.8;
+    object-position: 60% 42%;
+  }
+
+  .hero-veil {
+    /* The colour is the veil; the gradient paints over it, which is the order
+       the foot of the section needs — paper on top of the wash, not under. */
+    background-color: rgb(255 255 255 / 0.76);
+    background-image: linear-gradient(to top, var(--color-paper) 0%, transparent 22%);
   }
 
   /*
-   * Heaviest at the top under the headline, lifting through the middle where
-   * the artwork can still be seen behind the search box, and closing again at
-   * the foot so the colophon sits on near-flat ink.
-   *
-   * The stops sit under the same arithmetic as the panel from `lg` up: over
-   * the dimmed sky's #CECDD0, the thinnest of them — 72% through the middle —
-   * composites to #413E4A, 10.1:1 under white and 5.9:1 under the lead's
-   * ink-300, and the 86% at the foot gives the colophon labels 5.8:1.
+   * The grid is texture under the copy, and it has no business over the
+   * subject. Its mask fades out over a long run: a short ramp reads as an
+   * edge, a long one as depth.
    */
-  .hero-scrim {
-    background: linear-gradient(
-      to bottom,
-      color-mix(in oklab, var(--color-ink-950) 82%, transparent) 0%,
-      color-mix(in oklab, var(--color-ink-950) 72%, transparent) 55%,
-      color-mix(in oklab, var(--color-ink-950) 86%, transparent) 100%
-    );
+  .hero-grid {
+    mask-image: radial-gradient(120% 105% at 50% 44%, #000 0%, #000 48%, transparent 86%);
   }
 
   @media (min-width: 1024px) {
     /*
-     * Hold the master's own 1672x941 ratio, so a box that would otherwise be a
-     * letterbox slice of the picture is tall enough to show all of it. It is a
-     * floor, not a fixed height: the copy sets the height whenever it needs
-     * more, and 86vh keeps the masthead off a full screen on a large monitor.
+     * A floor, not a fixed height: the copy sets the height whenever it needs
+     * more, and the vh term keeps the masthead off a full screen on a large
+     * monitor. Below `lg` the section is as tall as its copy, which on a phone
+     * crops the artwork to a strip through the middle of the picture — hence
+     * the object-position above, which holds the head and the top of the
+     * network rather than the empty sky beside them.
      */
     .hero {
-      min-height: min(56.28vw, 86vh);
+      min-height: min(52vw, 84vh);
     }
 
     /*
-     * `12%` rather than `center` pushes the trim that a box wider than 16:9
-     * takes towards the bottom, which is empty light, so both the top of the
-     * neural network and the brand name set into the corner above it survive.
+     * From `lg` up the box is close enough to the master's own 1672x941 that
+     * centring it trims only a little off the top and bottom, and the copy now
+     * sits over the subject rather than beside it, so there is no empty column
+     * left to protect.
      */
     .hero-art {
-      object-position: 35% 12%;
-    }
-
-    /*
-     * Horizontal from `lg`, where there is an empty column to work with. The
-     * plateau has to clear the copy column, which reaches furthest right at
-     * exactly 1024px — 55.5% of the viewport, hence the stop at 57%: the
-     * container is still gutter-to-gutter there, while from `xl` up it is
-     * centred at 72rem and the column sits further left. Past it the wash
-     * thins over four stops and settles at 16% rather than running out, which
-     * is what keeps the back half of the frame in the same field as the copy
-     * column instead of reading as a separate picture beside it.
-     *
-     * The second gradient does the same job for the bottom edge: without it
-     * the artwork stops dead against the warm paper of the section below, and
-     * the colophon's hairline cuts across the picture on its way there.
-     */
-    .hero-scrim {
-      background:
-        linear-gradient(
-          to right,
-          color-mix(in oklab, var(--color-ink-950) 81%, transparent) 0%,
-          color-mix(in oklab, var(--color-ink-950) 79%, transparent) 57%,
-          color-mix(in oklab, var(--color-ink-950) 60%, transparent) 68%,
-          color-mix(in oklab, var(--color-ink-950) 38%, transparent) 80%,
-          color-mix(in oklab, var(--color-ink-950) 22%, transparent) 91%,
-          color-mix(in oklab, var(--color-ink-950) 16%, transparent) 100%
-        ),
-        linear-gradient(to top, var(--color-ink-950) 0%, transparent 38%);
-    }
-
-    /* The grid is texture for the copy column; it has no business over the
-       subject. Its mask fades out over the same long run as the wash above,
-       because a short one just puts the seam back a layer up. */
-    .hero-grid {
-      mask-image: linear-gradient(to right, #000 0%, #000 46%, transparent 78%);
-    }
-  }
-
-  @media (min-width: 1280px) {
-    /*
-     * Anchored to the right edge, which is the only width band where that
-     * fits: from 1280px up the box is wide enough that what it trims off the
-     * left is sky the wash covers anyway, so the whole subject — face,
-     * network, all four panels and the brand name — is shown uncut. Past
-     * roughly 1400px the ratio floor above wins outright and there is no trim
-     * left to spend.
-     *
-     * Below 1280px the box is far narrower than 16:9 and something has to go.
-     * 35% above spends that on the right edge rather than the left, because a
-     * hero that has lost a corner panel still reads and one whose face has
-     * been pulled back under the plateau does not.
-     */
-    .hero-art {
-      object-position: 100% 12%;
-    }
-
-    /*
-     * The container stops growing at 72rem and centres, so the copy column
-     * ends at a steady ~49.5% of the viewport from here up rather than the
-     * 55.5% it reaches at 1024px. The plateau follows it in, which gives the
-     * fall-off another half-column of frame to spread across on a wide
-     * monitor. The tail still settles at 16% rather than clearing.
-     */
-    .hero-scrim {
-      background:
-        linear-gradient(
-          to right,
-          color-mix(in oklab, var(--color-ink-950) 81%, transparent) 0%,
-          color-mix(in oklab, var(--color-ink-950) 79%, transparent) 51%,
-          color-mix(in oklab, var(--color-ink-950) 60%, transparent) 63%,
-          color-mix(in oklab, var(--color-ink-950) 38%, transparent) 76%,
-          color-mix(in oklab, var(--color-ink-950) 22%, transparent) 89%,
-          color-mix(in oklab, var(--color-ink-950) 16%, transparent) 100%
-        ),
-        linear-gradient(to top, var(--color-ink-950) 0%, transparent 38%);
-    }
-
-    .hero-grid {
-      mask-image: linear-gradient(to right, #000 0%, #000 40%, transparent 72%);
+      object-position: center;
     }
   }
 </style>
@@ -1007,5 +923,64 @@ const METHOD = [
     const name = element.dataset.analyticsEvent as AnalyticsEventName | undefined;
     if (!name) continue;
     element.addEventListener("click", () => trackEvent(name, { location: "homepage" }));
+  }
+
+  /**
+   * The colophon counters.
+   *
+   * Each figure is rendered at its final value by the build, so it is already
+   * right for a crawler and for a visitor with scripting off. This only
+   * decorates it: the counter reads the number the build wrote, runs up to it
+   * from zero whenever the row scrolls into view, and lands on exactly the
+   * text it started with. The observer is never disconnected, so scrolling
+   * away and back runs it again; the width each figure occupies is reserved in
+   * the markup, so a count that passes 9 cannot reflow the row.
+   *
+   * Anyone who has asked for reduced motion is left with the rendered numbers.
+   */
+  const COUNT_MS = 1100;
+  const COUNT_THRESHOLD = 0.6;
+
+  const counters = document.querySelectorAll<HTMLElement>("[data-count-to]");
+
+  if (counters.length > 0 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    /* Fast first, easing out — a count that decelerates into its final value
+       reads as arriving somewhere rather than as a stopwatch. */
+    const easeOut = (progress: number) => 1 - Math.pow(1 - progress, 3);
+
+    /* One pending frame per element, so a re-entry replaces its own run
+       instead of racing it. */
+    const frames = new WeakMap<HTMLElement, number>();
+
+    const count = (element: HTMLElement) => {
+      const target = Number(element.dataset.countTo);
+      if (!Number.isFinite(target)) return;
+
+      const pending = frames.get(element);
+      if (pending !== undefined) cancelAnimationFrame(pending);
+
+      const started = performance.now();
+      element.textContent = "0";
+
+      const step = (now: number) => {
+        const progress = Math.min((now - started) / COUNT_MS, 1);
+        element.textContent = String(Math.round(target * easeOut(progress)));
+        if (progress < 1) frames.set(element, requestAnimationFrame(step));
+        else frames.delete(element);
+      };
+
+      frames.set(element, requestAnimationFrame(step));
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) count(entry.target as HTMLElement);
+        }
+      },
+      { threshold: COUNT_THRESHOLD },
+    );
+
+    for (const counter of counters) observer.observe(counter);
   }
 </script>

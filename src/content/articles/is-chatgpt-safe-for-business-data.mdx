@@ -1,0 +1,188 @@
+---
+pageId: is-chatgpt-safe-for-business-data
+title: "Is ChatGPT Safe for Business Data?"
+heading: "Is ChatGPT Safe for Business Data? What Happens to What You Paste"
+description: "What really happens to company data you paste into ChatGPT - training, retention, deleted chats, share links, personal accounts - and what should never go in."
+publishedDate: 2026-10-28
+updatedDate: 2026-10-28
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Is ChatGPT safe for business data?
+    answer: Safe is not a property of ChatGPT, it is a property of the pairing - which data, in which account. Most ordinary business work (drafts, planning, your own thinking, public information) is fine on any plan with training turned off. Records that identify a customer, anything covered by a client confidentiality clause, credentials, and anything you could not stand behind in writing if it surfaced elsewhere should not go in on any plan, including Enterprise. The vendor controls what happens to the data after you send it. You control whether you send it, and that is the stronger of the two controls.
+  - question: Does OpenAI keep my chats after I delete them?
+    answer: For a short period, yes, and sometimes much longer. Deleted conversations are ordinarily removed within about 30 days, and a limited copy is kept for abuse monitoring even when training is off. The exception that matters is a legal hold - a court can require preservation of data your settings would have deleted, and in the New York Times litigation exactly that happened to consumer and Team-tier logs.
+  - question: Was business data caught up in the OpenAI court preservation order?
+    answer: Some of it was. The May 2025 preservation order in the New York Times case covered Free, Plus, Pro and Team logs, and Team is the workspace tier OpenAI now calls Business. ChatGPT Enterprise, ChatGPT Edu and API customers with a zero-data-retention amendment sat outside it. The going-forward duty ended on 26 September 2025 and the order was lifted on 9 October 2025, but data already preserved stayed preserved - which is the part no settings page can undo.
+  - question: Does turning off training delete what was already used?
+    answer: No. The data controls setting applies to new conversations, not to your history, so turning it off today does not reach back into what has already been through the model. That is an argument for doing it now rather than an argument against doing it, but it does mean an account that has been in daily use for a year cannot be made retroactively private by a toggle.
+  - question: Can my ChatGPT conversations turn up in Google?
+    answer: Shared ones could, and some did. Until mid-2025 the share feature offered to make a conversation discoverable by search engines, and reporting found roughly 4,500 shared links indexed - some containing resumes, internal business material and personal detail. OpenAI withdrew the indexing option in August 2025 and called it a short-lived experiment. Share links that are not indexed are still public to anyone holding the URL, which is the part that has not changed.
+  - question: Is it safe to paste client data into ChatGPT?
+    answer: Check the contract before you check the plan. Most client agreements already restrict sending their information to third parties, and a prompt containing their records is exactly that, whatever your AI settings say. The usual answer is to work from material you have stripped of identifying detail, which also tends to produce better output because it forces you to state the actual problem.
+  - question: What is zero data retention, and do I need it?
+    answer: Zero data retention is an API arrangement under which OpenAI does not store the request or the response at all, available to qualifying customers on eligible endpoints. It is the strongest option on offer and it is not a ChatGPT setting - it applies to developer traffic, so it is relevant if you are building something on the API rather than typing into a chat window. For a small business using the ChatGPT app, the realistic controls are the account type, the training setting, and what you choose to paste.
+  - question: Does a SOC 2 report mean my data is safe?
+    answer: It means the vendor has had its own controls examined, which is worth something and answers a different question from yours. A compliance certificate describes how OpenAI runs its systems. It does not tell you whether your client's contract allows their records to go to a processor, whether you have a lawful basis for the data you are sending, or whether the person typing had any business typing it. Those three stay yours no matter what the trust page says.
+---
+
+import { ComparisonTable, Callout, KeyTakeaways, VerdictBox } from "@/components/content";
+
+**Mostly yes, for most of the work — and the honest version of the answer is that "safe" is not a property of ChatGPT at all. It is a property of the pairing: which data, in which account.** The same prompt is fine on a free plan and reckless on Enterprise, depending on what is in it.
+
+The question is usually asked as though there were a single setting that settles it. There is not. There are five separate places your data can end up, only two of which anybody writes about, and one of them has a court docket attached.
+
+<KeyTakeaways>
+
+- **Training is the famous risk and the smallest one.** It is a toggle on personal plans and off by default on business tiers.
+- **"Not trained on" is not "not retained".** Deleted chats ordinarily go within about 30 days, and a limited copy survives for abuse monitoring regardless of your training setting.
+- **A court can override your deletion settings,** and in the New York Times case it did — to Free, Plus, Pro and Team logs, with Enterprise, Edu and zero-retention API customers outside the order.
+- **Turning training off is not retroactive.** It applies to new chats, not to the year of history behind them.
+- **Share links are public to whoever holds the URL,** and roughly 4,500 of them were indexed by Google before the option was withdrawn in August 2025.
+- **The biggest exposure is the account, not the model.** Verizon's 2026 DBIR puts regular AI use on corporate devices at 45%, up from 15% — and 67% of that access on non-corporate accounts.
+- **Four categories should never go in on any plan,** and the list is shorter than most policies make it.
+
+</KeyTakeaways>
+
+<Callout tone="note" heading="How this page was put together, and what it deliberately does not do">
+  OpenAI's own policy pages block automated reading, so every vendor-side fact here is corroborated
+  across independent write-ups rather than quoted from the source, and the court details come from
+  legal coverage of the docket. It is a researched orientation, not legal advice, and it states no
+  prices — those change faster than a page can. Settings and plan names move too, so treat the
+  mechanisms as the durable part and verify any specific toggle in your own account.
+</Callout>
+
+## What "safe" has to mean before the question can be answered
+
+"Is ChatGPT safe for business data" packs two questions together, and they have different answers.
+
+The first is whether OpenAI is a competent custodian of data you hand it. On the evidence, broadly yes — the company publishes compliance documentation, offers a data processing agreement on business tiers, encrypts data in transit and at rest, and has not had the kind of repeated breach history that would settle the question the other way.
+
+The second question is whether _your_ use of it is safe, and that one is not about OpenAI at all. It is about whether the data in your prompt was yours to send, whether a contract restricts it, whether the account is one you can answer for, and whether you would be comfortable explaining the prompt to the customer in it.
+
+Almost every page ranking on this query answers the first question and presents it as an answer to the second. That is where the trouble starts, because the first question has a reassuring answer and the second one has your name on it.
+
+<VerdictBox
+  heading="The working answer"
+  bestFor="Ordinary business work on any plan with training switched off - drafts, planning, summaries of your own material, public information, your own thinking out loud"
+  notFor="Records that identify a customer, anything covered by a client confidentiality clause, credentials, and anything you would not want read back to you. Those stay out on every tier, Enterprise included"
+/>
+
+## Where the data actually goes
+
+Five routes, in rough order of how much attention each gets versus how much it deserves.
+
+<ComparisonTable
+  caption="The five places business data can end up, and who controls each"
+  rowHeader="Route"
+  columns={["What it means", "Who actually controls it"]}
+  rows={[
+    {
+      label: "Model training",
+      cells: [
+        "Your conversations help improve future models. On by default on personal plans, off by default on business and enterprise tiers",
+        "You, per account, in data controls - or the workspace, once, for everybody in it",
+      ],
+    },
+    {
+      label: "Retention after deletion",
+      cells: [
+        "Deleted conversations are ordinarily removed within about 30 days rather than immediately",
+        "OpenAI's schedule. Admins on business tiers can set a retention period for the workspace",
+      ],
+    },
+    {
+      label: "Abuse monitoring",
+      cells: [
+        "A limited copy is kept for a period to detect misuse, and this is independent of your training setting",
+        "Nobody at your end. Zero data retention on the API is the only route that removes it, for developer traffic",
+      ],
+    },
+    {
+      label: "Legal preservation",
+      cells: [
+        "A court can require data to be kept that your settings would have deleted, and the obligation outranks the policy",
+        "Neither of you. This is the route the vendor cannot promise anything about",
+      ],
+    },
+    {
+      label: "Sharing, memory and connectors",
+      cells: [
+        "Share links, saved memory and connected accounts all widen what a single conversation touches or exposes",
+        "Entirely you, which is why this is the route most worth an hour of your attention",
+      ],
+    },
+  ]}
+/>
+
+Notice the shape of that table. The route everybody argues about is the one you can switch off in thirty seconds. The routes that are genuinely outside your control are the two in the middle, and they are the ones no security page leads with.
+
+## Deleted does not mean gone, and there is a docket to prove it
+
+This is the fact that makes the page worth writing, because it is a real event rather than a hypothetical, and almost nothing written on this query mentions it.
+
+In the consolidated copyright litigation brought by The New York Times and other news organisations, Magistrate Judge Ona T. Wang ordered OpenAI on **13 May 2025** to preserve and segregate output log data that would otherwise have been deleted. In plain terms, chats users had deleted, and chats their settings said would be deleted, were kept instead. The going-forward duty ended on **26 September 2025** and the order was lifted on **9 October 2025** — but data already preserved stayed preserved, and accounts flagged by the news organisations remained subject to continuing preservation.
+
+Then it went further. On **5 January 2026**, District Judge Sidney Stein affirmed an order requiring OpenAI to produce a sample of **20 million de-identified user conversations** to the plaintiffs under a protective order. The privacy objection failed, and the reasoning is the part to sit with: the court distinguished the case from wiretap precedent on the basis that ChatGPT users had voluntarily provided their data to OpenAI in the course of ordinary use.
+
+Two things follow for a small business, and they are not the obvious ones.
+
+**Scope is the whole story.** The preservation order covered Free, Plus, Pro and Team logs. Team is the workspace tier OpenAI now calls Business — so a paid company workspace was inside it. ChatGPT Enterprise, ChatGPT Edu and API customers with a zero-data-retention amendment sat outside. The tier that changes the training default did not, on its own, put you outside a preservation order.
+
+**No vendor can promise otherwise.** This is not a criticism of OpenAI, which contested the order publicly. It is a structural point about every AI vendor, and the same would have been true of any of them. A deletion policy is a commitment the vendor makes about its own behaviour, and a court can suspend it.
+
+<Callout tone="warning" heading="What this changes about the sentence you say to clients">
+  "Our AI tool deletes conversations after 30 days" is a claim about a policy, not about reality,
+  and it is the kind of sentence that ages badly in a security questionnaire. The defensible version
+  describes what you do rather than what the vendor does — what categories of client data never
+  enter the tool at all. That is a statement no court order can falsify, and it is the one worth
+  writing into your [AI use policy](/ai-business-tools/ai-use-policy-template/).
+</Callout>
+
+## Turning training off is right, and it is not retroactive
+
+Do it anyway, today, on every personal account that touches company work. Settings, then data controls, then switch off the option about improving the model for everyone. On the web it is three clicks; on mobile it is in the same place under your profile. Temporary Chat is the per-conversation version — it leaves no history, creates no memory, and is not used for training.
+
+Two limits worth knowing, because both are routinely left out.
+
+**It applies to new conversations only.** Switching it off does not reach backwards into the history already sitting in the account. An account that has been in daily use for a year cannot be made retroactively private by a toggle, which is an argument for doing it now rather than a reason to shrug.
+
+**It does not stop retention.** The training setting and the retention schedule are separate mechanisms. Training off, data still retained for a period, is the normal state of affairs and is not a contradiction.
+
+The reason a workspace helps here has nothing to do with the setting being better. It is that you can see it and answer for it. [ChatGPT Business vs Plus](/ai-business-tools/chatgpt-business-vs-plus/) works through that trade-off and the seat economics behind it; what matters for this page is only that an unverifiable setting on someone else's personal account is not a control at all.
+
+## The two leaks that happen without anyone pasting anything wrong
+
+**Share links.** The share button produces a URL that works for anyone who has it. Until mid-2025 it also offered to make the conversation discoverable by search engines, and the predictable thing happened: reporting found roughly 4,500 shared conversations indexed by Google, containing resumes, internal business material and a good deal people plainly had not meant to publish. OpenAI removed the indexing option in August 2025 and described it as a short-lived experiment that created too many chances to share things accidentally. The indexing is gone. The underlying property is not — a share link is public to whoever holds it, and links get forwarded.
+
+**Personal accounts doing company work.** Verizon's 2026 Data Breach Investigations Report, published on 19 May 2026, found regular employee AI use on corporate devices had risen to 45% from 15% the year before, and ranks shadow AI among the most common non-malicious causes of data leaving an organisation. The figure reported from the same research that should stop a small business owner is this one: 67% of AI access on corporate devices was through non-corporate accounts.
+
+That is the real exposure, and it is not a technical problem. Somebody pastes a customer list into an account you have never seen, with settings you cannot check, on a device you issued. No vendor control touches it. A written rule and a company account do.
+
+## What should never go in, whatever the plan
+
+Short lists get followed. This one has four entries.
+
+- **Anything that identifies a specific customer** — names with contact details, account histories, medical or financial particulars, complaint correspondence. Describe the situation instead of pasting the record; the output is usually better for it, because abstracting forces you to state the actual problem.
+- **Anything covered by a client confidentiality or data-protection clause.** The clause will not mention AI and does not need to. This is the same contractual territory as [do you have to tell clients you use AI?](/ai-business-tools/ai-disclosure-to-clients/), and it binds regardless of your settings.
+- **Credentials and keys** — passwords, API keys, bank details, anything that would let a reader do something rather than merely know something. These belong in a password manager, and nowhere that keeps a transcript.
+- **Anything you could not defend in writing if it surfaced elsewhere.** Staff disciplinary notes, half-formed opinions about a client, a draft of a difficult letter naming people. The preservation order is the proof that "it was deleted" is not always available to you.
+
+Everything else — drafts, plans, summaries of your own material, public information, your own thinking out loud — is ordinary business use of a tool, and treating it as dangerous is its own kind of mistake. The businesses that get this wrong in the cautious direction lose the benefit without buying any safety.
+
+## The three questions to actually answer
+
+If you do nothing else after reading this, answer these in writing. They take ten minutes and they are what a client's security questionnaire is really asking.
+
+1. **Which accounts do company work?** Name them. If the answer is "a few personal ones, probably", that is the finding.
+2. **What is on the never-list, in your own words?** Four lines is enough. The hard part is the data list, which is why the [policy template](/ai-business-tools/ai-use-policy-template/) spends most of its length on it.
+3. **What would you tell a client who asked?** Write the sentence now, while nobody is waiting for it. Describe what you keep out of the tool, not what the vendor promises to delete.
+
+## Where to go next
+
+- **Which tier, and whose account.** [ChatGPT Business vs Plus](/ai-business-tools/chatgpt-business-vs-plus/) covers the workspace decision, the training default across tiers, and why account ownership usually decides it.
+- **Writing the rule down.** [AI use policy template for small business](/ai-business-tools/ai-use-policy-template/) has the one-page wording to copy, including the forbidden-data list.
+- **The client-facing half.** [Do you have to tell clients you use AI?](/ai-business-tools/ai-disclosure-to-clients/) covers disclosure duties and the contract clauses that bind you.
+- **The meeting-recording version of this problem.** [AI notetaker consent](/ai-business-tools/ai-notetaker-consent/) covers consent law, and why a transcript is a document you now have to look after.
+- **What to expect from the tool in the first place.** [What AI cannot do for a small business](/getting-started/what-ai-cannot-do/).
+- **The wider category.** [AI business and productivity tools](/ai-business-tools/) is the hub for admin, meetings, bookkeeping and support.

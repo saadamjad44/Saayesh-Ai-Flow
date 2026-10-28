@@ -92,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 22,
+  3: 23,
 };
 
 export const PAGES = [
@@ -801,6 +801,44 @@ export const PAGES = [
     id: "ai-notetaker-consent",
     title: "AI Notetaker Consent: When You Have to Ask",
     path: "/ai-business-tools/ai-notetaker-consent/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-business-tools",
+  },
+
+  /**
+   * The second half of the trust cluster approved on 2026-10-20. The policy
+   * half shipped as ai-use-policy-template; this is the data-privacy half, and
+   * until it existed the site had no page at all on what happens to data a
+   * reader pastes into an assistant.
+   *
+   * Separated from chatgpt-business-vs-plus by question, not by keyword
+   * variant: that page answers "which tier do I buy", and settles it on
+   * account ownership rather than privacy. This one answers "what happens to
+   * the data once it is in there" and never ranks or recommends a tier. The
+   * training default is the one shared fact, and it is handled here as one row
+   * of a five-route table before the page moves on, because the four routes
+   * nobody writes about are the reason it exists.
+   *
+   * Its differentiator is the NYT preservation order, which no competing page
+   * on this query carries: a court required OpenAI to keep logs its own policy
+   * would have deleted, the order covered Free/Plus/Pro/Team (Team being
+   * today's Business tier) while Enterprise, Edu and zero-retention API sat
+   * outside, and on 2026-01-05 Judge Stein affirmed production of 20 million
+   * de-identified conversations. That is the evidence for the page's actual
+   * argument - a vendor deletion policy is a promise about the vendor's own
+   * behaviour and a court can suspend it, so the only durable claim a small
+   * business can make to a client is about what it keeps out of the tool.
+   *
+   * No prices, so no pricingVerifiedDate. OpenAI's policy pages return 403 to
+   * automated fetching, so every vendor-side fact is corroborated across
+   * independent write-ups and the page says so in a callout rather than
+   * implying it quotes the source.
+   */
+  {
+    id: "is-chatgpt-safe-for-business-data",
+    title: "Is ChatGPT Safe for Business Data?",
+    path: "/ai-business-tools/is-chatgpt-safe-for-business-data/",
     type: "article",
     phase: 3,
     pillar: "ai-business-tools",

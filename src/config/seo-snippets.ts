@@ -486,6 +486,36 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Informational",
   },
   /**
+   * Added 2026-10-28. The query is phrased as a yes/no safety question, so the
+   * title keeps the question form rather than converting it to a noun phrase -
+   * the AI Overview above this SERP is answering the question, and a page that
+   * does not visibly answer it loses the click.
+   *
+   * No year in the title. The mechanisms (training, retention, abuse
+   * monitoring, legal preservation, sharing) are durable; it is the toggles and
+   * plan names that date, and those are deliberately described rather than
+   * screenshotted.
+   *
+   * Keyword separation from chatgpt-business-vs-plus is deliberate: every
+   * tier-and-pricing phrase stays there, and nothing here bids on "which
+   * ChatGPT plan". The two pages answer different questions about the same
+   * product and must not compete.
+   */
+  "is-chatgpt-safe-for-business-data": {
+    brand: "omit",
+    description:
+      "What really happens to company data you paste into ChatGPT - training, retention, deleted chats, share links, personal accounts - and what should never go in.",
+    primaryKeyword: "is ChatGPT safe for business data",
+    supportingKeywords: [
+      "is ChatGPT safe to use for work",
+      "does OpenAI keep my chats",
+      "ChatGPT data privacy for business",
+      "is it safe to put client data in ChatGPT",
+      "does ChatGPT store your data",
+    ],
+    intent: "Informational",
+  },
+  /**
    * Added 2026-10-20. The commercial end of the support topic, and the page the
    * /ai-agents/ cluster sends its strongest use case to. Every result currently
    * ranking for this query is published by a chatbot vendor, so the angle here
