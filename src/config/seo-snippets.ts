@@ -358,6 +358,134 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Informational",
   },
   /**
+   * Added 2026-10-28. A template query, which means the SERP is full of
+   * gated-download pages and the reader's real fear is a twelve-page document
+   * written for a company with a compliance team. So the title keeps
+   * "template" — it is what they searched — and the description promises the
+   * thing the downloads do not: the wording, on the page, one page long.
+   */
+  "ai-use-policy-template": {
+    brand: "omit",
+    description:
+      "A one-page AI use policy for a small business, with wording to copy: approved tools, what data may go in, who reviews output, and who owns the grey cases.",
+    primaryKeyword: "AI use policy template for small business",
+    supportingKeywords: [
+      "AI acceptable use policy template",
+      "small business AI policy",
+      "AI policy for employees",
+      "how to write an AI policy",
+      "AI usage policy example",
+    ],
+    intent: "Informational",
+  },
+  /**
+   * Added 2026-10-28. The query is asked in fear ("am I allowed to do this"),
+   * so the title answers the permission question rather than describing the
+   * subject. "Consent" has to be in it because it is the word the law turns
+   * on and the word the competing results use.
+   */
+  "ai-notetaker-consent": {
+    brand: "omit",
+    description:
+      "When you need consent to use an AI notetaker, which states require everyone on the call to agree, and the line to say at the start to stay on the safe side.",
+    primaryKeyword: "AI notetaker consent",
+    supportingKeywords: [
+      "is it legal to use an AI notetaker without consent",
+      "do you need consent to record a meeting with AI",
+      "AI meeting notes consent law",
+      "are AI notetakers legal",
+      "AI notetaker privacy",
+    ],
+    intent: "Informational",
+  },
+  /**
+   * Added 2026-10-28. The one page on the site whose title is a negative, and
+   * deliberately so: every competing result on this query is a thin listicle,
+   * and the differentiator is that this site is willing to write the limits
+   * down as a page rather than as a disclaimer at the bottom of a roundup.
+   */
+  "what-ai-cannot-do": {
+    brand: "omit",
+    description:
+      "The jobs AI will not do for a small business, why the honest list beats the feature list, and what to keep human deliberately rather than by accident.",
+    primaryKeyword: "what AI cannot do for a small business",
+    supportingKeywords: [
+      "what AI can and cannot do",
+      "AI limitations for business",
+      "what AI is bad at",
+      "can AI replace a small business owner",
+      "AI limitations small business",
+    ],
+    intent: "Informational",
+  },
+  /**
+   * Added 2026-10-28. The title names the conversations rather than promising
+   * a count, because every result on this SERP promises a count — "25 best",
+   * "40 prompts", "90 prompts for $37" — and matching that race is the one way
+   * to lose it.
+   *
+   * "AI prompts for proposals" was removed from the supporting set during the
+   * build: chatgpt-prompts-for-small-business already has a proposals and
+   * pricing section, and leaving the term here would put two of our own pages
+   * on one query. Cross-page supportingKeywords overlap is not blocked by the
+   * build, so this separation is editorial discipline rather than something
+   * that would have failed.
+   */
+  "ai-prompts-for-freelancers": {
+    brand: "omit",
+    description:
+      "AI prompts for the freelance conversations that cost money: scope creep, raising your rate, a client who has gone quiet, and saying no without burning it.",
+    primaryKeyword: "AI prompts for freelancers",
+    supportingKeywords: [
+      "ChatGPT prompts for freelancers",
+      "AI prompts for client emails",
+      "scope creep email template",
+      "how to tell a client your rates are going up",
+      "AI prompts for freelance writers",
+    ],
+    intent: "Informational",
+  },
+  /**
+   * Added 2026-10-28. Purely a how-to, on a SERP made entirely of product
+   * pages — so the title stays a how-to and never a "best tools", which is
+   * the query this page must not drift into. The buying question already has
+   * a home at best-ai-automation-tools.
+   */
+  "automate-invoice-follow-up": {
+    brand: "omit",
+    description:
+      "How to automate invoice follow-up with AI without annoying clients: the daily check that replaces the trigger your accounting app lacks, and what to keep human.",
+    primaryKeyword: "how to automate invoice follow-up with AI",
+    supportingKeywords: [
+      "automate invoice reminders",
+      "AI invoice chasing",
+      "automate payment reminders Zapier",
+      "chase unpaid invoices automatically",
+      "late payment reminder automation",
+    ],
+    intent: "Informational",
+  },
+  /**
+   * Added 2026-10-28. The question form is kept because the competing results
+   * all answer it with a single confident number, and the value of this page
+   * is that the number is contested. "Actually" earns its place in a title
+   * here for once — it is the promise.
+   */
+  "how-much-time-does-ai-save": {
+    brand: "omit",
+    description:
+      "What the published AI time-savings figures are worth, how a number like 175 hours a year is built, and how to measure your own instead of someone else's.",
+    primaryKeyword: "how much time does AI save a small business",
+    supportingKeywords: [
+      "how much time does AI actually save",
+      "AI time savings statistics",
+      "does AI really save time",
+      "AI productivity gains small business",
+      "how many hours does AI save per week",
+    ],
+    intent: "Informational",
+  },
+  /**
    * Added 2026-10-20. The commercial end of the support topic, and the page the
    * /ai-agents/ cluster sends its strongest use case to. Every result currently
    * ranking for this query is published by a chatbot vendor, so the angle here

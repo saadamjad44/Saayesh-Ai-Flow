@@ -92,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 16,
+  3: 22,
 };
 
 export const PAGES = [
@@ -752,6 +752,137 @@ export const PAGES = [
     type: "article",
     phase: 3,
     pillar: "ai-business-tools",
+  },
+
+  /**
+   * Phase 3 — the rest of the 2026-10-27 research, approved by the owner on
+   * 2026-10-28 and shipped as one batch across four pillars.
+   *
+   * Two of them finish the trust cluster the disclosure page started; two are
+   * the site's own editorial angle written down as pages in their own right
+   * ("what AI cannot do", "how much time it actually saves"); one is the
+   * prompts pillar's first audience-specific set; one is the automation
+   * pillar's missing money workflow. The common property that got them picked
+   * is that no page currently ranking for any of them is published by anyone
+   * with authority — they are vendor micro-sites, Medium posts, template farms
+   * and prompt packs being sold for $37.
+   */
+
+  /**
+   * The policy page, and the one the owner's research flagged as the clearest
+   * download candidate. It deliberately ships without a download: public/
+   * downloads/ holds only the brand presentation PDF and is not a content-asset
+   * system, and a policy locked inside a PDF is a policy search engines cannot
+   * read. The full text is on the page, copyable. If the owner later wants a
+   * .docx, that is an asset task, not a content one.
+   */
+  {
+    id: "ai-use-policy-template",
+    title: "AI Use Policy Template for Small Business",
+    path: "/ai-business-tools/ai-use-policy-template/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-business-tools",
+  },
+
+  /**
+   * Sibling to ai-disclosure-to-clients and separated from it the same way the
+   * Duet pair was: that page is about telling a client you used a tool, this
+   * one is about the law on recording a conversation they are in. No shared
+   * H2s and no shared FAQ question.
+   *
+   * It names the all-party consent states but refuses to present the list as
+   * settled, because it is not — published lists disagree between eleven and
+   * thirteen states, Oregon splits by medium and Montana takes notice rather
+   * than consent. Saying so is more useful than a confident table, and it is
+   * the one thing no vendor page on this query does.
+   */
+  {
+    id: "ai-notetaker-consent",
+    title: "AI Notetaker Consent: When You Have to Ask",
+    path: "/ai-business-tools/ai-notetaker-consent/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-business-tools",
+  },
+
+  /**
+   * The house angle as a page. /getting-started/ already tells a reader how to
+   * begin; this is the other half of that conversation, and the pillar has
+   * never had anywhere to put it. Kept distinct from
+   * how-much-time-does-ai-save by subject: this one is about capability — the
+   * jobs that stay human — and that one is about measurement.
+   */
+  {
+    id: "what-ai-cannot-do",
+    title: "What AI Cannot Do for a Small Business",
+    path: "/getting-started/what-ai-cannot-do/",
+    type: "article",
+    phase: 3,
+    pillar: "getting-started",
+  },
+
+  /**
+   * The prompts pillar's first set written for one audience rather than one
+   * task, and the bridge to the freelancer traffic the research found. Every
+   * result on this query is either a Medium listicle or a prompt pack for
+   * sale, so the differentiator is the opposite of volume: a small number of
+   * prompts for the conversations that actually cost money, with the judgement
+   * left in the reader's hands.
+   *
+   * Scoped around an overlap found during the build, not before it.
+   * chatgpt-prompts-for-small-business already owns "Quotes, pricing, and
+   * proposals" and "Invoices, chasing, and money conversations", so this page
+   * deliberately carries neither. What it owns instead is the set of
+   * conversations a freelancer has and an owner with customers does not —
+   * scope creep on a fixed price, raising a rate on an existing client, a
+   * vague brief, saying no, and ending an engagement. It says so on the page
+   * and links out for the two it excludes, so the pair do not bid against each
+   * other.
+   */
+  {
+    id: "ai-prompts-for-freelancers",
+    title: "AI Prompts for Freelancers: Scope, Rates & Client Emails",
+    path: "/ai-prompts/ai-prompts-for-freelancers/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-prompts",
+  },
+
+  /**
+   * The automation cluster had an email tutorial and a customer-service
+   * tutorial and nothing about money. This is that page, and its SERP is the
+   * weakest the research turned up: every result is a vendor micro-site
+   * selling invoice-chasing software, with no editorial page anywhere.
+   *
+   * Its honest finding is the one those vendors cannot print — most accounting
+   * apps emit no "invoice became overdue" event, so the reliable build is a
+   * daily scheduled check rather than the trigger people look for and fail to
+   * find.
+   */
+  {
+    id: "automate-invoice-follow-up",
+    title: "How to Automate Invoice Follow-Up With AI",
+    path: "/ai-automation/automate-invoice-follow-up/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-automation",
+  },
+
+  /**
+   * The counterpart to the free email time-savings calculator, which has
+   * always needed a page explaining what the published time-savings figures
+   * are actually worth. It sits under /ai-automation/ for that reason: the
+   * calculator is in this cluster, and the honest answer to the question ends
+   * in "measure your own", which is what the calculator is for.
+   */
+  {
+    id: "how-much-time-does-ai-save",
+    title: "How Much Time Does AI Actually Save a Small Business?",
+    path: "/ai-automation/how-much-time-does-ai-save/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-automation",
   },
 ] as const satisfies readonly SitePage[];
 

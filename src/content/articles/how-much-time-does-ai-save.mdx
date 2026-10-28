@@ -1,0 +1,184 @@
+---
+pageId: how-much-time-does-ai-save
+title: "How Much Time Does AI Actually Save a Small Business?"
+heading: "How Much Time Does AI Actually Save a Small Business? Check the Math"
+description: "What the published AI time-savings figures are worth, how a number like 175 hours a year is built, and how to measure your own instead of someone else's."
+publishedDate: 2026-10-28
+updatedDate: 2026-10-28
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: How much time does AI actually save a small business?
+    answer: There is no honest single answer, and the published figures disagree by roughly an order of magnitude — from a few hours a week in survey data to twenty or more in vendor marketing. The reason is that the number depends almost entirely on how much repetitive written work your business already does, and that varies enormously between a solo consultant and a six-person agency. Anyone quoting you one figure for all small businesses is quoting a number they cannot possibly know applies to you.
+  - question: Where does the "175 hours a year" figure come from?
+    answer: Adobe published it in a 2026 study of 431 small business owners, which also put the annual saving at around $5,816 — and the important detail is that both figures are for using AI on social media content alone. The same study estimated 152 hours on summarising reports and 67 hours on social advertising. It is self-reported, it is an extrapolation from per-task estimates, and it was published by a company that sells AI tools. None of that makes it false; all of it means you should check whether its assumptions describe you.
+  - question: Why should I be sceptical of the big weekly numbers?
+    answer: Because the largest figures, the eight-to-fifteen and twenty-plus hours a week claims, mostly appear on pages selling automation services, and almost none of them subtract anything. Setup time, the time spent checking output, and the ongoing maintenance when something drifts are real costs that come out of the same budget as the saving. A gross saving with no costs deducted is a marketing number, not a measurement.
+  - question: How do I work out my own number?
+    answer: Measure before you optimise. Pick the three tasks you think AI could absorb, track how long they actually take for two weeks, then introduce the tool and track the same three tasks for another two — including the time spent reviewing and correcting output. The difference is your number. It takes a month and it is worth more than every published statistic combined, because it is the only one measured on your business.
+  - question: Does AI save time on work I do not already do?
+    answer: No, and this is the test that deflates most headline figures. A number like 175 hours a year on social media content assumes you were spending roughly three and a half hours a week on social media content to begin with. If you spend twenty minutes, the ceiling on your saving is twenty minutes, however good the tool is. Read any claimed saving as a claim about the volume of work you are already doing.
+  - question: What costs should I subtract from the saving?
+    answer: Three. Setup, which is one-off but real and includes the time spent learning what the tool is bad at. Checking, which is ongoing and is the big one — output that goes to a customer has to be read properly, and that time never goes away. And maintenance, because prompts drift, models change and automations built around last quarter's process keep running after the process moves.
+  - question: Is the time saved the same as time gained?
+    answer: Not automatically. Twenty minutes freed in three separate places during a day usually becomes nothing in particular, because the work expands to fill it. The businesses that get real value tend to decide in advance what the time is for — a specific piece of work only the owner can do, or finishing earlier on purpose — rather than discovering afterwards that it quietly went somewhere.
+  - question: Should I use a calculator to estimate it?
+    answer: A calculator is useful for structuring the question, as long as you put in your own measured figures rather than published averages. Our free email time-savings calculator does that for one well-defined task, and the cost calculator does the other half of the sum. The output is only as good as the input, so measure your own task times first and treat any number produced from someone else's survey as fiction about your business.
+---
+
+import {
+  ComparisonTable,
+  Callout,
+  KeyTakeaways,
+  Steps,
+  Step,
+  VerdictBox,
+} from "@/components/content";
+
+**The published figures for how much time AI saves a small business range from a few hours a week to more than twenty.** That is not a disagreement about measurement error. It is an order of magnitude, and the spread tells you more than any of the individual numbers do.
+
+This page is about what those figures are actually measuring, how a headline number is built, what nobody subtracts from it, and how to get a number that is about your business instead of somebody else's.
+
+<KeyTakeaways>
+
+- **The range is an order of magnitude,** which means no single published number can be planned around.
+- **Adobe's 175 hours a year is for social media content alone** — one task, self-reported, from a company that sells AI tools.
+- **You cannot save time on work you do not already do.** Every headline saving is a hidden claim about your current volume.
+- **Almost no published figure subtracts anything** — not setup, not checking, not maintenance.
+- **Checking is the cost that never goes away,** and it is the one that decides whether a saving is real.
+- **Time saved is not time gained** unless you decide in advance what it is for.
+- **Measure your own in a month:** two weeks before, two weeks after, same three tasks, reviewing time included.
+
+</KeyTakeaways>
+
+## The published numbers, and who published them
+
+<ComparisonTable
+  caption="What the circulating figures are actually measuring"
+  rowHeader="The claim"
+  columns={["Where it comes from", "What to notice"]}
+  rows={[
+    {
+      label: "175 hours a year, and around $5,816",
+      cells: [
+        "Adobe's 2026 study of 431 small business owners, reported at a 95% confidence level with a 5% margin of error",
+        "It is for social media content alone — and Adobe sells AI tools. The same study gave 152 hours for summarising reports and 67 for social advertising",
+      ],
+    },
+    {
+      label: "8 to 15 hours a week",
+      cells: [
+        "Mostly automation agencies and service providers",
+        "Gross, with nothing subtracted, and typically illustrative rather than measured",
+      ],
+    },
+    {
+      label: "20+ hours a week",
+      cells: [
+        "Vendor and consultancy marketing",
+        "Treat as a ceiling claim for a heavily automated business, not a typical outcome",
+      ],
+    },
+    {
+      label: "A few hours a week",
+      cells: [
+        "Survey data that asks owners directly",
+        "Lower, and closer to what people report when nobody is selling them anything",
+      ],
+    },
+  ]}
+/>
+
+The pattern is hard to miss once you look for it: the number rises with the commercial interest of whoever published it. That is not an accusation of dishonesty — a business that has genuinely automated a lot does save a lot — it is a reason to read every figure alongside its source. If you want primary data rather than someone's blog post about it, the SBE Council's Small Business Technology Use Survey from March 2026 is the kind of document worth reading directly.
+
+<Callout tone="note" heading="What this site will not do">
+  Publish a figure of our own. We have no measured data on how much time AI saves across small
+  businesses, and inventing one would be the same move this page is criticising. What follows is how
+  to read other people's numbers and how to produce your own.
+</Callout>
+
+## Why 175 hours is probably not your number
+
+Take the best-documented figure and do the arithmetic on it, because the arithmetic is the whole point.
+
+175 hours a year is about three and a half hours a week. The claim is that AI saves you three and a half hours a week **on social media content**.
+
+Now answer honestly: how much time do you currently spend on social media content? If the answer is three and a half hours a week, the figure might describe you. If the answer is twenty minutes, then twenty minutes is your ceiling — not because the tool is weaker for you, but because you cannot save time on work you were not doing.
+
+That is the test to apply to every time-savings claim you read. **A saving figure is a disguised claim about your current volume.** The number is a statement about the business it was measured on, and it transfers to yours only in so far as your week looks like theirs. A solo consultant who writes two emails and one proposal a day and a six-person agency producing content all week are both "small businesses", and no single hours-saved figure can be true of both.
+
+The same logic cuts the other way, and it is the useful half. If there is a task you do for six hours a week that is repetitive and written down, your potential saving on that one task is larger than any published average — because the averages are flattened across businesses that do not do it at all.
+
+## The three costs nobody subtracts
+
+Published figures are gross. Here is what comes off them.
+
+**Setup.** One-off but real: choosing the tool, learning what it is bad at, writing the instructions properly, building the automation. For a simple task this is an hour. For a workflow with an automation platform in it, budget a day and expect to revisit it twice.
+
+**Checking.** The big one, and the one that never goes away. Anything going to a customer or into a decision has to be read properly — not skimmed, because [confident output and correct output are indistinguishable](/getting-started/what-ai-cannot-do/). If a task took forty minutes and now takes ten minutes of drafting plus eight of checking, your saving is twenty-two minutes, not thirty. Most published figures quietly count thirty.
+
+**Maintenance.** Prompts stop working as models change. Automations keep running after the process they were built around has moved on. Something that worked for three months unattended has often been slightly wrong for one of them. A monthly review of anything customer-facing is the realistic cost, and it belongs in the sum.
+
+Subtract all three and the honest shape of the answer for most small businesses is: a meaningful saving on a small number of specific tasks, not a transformation of the week. Which is still worth having — it is just not what the headline said.
+
+## Measure your own
+
+A month of attention gets you a number worth more than every statistic above, because it is measured on the business you actually run.
+
+<Steps>
+  <Step title="Pick three tasks, not a category">
+    Specific and repeated — "writing the Monday customer update", not "marketing". If you cannot
+    name when it happens and how often, it is not measurable yet.
+  </Step>
+  <Step title="Time them for two weeks, before changing anything">
+    Rough is fine. Start and stop times in a notebook beat a precise system you abandon on day
+    three. Most people discover here that one of the three takes half what they assumed, and another
+    takes double.
+  </Step>
+  <Step title="Introduce the tool on those three tasks only">
+    Not everywhere at once, or you will not know what caused what.
+  </Step>
+  <Step title="Time them again for two weeks — including the checking">
+    This is the step that makes the number honest. Count review and correction time inside the task,
+    because that is where it actually falls.
+  </Step>
+  <Step title="Subtract the setup, spread over a sensible period">
+    An hour of setup against a weekly task is roughly five minutes a week over a quarter. Do not
+    pretend it was free, and do not amortise it over five years either.
+  </Step>
+  <Step title="Decide what the time is for, in advance">
+    Name the thing you will do with it before it appears. Unassigned saved time is absorbed by
+    whatever is nearest, and then nobody can tell whether any of it was real.
+  </Step>
+</Steps>
+
+<Callout tone="tip" heading="Two calculators for the arithmetic">
+  Once you have your own measured figures, our free [AI email time savings
+  calculator](/ai-automation/ai-email-time-savings-calculator/) does the sum for one well-defined
+  task, and the [small business AI cost
+  calculator](/ai-business-tools/small-business-ai-cost-calculator/) does the other side of it. Both
+  run in your browser and need no sign-up. Put your own numbers in — a calculator fed published
+  averages just launders someone else's survey into a figure that looks like yours.
+</Callout>
+
+## Time saved is not time gained
+
+The last thing, and it is the one that decides whether any of this shows up in your life.
+
+Twenty minutes freed at three separate points in a day tends to become nothing. The work expands, the inbox fills it, and at the end of the quarter you are equally busy and cannot say where the saving went. This is not a failure of the tools; it is what happens to unallocated time in a business run by one or two people.
+
+So decide first. The saving is worth having if it goes somewhere you chose — the piece of work only you can do, the thing that has been on the list since March, or simply finishing when you said you would. That is a decision about how you work, and no software makes it for you.
+
+<VerdictBox
+  heading="The honest answer"
+  bestFor="Expecting a real saving on a few specific, repetitive, written tasks — measured on your own week, with checking time subtracted, and spent on something you named in advance"
+  notFor="Planning around a published figure. The range in the research is an order of magnitude wide, and the biggest numbers are published by the people selling the thing being measured"
+/>
+
+## Where to go next
+
+- **The limits behind the numbers.** [What AI cannot do for a small business](/getting-started/what-ai-cannot-do/) covers why the checking cost never disappears.
+- **Where the real savings usually are.** [Best AI workflows for solopreneurs](/ai-automation/best-ai-workflows-for-solopreneurs/) works through a week task by task.
+- **One worked example end to end.** [How to automate invoice follow-up with AI](/ai-automation/automate-invoice-follow-up/), including what to keep manual.
+- **The cost side of the sum.** [How much does AI cost for a small business?](/ai-business-tools/how-much-does-ai-cost-small-business/) breaks it down by budget level.
+- **The wider category.** [AI automation and workflows](/ai-automation/) is the hub.

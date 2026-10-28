@@ -1,0 +1,139 @@
+---
+pageId: ai-notetaker-consent
+title: "AI Notetaker Consent: When You Have to Ask"
+heading: "AI Notetaker Consent: When You Have to Ask, and What to Say"
+description: "When you need consent to use an AI notetaker, which states require everyone on the call to agree, and the line to say at the start to stay on the safe side."
+publishedDate: 2026-10-28
+updatedDate: 2026-10-28
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Is it legal to use an AI notetaker without telling people?
+    answer: It depends where everyone on the call is, and the safe assumption is no. Under US federal law and in most states, one party to the conversation can consent to it being recorded — which can be you. But around eleven states require everyone to agree, and a call that crosses state lines can be subject to every applicable standard at once. Since announcing it costs one sentence and a silent bot is the thing that actually gets people into trouble, the practical answer is to say it every time.
+  - question: Which states require all-party consent for recording?
+    answer: The states that appear on essentially every published list are California, Delaware, Florida, Illinois, Maryland, Massachusetts, Montana, Nevada, New Hampshire, Pennsylvania and Washington. Connecticut, Michigan, Oregon and Vermont appear on some lists and not others because their rules are mixed or unsettled — Oregon, for instance, treats phone calls differently from in-person conversations. Published counts range from eleven to thirteen for exactly this reason, so treat any list as a prompt to check your own state rather than as the final word.
+  - question: Does a notetaker count as recording if it only makes a transcript?
+    answer: Assume it does. The tool has to capture the audio to transcribe it, and the laws in question are about intercepting or recording a conversation rather than about keeping an audio file afterwards. A product that deletes the recording and keeps only text has not avoided the question, and arguing otherwise is not a position you want to be in after the fact.
+  - question: What should I say at the start of a call?
+    answer: One sentence, before anything substantive. Something like — I have an AI notetaker on this call taking notes, is that all right with everyone? Then pause for an answer. Saying it before the real discussion starts matters, because consent given after the useful part has already been captured is not much use to you.
+  - question: Is silence the same as consent?
+    answer: Not reliably, and it varies. Montana's statute, for example, is satisfied by notification rather than active agreement, so carrying on talking after being told counts there. Other all-party states are read more strictly. Asking a direct question and getting a spoken yes takes three seconds and removes the argument, so the safest habit is to ask rather than to announce.
+  - question: What are the risks that have nothing to do with recording law?
+    answer: Three, and they catch people more often than the statutes do. Your client contract may restrict sending their information to third parties, and a transcript sent to a notetaking vendor is exactly that. Privilege can be affected if a lawyer is on the call and a third party is present or a recording exists. And the transcript itself becomes a document that can be requested, discovered or leaked, which the meeting notes in somebody's head never were.
+  - question: What if a client or colleague says no?
+    answer: Turn it off and take notes by hand, and do not argue the point. Someone who has said no on a recorded call and been overridden has a grievance that is far more expensive than the notes were worth. The useful move afterwards is to ask whether they object to the recording or to the vendor, because the second has a workable answer — some tools keep the audio on your own machine rather than sending it to a service.
+  - question: What settings should I change on an AI notetaker?
+    answer: Three. Turn off anything that lets the tool join calls automatically without you, because that is how a bot ends up in a meeting you never meant it in. Make sure the notice is visible to everyone rather than only to you. And set retention deliberately, because a default of "keep everything forever" turns every conversation into a permanent record you now have to look after.
+---
+
+import { ComparisonTable, Callout, KeyTakeaways, VerdictBox } from "@/components/content";
+
+**If everyone on the call is somewhere that allows one-party consent, you can record it. If anyone is in a state that requires all-party consent, you need everybody to agree — and because calls cross borders, the practical rule is to ask every time.**
+
+That is the whole answer, and announcing it costs one sentence. The reason this question is worth a page is not the law; it is that the default settings on these tools let a bot join a meeting silently, and the three risks that bite hardest are not recording law at all.
+
+<KeyTakeaways>
+
+- **US federal law and most states allow one-party consent** — one person on the call can agree, and that can be you.
+- **Around eleven states require everyone to agree.** Published lists disagree on the exact count because several states have mixed rules.
+- **A cross-border call can be subject to every applicable standard at once,** so the strictest one is the one to follow.
+- **A transcript counts.** The tool captured the audio to produce it; deleting the audio afterwards does not undo that.
+- **Ask, do not just announce.** Silence counts in some states and not others; a spoken yes removes the argument.
+- **The bigger risks are contractual** — your client's confidentiality clause, legal privilege, and the transcript existing as a discoverable document.
+- **Change three settings:** no automatic joining, a notice everyone can see, and a deliberate retention period.
+
+</KeyTakeaways>
+
+<Callout tone="warning" heading="Not legal advice, and the lists genuinely disagree">
+  This is a researched orientation, not legal advice. State recording law is unusually messy — the
+  published lists of all-party consent states differ from each other, several states split by
+  medium, and the rules interact with your own contracts. Use this to know what question to ask,
+  then check your own jurisdiction before relying on it.
+</Callout>
+
+## The rule in one paragraph
+
+These laws are about recording a conversation, and they come in two shapes. Under **one-party consent**, one participant can agree to the recording — and if you are on the call, that participant can be you, with nobody else told. Under **all-party consent**, everybody has to agree. US federal law and the large majority of states — commonly counted as 39 plus the District of Columbia — take the one-party approach. A minority take the all-party approach.
+
+Nothing in that depends on AI. What AI changed is the volume: recording a call used to be a deliberate act, and now it is the default behaviour of a calendar integration.
+
+## Which states require everyone to agree
+
+<ComparisonTable
+  caption="All-party consent states, and the ones the lists argue about"
+  rowHeader="Group"
+  columns={["States", "What to do with this"]}
+  rows={[
+    {
+      label: "On essentially every list",
+      cells: [
+        "California, Delaware, Florida, Illinois, Maryland, Massachusetts, Montana, Nevada, New Hampshire, Pennsylvania, Washington",
+        "Treat these as all-party. If anyone on your calls is in one of them, build the habit of asking",
+      ],
+    },
+    {
+      label: "Mixed or unsettled",
+      cells: [
+        "Connecticut, Michigan, Oregon, Vermont",
+        "They appear on some published lists and not others. Oregon splits by medium — electronic communications and in-person conversations are treated differently",
+      ],
+    },
+    {
+      label: "Notice rather than consent",
+      cells: [
+        "Montana, by statute",
+        "Notification is treated as sufficient there, so continuing the conversation after being told counts. Do not generalise this to other states",
+      ],
+    },
+  ]}
+/>
+
+The honest point about that table is that no version of it is authoritative. Published counts run from eleven to thirteen states, and they differ because some rules are mixed, some have been read differently by different courts, and some turn on whether the conversation was in person or over a wire. Every vendor page on this topic prints a confident list; the confident lists do not match each other.
+
+Which is why the useful conclusion is not a list at all.
+
+## Why the strictest standard wins
+
+Think about an ordinary call. You are in one state, your client is in another, and somebody has dialled in from a third. A call that crosses jurisdictions can answer to every applicable standard at the same time, and you do not necessarily know where everyone is sitting — somebody is working from a relative's house this week and has not mentioned it.
+
+You cannot run a per-participant legal analysis before a 2pm catch-up. So the only workable policy is to behave as though the strictest rule applies, every time, which means asking. Once that is a habit, the entire question stops being a question.
+
+<VerdictBox
+  heading="The working rule"
+  bestFor="Ask at the start of every call, in one sentence, and wait for an answer. It takes three seconds, it satisfies the strictest standard, and it removes the need to know where anyone is"
+  notFor="Relying on a one-party consent state. It is probably correct and it stops being correct the moment one person joins from California"
+/>
+
+## The three risks that are not recording law
+
+These are the ones that cause real damage, and none of them is fixed by consent.
+
+**Your client's contract.** A confidentiality or data clause that restricts sending their information to third parties covers the transcript you just sent to a notetaking vendor. The clause will not mention AI, and it does not need to. This is the same problem covered in [do you have to tell clients you use AI?](/ai-business-tools/ai-disclosure-to-clients/) — the data disclosure, rather than the credit one, is the part that binds.
+
+**Privilege.** If a lawyer is on the call, the presence of a third party and the existence of a recording can both matter to whether the conversation stays privileged. Legal practitioners have been warning about exactly this since notetakers became default-on. If a call is genuinely legal advice, the notetaker should not be in it.
+
+**The transcript exists.** This is the one nobody thinks about until it matters. A meeting in somebody's memory cannot be requested, disclosed or leaked. A transcript can, and it contains the throwaway remark somebody made about a customer at minute forty. You have converted a conversation into a record, and records have a life of their own.
+
+## What to say, and what to change
+
+One line, before anything substantive:
+
+> "I've got an AI notetaker on this call taking notes — is that all right with everyone?"
+
+Then stop and let people answer. Asking rather than announcing matters for two reasons: silence is not reliably consent, and the pause is what gives a quieter person room to object.
+
+Then change three settings, today, in whatever tool you use:
+
+- **Automatic joining off.** Many of these tools will put a bot in every meeting on your calendar. That is how a notetaker ends up in a conversation you would never have recorded on purpose.
+- **A notice everyone can see.** Some tools show the recording state only to the host. If the people on the call cannot tell, your announcement is the only notice that exists.
+- **Retention set deliberately.** Decide how long transcripts live and set it. The default is usually forever, and forever is a decision you did not make.
+
+If someone says no, turn it off and write by hand. If you want to understand the objection, ask whether it is the recording or the vendor — because the second has an answer, in tools that process audio locally rather than sending it to a service.
+
+## Where to go next
+
+- **The related client question.** [Do you have to tell clients you use AI?](/ai-business-tools/ai-disclosure-to-clients/) covers disclosure duties and the contract clauses that bind you.
+- **Writing the rule down.** [AI use policy template for small business](/ai-business-tools/ai-use-policy-template/) has a one-page policy, including the data list a transcript falls under.
+- **Where the transcripts and accounts live.** [ChatGPT Business vs Plus](/ai-business-tools/chatgpt-business-vs-plus/) covers company accounts and why personal ones make the data answer unverifiable.
+- **The jobs a meeting summary cannot do for you.** [What AI cannot do for a small business](/getting-started/what-ai-cannot-do/).
+- **The wider category.** [AI business and productivity tools](/ai-business-tools/) is the hub for admin, meetings, bookkeeping and support.

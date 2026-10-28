@@ -1,0 +1,194 @@
+---
+pageId: automate-invoice-follow-up
+title: "How to Automate Invoice Follow-Up With AI"
+heading: "How to Automate Invoice Follow-Up With AI (Without Annoying Clients)"
+description: "How to automate invoice follow-up with AI without annoying clients: the daily check that replaces the trigger your accounting app lacks, and what to keep human."
+publishedDate: 2026-10-28
+updatedDate: 2026-10-28
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Do I need an automation to chase invoices, or will my accounting software do it?
+    answer: Try the software first, because for a lot of small businesses it is enough and it is free. QuickBooks, Xero, FreshBooks and most invoicing tools can send scheduled reminders before and after a due date without any automation platform involved. Build something custom only when you need what they cannot do — a message that reads differently per client, a different ladder for your biggest account, or the later chases landing in your drafts for you to approve rather than going out automatically.
+  - question: Why can I not find an "invoice overdue" trigger in Zapier?
+    answer: Because most accounting apps do not emit one. An invoice going overdue is not an event inside the system; it is the absence of an event — a date passed and nothing happened. So the reliable shape is not a trigger at all. You schedule a check once a day, search for invoices matching your overdue criteria, and act on what comes back. People lose hours looking for a trigger that mostly does not exist, so start from the scheduled check.
+  - question: What should the AI step actually do?
+    answer: Write the message, and nothing else. The deciding — which invoices qualify, which rung of the ladder each one is on, who is excluded — should be done by filters and rules you can read, not by a model. Give the AI the invoice number, the amount, the days overdue, the client name and which rung this is, and tell it explicitly not to invent anything beyond those. That split is what makes the automation trustworthy, because the part that can go wrong creatively is only the wording.
+  - question: Should the reminders send automatically or go to my drafts?
+    answer: Split it by rung. The first polite nudge a few days after the due date is safe to send automatically — it is low stakes and nobody resents it. Everything after that should land in your drafts, because by the second or third chase the message depends on context the automation does not have, like the call you had on Tuesday or the fact that they are about to give you a bigger project.
+  - question: How do I stop it chasing someone I should not chase?
+    answer: Keep a suppression list and check it in the automation before anything sends. Clients in dispute, clients on an agreed payment plan, anyone you have already spoken to this week, and the account where the relationship matters more than the thirty days. Without that list the automation will eventually send a cheerful payment reminder to someone you are mid-negotiation with, which is the single worst outcome available here.
+  - question: How many reminders should I send, and how far apart?
+    answer: Four touches is a common shape — a few days after the due date, around a week later, at roughly two weeks, and a final one at about a month where the tone changes and you name a consequence. The exact spacing matters far less than consistency and than escalating the tone rather than repeating it. Three identical nudges teach a client that nothing happens; a ladder teaches them that something does.
+  - question: Will automated chasing damage the client relationship?
+    answer: Done badly, yes — and the two ways it goes wrong are sending to the wrong person and sounding like a collections system. Done well it usually improves things, because the alternative in most small businesses is an awkward silence followed by one tense message after three months of resentment. Consistent, early, mild reminders are easier for everyone than a late confrontation.
+  - question: Can I automate late fees or interest?
+    answer: Be careful. Whether you can charge interest or a fee on a late payment, at what rate, and what notice you must have given depends on your jurisdiction and on what your contract and invoice terms actually say. Automating a charge you are not entitled to is worse than not chasing at all. Get the terms right first, mention them in the final rung if they apply, and keep anything that touches money on your approval rather than on a schedule.
+---
+
+import {
+  ComparisonTable,
+  Callout,
+  KeyTakeaways,
+  PromptBlock,
+  Steps,
+  Step,
+  VerdictBox,
+} from "@/components/content";
+
+**The thing that gets invoices paid is not a clever message. It is that the follow-up happens at all, every time, without you having to decide to do it.** That is what to automate — the remembering — and it is why this works even when the wording is ordinary.
+
+One practical finding first, because it is where most people stall: your accounting app probably has no "invoice became overdue" trigger, because an invoice going overdue is not an event. It is the absence of one. So the automation is a daily check, not a trigger, and knowing that saves an afternoon of searching for something that is not there.
+
+<KeyTakeaways>
+
+- **Try your accounting software's built-in reminders first.** For many small businesses that is the whole job, free.
+- **There is usually no "overdue" trigger.** Build a scheduled daily check that searches for matching invoices instead.
+- **The AI step writes the message and nothing else.** Rules you can read decide who gets chased and when.
+- **Automate the first nudge, draft the rest.** By the second chase the right message depends on context the automation lacks.
+- **Keep a suppression list** — disputes, payment plans, anyone you spoke to this week. This is the setting that prevents the embarrassment.
+- **Escalate the tone instead of repeating it.** Four identical reminders teach a client that nothing happens.
+- **Leave fees and interest manual.** What you may charge depends on your contract and jurisdiction, not on your workflow.
+
+</KeyTakeaways>
+
+## First, check whether you need to build anything
+
+The honest starting point, and it will cost some people nothing.
+
+QuickBooks, Xero, FreshBooks and most invoicing tools already send reminders on a schedule relative to the due date, with your own wording, without an automation platform anywhere near them. If you are not using that, turn it on this afternoon and you have solved perhaps eighty per cent of the problem in ten minutes.
+
+Build something custom when you need one of these three things, and not before:
+
+- **Messages that differ by client** — your biggest account getting a different ladder, or a different tone, from a one-off job.
+- **Approval before sending** on the later, sharper reminders, rather than all-or-nothing automation.
+- **Something the invoicing tool cannot see** — chasing based on project status, prior conversations, or data that lives in another system.
+
+<Callout tone="tip" heading="This is the test for any automation, not just this one">
+  If the built-in feature does ninety per cent of the job, the automation has to be worth building
+  and maintaining for the last ten. Often it is not. See [best AI automation
+  tools](/ai-automation/best-ai-automation-tools/) for how to decide by category rather than by
+  product.
+</Callout>
+
+## The shape that actually works
+
+<Steps>
+  <Step title="Schedule a daily check">
+    In Zapier, Make or n8n, start with a schedule trigger rather than an app trigger — once a day,
+    early. This is the step people get wrong by hunting for an "invoice overdue" event that the
+    accounting app does not publish.
+  </Step>
+  <Step title="Search for invoices that qualify">
+    Use your accounting app's find or search action to pull unpaid invoices past their due date.
+    Pull the fields you will need downstream — invoice number, amount, due date, days overdue,
+    client name and email.
+  </Step>
+  <Step title="Work out which rung each invoice is on">
+    A simple calculation on days overdue, mapped to your ladder. Keep this in filters and paths you
+    can read at a glance, not in a prompt — you want to be able to see exactly who is about to get
+    what.
+  </Step>
+  <Step title="Check the suppression list before anything else">
+    A spreadsheet or table of accounts not to chase automatically, looked up by client. If there is
+    a match, the automation stops. Build this step before you build the sending step, not after.
+  </Step>
+  <Step title="Draft the message with an AI step">
+    Pass the invoice facts and the rung. The AI writes the wording. It must not decide anything and
+    must not add any fact it was not given.
+  </Step>
+  <Step title="Send the first rung, draft the others">
+    Rung one goes out on its own. Rungs two and up are created as drafts in your mail client, so the
+    work of remembering and writing is done and the decision to send stays yours.
+  </Step>
+  <Step title="Log what was sent">
+    Append a row to a sheet — invoice, rung, date, and whether it sent or drafted. Without this you
+    cannot tell what a client has already received, and you will eventually double-chase someone.
+  </Step>
+</Steps>
+
+## The escalation ladder
+
+Escalate the tone. Repeating the same mild nudge four times is what teaches a client that your due dates are decorative.
+
+<ComparisonTable
+  caption="A four-rung follow-up ladder"
+  rowHeader="When"
+  columns={["What the message does", "Send or draft?"]}
+  rows={[
+    {
+      label: "A few days after the due date",
+      cells: [
+        "Assumes it was missed. Friendly, one line, invoice attached or linked, no suggestion of fault",
+        "Send automatically",
+      ],
+    },
+    {
+      label: "About a week later",
+      cells: [
+        "Asks a direct question — has it been scheduled for payment, and if not what is holding it up",
+        "Draft",
+      ],
+    },
+    {
+      label: "Around two weeks",
+      cells: [
+        "Names the delay plainly, asks for a payment date rather than an acknowledgement",
+        "Draft",
+      ],
+    },
+    {
+      label: "About a month",
+      cells: [
+        "Changes register. States what happens next — work paused, terms applied, the matter escalated — and means it",
+        "Draft, and read it twice",
+      ],
+    },
+  ]}
+/>
+
+The second column is the part the vendor pages skip. A reminder that asks for an acknowledgement gets an acknowledgement; a reminder that asks for a date gets a date, or gets you the real reason, which is the thing you actually need.
+
+## The AI step, written to be safe
+
+The risk in putting a model in this workflow is not bad prose. It is invention — a reference to a conversation that did not happen, a payment date nobody agreed, a warm line about a project that finished badly. So the instruction's main job is to forbid that.
+
+<PromptBlock
+  label="Drafting one follow-up message"
+  prompt={`You are writing a payment follow-up email for a small business. Use only these facts and add nothing else: client name [name], invoice number [number], amount [amount], due date [date], days overdue [days], follow-up stage [1 to 4 of 4]. Write under 90 words, plain text, no subject line pleasantries. Tone by stage — 1 assumes it was simply missed and implies no fault; 2 asks directly whether payment has been scheduled and what is holding it up; 3 states the delay plainly and asks for a specific payment date; 4 is formal and names the stated consequence [consequence]. Never invent prior conversations, promises, payment dates, relationship history or reasons for the delay. Never mention interest, fees or legal action unless stage 4 and only in the words given. Do not apologise for sending the reminder. End with one clear request.`}
+/>
+
+**Why it works:** the facts are enumerated and everything else is banned, so the model's job is reduced to wording. "Do not apologise for sending the reminder" removes the most common weakness in these emails — a chase that opens by apologising for existing teaches the reader that it is optional.
+
+**Limitation:** it has no idea whether this client is in dispute, mid-negotiation, or about to sign something larger. That is what the suppression list is for, and the suppression list is a human-maintained file rather than anything the model can work out.
+
+## What to keep manual, permanently
+
+<VerdictBox
+  heading="Never on a schedule"
+  bestFor="Automating the first nudge, the remembering, and the drafting. That is where the saving is, and none of it carries relationship risk"
+  notFor="Anything that names a consequence, applies a fee, pauses work, or goes to a client you are in a dispute or a negotiation with. Those need a person who knows this week's context"
+/>
+
+Four specific things to keep off the automation:
+
+- **The final rung's sending.** Draft it, read it, send it yourself. This is the message that can end a relationship, and it should cost you thirty seconds of attention.
+- **Fees and interest.** What you may charge, at what rate, with what notice, depends on your contract terms and your jurisdiction. Automating a charge you are not entitled to is worse than not chasing.
+- **Anyone in dispute or on a payment plan.** Suppression list, checked first, every run.
+- **Your largest client, probably.** Where the relationship is worth more than the thirty days, a phone call outperforms any ladder.
+
+## Did it work?
+
+One number tells you, and it is worth capturing before you build anything: the average days between invoice date and payment date, over your last twenty invoices. Write it down. Compare after two months.
+
+If it has not moved, the problem is upstream of the chasing — payment terms that are too long, invoices going out late or to the wrong person, or no payment link in the email. An automation cannot fix any of those, and chasing harder on a broken invoicing process just makes you unpopular at the same speed.
+
+Count the build and maintenance time against the saving too. That is the subject of [how much time does AI actually save a small business?](/ai-automation/how-much-time-does-ai-save/), and the figures circulating for workflows like this one are mostly published by people selling the workflow.
+
+## Where to go next
+
+- **The platform decision.** [n8n vs Zapier vs Make](/ai-automation/n8n-vs-zapier-vs-make/) compares the three this is built on.
+- **More worked automations.** [Zapier AI automation examples](/ai-automation/zapier-ai-automation-examples/) has eight others, built the same way.
+- **The wider workflow picture.** [Best AI workflows for solopreneurs](/ai-automation/best-ai-workflows-for-solopreneurs/) covers money admin alongside the rest of the week.
+- **Writing the chase yourself instead.** [AI prompts for freelancers](/ai-prompts/ai-prompts-for-freelancers/) covers the client conversations around scope and rates.
+- **The wider category.** [AI automation and workflows](/ai-automation/) is the hub.
