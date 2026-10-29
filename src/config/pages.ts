@@ -92,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 23,
+  3: 24,
 };
 
 export const PAGES = [
@@ -921,6 +921,40 @@ export const PAGES = [
     type: "article",
     phase: 3,
     pillar: "ai-automation",
+  },
+
+  /**
+   * Phase 3 — the site's first published dataset, and a third page type in
+   * practice: not a guide, not a calculator, but a structured record.
+   *
+   * It exists because the site already had the data and was wasting it. A dozen
+   * guides each publish vendor list prices with their own verification date,
+   * written as prose and scattered across three clusters, so no reader could
+   * compare billing models across vendors or tell which figures were fresh.
+   * This page consolidates every one of those figures into one dated, sortable,
+   * machine-readable table (src/data/ai-tool-pricing.ts) and publishes the
+   * findings computed from it. It adds no new price claims: a row may only
+   * restate a figure a page on this site already published.
+   *
+   * Registered as `type: "tool"` rather than "article" because that is what it
+   * behaves like — a utility with supporting editorial copy, carrying
+   * WebApplication-style schema and no Article schema, rendered from the
+   * `tools` collection. It also emits Dataset schema and ships a JSON
+   * distribution at /ai-tool-pricing.json, which is the part that makes it
+   * citable rather than merely readable.
+   *
+   * It sits in /ai-business-tools/ with the cost calculator, because the
+   * budgeting intent it serves already lives there and the two answer halves of
+   * the same question: this page says what vendors charge, the calculator totals
+   * what your own stack costs.
+   */
+  {
+    id: "ai-tool-pricing-tracker",
+    title: "AI Tool Pricing Tracker: Verified List Prices",
+    path: "/ai-business-tools/ai-tool-pricing-tracker/",
+    type: "tool",
+    phase: 3,
+    pillar: "ai-business-tools",
   },
 ] as const satisfies readonly SitePage[];
 

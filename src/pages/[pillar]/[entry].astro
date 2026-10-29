@@ -19,6 +19,7 @@ import type { RelatedPage } from "@/components/content/RelatedPages.astro";
 import { getPublishedEntries, pathSegments } from "@/lib/content";
 import { getPage, type PageId } from "@/config/pages";
 import { articleSchema, getSocialImage, webApplicationSchema, type JsonLd } from "@/lib/seo";
+import { pricingDatasetSchema } from "@/data/ai-tool-pricing-schema";
 
 export async function getStaticPaths() {
   /**
@@ -51,6 +52,16 @@ export async function getStaticPaths() {
       "how-to-automate-email-with-ai",
       "zapier-ai-automation-examples",
       "best-ai-workflows-for-solopreneurs",
+    ],
+    /**
+     * The pricing tracker's shortlist is the three guides its rows came from
+     * and lead back to: what the prices mean for a budget, which tools the
+     * table covers and why, and whether the money is better spent on a person.
+     */
+    "ai-tool-pricing-tracker": [
+      "how-much-does-ai-cost-small-business",
+      "best-ai-tools-for-small-business",
+      "ai-tools-vs-virtual-assistant",
     ],
   };
 
@@ -161,10 +172,23 @@ const path = Astro.url.pathname;
 
 let jsonLd: readonly JsonLd[];
 if (kind === "tool") {
-  // The utility itself is the page's main entity. BreadcrumbList comes from the
-  // layout and FAQPage from the visible FAQ, so nothing is declared twice.
+  /**
+   * The utility itself is the page's main entity. BreadcrumbList comes from the
+   * layout and FAQPage from the visible FAQ, so nothing is declared twice.
+   *
+   * The pricing tracker is the exception: it is a published dataset rather than
+   * an application — it computes nothing for the visitor and has no inputs — so
+   * it declares Dataset, which names the licence, the collection method, the
+   * fields and the JSON distribution. Calling it a WebApplication would
+   * describe the wrong thing and waste the one claim that makes a data page
+   * citable. The schema's own values live beside the data it describes; see
+   * src/data/ai-tool-pricing-schema.ts.
+   */
+  const schemaFor =
+    page.id === "ai-tool-pricing-tracker" ? pricingDatasetSchema : webApplicationSchema;
+
   jsonLd = [
-    webApplicationSchema({
+    schemaFor({
       name: entry.data.heading ?? entry.data.title,
       description: entry.data.description,
       path,

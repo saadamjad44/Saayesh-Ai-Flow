@@ -552,6 +552,33 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Informational",
     note: 'Rendered at 79 characters, the longest on the site. "Free" leads because it is the first thing a searcher decides and it is factually true — no sign-up, runs in the browser. The description now surfaces cost per business unit and per employee, both answered by their own H2s on the page and both observed Search Console queries.',
   },
+  "ai-tool-pricing-tracker": {
+    title: "AI Tool Pricing Tracker: List Prices, Checked and Dated",
+    brand: "omit",
+    description:
+      "Monthly and annual list prices for AI tools and the AI features in business software, each with the date we checked it. Sort, filter, or download as JSON.",
+    primaryKeyword: "AI tool pricing",
+    supportingKeywords: [
+      "AI tools pricing comparison",
+      "AI software pricing list",
+      "how much do AI tools cost",
+      "AI tools with free plans",
+      "AI pricing dataset",
+    ],
+    intent: "Info / Commercial",
+    /**
+     * The one page on the site whose selling point is a date. Competing pages
+     * for this query are vendor-roundup listicles with undated prices, which is
+     * exactly the weakness a reader discovers only after acting on one — so
+     * "Checked and Dated" is both the differentiator and a promise the page
+     * keeps structurally, with a check date on every row.
+     *
+     * Deliberately not "Best AI Tool Pricing" or any value framing: the page
+     * ranks nothing and scores nothing, and a title implying otherwise would
+     * over-promise against a table that carries no verdicts.
+     */
+    note: 'Rendered at 55 characters. The primary is the head term "AI tool pricing"; the page is the only one on the site written for it, so it does not compete with the cost guide (which owns "how much does AI cost for a small business") or the calculator (which owns the calculator query). "Checked and Dated" is the differentiator against undated vendor roundups, and the download is surfaced in the description because "AI pricing dataset" intent wants the file, not the article.',
+  },
 
   // ---- AI Automation cluster ---------------------------------------------
   "ai-automation": {

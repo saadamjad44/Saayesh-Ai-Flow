@@ -280,6 +280,87 @@ export function webApplicationSchema(input: WebApplicationSchemaInput): JsonLd {
   };
 }
 
+export interface DatasetVariable {
+  /** The field's name as the dataset publishes it, e.g. "monthlyUsd". */
+  name: string;
+  description: string;
+  /** Unit code where the field is a measurement, e.g. "USD" for a price. */
+  unitText?: string;
+}
+
+export interface DatasetSchemaInput {
+  name: string;
+  description: string;
+  path: string;
+  datePublished: Date;
+  dateModified: Date;
+  /** Licence URL the data is published under. */
+  license: string;
+  /**
+   * ISO 8601 interval covered by the observations, e.g. "2026-09-14/2026-10-21".
+   * For this site that is the span of verification dates, not a claim about a
+   * period of time the prices were valid for.
+   */
+  temporalCoverage: string;
+  /** How the figures were gathered. Must describe what actually happened. */
+  measurementTechnique: string;
+  /** The fields a consumer of the data will find in it. */
+  variableMeasured: readonly DatasetVariable[];
+  /** Machine-readable copies of the data, as absolute or site-relative paths. */
+  distributions: readonly { path: string; encodingFormat: string }[];
+  keywords: readonly string[];
+}
+
+/**
+ * A published dataset: structured observations offered for reuse, rather than
+ * an article that happens to contain a table.
+ *
+ * This is the schema that makes a data page citable instead of merely readable
+ * — it names the licence, the collection method, the fields, the period covered
+ * and a machine-readable download, which is what a reader, a crawler, or an
+ * answer engine needs in order to quote a figure and say where it came from.
+ *
+ * Every claim it makes has to be true of the page that emits it: a `license`
+ * only if the page states one, a `distribution` only if that URL really serves
+ * the data, and a `measurementTechnique` that describes the actual process. A
+ * Dataset declaration on a page with no downloadable data is a lie told in
+ * JSON, so there is deliberately no default for any of these.
+ *
+ * Note what is absent and must stay absent: no `aggregateRating`, no `review`,
+ * and no `Offer`. The rows describe other companies' prices; this site neither
+ * sells those plans nor rates them.
+ */
+export function datasetSchema(input: DatasetSchemaInput): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    license: input.license,
+    isAccessibleForFree: true,
+    inLanguage: SITE.lang,
+    datePublished: input.datePublished.toISOString(),
+    dateModified: input.dateModified.toISOString(),
+    temporalCoverage: input.temporalCoverage,
+    measurementTechnique: input.measurementTechnique,
+    keywords: [...input.keywords],
+    creator: { "@id": ORGANIZATION_ID() },
+    publisher: organization(),
+    variableMeasured: input.variableMeasured.map((variable) => ({
+      "@type": "PropertyValue",
+      name: variable.name,
+      description: variable.description,
+      ...(variable.unitText ? { unitText: variable.unitText } : {}),
+    })),
+    distribution: input.distributions.map((distribution) => ({
+      "@type": "DataDownload",
+      encodingFormat: distribution.encodingFormat,
+      contentUrl: absoluteUrl(distribution.path),
+    })),
+  };
+}
+
 export interface FaqItem {
   question: string;
   /** Plain text, so the visible answer and the structured data stay identical. */

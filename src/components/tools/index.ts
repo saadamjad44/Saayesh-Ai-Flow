@@ -8,3 +8,4 @@
  */
 export { default as AiCostCalculator } from "./AiCostCalculator.astro";
 export { default as AiEmailSavingsCalculator } from "./AiEmailSavingsCalculator.astro";
+export { default as AiToolPricingTracker } from "./AiToolPricingTracker.astro";

@@ -7,6 +7,7 @@ import { assertValidPageRegistry } from "./src/config/pages";
 import { assertValidSeoSnippets } from "./src/config/seo-snippets";
 import { seoAudit } from "./src/lib/seo-audit.mjs";
 import { assertEmailSavingsCalculator } from "./src/components/tools/ai-email-savings-calculator.spec";
+import { assertPricingDataset } from "./src/data/ai-tool-pricing.spec";
 
 assertValidPageRegistry();
 assertValidSeoSnippets();
@@ -17,6 +18,13 @@ assertValidSeoSnippets();
  * with no test runner and no extra dependency.
  */
 assertEmailSavingsCalculator();
+/**
+ * The pricing dataset's own invariants, plus the arithmetic behind the findings
+ * the tracker page publishes. Same contract as the asserts above: a row that
+ * breaks a rule, or a median that stops adding up, fails the build rather than
+ * shipping a wrong price.
+ */
+assertPricingDataset();
 
 if (isPlaceholderDomain) {
   console.warn(

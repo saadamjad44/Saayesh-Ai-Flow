@@ -1,0 +1,532 @@
+---
+/**
+ * AI Tool Pricing Tracker — the interactive part of
+ * /ai-business-tools/ai-tool-pricing-tracker/.
+ *
+ * Renders src/data/ai-tool-pricing.ts: the findings computed from the dataset,
+ * then every row of it.
+ *
+ * Two properties this component has to keep:
+ *
+ * 1. EVERY ROW IS IN THE HTML. The table is rendered at build time, in full,
+ *    with no pagination and no fetch. Filtering and sorting only hide and
+ *    reorder rows that are already on the page, so the whole dataset is
+ *    indexable, quotable, and readable with scripting off — which for a page
+ *    whose purpose is to be cited is the entire point. The filter bar is
+ *    hidden until script enables it, so controls that cannot work are never
+ *    shown.
+ *
+ * 2. NO NUMBER IS TYPED IN. Every figure, count, median and date comes from
+ *    the dataset or from pricingStats(), so a re-verified price moves the
+ *    findings with it and nothing in the markup can drift out of date.
+ *
+ * `asOf` is the build date: this is a static site, so row freshness is measured
+ * from the last deploy, and the page prints that date rather than implying a
+ * live check.
+ */
+import {
+  PRICING_CATEGORIES,
+  PRICING_DATASET,
+  PRICING_ROWS,
+  type PricingRow,
+} from "@/data/ai-tool-pricing";
+import { PRICING_JSON_PATH } from "@/data/ai-tool-pricing-schema";
+import {
+  FRESHNESS_DAYS,
+  FRESHNESS_LABELS,
+  ageInDays,
+  formatPercent,
+  formatUsd,
+  freshnessOf,
+  lowestListedMonthly,
+  pricingStats,
+} from "@/data/ai-tool-pricing-stats";
+import { getPage } from "@/config/pages";
+
+const asOf = new Date();
+const stats = pricingStats(asOf);
+
+/**
+ * Widened the way assertValidPageRegistry() widens PAGES: `as const satisfies`
+ * narrows each row to its own literal type, which drops the optional fields
+ * this component renders (`isStartingPrice`, `seatMinimum`, `note`).
+ */
+const allRows = PRICING_ROWS as readonly PricingRow[];
+
+/** Long-form dates, matching the site's usual "7 October 2026" style. */
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
+const longDate = (iso: string) => dateFormatter.format(new Date(`${iso}T00:00:00Z`));
+
+/**
+ * The headline findings, in the order a reader needs them: how big the dataset
+ * is, then what it costs to start paying, then the two structural facts that
+ * decide a bill — how annual billing is priced, and what the price is per.
+ *
+ * `value` is always computed. `detail` explains what the number is OF, because
+ * a median across a hand-picked census is easy to over-read.
+ */
+const findings = [
+  {
+    value: `${stats.planCount}`,
+    label: "plans tracked",
+    detail: `Across ${stats.toolCount} tools from ${stats.vendorCount} vendors, in ${stats.categoryCount} categories.`,
+  },
+  {
+    value: stats.medianEntryUsd === null ? "—" : formatUsd(stats.medianEntryUsd),
+    label: "median entry price, per month",
+    detail:
+      stats.cheapestEntry && stats.dearestEntry
+        ? `The midpoint of each tool's cheapest paid plan — from ${formatUsd(stats.cheapestEntry.monthlyUsd)} (${stats.cheapestEntry.tool} ${stats.cheapestEntry.plan}) to ${formatUsd(stats.dearestEntry.monthlyUsd)} (${stats.dearestEntry.tool} ${stats.dearestEntry.plan}).`
+        : "",
+  },
+  {
+    value: `${stats.freePlanCount} of ${stats.planCount}`,
+    label: "tracked plans cost nothing",
+    /**
+     * Counted as rows, not as a market fact, and the caveat is not optional: a
+     * few tools whose free tier we did not give a row of its own mention it on
+     * a paid row instead, so the tool-level count is a floor rather than a
+     * census of who offers one.
+     */
+    detail: `Free tiers across ${stats.toolsWithFreePlan} of the ${stats.toolCount} tools. A few others mention a free plan on a paid row instead of getting a row of their own, so read this as a floor.`,
+  },
+  {
+    value: stats.medianAnnualDiscount === null ? "—" : formatPercent(stats.medianAnnualDiscount),
+    label: "median annual-billing saving",
+    detail: `Across the ${stats.annualDiscounts.length} plans that publish both a monthly and an annual price. The other ${stats.monthlyOnlyCount} paid plans publish no annual figure at all.`,
+  },
+  {
+    value: `${stats.perPersonCount} of ${stats.planCount}`,
+    label: "plans are priced per person",
+    detail: `The remaining ${stats.perAccountCount} are a flat account price. Per-person pricing is what makes a stack expensive as a team grows, not the headline figure.`,
+  },
+  {
+    value: `${stats.meteredCount} of ${stats.planCount}`,
+    label: "plans carry a usage cap",
+    detail: `Tasks, credits, minutes, prompts or conversations. ${stats.startingPriceCount} plans are listed as a "from" price, so the figure is a floor rather than the bill.`,
+  },
+] as const;
+
+/**
+ * Rows in render order: category by category, in PRICING_CATEGORIES order, with
+ * each row's display values and the attributes the filter script reads.
+ */
+const rows = (Object.keys(PRICING_CATEGORIES) as (keyof typeof PRICING_CATEGORIES)[]).flatMap(
+  (category) =>
+    allRows
+      .filter((row) => row.category === category)
+      .map((row) => {
+        const citation = getPage(row.citedOn);
+        const lowest = lowestListedMonthly(row);
+
+        return {
+          row,
+          categoryLabel: PRICING_CATEGORIES[category],
+          citationPath: citation.path,
+          citationTitle: citation.title,
+          /** Sort key: the cheapest way to have the plan, free plans included. */
+          sortPrice: lowest ?? Number.POSITIVE_INFINITY,
+          freshness: freshnessOf(row.verifiedOn, asOf),
+          age: ageInDays(row.verifiedOn, asOf),
+          /** Lowercased haystack for the free-text filter. */
+          search: [row.tool, row.vendor, row.plan, PRICING_CATEGORIES[category]]
+            .join(" ")
+            .toLowerCase(),
+        };
+      }),
+);
+
+/** Tailwind classes per freshness level. Amber and red carry text, not colour alone. */
+const FRESHNESS_CLASS = {
+  fresh: "bg-ink-100 text-ink-700",
+  ageing: "bg-amber-100 text-amber-900",
+  stale: "bg-red-100 text-red-900",
+} as const;
+
+const SORT_OPTIONS = [
+  { value: "category", label: "Category" },
+  { value: "price-asc", label: "Price: low to high" },
+  { value: "price-desc", label: "Price: high to low" },
+  { value: "checked", label: "Most recently checked" },
+] as const;
+
+const jsonUrl = PRICING_JSON_PATH;
+---
+
+{/*
+  The section's own "What the dataset shows" H2 is authored in the MDX body
+  rather than here, so it lands in `headings` from render() and therefore in the
+  page's table of contents — which is built from MDX H2s only. A heading emitted
+  by a component would be the most prominent section on the page and the one the
+  contents list did not mention. The H3s below are inside that H2 and are
+  deliberately absent from the contents list, as on every other entry.
+*/}
+<section class="not-prose my-10" aria-label="AI tool pricing dataset">
+  {/* ---- Findings -------------------------------------------------------- */}
+  <p class="mt-2 text-sm text-ink-600">
+    Every figure below is computed from the {stats.planCount} rows in the table, each one checked on
+    the vendor's own pricing page between {longDate(stats.firstCheckedOn)} and{" "}
+    {longDate(stats.lastCheckedOn)}.
+  </p>
+
+  <ul class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {findings.map((finding) => (
+      <li class="rounded-card border border-ink-200 bg-surface p-4 shadow-card">
+        <p class="font-sans text-2xl font-bold tracking-tight text-ink-900">{finding.value}</p>
+        <p class="mt-0.5 font-mono text-[0.6875rem] font-semibold tracking-[0.08em] text-ink-700 uppercase">
+          {finding.label}
+        </p>
+        <p class="mt-2 text-sm leading-relaxed text-ink-600">{finding.detail}</p>
+      </li>
+    ))}
+  </ul>
+
+  {/* ---- What this is not ------------------------------------------------ */}
+  <p class="mt-5 rounded-card border border-ink-200 bg-ink-50 px-4 py-3 text-sm leading-relaxed text-ink-700">
+    <strong class="font-semibold text-ink-900">
+      Read these as a census, not a market average.
+    </strong>{" "}
+    This is every plan we have checked, chosen because the tools appear in our guides — not a random
+    sample of the industry. The medians describe this table and nothing wider, and every figure is
+    an advertised list price rather than a price anyone paid.
+  </p>
+
+  {/* ---- Freshness ------------------------------------------------------- */}
+  <div
+    class="mt-8 rounded-card border border-ink-200 bg-surface p-4 shadow-card"
+    aria-labelledby="pricing-freshness-heading"
+  >
+    <h3
+      id="pricing-freshness-heading"
+      class="font-sans text-base font-bold tracking-tight text-ink-900"
+    >
+      How current this is
+    </h3>
+    <p class="mt-1.5 text-sm leading-relaxed text-ink-600">
+      Checked against the last site build, {longDate(asOf.toISOString().slice(0, 10))}. A row is
+      marked for re-checking after {FRESHNESS_DAYS.fresh} days and flagged after{" "}
+      {FRESHNESS_DAYS.ageing}. We publish the age of every row rather than a single "last updated"
+      date, because one refreshed price would make all the others look new.
+    </p>
+    <ul class="mt-3 flex flex-wrap gap-2">
+      {(["fresh", "ageing", "stale"] as const).map((level) => (
+        <li
+          class={`rounded-lg px-2.5 py-1 text-xs font-semibold ${FRESHNESS_CLASS[level]}`}
+          data-freshness-count={level}
+        >
+          {stats.freshness[level]} {level === "fresh" ? "current" : level}
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  {/* ---- Filters (revealed by script) ----------------------------------- */}
+  <div
+    hidden
+    class="mt-8 grid gap-4 rounded-card border border-ink-200 bg-ink-50 p-4 sm:grid-cols-3"
+    data-pricing-controls
+  >
+    <div>
+      <label for="pricing-search" class="block text-sm font-semibold text-ink-900">
+        Search tool or vendor
+      </label>
+      <input
+        id="pricing-search"
+        type="search"
+        autocomplete="off"
+        placeholder="e.g. Zapier"
+        class="mt-1.5 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
+        data-pricing-search
+      />
+    </div>
+
+    <div>
+      <label for="pricing-category" class="block text-sm font-semibold text-ink-900">
+        Category
+      </label>
+      <select
+        id="pricing-category"
+        class="mt-1.5 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
+        data-pricing-category
+      >
+        <option value="">All categories</option>
+        {stats.categories.map((category) => (
+          <option value={category.id}>
+            {category.label} ({category.planCount})
+          </option>
+        ))}
+      </select>
+    </div>
+
+    <div>
+      <label for="pricing-sort" class="block text-sm font-semibold text-ink-900">
+        Sort by
+      </label>
+      <select
+        id="pricing-sort"
+        class="mt-1.5 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
+        data-pricing-sort
+      >
+        {SORT_OPTIONS.map((option) => (
+          <option value={option.value}>{option.label}</option>
+        ))}
+      </select>
+    </div>
+
+    <p class="text-sm text-ink-600 sm:col-span-3" aria-live="polite" data-pricing-count>
+      Showing all {stats.planCount} plans.
+    </p>
+  </div>
+
+  {/* ---- The table ------------------------------------------------------- */}
+  <figure class="mt-6 overflow-hidden rounded-card border border-ink-200 bg-surface shadow-card">
+    <figcaption class="border-b border-ink-200 bg-ink-50 px-4 py-3">
+      <span
+        id="pricing-table-caption"
+        class="block font-sans text-[0.9375rem] font-bold text-balance text-ink-900"
+      >
+        AI tool list prices, {PRICING_DATASET.currency}, excluding tax
+      </span>
+      <span class="mt-0.5 block text-xs text-ink-500 sm:hidden">
+        Scroll sideways to see every column.
+      </span>
+    </figcaption>
+
+    <div
+      role="region"
+      aria-labelledby="pricing-table-caption"
+      tabindex="0"
+      class="overflow-x-auto overscroll-x-contain"
+    >
+      <table class="w-full min-w-[56rem] border-collapse text-left text-sm">
+        <caption class="sr-only">
+          Every plan in the AI Tool Pricing Dataset, with its monthly and annual-equivalent list
+          price, billing unit, usage limits, and the date the price was checked.
+        </caption>
+        <thead class="text-ink-900">
+          <tr class="border-b border-ink-200">
+            {[
+              "Tool and plan",
+              "Category",
+              "Monthly",
+              "Annual, per month",
+              "Billed per",
+              "Limits and notes",
+              "Checked",
+            ].map((heading) => (
+              <th
+                scope="col"
+                class="px-4 py-3 align-bottom font-mono text-[0.6875rem] font-semibold tracking-[0.08em] text-ink-700 uppercase"
+              >
+                {heading}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-200 text-ink-600" data-pricing-body>
+          {rows.map((item) => (
+            <tr
+              class="bg-surface"
+              data-pricing-row
+              data-category={item.row.category}
+              data-search={item.search}
+              data-price={item.sortPrice}
+              data-checked={item.row.verifiedOn}
+            >
+              <th scope="row" class="px-4 py-3.5 align-top font-sans font-bold text-ink-900">
+                {item.row.tool}
+                <span class="block font-sans text-sm font-normal text-ink-600">
+                  {item.row.plan}
+                </span>
+                <span class="block text-xs text-ink-500">{item.row.vendor}</span>
+              </th>
+
+              <td class="px-4 py-3.5 align-top leading-relaxed">{item.categoryLabel}</td>
+
+              <td class="px-4 py-3.5 align-top whitespace-nowrap tabular-nums">
+                {item.row.monthlyUsd === null ? (
+                  <span class="text-ink-500">Not offered</span>
+                ) : (
+                  <>
+                    {item.row.isStartingPrice && <span class="text-ink-500">from </span>}
+                    <span class="font-semibold text-ink-900">{formatUsd(item.row.monthlyUsd)}</span>
+                  </>
+                )}
+              </td>
+
+              <td class="px-4 py-3.5 align-top whitespace-nowrap tabular-nums">
+                {item.row.annualMonthlyUsd === null ? (
+                  <span class="text-ink-500">—</span>
+                ) : (
+                  <>
+                    {item.row.isStartingPrice && <span class="text-ink-500">from </span>}
+                    <span class="font-semibold text-ink-900">
+                      {formatUsd(item.row.annualMonthlyUsd)}
+                    </span>
+                  </>
+                )}
+              </td>
+
+              <td class="px-4 py-3.5 align-top leading-relaxed">
+                {item.row.unit === "account"
+                  ? "Account"
+                  : item.row.unit === "seat"
+                    ? "Seat"
+                    : "Member"}
+                {item.row.seatMinimum !== undefined && (
+                  <span class="block text-xs text-ink-500">
+                    Minimum {item.row.seatMinimum} seats
+                  </span>
+                )}
+              </td>
+
+              <td class="px-4 py-3.5 align-top leading-relaxed">
+                {item.row.usageLimit && <span class="block">{item.row.usageLimit}</span>}
+                {item.row.note && (
+                  <span class="mt-1 block text-xs text-ink-500">{item.row.note}</span>
+                )}
+                {!item.row.usageLimit && !item.row.note && <span class="text-ink-500">—</span>}
+              </td>
+
+              <td class="px-4 py-3.5 align-top">
+                <span class="block whitespace-nowrap font-semibold text-ink-900">
+                  {longDate(item.row.verifiedOn)}
+                </span>
+                <span
+                  class={`mt-1 inline-block rounded px-1.5 py-0.5 text-xs font-semibold ${FRESHNESS_CLASS[item.freshness]}`}
+                  title={FRESHNESS_LABELS[item.freshness]}
+                >
+                  {item.age === 0 ? "today" : `${item.age} days ago`}
+                </span>
+                <span class="mt-1 block text-xs text-ink-500">
+                  {item.row.sourceUrl ? (
+                    <a href={item.row.sourceUrl} rel="nofollow noopener">
+                      {item.row.source}
+                    </a>
+                  ) : (
+                    item.row.source
+                  )}
+                </span>
+                <span class="block text-xs text-ink-500">
+                  Published in <a href={item.citationPath}>{item.citationTitle}</a>
+                </span>
+              </td>
+            </tr>
+          ))}
+          <tr hidden data-pricing-empty>
+            <td colspan="7" class="px-4 py-6 text-center text-sm text-ink-600">
+              No plans match that search. Clear the filters to see all {stats.planCount} again.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  {/* ---- Reuse ----------------------------------------------------------- */}
+  <div class="mt-6 rounded-card border border-ink-200 bg-surface p-4 shadow-card">
+    <h3 class="font-sans text-base font-bold tracking-tight text-ink-900">Use this data</h3>
+    <p class="mt-1.5 text-sm leading-relaxed text-ink-600">
+      The whole dataset is published as JSON under{" "}
+      <a href={PRICING_DATASET.license} rel="nofollow noopener">
+        {PRICING_DATASET.licenseLabel}
+      </a>
+      , so you may reuse it with attribution. Every row carries the date it was checked and a link
+      to the page that published it, so any figure you quote can be traced.
+    </p>
+    <p class="mt-3">
+      <a href={jsonUrl} class="btn btn-secondary">
+        <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+          <path
+            fill-rule="evenodd"
+            d="M10 3a.75.75 0 0 1 .75.75v7.19l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 1 1 1.06-1.06l2.22 2.22V3.75A.75.75 0 0 1 10 3ZM3.75 15.25a.75.75 0 0 1 .75.75v.25h11v-.25a.75.75 0 0 1 1.5 0V16a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 16v-.25a.75.75 0 0 1 .75-.5Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Download the JSON
+      </a>
+    </p>
+  </div>
+</section>
+
+<script>
+  /**
+   * Filtering and sorting over rows that are already in the document.
+   *
+   * Nothing is fetched and nothing is created: every <tr> was rendered at build
+   * time, so this only toggles `hidden` and reorders existing nodes. With
+   * scripting off, the controls stay hidden (they are `hidden` in the markup)
+   * and the full table is what a visitor — or a crawler — gets.
+   */
+  const controls = document.querySelector<HTMLElement>("[data-pricing-controls]");
+  const body = document.querySelector<HTMLTableSectionElement>("[data-pricing-body]");
+  if (controls && body) {
+    /** Re-bound so the narrowing survives into the closures below. */
+    const tbody = body;
+    const search = controls.querySelector<HTMLInputElement>("[data-pricing-search]")!;
+    const category = controls.querySelector<HTMLSelectElement>("[data-pricing-category]")!;
+    const sort = controls.querySelector<HTMLSelectElement>("[data-pricing-sort]")!;
+    const count = controls.querySelector<HTMLElement>("[data-pricing-count]")!;
+    const empty = body.querySelector<HTMLTableRowElement>("[data-pricing-empty]")!;
+
+    const rows = [...body.querySelectorAll<HTMLTableRowElement>("[data-pricing-row]")];
+    /** The build-time order, so "Category" can always be restored exactly. */
+    const original = [...rows];
+    const total = rows.length;
+
+    const priceOf = (row: HTMLTableRowElement) => Number(row.dataset.price ?? "0");
+    const checkedOf = (row: HTMLTableRowElement) => row.dataset.checked ?? "";
+
+    function apply(): void {
+      const term = search.value.trim().toLowerCase();
+      const wanted = category.value;
+
+      let shown = 0;
+      for (const row of rows) {
+        const matches =
+          (wanted === "" || row.dataset.category === wanted) &&
+          (term === "" || (row.dataset.search ?? "").includes(term));
+        row.hidden = !matches;
+        if (matches) shown += 1;
+      }
+
+      empty.hidden = shown > 0;
+      count.textContent =
+        shown === total ? `Showing all ${total} plans.` : `Showing ${shown} of ${total} plans.`;
+
+      const ordered = [...original];
+      switch (sort.value) {
+        case "price-asc":
+          ordered.sort((a, b) => priceOf(a) - priceOf(b));
+          break;
+        case "price-desc":
+          // Plans with no usable price sort to Infinity, which must not lead
+          // a high-to-low list, so they stay at the end either way.
+          ordered.sort((a, b) => {
+            const [left, right] = [priceOf(a), priceOf(b)];
+            if (!Number.isFinite(left) || !Number.isFinite(right)) return left - right;
+            return right - left;
+          });
+          break;
+        case "checked":
+          ordered.sort((a, b) => checkedOf(b).localeCompare(checkedOf(a)));
+          break;
+        default:
+          break;
+      }
+      for (const row of ordered) tbody.insertBefore(row, empty);
+    }
+
+    search.addEventListener("input", apply);
+    category.addEventListener("change", apply);
+    sort.addEventListener("change", apply);
+
+    controls.hidden = false;
+    apply();
+  }
+</script>

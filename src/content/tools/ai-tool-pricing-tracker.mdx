@@ -1,0 +1,113 @@
+---
+pageId: ai-tool-pricing-tracker
+title: "AI Tool Pricing Tracker: Verified List Prices"
+heading: AI Tool Pricing Tracker
+description: List prices for AI tools and the AI features inside business software, each with the date it was checked, its billing unit, usage caps, and a JSON download.
+publishedDate: 2026-10-28
+updatedDate: 2026-10-28
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: How much do AI tools cost per month?
+    answer: It depends far more on how a plan is billed than on its headline price. In this dataset, the cheapest paid plan of each tool clusters in the single-digit to low-twenties range per month, while team and premium tiers run from the mid-twenties into the hundreds. The figure that actually decides your bill is the billing unit. A flat account price stays flat as you grow, while a per-seat price multiplies by your headcount. The table above shows both for every plan, so you can work out your own total rather than reading an average.
+  - question: Which AI tools have a free plan?
+    answer: Most of the tools tracked here list one, but a substantial minority do not - productivity suites, premium email clients and the dearer writing tools are the common exceptions. Where a free plan exists it is almost always capped, by a monthly prompt allowance, a task count, transcription minutes, a conversation limit, or a cap on users and documents, and the Limits and notes column states each cap in the vendor's own terms. The cap is the thing to read, not the word free. Note also that the free-plan count on this page counts rows, so where a tool's free tier is mentioned on a paid row rather than given a row of its own, it is not in that figure.
+  - question: Is annual billing cheaper for AI tools?
+    answer: Usually yes, and the saving is published on the page, computed from the plans in this dataset that list both a monthly and an annual price. Two cautions. First, an annual figure is almost always a monthly equivalent rather than what you are billed, so a plan listed at 17 dollars a month annually means paying the full year up front. Second, many paid plans publish no annual price at all. Pay monthly while a tool is still proving itself and switch to annual once it has earned a permanent place.
+  - question: How current are these prices?
+    answer: Each row carries its own check date and how many days ago that was, and the page flags rows that have aged past our re-check window instead of hiding them. We deliberately do not publish a single last updated date for the whole table, because one refreshed price would make every other row look new. Treat any flagged row as a prompt to open the vendor's pricing page yourself.
+  - question: Why are some prices shown as from?
+    answer: Because the vendor lists them that way, and the distinction matters. A from price is a floor for the smallest tier, not the amount you will pay. It is most common on usage-billed products such as automation platforms, where the same plan name covers several task volumes at different prices, and on enterprise tiers where a seat price sits on top of usage charged separately. Where a row says from, budget above it.
+  - question: Where do these figures come from?
+    answer: Each one was read from the vendor's own public pricing page on the date recorded beside it, and each was already published in one of our guides before it was added here. This page consolidates those figures rather than adding new ones, so every row links back to the guide that published it. Nothing here is estimated, modelled, averaged, scraped, or supplied by a vendor.
+  - question: Can I reuse this pricing data?
+    answer: Yes. The full dataset is published as JSON under a Creative Commons Attribution 4.0 licence, so you may use it commercially and in derivative work as long as you credit the source. Every row in the JSON carries its check date and a link to the page that published the figure, so anything you quote can be traced back. We ask only that you keep the check date attached to the price, because a list price without a date is not a fact.
+  - question: Does this page earn commission on these tools?
+    answer: No. There are no affiliate links on this page and no vendor pays to appear in the table. The tools are here because they appear in our guides, which is the only selection rule the dataset has, and the order is category then price - never anything we are paid for.
+---
+
+import { Callout, KeyTakeaways } from "@/components/content";
+import { AiToolPricingTracker } from "@/components/tools";
+
+Every AI pricing page you have ever read was out of date the week after it was published, and none of them told you which figures had aged. This page is the fix: one table of list prices for AI tools and for the AI features inside ordinary business software, where every single row carries the date it was checked and how long ago that was.
+
+It is the same data our guides already publish, pulled out of a dozen articles and into one structured record — so you can finally compare how these products are _billed_, not just what their headline number is. You can sort it, filter it, and download the whole thing as JSON.
+
+<KeyTakeaways>
+
+- **The billing unit decides your bill,** not the headline price. A flat account price stays flat; a per-seat price multiplies by headcount.
+- **Most tools here list a free plan,** and what matters is its cap, not the word "free". Read the cap.
+- **Annual billing is a commitment, not a discount.** The annual column is a monthly _equivalent_ — you pay the year up front.
+- **A "from" price is a floor,** most often on usage-billed platforms. Budget above it.
+- **Every row has its own check date,** because a single "last updated" stamp on a price table is a way of hiding the old rows.
+
+</KeyTakeaways>
+
+<Callout tone="note" heading="What this page is based on">
+  Vendor list prices, each read from the company's own public pricing page on the date recorded
+  beside it, and each already published in one of our guides before it was added here. No prices are
+  estimated, averaged, scraped, or supplied by a vendor, and there are no affiliate links on this
+  page. Our [editorial process](/about/) explains how we label what we have and have not tested.
+</Callout>
+
+## What the dataset shows
+
+<AiToolPricingTracker />
+
+## How to read these prices
+
+Four things in the table change what you actually pay, and all four are easier to miss than the price itself.
+
+**The billing unit is the most important column.** "Billed per" says whether a figure is a flat price for the whole account or a price per person. A $20 flat plan and a $20 seat look identical in a list and are completely different products once a second person needs access: one stays $20, the other becomes $40, then $60. Per-seat pricing is what turns a manageable AI budget into an unmanageable one, and it does it quietly.
+
+**The annual column is a monthly equivalent, not a monthly charge.** Where a plan lists an annual price, we show it as the per-month figure you divide by — because that is what makes it comparable to the monthly column. What you are actually billed is twelve times that, up front. Several rows note the up-front amount for exactly this reason.
+
+**A "from" price is a floor.** Usage-billed products, automation platforms especially, sell one plan name across several volume tiers at different prices. The figure we record is the lowest of those. If your month is busier than the smallest tier allows, you pay more, or you are pushed onto the next plan.
+
+**The usage cap is part of the price.** A $20 plan with a monthly task, credit, prompt or minute allowance you will exceed is not a $20 plan. The "Limits and notes" column carries each cap in the vendor's own words, along with seat minimums, promotional rates that expire, and any arithmetic we did ourselves.
+
+## Where these figures come from
+
+Each row began life in one of our guides. Those guides state prices because a reader budgeting for AI needs real numbers, and each one records the date its prices were checked on the vendor's own pricing page.
+
+The problem was that the data stayed trapped in prose. A figure in the middle of a 3,000-word article cannot be compared against one in a different article, written on a different date, in a different cluster of the site. So this page consolidates them under five rules:
+
+1. **A row may only restate a figure a page on this site already publishes.** This page does no new research and makes no new claims.
+2. **The check date is the date that page recorded,** never today's date and never a guess.
+3. **Where two guides disagree, the newer check wins** and the older figure is removed rather than kept beside it.
+4. **Any arithmetic of ours is stated on the row.** Where a vendor publishes only a yearly price, the monthly equivalent is our own division, and the row says so.
+5. **Prices are US list prices excluding tax.** Vendors localise, discount and reprice constantly.
+
+Every row links back to the guide that published it, so you can read the figure in its original context — with the caveats that guide attached to it.
+
+## What this dataset is not
+
+This matters more than what it is, because a table of numbers invites conclusions it cannot support.
+
+**It is not a market average.** The tools are here because they appear in our guides, which is the only selection rule. That makes this a census of what we have checked, not a random sample of the industry, so the medians on this page describe this table and nothing wider. Anyone quoting them as an industry figure would be wrong.
+
+**It is not a record of what anyone paid.** These are advertised list prices. Real invoices include tax, local currency, promotional rates, negotiated discounts, seat minimums you did not want, and usage you did not forecast.
+
+**It is not a ranking.** There are no scores here and no best-value verdict, because judging value needs hands-on testing this site does not claim. Price is the one thing about these products that is published, checkable and comparable, so price is all this page offers.
+
+**It is not a substitute for the vendor's pricing page.** It is a way of seeing the whole field at once and knowing how old each figure is. Before you spend money, click through.
+
+## How often it is re-checked
+
+Re-verification is a manual pass: open each vendor's pricing page, correct anything that moved, and set that row's date to the day we looked. There is no scraper, because a scraper reading a JavaScript-rendered pricing page reliably enough to publish from is a bigger engineering problem than it sounds, and a wrong price published confidently is worse than an old one published honestly.
+
+So instead of promising freshness, the page measures it. Rows are marked for re-checking after a month and flagged after three, and the counts at the top tell you how much of the table is in each state right now. If a row you care about is flagged, treat that as what it is: a signal to check the vendor yourself.
+
+## Use the data
+
+The whole table is published as JSON at [/ai-tool-pricing.json](/ai-tool-pricing.json) under a Creative Commons Attribution 4.0 licence. Each row carries its check date, its source, and an absolute link to the page that published it, and the file leads with the licence, the currency and the limitations so they travel with the data.
+
+Use it commercially, build on it, chart it. The one thing we ask is that you **keep the check date attached to the price**, because a list price without a date is not a fact — it is a rumour with a dollar sign on it.
+
+## Where to go next
+
+- **Budgeting from scratch?** [How much AI costs for a small business](/ai-business-tools/how-much-does-ai-cost-small-business/) works through the same prices at three budget levels, with the costs that never appear on a pricing page.
+- **Want your own total rather than a list?** Our free [small business AI cost calculator](/ai-business-tools/small-business-ai-cost-calculator/) adds up your actual stack across seats, usage fees and one-off setup costs.
+- **Still choosing tools?** [Best AI tools for small business](/ai-business-tools/best-ai-tools-for-small-business/) is organised by use case, and most of the tools in this table are covered there in context.
+- **Weighing software against a person?** [AI tools vs a virtual assistant](/ai-business-tools/ai-tools-vs-virtual-assistant/) puts these subscription costs beside hourly rates.
+- **Deciding between the two big assistants?** [Claude vs ChatGPT for small business](/ai-business-tools/claude-vs-chatgpt-for-small-business/) compares the plans in the first rows of this table.
