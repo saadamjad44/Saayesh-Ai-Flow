@@ -159,9 +159,23 @@ const author = (): JsonLd => ({
 /**
  * The author page: a ProfilePage whose main entity is the Person every article
  * credits. `description` is the owner's own factual role line and `worksFor` is
- * the site's Organization — both already visible on the page. No jobTitle,
- * award, credential, alumniOf, or sameAs is emitted, because the site states
- * none of them.
+ * the site's Organization — both already visible on the page.
+ *
+ * `sameAs` and `knowsAbout` come from AUTHOR and are the only identity claims
+ * the site makes about a person outside it. Both are constrained at the source:
+ * every `sameAs` URL is owner-supplied and rendered as a visible link on this
+ * same page, and every `knowsAbout` term appears verbatim in the published bio.
+ * They are here because an answer engine resolving "who wrote this" needs the
+ * person to be the same entity it already knows from elsewhere — that is the
+ * single highest-value thing this schema can say.
+ *
+ * Still deliberately absent: jobTitle, award, credential, alumniOf, and any
+ * years-of-experience or seniority claim. The site states none of them.
+ *
+ * Note what is NOT added to the Organization in return. The site's own words
+ * are that it "is run by" Saad Amjad, which supports `worksFor` from the Person
+ * side and does not support `founder` — founding is a specific claim no page
+ * here makes. Add it only if the owner states it on the site first.
  */
 export function profilePageSchema(input: { path: string; description: string }): JsonLd {
   return {
@@ -173,6 +187,8 @@ export function profilePageSchema(input: { path: string; description: string }):
       ...author(),
       description: input.description,
       worksFor: { "@id": ORGANIZATION_ID() },
+      sameAs: AUTHOR.profiles.map((profile) => profile.url),
+      knowsAbout: [...AUTHOR.knowsAbout],
     },
     publisher: organization(),
   };

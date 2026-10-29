@@ -68,6 +68,31 @@ const contactPath = getPage("contact").path;
     </p>
   )}
 
+  {/*
+    Rendered visibly because the Person schema on this page lists these same
+    URLs as `sameAs`. A sameAs with no visible counterpart is an unverifiable
+    assertion; shown here, each one can be followed and checked. Keep the two
+    in step — both read from AUTHOR.profiles, so they cannot diverge.
+
+    `rel="me"` is the point of the markup: it is the long-standing, machine-
+    readable way to say "this other profile is also me", which is exactly the
+    claim sameAs makes in JSON-LD. It is also the ONLY attribute added here, per
+    the outbound-link policy in src/lib/links.ts — non-commercial links on this
+    site carry no nofollow and no target, and the author's own profiles are not
+    commercial destinations.
+  */}
+  <h2>Elsewhere</h2>
+  <p>Saad Amjad's own profiles, for anyone who wants to verify who writes this site:</p>
+  <ul>
+    {AUTHOR.profiles.map((profile) => (
+      <li>
+        <a href={profile.url} rel="me">
+          {profile.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+
   <h2>How these guides are researched</h2>
   <p>
     The guides here are research-based. They work from publicly available information — official

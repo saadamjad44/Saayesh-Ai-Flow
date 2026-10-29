@@ -403,11 +403,15 @@ const jsonUrl = PRICING_JSON_PATH;
                 >
                   {item.age === 0 ? "today" : `${item.age} days ago`}
                 </span>
+                {/*
+                  The source link carries no `rel`: a vendor's pricing page is
+                  the source this row was read from, and src/lib/links.ts makes
+                  source citations ordinary links. Only commercial destinations
+                  are marked, and nothing on this page is affiliate or paid.
+                */}
                 <span class="mt-1 block text-xs text-ink-500">
                   {item.row.sourceUrl ? (
-                    <a href={item.row.sourceUrl} rel="nofollow noopener">
-                      {item.row.source}
-                    </a>
+                    <a href={item.row.sourceUrl}>{item.row.source}</a>
                   ) : (
                     item.row.source
                   )}
@@ -433,11 +437,9 @@ const jsonUrl = PRICING_JSON_PATH;
     <h3 class="font-sans text-base font-bold tracking-tight text-ink-900">Use this data</h3>
     <p class="mt-1.5 text-sm leading-relaxed text-ink-600">
       The whole dataset is published as JSON under{" "}
-      <a href={PRICING_DATASET.license} rel="nofollow noopener">
-        {PRICING_DATASET.licenseLabel}
-      </a>
-      , so you may reuse it with attribution. Every row carries the date it was checked and a link
-      to the page that published it, so any figure you quote can be traced.
+      <a href={PRICING_DATASET.license}>{PRICING_DATASET.licenseLabel}</a>, so you may reuse it with
+      attribution. Every row carries the date it was checked and a link to the page that published
+      it, so any figure you quote can be traced.
     </p>
     <p class="mt-3">
       <a href={jsonUrl} class="btn btn-secondary">
