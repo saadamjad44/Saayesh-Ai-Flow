@@ -100,6 +100,27 @@ const WEBSITE_ID = () => absoluteUrl("/#website");
 const ORGANIZATION_ID = () => absoluteUrl("/#organization");
 const AUTHOR_ID = () => absoluteUrl(`${AUTHOR.path}#person`);
 
+/**
+ * The site itself, emitted on the homepage.
+ *
+ * `author` is the one addition worth making here. Every article already names
+ * the Person who wrote it, but the homepage — the page an answer engine reaches
+ * first when resolving "who is behind this site" — said only that an
+ * Organization publishes it, and the Organization is a one-person site. Naming
+ * the author on the WebSite node connects the two, and `author()` writes it as
+ * the same @id every article points at, so it resolves to one person rather
+ * than a namesake. WebSite is a CreativeWork, so the property is valid on it.
+ *
+ * It carries `name` and `url` inline for the same reason every article's author
+ * does: enough to stand alone if the author page has not been crawled yet, and
+ * nothing that could contradict the fuller node there. Still no credential of
+ * any kind — the site states none.
+ *
+ * Not added, on purpose: `potentialAction`/SearchAction (Google retired the
+ * sitelinks search box in 2023 and nothing else reads it), and
+ * SiteNavigationElement for the category grid (no search feature consumes it).
+ * Schema that no consumer reads is markup to maintain for nothing.
+ */
 export function websiteSchema(): JsonLd {
   return {
     "@context": "https://schema.org",
@@ -109,6 +130,7 @@ export function websiteSchema(): JsonLd {
     url: absoluteUrl("/"),
     inLanguage: SITE.lang,
     publisher: { "@id": ORGANIZATION_ID() },
+    author: author(),
   };
 }
 

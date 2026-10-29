@@ -5,6 +5,8 @@
  *
  * The link groups come from FOOTER_NAV, so the footer cannot fall behind the
  * page registry. No email opt-in and no form of any kind: the site has none.
+ *
+ * The group labels are deliberately not headings — see the comment on them.
  */
 import { Image } from "astro:assets";
 
@@ -65,9 +67,24 @@ const logoWidth = Math.round((BRAND_LOGO.src.width / BRAND_LOGO.src.height) * 32
         </p>
       </div>
 
+      {/*
+        The group labels are <p>, not <h2>.
+
+        They were headings, which put four of them — Categories, Guides &
+        tools, About, Legal — into the heading outline of all 58 pages, as
+        siblings of the real <h2>s in the content above. On the homepage that
+        meant a crawler parsing the page structure found four top-level
+        sections at the end that are navigation, not content, and on a guide it
+        put four more <h2>s after the FAQ.
+
+        Nothing is lost by demoting them. Each group is already a landmark with
+        an accessible name, from the <nav aria-label> around it, which is how a
+        screen reader reaches footer navigation; the heading was a second,
+        weaker label for the same thing.
+      */}
       {FOOTER_NAV.map(({ heading, links }) => (
         <nav aria-label={heading}>
-          <h2 class="eyebrow">{heading}</h2>
+          <p class="eyebrow">{heading}</p>
           <ul class="mt-4 space-y-0.5 text-sm">
             {links.map(({ label, href }) => (
               <li>

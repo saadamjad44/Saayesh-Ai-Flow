@@ -1,8 +1,8 @@
 /**
- * Presentation copy for the six content pillars, in one place.
+ * Presentation copy for the content pillars, in one place.
  *
  * The header mega menu, the homepage category grid, the "Start here" pathways,
- * and the blog archive all describe the same six categories. Before this file
+ * and the blog archive all describe the same categories. Before this file
  * each of them carried its own copy of that wording; now they read from one
  * complete Record over PillarId, so adding a pillar to the registry fails the
  * build until it has an entry here and no surface can fall behind another.
@@ -31,12 +31,12 @@ export const PILLAR_PRESENTATION: Readonly<Record<PillarId, PillarPresentation>>
   "getting-started": {
     summary:
       "New to AI? Start here for what these tools actually do, where to begin, and the mistakes that waste the most time.",
-    menu: "What AI tools do, and where to begin",
+    menu: "How to choose and set up your first AI tool",
     icon: "compass",
   },
   "ai-writing-tools": {
     summary:
-      "Roundups and head-to-head comparisons to help you choose an AI writing tool for your work.",
+      "Roundups and head-to-head comparisons to help you compare, shortlist, and choose an AI writing tool for your work.",
     menu: "Roundups and head-to-head comparisons",
     icon: "nib",
   },
@@ -48,8 +48,8 @@ export const PILLAR_PRESENTATION: Readonly<Record<PillarId, PillarPresentation>>
   },
   "ai-automation": {
     summary:
-      "Step-by-step automation examples and workflows for email, scheduling, and other repeat tasks.",
-    menu: "Workflows for email, scheduling and repeat work",
+      "Step-by-step workflows you can configure, test, and deploy for email, scheduling, and other tasks that repeat.",
+    menu: "Automations to build for email and scheduling",
     icon: "workflow",
   },
   "ai-agents": {

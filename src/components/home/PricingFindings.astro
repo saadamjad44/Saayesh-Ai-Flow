@@ -1,0 +1,195 @@
+---
+/**
+ * The homepage's one block of substantive content: what the AI Tool Pricing
+ * Dataset actually shows.
+ *
+ * WHY IT IS HERE
+ *
+ * Everything else on the homepage is navigation — cards that route a visitor to
+ * a guide. That makes the hub useful and makes it say nothing a guide does not
+ * already say. This section is the exception: it is the only place on the page
+ * that states a finding, names the products the site covers in its own prose
+ * rather than only inside a link, and links out to the vendor pages the figures
+ * were read from.
+ *
+ * WHERE THE NUMBERS COME FROM
+ *
+ * Every figure is pricingStats() run over src/data/ai-tool-pricing.ts at build
+ * time — the same function, over the same rows, that the tracker page itself
+ * renders. Nothing below is typed by hand, so re-verifying one price moves this
+ * section too, and the homepage can never quote a figure the dataset has since
+ * corrected. The wording is deliberately not the tracker's: the same four facts
+ * are framed here as "what decides your bill" rather than as a data summary, so
+ * the two pages are not two copies of one paragraph.
+ *
+ * WHAT IT MAY NOT SAY, and does not
+ *
+ * The dataset is a census of the plans this site has checked, not a sample of
+ * the market. So every finding here is a statement about WHAT VENDORS LIST —
+ * never about what a business pays, what a tool is worth, or what AI costs "on
+ * average". The caveat under the figures says so in writing, and the same
+ * caution is why the coverage line calls itself the tools in the record rather
+ * than the tools that matter.
+ *
+ * The outbound links are the vendor pricing pages the dataset records a
+ * `sourceUrl` for — real sources for real figures, not a link row assembled to
+ * have outbound links. They go through outboundLinkAttrs(), so a host that ever
+ * becomes commercial is marked without this file changing.
+ */
+import { PRICING_ROWS, type PricingRow } from "@/data/ai-tool-pricing";
+import { formatPercent, formatUsd, pricingStats } from "@/data/ai-tool-pricing-stats";
+import { getPage } from "@/config/pages";
+import { outboundLinkAttrs } from "@/lib/links";
+
+const stats = pricingStats(new Date());
+
+/**
+ * Widened the way the tracker component widens it: PRICING_ROWS is declared
+ * `as const satisfies`, which narrows each row to its own literal type and so
+ * drops the optional `sourceUrl` this section reads.
+ */
+const allRows = PRICING_ROWS as readonly PricingRow[];
+
+const trackerPage = getPage("ai-tool-pricing-tracker");
+const costGuidePage = getPage("how-much-does-ai-cost-small-business");
+
+/**
+ * The four facts that decide what a stack costs, in the order they bite: what
+ * it takes to start paying, whether you can avoid paying at all, what the
+ * billing period does to the price, and what the price is *per* — which is the
+ * one that turns a cheap tool into an expensive line item as a team grows.
+ *
+ * `value` is always computed and `detail` always says what the number is OF,
+ * because a median across a hand-picked census is easy to over-read.
+ */
+const FINDINGS = [
+  {
+    value: stats.medianEntryUsd === null ? "—" : formatUsd(stats.medianEntryUsd),
+    label: "Median price to start paying, a month",
+    detail:
+      stats.cheapestEntry && stats.dearestEntry
+        ? `The midpoint of each tool's cheapest paid plan. ${stats.cheapestEntry.tool} ${stats.cheapestEntry.plan} is the least at ${formatUsd(stats.cheapestEntry.monthlyUsd)}; ${stats.dearestEntry.tool} ${stats.dearestEntry.plan} the most at ${formatUsd(stats.dearestEntry.monthlyUsd)}.`
+        : `Across ${stats.toolCount} tools.`,
+  },
+  {
+    value: `${stats.toolsWithFreePlan} of ${stats.toolCount}`,
+    label: "Tools list a free plan",
+    detail:
+      "Nearly every one of them is capped — by prompts, tasks, transcription minutes, conversations, or seats. The cap is the thing to read, not the word free.",
+  },
+  {
+    value: stats.medianAnnualDiscount === null ? "—" : formatPercent(stats.medianAnnualDiscount),
+    label: "Median saving for paying yearly",
+    detail: `Across the ${stats.annualDiscounts.length} plans that list both periods. The other ${stats.monthlyOnlyCount} paid plans publish no annual price at all, so the saving is not always on offer.`,
+  },
+  {
+    value: `${stats.perPersonCount} of ${stats.planCount}`,
+    label: "Plans are priced per person",
+    detail: `The other ${stats.perAccountCount} are a flat account price. Per-person billing is what multiplies when you hire; the headline figure is not.`,
+  },
+] as const;
+
+/**
+ * Every product in the dataset, once, alphabetically — with the vendor pricing
+ * page linked wherever a row records one.
+ *
+ * Derived rather than written out, so retiring a tool or adding one cannot
+ * leave this line describing coverage the dataset no longer has.
+ */
+const coverage = [...new Set(allRows.map((row) => row.tool))]
+  .map((tool) => ({
+    tool,
+    href: allRows.find((row) => row.tool === tool && row.sourceUrl)?.sourceUrl,
+  }))
+  .sort((a, b) => a.tool.localeCompare(b.tool));
+---
+
+<section
+  aria-labelledby="pricing-findings-heading"
+  class="border-y border-ink-200 bg-surface-sunken"
+>
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+    <div class="max-w-3xl">
+      <p class="eyebrow eyebrow-rule">From the data</p>
+      <h2 id="pricing-findings-heading" class="type-section mt-3">
+        What the pricing data shows
+      </h2>
+      <p class="type-body mt-3">
+        Writing the guides means reading a lot of pricing pages, so we keep what we read.{" "}
+        {stats.planCount} plans from {stats.toolCount} tools are in the record, each with the date
+        it was checked on the vendor's own page. Four things in it decide what a stack costs, and
+        the headline price is only one of them.
+      </p>
+    </div>
+
+    <dl class="mt-10 grid gap-4 sm:grid-cols-2">
+      {FINDINGS.map((finding) => (
+        <div class="card flex flex-col p-6">
+          <dd class="font-sans text-3xl font-extrabold text-ink-900 tabular-nums">
+            {finding.value}
+          </dd>
+          <dt class="mt-1.5 font-mono text-[0.6875rem] tracking-[0.06em] text-ink-600 uppercase">
+            {finding.label}
+          </dt>
+          <p class="mt-3.5 flex-1 border-t border-ink-100 pt-3.5 text-[0.9375rem] leading-relaxed text-ink-600">
+            {finding.detail}
+          </p>
+        </div>
+      ))}
+    </dl>
+
+    {/*
+      The caveat is not small print to be trimmed. It is the difference between
+      a finding and a claim about the market, and the dataset's own rules
+      require it wherever these figures appear.
+    */}
+    <p class="mt-7 max-w-3xl text-sm leading-relaxed text-ink-500">
+      These describe what vendors <strong class="font-semibold text-ink-700">list</strong> — a
+      census of the plans we have checked, not a sample of the industry, and not what any business
+      pays. Vendors localise, discount and reprice constantly, so every row carries its check date
+      and the page says when one has aged.
+    </p>
+
+    <div class="mt-9 border-t border-ink-200 pt-8">
+      <p class="font-sans text-[0.9375rem] font-bold text-ink-900">In the record so far</p>
+      <p class="mt-2.5 max-w-4xl text-[0.9375rem] leading-relaxed text-ink-600">
+        {/*
+          The separator is explicit on both sides, because the template's own
+          whitespace cannot be relied on here: Astro drops the newline between
+          two adjacent expressions but keeps the one before a fragment's close,
+          and Prettier is free to move the break between them. Written any other
+          way the line renders either as "Canva , ChatGPT" or as
+          "Canva,ChatGPT", depending on how it was last formatted. So the comma
+          follows its item as its own expression and the space after it is an
+          explicit {" "}.
+        */}
+        {coverage.map((item, index) => (
+          <>
+            {item.href ? (
+              <a
+                href={item.href}
+                class="text-ink-700 underline decoration-ink-300 underline-offset-2 transition-colors duration-180 ease-ui hover:text-brand-700 hover:decoration-current motion-reduce:transition-none"
+                {...outboundLinkAttrs(item.href)}
+              >
+                {item.tool}
+              </a>
+            ) : (
+              item.tool
+            )}
+            {index < coverage.length - 1 ? "," : "."}{" "}
+          </>
+        ))}
+        Underlined names link to the vendor pricing page the figures were read from.
+      </p>
+
+      <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <a href={trackerPage.path} class="btn btn-primary">
+          See every tracked price
+        </a>
+        <a href={costGuidePage.path} class="btn btn-secondary">
+          What AI costs a small business
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

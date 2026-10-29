@@ -2,11 +2,12 @@
 /**
  * Homepage.
  *
- * Eight sections, in the order a visitor needs them: a centred masthead that
+ * Ten sections, in the order a visitor needs them: a centred masthead that
  * says what this site is and gives a way to search it, the categories, a short
  * editorial selection of guides, four routes in for someone who does not know
- * which category they want, both free calculators, an eight-slide introduction
- * to the site, the newest guides, and how the site works.
+ * which category they want, what the pricing dataset shows, both free
+ * calculators, an eight-slide introduction to the site, the newest guides, how
+ * the site works, and the five questions people arrive with.
  *
  * Nothing on this page is hand-listed. The categories come from PILLAR_NAV
  * filtered to published pillars; the featured and "start here" selections are
@@ -16,8 +17,15 @@
  * preview is produced by that calculator's own function at build time, so the
  * figures shown cannot be arithmetic the real tool would not do.
  *
- * The one set of figures on the page — the colophon under the hero headline —
- * is counted from the published collections at build time for the same reason.
+ * Two sets of figures appear in prose. The colophon under the hero headline is
+ * counted from the published collections at build time, and every figure in
+ * <PricingFindings> is computed from the pricing dataset by the same function
+ * the tracker page uses — for the same reason in both cases: a number nobody
+ * typed cannot go quietly out of date.
+ *
+ * The page carries one block of substantive content rather than none — the
+ * pricing findings — and one FAQ, because a hub whose every word is a label
+ * answers no question at all, including the ones that bring people to it.
  *
  * Deliberately absent: visitor counts, "most popular" claims, review scores,
  * testimonials, partner logos, and any email opt-in. The site has none of them.
@@ -25,7 +33,9 @@
 import { Image } from "astro:assets";
 
 import ArticleCard from "@/components/content/ArticleCard.astro";
+import FaqSection from "@/components/content/FaqSection.astro";
 import PresentationViewer from "@/components/home/PresentationViewer.astro";
+import PricingFindings from "@/components/home/PricingFindings.astro";
 import ToolPromoPanel from "@/components/home/ToolPromoPanel.astro";
 import PillarIcon from "@/components/layout/PillarIcon.astro";
 import SearchBox from "@/components/layout/SearchBox.astro";
@@ -35,6 +45,7 @@ import {
   CALCULATOR_PREVIEW,
   FEATURED_GUIDES,
   FEATURED_GUIDES_INTRO,
+  HOME_FAQ,
   LATEST_GUIDE_COUNT,
   START_HERE,
   TOOL_PROMOS,
@@ -259,18 +270,23 @@ const EMAIL_PREVIEW_ROWS = [
  * already exist: the guide archive, the category grid further up this page, and
  * the free tools band directly above the presentation. No new page is invented
  * to give a button somewhere to point.
+ *
+ * The two counts in the summaries are interpolated rather than written, because
+ * the written versions had already fallen behind: they said six topics and two
+ * calculators after a seventh pillar and a third tool were published. A count
+ * taken from what is published cannot drift that way.
  */
 const EXPLORE_ACTIONS = [
   { href: blogPath, label: "Explore AI guides", summary: "Every published guide, newest first." },
   {
     href: "#categories",
     label: "Browse categories",
-    summary: "Six topics, from first steps to industry use cases.",
+    summary: `${categories.length} topics, from first steps to industry use cases.`,
   },
   {
     href: "#free-tools",
     label: "Try our free tools",
-    summary: "Two calculators, no sign-up, nothing stored.",
+    summary: `${tools.length} free tools, no sign-up, nothing stored.`,
   },
 ];
 
@@ -424,8 +440,17 @@ const METHOD = [
       <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
         <div class="max-w-2xl">
           <p class="eyebrow eyebrow-rule">Categories</p>
+          {/*
+            The one heading on the page written for search as well as for the
+            reader. "Explore AI by category" said nothing a visitor could not
+            see from the grid under it and nothing a crawler could use; this
+            says the same thing and names the territory the page occupies. The
+            <title> and the clusters below already own that language — see the
+            home entry in src/config/seo-snippets.ts — so the heading agreeing
+            with them costs the reader nothing.
+          */}
           <h2 id="categories-heading" class="type-section mt-3">
-            Explore AI by category
+            AI tools for small business, by category
           </h2>
         </div>
         <a
@@ -582,7 +607,19 @@ const METHOD = [
     </div>
   </section>
 
-  {/* ---- 5. Free tools ----------------------------------------------- */}
+  {/* ---- 5. What the pricing data shows ------------------------------ */}
+  {/*
+    The page's one section of substantive content, and the only place on it
+    that states a finding rather than a label. It sits here because it leads
+    into the calculators directly below: the figures say what vendors list, and
+    the tool under them works out what a particular stack costs.
+
+    The sunken ground separates it from the plain section above and the surface
+    band below, so three substantial sections in a row still read as three.
+  */}
+  <PricingFindings />
+
+  {/* ---- 6. Free tools ----------------------------------------------- */}
   {/*
     Both calculators, one band. Each panel is its own <section> with its own
     <h2>, so neither tool is demoted to a sub-heading of the other and the
@@ -704,7 +741,7 @@ const METHOD = [
     </div>
   )}
 
-  {/* ---- 6. The site in eight slides --------------------------------- */}
+  {/* ---- 7. The site in eight slides --------------------------------- */}
   {/*
     An orientation piece for a first-time visitor: the same introduction the
     owner's PDF gives, readable in place and downloadable as the original file.
@@ -764,7 +801,7 @@ const METHOD = [
     </div>
   </section>
 
-  {/* ---- 7. Latest guides ------------------------------------------- */}
+  {/* ---- 8. Latest guides ------------------------------------------- */}
   <section aria-labelledby="latest-heading">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
@@ -799,7 +836,7 @@ const METHOD = [
     </div>
   </section>
 
-  {/* ---- 8. How these guides are made ------------------------------- */}
+  {/* ---- 9. How these guides are made ------------------------------- */}
   <section aria-labelledby="method-heading" class="border-t border-ink-200 bg-surface">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <div class="grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
@@ -808,10 +845,25 @@ const METHOD = [
           <h2 id="method-heading" class="type-section mt-3">
             Why trust these guides
           </h2>
+          {/*
+            The author's name is a link now rather than plain text. The person
+            who writes every guide on the site had no route to his own page from
+            the homepage at all, which is the one page an answer engine or a
+            reader checking "who is behind this" reaches first. The link is the
+            whole fix: the author page already holds the bio, the Person node
+            and the owner-supplied profiles, and nothing is claimed here that
+            that page does not already state.
+          */}
           <p class="type-body mt-4">
-            {SITE.name} is written and researched by {AUTHOR.name}. There is no team behind it, so
-            the method is published instead: what the guides are based on, what they will not claim,
-            and how the site makes money.
+            {SITE.name} is written and researched by{" "}
+            <a
+              href={AUTHOR.path}
+              class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 transition-colors duration-180 ease-ui hover:text-brand-800 hover:decoration-current motion-reduce:transition-none"
+            >
+              {AUTHOR.name}
+            </a>
+            . There is no team behind it, so the method is published instead: what the guides are
+            based on, what they will not claim, and how the site makes money.
           </p>
           <a href={aboutPath} class="btn btn-secondary mt-6">
             Read the editorial process
@@ -835,6 +887,33 @@ const METHOD = [
       </div>
     </div>
   </section>
+
+  {/* ---- 10. Questions people arrive with --------------------------- */}
+  {/*
+    The five questions HOME_FAQ answers, rendered by the same component every
+    guide uses — so the visible answer and the FAQPage JSON-LD are built from
+    one string and cannot disagree. FaqSection emits that schema itself, which
+    is why no faqSchema() is passed to the layout above.
+
+    It closes the page on purpose. A visitor who has read this far has not found
+    the guide they want from eleven routes in, and the thing most likely to help
+    them now is a direct answer rather than a twelfth card.
+  */}
+  {/*
+    No <section> wrapper: FaqSection is its own labelled section, so wrapping it
+    in a second one would nest two regions around one heading. The div only
+    holds the page's measure and gutters, and the component's own vertical
+    margin supplies the band's spacing.
+  */}
+  <div class="border-t border-ink-200">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <FaqSection
+        items={HOME_FAQ}
+        heading="Common questions about AI tools for small business"
+        id="home-faq-heading"
+      />
+    </div>
+  </div>
 </BaseLayout>
 
 <style>

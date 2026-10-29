@@ -171,3 +171,57 @@ export const TOOL_PROMOS: readonly ToolPromo[] = [
     note: "No sign-up. Your figures stay in the browser.",
   },
 ];
+
+/* ---------------------------------------------------------------------------
+ * Homepage FAQ
+ * ------------------------------------------------------------------------- */
+
+/**
+ * The five questions a first-time visitor arrives with, answered on the page
+ * they land on.
+ *
+ * Why a hub page carries an FAQ at all: the homepage's own prose is otherwise
+ * entirely navigational, which leaves it with no answer to any actual question
+ * — including the ones that bring people here. These five are the questions the
+ * site's own guides are built around, answered in two or three sentences each,
+ * with the guide that answers them properly named in the text so the answer is
+ * a route in rather than a dead end.
+ *
+ * Every answer is constrained the way the rest of the site is constrained. No
+ * figure appears here that is not either computed from the pricing dataset at
+ * render time or already published on the page being pointed at; nothing claims
+ * hands-on testing; and the recommendation question is answered with the
+ * method, not with a tool, because a hub page recommending one product is how a
+ * trust page stops being one.
+ *
+ * Plain text on purpose: FaqSection renders the visible answer and the FAQPage
+ * JSON-LD from the same string, so the structured data cannot say something the
+ * reader is not shown. That is also why there are no links inside an answer.
+ */
+export const HOME_FAQ: readonly { question: string; answer: string }[] = [
+  {
+    question: "What are the best AI tools for a small business?",
+    answer:
+      "There is no single answer, and any list that gives you one has skipped the question. The tool that earns its place depends on the job you are handing over — drafting, meeting notes, support replies, scheduling, bookkeeping — and on whether you are paying per person or for one account. Our picks-by-use-case guide works through it job by job rather than ranking products against each other, and our head-to-head comparisons cover the pairs people actually choose between, such as Claude and ChatGPT.",
+  },
+  {
+    question: "How much do AI tools cost for a small business?",
+    answer:
+      "Far less than the enterprise figures suggest, and far more than the headline price implies once you multiply it. Most small-business AI tools list an entry plan in the single digits to low twenties per month, but the number that decides your bill is the billing unit: a flat account price stays flat as you grow, while a per-seat price multiplies by headcount. Our pricing tracker publishes every list price we have checked with the date we checked it, and the free cost calculator totals your own stack across a month, a year, and a first year with setup.",
+  },
+  {
+    question: "Are free AI plans good enough to run a business on?",
+    answer:
+      "For one person testing an idea, often yes. Nearly every free plan we have recorded is capped — by monthly prompts, automation tasks, transcription minutes, conversations, or the number of people who can use it — so the question is never whether a free tier exists but where its cap sits relative to your actual volume. Read the cap before the price, and treat a free plan as a trial you are not paying for rather than as a tier you can stay on.",
+  },
+  {
+    question: "Is it safe to put business data into AI tools?",
+    answer:
+      "It depends entirely on the plan you are on, which is why it belongs in the buying decision rather than after it. Vendors publish different data-retention and training terms for free, paid, and business tiers of the same product, and the differences are substantial. Check what a vendor says it does with your inputs on the plan you are actually buying, keep client-identifiable and regulated data out of tools you have not checked, and — where notetakers are involved — find out what consent your jurisdiction requires before recording anyone.",
+  },
+  {
+    question: "How does this site decide what to recommend?",
+    answer:
+      "Guides are written from official product documentation, pricing pages, and product announcements, summarised in our own words with the sources linked. A tool is only described as tested when it has actually been tested; research-based guides say so on the page and carry no scores. Every guide shows when it was last updated, and every price shows the date it was checked on the vendor's own page. Some pages carry affiliate links and disclose it before the recommendation — commissions do not decide what gets recommended or how it ranks.",
+  },
+];

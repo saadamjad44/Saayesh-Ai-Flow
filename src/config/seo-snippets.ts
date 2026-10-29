@@ -75,10 +75,33 @@ export interface PageSnippet {
 export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
   // ---- Core pages --------------------------------------------------------
   home: {
-    title: "AI Tools, Automation & Workflows for Small Business",
+    /**
+     * Four nouns in the old title — tools, automation, workflows, small
+     * business — competed for the same 50 characters and left none for what
+     * separates this site from the fifty others answering the query. The two
+     * that matter keep their place at the front, "workflows" moves into the
+     * tail where it still reads, and the characters that opens up go to the
+     * free interactive tools, which are the one thing on the site no
+     * competitor for this query has.
+     *
+     * Still a hub's title, not the cluster's: the plural "Guides" says this
+     * page is the index, so it is not written to outrank the use-case guide
+     * that owns the head term. See the keyword note below.
+     */
+    title: "AI Tools for Small Business: Guides, Workflows & Free Tools",
     brand: "omit",
+    /**
+     * The description sells the method rather than the breadth. "Independent"
+     * and "research-based" were both in the old one and both are abstract; a
+     * dated price check is the specific, checkable version of the same promise
+     * and the thing the pricing dataset actually delivers.
+     *
+     * No counts. A description that says "42 guides across 8 categories" is
+     * wrong the week a guide is published, and this file holds static strings —
+     * the page's own counted colophon is where live figures belong.
+     */
     description:
-      "Independent, research-based guides to AI tools, automation and prompts for solopreneurs and small business owners, with current pricing and real limits.",
+      "Independent guides to AI tools, automation and prompts for small business. Verified list prices with the date each was checked, plus free calculators.",
     /**
      * Social gets the brand back: a shared link has no site-name line beside it
      * the way a search result does, so the name has to be in the title itself.
