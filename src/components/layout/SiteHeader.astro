@@ -118,8 +118,9 @@ const navDivider =
       aria-current={currentPath === "/" ? "page" : undefined}
     >
       {/*
-        Decorative: the wordmark beside it already names the brand, so the
-        link's accessible name is correct without the image repeating it.
+        The image carries the brand's accessible name (BRAND_LOGO.alt) and the
+        wordmark below is marked aria-hidden, so this link announces the brand
+        once rather than twice. The wordmark stays visible and stays in the DOM.
       */}
       <Image
         src={BRAND_LOGO.src}
@@ -131,7 +132,10 @@ const navDivider =
         decoding="sync"
         class="h-7 w-auto shrink-0 sm:h-[30px]"
       />
-      <span class="font-display text-[1.0625rem] font-extrabold tracking-[-0.01em] text-ink-900 transition-colors duration-180 ease-ui group-hover:text-brand-800 sm:text-lg motion-reduce:transition-none">
+      <span
+        aria-hidden="true"
+        class="font-display text-[1.0625rem] font-extrabold tracking-[-0.01em] text-ink-900 transition-colors duration-180 ease-ui group-hover:text-brand-800 sm:text-lg motion-reduce:transition-none"
+      >
         {brandLead} <span class="text-brand-700">{brandTail.join(" ")}</span>
       </span>
     </a>

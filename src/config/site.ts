@@ -36,8 +36,15 @@ export const SITE = {
    * what the old line ("Honest AI tool reviews for people who work alone")
    * only implied — without using the word "reviews", which would over-promise
    * against research-based pages that carry no scores.
+   *
+   * No full stop. This is a headline, not a sentence: it is printed as the
+   * homepage <h1> and as the About page's standfirst, and a heading that ends
+   * in a full stop reads as a truncated paragraph. The two places that do use
+   * it mid-prose — llms.txt, and the About standfirst — punctuate it
+   * themselves, so the terminator lives with the sentence that needs one rather
+   * than being baked into the phrase.
    */
-  tagline: "AI tools and automation that earn their place in a small business.",
+  tagline: "AI tools and automation that earn their place in a small business",
   url: `https://${SITE_DOMAIN}`,
   lang: "en",
   locale: "en_US",
@@ -105,4 +112,26 @@ export const INTEGRATIONS = {
    * not because it is a secret. Empty means the form renders disabled.
    */
   web3formsAccessKey: (import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY ?? "").trim(),
+  /**
+   * The email provider's embedded-signup POST URL, from the build environment
+   * (PUBLIC_NEWSLETTER_ENDPOINT — see .env.example). Empty means the signup
+   * form renders disabled, the same way the contact form does without its key.
+   *
+   * Public by design and inlined into the built HTML: an embed endpoint only
+   * accepts subscriptions to the list it belongs to and grants no account
+   * access. It is an environment variable so the list can be moved between
+   * providers without a code change.
+   *
+   * The site stores no addresses itself and has no database. Everything about
+   * confirmation, double opt-in, and unsubscribing is the provider's — which is
+   * the whole reason the form posts to them directly rather than through us.
+   */
+  newsletterEndpoint: (import.meta.env.PUBLIC_NEWSLETTER_ENDPOINT ?? "").trim(),
+  /**
+   * The field name that provider expects the address in. Nearly all use
+   * "email"; Kit/ConvertKit uses "email_address" and Mailchimp's embedded form
+   * uses "EMAIL". Overridable so a provider swap is an environment change
+   * rather than a code change.
+   */
+  newsletterEmailField: (import.meta.env.PUBLIC_NEWSLETTER_EMAIL_FIELD ?? "").trim() || "email",
 } as const;

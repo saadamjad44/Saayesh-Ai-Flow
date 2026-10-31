@@ -40,10 +40,18 @@ import homeHero from "@/assets/images/home-hero.jpg";
  * background without a white box behind it. It lives in src/assets/ rather than
  * public/ so astro:assets emits responsive, width/height-stamped variants.
  *
- * `alt` is empty on purpose. Everywhere the logo is used it sits beside the
- * visible "Saayesh AI Flow" wordmark inside the same link, so describing the
- * mark as well would make a screen reader announce the brand name twice. The
- * accessible name of the link comes from the wordmark text.
+ * `alt` names the mark, so the logo is a described image rather than a
+ * decorative one — it is the brand's own artwork, and an image search result
+ * for it should say what it is.
+ *
+ * That creates one problem and fixes it in the same move. Everywhere the logo
+ * is used it sits beside the visible "Saayesh AI Flow" wordmark inside the same
+ * link, so an alt here plus the wordmark would make a screen reader announce
+ * the brand twice over one link. The wordmark carries `aria-hidden` at both
+ * call sites instead (header and footer), which leaves the link with exactly
+ * one accessible name — this one — and leaves the visible text untouched for
+ * everyone else and for crawlers. Change one without the other and the double
+ * announcement comes back.
  *
  * The favicon set in public/ (favicon.ico, favicon-48x48.png,
  * favicon-192x192.png, apple-touch-icon.png) is rasterised from this same file,
@@ -54,7 +62,7 @@ import homeHero from "@/assets/images/home-hero.jpg";
  */
 export const BRAND_LOGO = {
   src: logo,
-  alt: "",
+  alt: "Saayesh AI Flow logo",
   /** Rendered height in the header, in px. Width follows the intrinsic ratio. */
   headerHeight: 30,
 } as const;

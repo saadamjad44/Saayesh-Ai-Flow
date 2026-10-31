@@ -7,7 +7,8 @@
  * Header: category eyebrow linking to its hub, the byline row (author, updated
  * date, reading estimate, pricing-checked date), the affiliate note where the
  * page carries affiliate links, and an optional category image. After the body:
- * related internal pages, then the FAQ (with its own FAQPage schema).
+ * the share row, related internal pages, then the FAQ (with its own FAQPage
+ * schema).
  *
  * Every entry page gets the contextual rail: its own table of contents, built
  * from the H2s of this entry, then the category navigation built from the
@@ -29,6 +30,7 @@ import FaqSection from "@/components/content/FaqSection.astro";
 import FeaturedImage from "@/components/content/FeaturedImage.astro";
 import LastUpdated from "@/components/content/LastUpdated.astro";
 import RelatedPages, { type RelatedPage } from "@/components/content/RelatedPages.astro";
+import ShareRow from "@/components/content/ShareRow.astro";
 import TableOfContents from "@/components/content/TableOfContents.astro";
 import ContentSidebar from "@/components/layout/ContentSidebar.astro";
 import { AUTHOR } from "@/config/author";
@@ -133,6 +135,15 @@ const openGraphArticle =
   <slot />
 
   <Fragment slot="after">
+    {/*
+      Share controls first, directly under the body: the moment someone is
+      most likely to pass a guide on is the moment they finish it, not after
+      they have scrolled past a related-links grid and an FAQ. The row loads no
+      third-party script — see ShareRow — which is why it can go on every entry
+      page without a cost to anyone who never uses it.
+    */}
+    <ShareRow path={currentPath} title={data.title} />
+
     {/*
       A route may replace the related block entirely — pillar hubs pass a card
       grid of their own guides, where a cluster page wants the compact list.

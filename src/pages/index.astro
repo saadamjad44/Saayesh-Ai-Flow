@@ -3,11 +3,11 @@
  * Homepage.
  *
  * Ten sections, in the order a visitor needs them: a centred masthead that
- * says what this site is and gives a way to search it, the categories, a short
- * editorial selection of guides, four routes in for someone who does not know
- * which category they want, what the pricing dataset shows, both free
- * calculators, an eight-slide introduction to the site, the newest guides, how
- * the site works, and the five questions people arrive with.
+ * says what this site is and gives a way to search it, the categories, the
+ * email signup, a short editorial selection of guides, four routes in for
+ * someone who does not know which category they want, what the pricing dataset
+ * shows, both free calculators, the newest guides, how the site works, and the
+ * five questions people arrive with.
  *
  * Nothing on this page is hand-listed. The categories come from PILLAR_NAV
  * filtered to published pillars; the featured and "start here" selections are
@@ -27,14 +27,18 @@
  * pricing findings — and one FAQ, because a hub whose every word is a label
  * answers no question at all, including the ones that bring people to it.
  *
+ * The structured data is built from the same arrays the sections render; see
+ * the comment on the BaseLayout call.
+ *
  * Deliberately absent: visitor counts, "most popular" claims, review scores,
- * testimonials, partner logos, and any email opt-in. The site has none of them.
+ * testimonials, partner logos, and any subscriber or open-rate figure beside
+ * the signup. The site has none of them.
  */
 import { Image } from "astro:assets";
 
 import ArticleCard from "@/components/content/ArticleCard.astro";
 import FaqSection from "@/components/content/FaqSection.astro";
-import PresentationViewer from "@/components/home/PresentationViewer.astro";
+import NewsletterSignup from "@/components/forms/NewsletterSignup.astro";
 import PricingFindings from "@/components/home/PricingFindings.astro";
 import ToolPromoPanel from "@/components/home/ToolPromoPanel.astro";
 import PillarIcon from "@/components/layout/PillarIcon.astro";
@@ -67,10 +71,15 @@ import {
   formatHours,
   formatSignedMoney,
 } from "@/components/tools/ai-email-savings-calculator";
-import { SLIDE_COUNT } from "@/config/presentation";
 import { getPublishedEntries, toArticleCard } from "@/lib/content";
 import { formatShortDate, isoDate } from "@/lib/format";
-import { organizationSchema, websiteSchema } from "@/lib/seo";
+import {
+  homeBreadcrumbSchema,
+  itemListSchema,
+  organizationSchema,
+  siteNavigationSchema,
+  websiteSchema,
+} from "@/lib/seo";
 
 const [pillars, articles, tools] = await Promise.all([
   getPublishedEntries("pillars"),
@@ -149,10 +158,15 @@ const latest = [...articles]
   .map((article) => toArticleCard(article, categoryTitles));
 
 /*
- * The hero background. Its own `alt` in the registry describes the picture
- * for the social card; here it is decorative — the h1 beside it already says
- * what the page is — so it is given an empty alt and hidden from assistive
- * technology.
+ * The hero background, described rather than hidden.
+ *
+ * It used to render with an empty alt and aria-hidden, on the reasoning that
+ * the h1 over it already says what the page is. That is true of the page and
+ * not of the picture: the registry holds a factual description of the artwork
+ * itself, which is what an image result and a screen-reader user both want, and
+ * withholding it loses the site's own original illustration from image search
+ * for nothing in return. The alt describes the picture; it never repeats the
+ * headline, which is the rule MediaAsset.alt is written under.
  */
 const heroArt = getMedia("home");
 
@@ -263,33 +277,6 @@ const EMAIL_PREVIEW_ROWS = [
   },
 ];
 
-/* ---- Presentation ----------------------------------------------------- */
-
-/**
- * Where the eight-slide introduction sends people next. Three destinations that
- * already exist: the guide archive, the category grid further up this page, and
- * the free tools band directly above the presentation. No new page is invented
- * to give a button somewhere to point.
- *
- * The two counts in the summaries are interpolated rather than written, because
- * the written versions had already fallen behind: they said six topics and two
- * calculators after a seventh pillar and a third tool were published. A count
- * taken from what is published cannot drift that way.
- */
-const EXPLORE_ACTIONS = [
-  { href: blogPath, label: "Explore AI guides", summary: "Every published guide, newest first." },
-  {
-    href: "#categories",
-    label: "Browse categories",
-    summary: `${categories.length} topics, from first steps to industry use cases.`,
-  },
-  {
-    href: "#free-tools",
-    label: "Try our free tools",
-    summary: `${tools.length} free tools, no sign-up, nothing stored.`,
-  },
-];
-
 /* ---- Editorial method ------------------------------------------------- */
 
 /**
@@ -317,7 +304,33 @@ const METHOD = [
 ];
 ---
 
-<BaseLayout pageId="home" jsonLd={[websiteSchema(), organizationSchema()]}>
+{/*
+  The homepage's structured data. WebSite and the Organization behind it, the
+  root of the breadcrumb hierarchy, the category navigation, and the editor's
+  picks as an ordered list — the last three all built from the same arrays the
+  page renders below, so none of them can describe a page that is not there.
+
+  FAQPage is NOT in this list: <FaqSection> emits it itself, from the same
+  strings it renders, which is the only way the visible answer and the markup
+  cannot drift apart.
+*/}
+<BaseLayout
+  pageId="home"
+  jsonLd={[
+    websiteSchema(),
+    organizationSchema(),
+    homeBreadcrumbSchema(),
+    siteNavigationSchema(
+      categories.map((category) => ({ name: category.title, path: category.href })),
+    ),
+    itemListSchema({
+      name: `Featured guides on ${SITE.name}`,
+      items: [featuredLead, ...featuredRest]
+        .filter((article) => article !== undefined)
+        .map((article) => ({ name: article.title, path: article.path })),
+    }),
+  ]}
+>
   {/* ---- 1. Hero ---------------------------------------------------- */}
   {/*
     A light masthead, centred on one measure.
@@ -338,8 +351,7 @@ const METHOD = [
   <section class="hero relative isolate flex items-center overflow-hidden bg-paper">
     <Image
       src={heroArt.src}
-      alt=""
-      aria-hidden="true"
+      alt={heroArt.alt}
       widths={[640, 960, 1280, 1672]}
       sizes="100vw"
       loading="eager"
@@ -520,7 +532,25 @@ const METHOD = [
     </div>
   </section>
 
-  {/* ---- 3. Featured guides ----------------------------------------- */}
+  {/* ---- 3. Email ---------------------------------------------------- */}
+  {/*
+    The signup, directly under the category grid.
+
+    Here rather than lower down because this is where a visitor has just seen
+    the whole site and decided whether it is for them, and the only thing the
+    site could previously ask of them at that moment was another click. It
+    posts to the owner's email provider, keeps no address here, and renders
+    disabled until PUBLIC_NEWSLETTER_ENDPOINT is set — see the component.
+
+    No count, no open rate, no "join N readers". The site has no such figure.
+  */}
+  <div class="border-t border-ink-200 bg-surface-sunken">
+    <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
+      <NewsletterSignup location="homepage" />
+    </div>
+  </div>
+
+  {/* ---- 4. Featured guides ----------------------------------------- */}
   <section aria-labelledby="featured-heading" class="border-y border-ink-200 bg-surface">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <div class="max-w-2xl">
@@ -552,7 +582,7 @@ const METHOD = [
     </div>
   </section>
 
-  {/* ---- 4. Start here ---------------------------------------------- */}
+  {/* ---- 5. Start here ---------------------------------------------- */}
   <section aria-labelledby="start-here-heading">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <div class="max-w-2xl">
@@ -607,7 +637,7 @@ const METHOD = [
     </div>
   </section>
 
-  {/* ---- 5. What the pricing data shows ------------------------------ */}
+  {/* ---- 6. What the pricing data shows ------------------------------ */}
   {/*
     The page's one section of substantive content, and the only place on it
     that states a finding rather than a label. It sits here because it leads
@@ -619,7 +649,7 @@ const METHOD = [
   */}
   <PricingFindings />
 
-  {/* ---- 6. Free tools ----------------------------------------------- */}
+  {/* ---- 7. Free tools ----------------------------------------------- */}
   {/*
     Both calculators, one band. Each panel is its own <section> with its own
     <h2>, so neither tool is demoted to a sub-heading of the other and the
@@ -740,66 +770,6 @@ const METHOD = [
       </div>
     </div>
   )}
-
-  {/* ---- 7. The site in eight slides --------------------------------- */}
-  {/*
-    An orientation piece for a first-time visitor: the same introduction the
-    owner's PDF gives, readable in place and downloadable as the original file.
-    It sits after the tools and before the latest guides so the page ends on
-    editorial content rather than on promotional blocks, and it takes the sunken
-    surface tone — the one ground the homepage was not already using — so three
-    substantial sections in a row still read as three separate sections.
-  */}
-  <section aria-labelledby="presentation-heading" class="border-b border-ink-200 bg-surface-sunken">
-    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-      <div class="max-w-2xl">
-        <p class="eyebrow eyebrow-rule">Presentation</p>
-        <h2 id="presentation-heading" class="type-section mt-3">
-          Discover {SITE.name} in {SLIDE_COUNT} slides
-        </h2>
-        <p class="type-body mt-3">
-          Explore our AI guides, practical workflows, comparisons, and free tools through a quick
-          visual introduction.
-        </p>
-      </div>
-
-      <div class="mt-9">
-        <PresentationViewer label={`${SITE.name} in ${SLIDE_COUNT} slides`} />
-      </div>
-
-      <div class="mt-10 border-t border-ink-200 pt-8">
-        <h3 class="font-display text-[1.0625rem] font-bold text-ink-900">Where to go from here</h3>
-        <ul class="mt-4 grid gap-4 sm:grid-cols-3">
-          {EXPLORE_ACTIONS.map((action) => (
-            <li class="card card-link group relative flex flex-col p-5">
-              <p class="font-sans text-[0.9375rem] font-bold text-ink-900">
-                <a href={action.href} class="stretch-target group-hover:text-brand-800">
-                  {action.label}
-                </a>
-              </p>
-              <p class="mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{action.summary}</p>
-              <span
-                aria-hidden="true"
-                class="mt-4 inline-flex items-center gap-1.5 font-sans text-sm font-bold text-brand-700"
-              >
-                <svg
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-4 transition-transform duration-180 ease-ui group-hover:translate-x-0.5 motion-reduce:transition-none"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  </section>
 
   {/* ---- 8. Latest guides ------------------------------------------- */}
   <section aria-labelledby="latest-heading">
@@ -988,13 +958,16 @@ const METHOD = [
 
 <script>
   /**
-   * The homepage's only analytics listener: a call to action that declares an
-   * event name gets one, and nothing else on the page is instrumented.
+   * The homepage's analytics listener: a call to action that declares an event
+   * name gets one, and nothing else in this file is instrumented.
    *
    * What is sent is that the click happened, and where. Never a value — the
    * calculators' own figures are not touched here and must never be; see the
-   * contract in src/lib/analytics.ts. The presentation viewer tracks its own
-   * two events in its own script, so nothing below fires twice.
+   * contract in src/lib/analytics.ts.
+   *
+   * <NewsletterSignup> tracks its own submit in its own script, so nothing
+   * below fires twice for it, and the address typed into it is never a
+   * parameter of anything.
    */
   import { trackEvent, type AnalyticsEventName } from "@/lib/analytics";
 

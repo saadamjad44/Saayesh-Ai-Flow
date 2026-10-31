@@ -770,11 +770,10 @@ export const PAGES = [
 
   /**
    * The policy page, and the one the owner's research flagged as the clearest
-   * download candidate. It deliberately ships without a download: public/
-   * downloads/ holds only the brand presentation PDF and is not a content-asset
-   * system, and a policy locked inside a PDF is a policy search engines cannot
-   * read. The full text is on the page, copyable. If the owner later wants a
-   * .docx, that is an asset task, not a content one.
+   * download candidate. It deliberately ships without a download: public/ is
+   * not a content-asset system, and a policy locked inside a PDF is a policy
+   * search engines cannot read. The full text is on the page, copyable. If the
+   * owner later wants a .docx, that is an asset task, not a content one.
    */
   {
     id: "ai-use-policy-template",

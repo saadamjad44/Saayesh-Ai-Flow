@@ -11,9 +11,16 @@
  *
  * Privacy, which the page states in writing and this implementation has to
  * guarantee: there is no `<form>` element (so no value can ever be submitted,
- * not even as a query string if scripting fails), no `fetch`, no analytics
- * call, and no `localStorage` or cookie write anywhere in the script below.
- * Every figure stays in the page's own DOM for as long as the tab is open.
+ * not even as a query string if scripting fails), no `fetch`, and no
+ * `localStorage` or cookie write anywhere in the script below. Every figure
+ * stays in the page's own DOM for as long as the tab is open.
+ *
+ * Two controls let the visitor take the figures out, and only on an explicit
+ * press: Copy writes the results summary to their clipboard, and Share hands
+ * the same text to the browser's own share sheet, where they choose the
+ * destination. Neither sends anything from the page. The one analytics event in
+ * the file records that Share was pressed and carries no figure — see the
+ * script's own comment, and src/lib/analytics.ts, which forbids more.
  *
  * Nothing here hardcodes a vendor, plan, or price: the visitor supplies every
  * figure, which is what keeps the tool accurate as vendor pricing changes.
@@ -343,6 +350,15 @@ const headingId = "ai-cost-calculator";
         <button type="button" class="btn btn-secondary w-full sm:w-auto" hidden data-copy>
           Copy results summary
         </button>
+        {/*
+          Share hands the same summary to the device's own share sheet, where
+          the visitor picks the destination. Hidden unless the browser has the
+          Web Share API, so it is never a control that cannot work. Nothing is
+          sent anywhere by the page itself — see the handler below.
+        */}
+        <button type="button" class="btn btn-secondary w-full sm:w-auto" hidden data-share>
+          Share these figures
+        </button>
         <p class="text-sm text-ink-600 sm:ml-1" role="status" data-copy-status></p>
       </div>
     </div>
@@ -368,8 +384,12 @@ const headingId = "ai-cost-calculator";
 <script>
   /**
    * Calculator behaviour. Reads the DOM, validates, computes with the shared
-   * module, and writes the results back. It makes no network request, sends
-   * nothing to analytics, and writes to no storage — see the component comment.
+   * module, and writes the results back. It makes no network request and writes
+   * to no storage — see the component comment.
+   *
+   * One analytics event exists, and only one: `share_click`, sent when the
+   * visitor presses Share. It carries the method and nothing else. No figure,
+   * no input, and no part of the results summary is ever passed to it.
    */
   import {
     CURRENCIES,
@@ -384,6 +404,7 @@ const headingId = "ai-cost-calculator";
     type FieldKind,
     type ToolInput,
   } from "./ai-cost-calculator";
+  import { trackEvent } from "@/lib/analytics";
 
   const calculator = document.querySelector<HTMLElement>("[data-ai-cost-calculator]");
   const rowSource = document.querySelector<HTMLTemplateElement>("[data-ai-cost-row-template]");
@@ -393,6 +414,7 @@ const headingId = "ai-cost-calculator";
   const addEl = calculator?.querySelector<HTMLButtonElement>("[data-add-tool]");
   const resetEl = calculator?.querySelector<HTMLButtonElement>("[data-reset]");
   const copyEl = calculator?.querySelector<HTMLButtonElement>("[data-copy]");
+  const shareEl = calculator?.querySelector<HTMLButtonElement>("[data-share]");
   const copyStatusEl = calculator?.querySelector<HTMLElement>("[data-copy-status]");
   const currencyEl = calculator?.querySelector<HTMLSelectElement>("[data-currency]");
   const breakdownEl = calculator?.querySelector<HTMLTableSectionElement>("[data-breakdown-body]");
@@ -770,6 +792,31 @@ const headingId = "ai-cost-calculator";
           () =>
             showCopyStatus("Copy was blocked by your browser. Select the figures to copy them."),
         );
+      });
+    }
+
+    /**
+     * Share, which is Copy with a different destination.
+     *
+     * It passes the same already-rendered `summary` string to the browser's own
+     * share sheet, and the visitor chooses where it goes. The page itself still
+     * sends nothing anywhere: navigator.share hands the text to the operating
+     * system on an explicit click, which is why this does not contradict what
+     * the panel promises about figures staying in the browser. The analytics
+     * event carries the method and never the summary — src/lib/analytics.ts
+     * forbids passing a visitor's figures as an event parameter.
+     *
+     * Hidden where the API does not exist, which is most desktop browsers.
+     */
+    if (shareEl && typeof navigator.share === "function") {
+      const shareButton: HTMLButtonElement = shareEl;
+      shareButton.hidden = false;
+      shareButton.addEventListener("click", () => {
+        void navigator
+          .share({ title: document.title, text: summary, url: window.location.href })
+          .then(() => trackEvent("share_click", { method: "cost_calculator" }))
+          // A dismissed share sheet rejects, which is not a failure to report.
+          .catch(() => {});
       });
     }
 

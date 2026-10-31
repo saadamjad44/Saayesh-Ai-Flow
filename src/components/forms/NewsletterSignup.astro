@@ -1,0 +1,192 @@
+---
+/**
+ * Email signup, posted straight to the owner's email provider.
+ *
+ * WHY IT IS A PLAIN FORM POST
+ *
+ * The form submits as an ordinary HTML POST to INTEGRATIONS.newsletterEndpoint
+ * — the embed URL the provider issues — and the provider's own page takes it
+ * from there: confirmation, double opt-in, the welcome email, and the
+ * unsubscribe link. Not fetch(): Mailchimp and several others reject a
+ * cross-origin XHR, so an inline-status version of this form works on some
+ * providers and silently fails on others. A plain POST works on all of them.
+ *
+ * The consequence is that submitting leaves the site, which is why there is no
+ * success state here to maintain. The provider shows it.
+ *
+ * WHAT THIS SITE KEEPS: nothing. There is no database, no list stored in the
+ * repository, and no address written anywhere we control. The only event sent
+ * is `newsletter_submit`, which records that a submit happened and from which
+ * page — never the address. See src/lib/analytics.ts, which forbids it.
+ *
+ * WITH NO ENDPOINT SET the form renders disabled and says so, the same way the
+ * contact form does without its key. It never renders as a working form that
+ * quietly drops what someone typed.
+ *
+ * WHAT IT DOES NOT CLAIM. No subscriber count, no open rate, no "join 5,000
+ * readers" — the site has no such figure and may not invent one. No promised
+ * send frequency either: "every Tuesday" is a commitment nothing in this
+ * repository can keep, so the copy says what the email *is* instead.
+ */
+import { getPage } from "@/config/pages";
+import { INTEGRATIONS, OWNER } from "@/config/site";
+
+interface Props {
+  /**
+   * Which page this instance sits on. Sent as the `location` parameter of the
+   * analytics event, so two placements can be told apart.
+   */
+  location: string;
+  /** Visual treatment. "band" is the full-width homepage block. */
+  variant?: "band" | "inline";
+  class?: string;
+}
+
+const { location, variant = "band", class: className } = Astro.props;
+
+const endpoint = INTEGRATIONS.newsletterEndpoint;
+const emailField = INTEGRATIONS.newsletterEmailField;
+const isConfigured = endpoint.length > 0;
+
+if (!isConfigured) {
+  console.warn(
+    "[newsletter] PUBLIC_NEWSLETTER_ENDPOINT is not set, so the signup form is " +
+      "rendered disabled. Set it in the build environment before deploying.",
+  );
+}
+
+const privacyPath = getPage("privacy-policy").path;
+const fallbackEmail = OWNER.contactEmail;
+
+/** A stable, unique id per instance, so two on one page cannot collide. */
+const inputId = `newsletter-email-${location.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+
+const isBand = variant === "band";
+
+/**
+ * `rel="noopener"` for the new tab below, spread rather than written as an
+ * attribute because Astro's FormHTMLAttributes has no `rel` — the HTML spec
+ * does (a form may carry rel keywords exactly as a link can), so the attribute
+ * is correct and only the type is missing it.
+ */
+const FORM_REL = { rel: "noopener" } as const;
+
+const WARNING_PATH =
+  "M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.63-1.516 2.63H3.72c-1.347 0-2.189-1.463-1.515-2.63L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z";
+---
+
+<div
+  class:list={[
+    "not-prose",
+    isBand && "card overflow-hidden p-6 sm:p-9",
+    !isBand && "rounded-card border border-ink-200 bg-surface p-5",
+    className,
+  ]}
+>
+  <div class:list={[isBand && "grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-12"]}>
+    <div>
+      <p class="eyebrow">One email</p>
+      <h2
+        id={`${inputId}-heading`}
+        class:list={[
+          "mt-2 font-display font-bold tracking-[-0.01em] text-ink-900",
+          isBand ? "text-2xl sm:text-[1.75rem]" : "text-xl",
+        ]}
+      >
+        Get the next guide before it is indexed
+      </h2>
+      <p class="mt-3 leading-relaxed text-ink-600">
+        When a new guide goes up — or a price we published moves — you get one email saying what
+        changed and whether it affects you. No course, no funnel, no forwarded vendor press
+        releases. Unsubscribe in one click, from any of them.
+      </p>
+    </div>
+
+    {/*
+      `target="_blank"` for the one reason that matters: the provider's
+      confirmation page is not this site, and sending a reader away from the
+      guide they were reading to see it is a worse outcome than a second tab.
+      `rel="noopener"` because any new-tab link needs it.
+    */}
+    <form
+      action={endpoint}
+      method="POST"
+      target="_blank"
+      {...FORM_REL}
+      class="self-center"
+      data-newsletter-form
+      data-location={location}
+      data-configured={String(isConfigured)}
+    >
+      <label for={inputId} class="block text-sm font-semibold text-ink-900">
+        Email address
+      </label>
+      <div class="mt-1.5 flex flex-col gap-2.5 sm:flex-row">
+        <input
+          id={inputId}
+          name={emailField}
+          type="email"
+          autocomplete="email"
+          required
+          maxlength="254"
+          placeholder="you@yourbusiness.com"
+          disabled={!isConfigured}
+          class="min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3.5 py-2.5 text-base text-ink-900 shadow-card placeholder:text-ink-500 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/25 focus:outline-none disabled:cursor-not-allowed disabled:bg-ink-50 disabled:text-ink-500"
+        />
+        <button type="submit" class="btn btn-primary shrink-0" disabled={!isConfigured}>
+          Subscribe
+        </button>
+      </div>
+
+      <p class="mt-3 text-sm leading-relaxed text-ink-500">
+        We use your address to send that email and nothing else. See the{" "}
+        <a
+          href={privacyPath}
+          class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-800 hover:decoration-current"
+        >
+          privacy policy
+        </a>
+        .
+      </p>
+
+      {!isConfigured && (
+        <p class="mt-3 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-medium text-red-800">
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            class="mt-0.5 size-4 shrink-0"
+          >
+            <path fill-rule="evenodd" d={WARNING_PATH} clip-rule="evenodd" />
+          </svg>
+          <span>
+            Signups are not switched on yet, so this form cannot subscribe anyone.
+            {fallbackEmail ? ` Email ${fallbackEmail} to be added by hand.` : ""}
+          </span>
+        </p>
+      )}
+    </form>
+  </div>
+</div>
+
+<script>
+  /**
+   * The one line of enhancement this form gets: record that a submit happened.
+   *
+   * Not the address, and not the form contents — src/lib/analytics.ts forbids
+   * passing anything typed into a field as an event parameter, and this is the
+   * form where that rule matters most. `location` is the placement name the
+   * component was given, which is the entire payload.
+   *
+   * The submit itself is untouched: the browser posts to the provider exactly as
+   * it would with this script absent.
+   */
+  import { trackEvent } from "@/lib/analytics";
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("[data-newsletter-form]")) {
+    if (form.dataset.configured !== "true") continue;
+    form.addEventListener("submit", () => {
+      trackEvent("newsletter_submit", { location: form.dataset.location ?? "unknown" });
+    });
+  }
+</script>

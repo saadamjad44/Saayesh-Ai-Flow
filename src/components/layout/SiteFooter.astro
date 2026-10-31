@@ -39,7 +39,15 @@ const logoWidth = Math.round((BRAND_LOGO.src.width / BRAND_LOGO.src.height) * 32
             decoding="async"
             class="h-8 w-auto shrink-0"
           />
-          <span class="font-display text-lg font-extrabold tracking-[-0.01em] text-ink-900 group-hover:text-brand-800">
+          {/*
+            aria-hidden for the same reason as in the header: the logo image
+            beside it now carries the brand's accessible name, and announcing
+            both would say "Saayesh AI Flow logo Saayesh AI Flow" on one link.
+          */}
+          <span
+            aria-hidden="true"
+            class="font-display text-lg font-extrabold tracking-[-0.01em] text-ink-900 group-hover:text-brand-800"
+          >
             {SITE.name.split(" ")[0]}{" "}
             <span class="text-brand-700">{SITE.name.split(" ").slice(1).join(" ")}</span>
           </span>

@@ -10,10 +10,12 @@
  *
  * What may be sent: the fact that an intentional interaction happened. That is
  * the whole contract. No calculator inputs, no figures, no financial
- * assumptions, no personal data, no PDF contents, and nothing typed into any
- * field on the site may ever be passed in `params` — the free tools state in
- * writing that the visitor's figures never leave the browser, and that promise
- * is kept here as well as in the calculators themselves.
+ * assumptions, no personal data, and nothing typed into any field on the site
+ * may ever be passed in `params` — the free tools state in writing that the
+ * visitor's figures never leave the browser, and that promise is kept here as
+ * well as in the calculators themselves. That rule is why `newsletter_submit`
+ * records only that a submit happened and from where: the address typed into
+ * that form is never an event parameter.
  *
  * Consent is whatever the GA4 installation is already configured with. This
  * module deliberately has no consent logic of its own: a second, divergent
@@ -22,12 +24,12 @@
 
 /** Every event the site sends, named once so a typo cannot invent a new one. */
 export type AnalyticsEventName =
-  /** The slide viewer was expanded into the full-screen presentation mode. */
-  | "presentation_open"
-  /** The original presentation PDF was downloaded. */
-  | "presentation_download"
   /** A homepage call to action for the email savings calculator was clicked. */
-  | "email_calculator_cta_click";
+  | "email_calculator_cta_click"
+  /** A page was shared, or its link copied. `params.method` names which. */
+  | "share_click"
+  /** The newsletter form was submitted from a page. `params.location` names it. */
+  | "newsletter_submit";
 
 declare global {
   interface Window {

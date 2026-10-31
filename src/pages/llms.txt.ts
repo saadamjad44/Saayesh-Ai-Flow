@@ -72,7 +72,7 @@ export const GET: APIRoute = async () => {
   const lines: string[] = [
     `# ${SITE.name}`,
     "",
-    `> ${SITE.tagline} Research-based guides, comparisons and free tools covering AI tools, automation, workflows and prompts for solopreneurs, freelancers and small businesses.`,
+    `> ${SITE.tagline}. Research-based guides, comparisons and free tools covering AI tools, automation, workflows and prompts for solopreneurs, freelancers and small businesses.`,
     "",
     `Written and run by ${AUTHOR.name}${OWNER.location ? `, based in ${OWNER.location}` : ""}. ${AUTHOR.role}`,
     "",
@@ -88,7 +88,7 @@ export const GET: APIRoute = async () => {
     "",
     "## Core pages",
     "",
-    link("Homepage", "/", SITE.tagline),
+    link("Homepage", "/", `${SITE.tagline}.`),
     ...corePages.map((page) => link(page.title, page.path)),
     "",
     "## Free tools and open data",

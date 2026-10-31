@@ -14,7 +14,9 @@ Build and grow Saayesh AI Flow as a trustworthy, SEO-first AI tools, automation,
 - Domain: custom domain not purchased yet. `SITE_DOMAIN` in `src/config/site.ts` currently holds the Netlify production host; update that single value when the owner provides the final domain.
 - Phase 1 scope: exactly 17 pages (6 core/utility + 3 pillars + 8 keyword-targeted articles).
 - `/blog/` is an approved Phase 2 core page and may be built and linked.
-- Navigation, homepage, and footer may link to approved live pages from the current active phase; do not link to unapproved or draft pages. No email opt-in and nothing that depends on Phase 2/3 features.
+- Navigation, homepage, and footer may link to approved live pages from the current active phase; do not link to unapproved or draft pages.
+- Email opt-in is approved (owner decision, 2026-10-29) and lives on the homepage. The form POSTs straight to the owner's email provider via `PUBLIC_NEWSLETTER_ENDPOINT`; the site stores no addresses, and the form renders disabled until that variable is set. Never publish a subscriber count, open rate, or send-frequency promise — the site has no such figure and cannot keep such a promise.
+- The eight-slide brand presentation was removed on 2026-10-29 (owner decision). Do not reinstate it, and do not reintroduce `public/downloads/`.
 - Testing: Phase 1 content is research-based. Do not invent hands-on testing, scores, screenshots, or first-hand claims unless the owner provides testing evidence.
 - SEO data: the owner's validated Semrush data is for internal prioritization only. Never publish search volume, KD, CPC, or competition claims on the website.
 - Legal pages (privacy policy, terms, affiliate disclosure) are noindexed and excluded from the XML sitemap.
@@ -36,6 +38,7 @@ Build and grow Saayesh AI Flow as a trustworthy, SEO-first AI tools, automation,
 
 ## SEO rules
 - Target search intent first; keywords must fit naturally.
+- Share controls are first-party only: the Web Share API, the clipboard, and plain links to a network's public share URL. Never add a third-party share widget or any script that loads for visitors who do not use it.
 - Do not claim keyword volume, difficulty, traffic potential, or ranking opportunity unless validated by provided SEO data.
 - Use clean, stable URLs and consistent canonicalization.
 - Build strong internal linking from pillar pages to clusters and contextual links between relevant pages.

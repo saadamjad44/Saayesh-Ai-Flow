@@ -30,7 +30,12 @@ export function absoluteUrl(path: string): string {
 /**
  * Home → parent → current page. The parent is the page's pillar (articles) or
  * its explicit `parent` (e.g. a review under the /reviews/ hub); pages with
- * neither sit directly under Home. The homepage has no breadcrumb trail.
+ * neither sit directly under Home.
+ *
+ * The homepage still gets no trail: a visible breadcrumb reading only "Home" on
+ * the page called Home is noise. Its BreadcrumbList schema is built separately
+ * — see homeBreadcrumbSchema() — because a one-item list is meaningful to a
+ * parser (it states the root of the hierarchy) and meaningless to a reader.
  */
 export function getBreadcrumbs(page: SitePage): BreadcrumbItem[] {
   if (page.path === "/") return [];
@@ -54,6 +59,78 @@ export function breadcrumbSchema(items: readonly BreadcrumbItem[]): JsonLd {
       position: index + 1,
       name: item.label,
       item: absoluteUrl(item.path),
+    })),
+  };
+}
+
+/**
+ * The homepage's own BreadcrumbList: one item, naming the root.
+ *
+ * Nothing is rendered for it — see getBreadcrumbs() — and it will not produce a
+ * breadcrumb line in a result, because the root is where a result's breadcrumb
+ * starts rather than something shown beneath it. It is here because the
+ * homepage is the only page on the site that was declaring no position in the
+ * hierarchy at all, and a parser walking the site's structured data should find
+ * the root stated by the root.
+ */
+export function homeBreadcrumbSchema(): JsonLd {
+  const home = getPage("home");
+  return breadcrumbSchema([{ label: "Home", path: home.path }]);
+}
+
+export interface NavigationLink {
+  name: string;
+  path: string;
+}
+
+/**
+ * The site's primary navigation, as one SiteNavigationElement list.
+ *
+ * Built from the same PILLAR_NAV-derived list the homepage grid renders, so the
+ * markup cannot describe navigation the page does not have. One ItemList node
+ * holding every entry rather than one node per link: the latter is the shape
+ * that shows up in the wild and it emits N anonymous top-level nodes for one
+ * menu, which is harder for anything to read, not easier.
+ */
+export function siteNavigationSchema(links: readonly NavigationLink[]): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${SITE.name} categories`,
+    itemListElement: links.map((link, index) => ({
+      "@type": "SiteNavigationElement",
+      position: index + 1,
+      name: link.name,
+      url: absoluteUrl(link.path),
+    })),
+  };
+}
+
+export interface ListedItem {
+  name: string;
+  path: string;
+}
+
+/**
+ * An ordered ItemList of pages, for the homepage's editor's picks.
+ *
+ * `url`-only entries, not inlined Article nodes: each guide already publishes
+ * its own full Article schema on its own page, and restating headline, dates
+ * and author here would create a second, staler copy of every one of them. A
+ * list of URLs in a stated order is the whole claim being made.
+ */
+export function itemListSchema(input: { name: string; items: readonly ListedItem[] }): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: input.name,
+    itemListOrder: "https://schema.org/ItemListOrderAscending",
+    numberOfItems: input.items.length,
+    itemListElement: input.items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      url: absoluteUrl(item.path),
     })),
   };
 }
@@ -116,10 +193,9 @@ const AUTHOR_ID = () => absoluteUrl(`${AUTHOR.path}#person`);
  * nothing that could contradict the fuller node there. Still no credential of
  * any kind — the site states none.
  *
- * Not added, on purpose: `potentialAction`/SearchAction (Google retired the
- * sitelinks search box in 2023 and nothing else reads it), and
- * SiteNavigationElement for the category grid (no search feature consumes it).
- * Schema that no consumer reads is markup to maintain for nothing.
+ * Not added, on purpose: `potentialAction`/SearchAction. Google retired the
+ * sitelinks search box in 2023, so it would be markup to maintain for a feature
+ * that no longer exists.
  */
 export function websiteSchema(): JsonLd {
   return {
