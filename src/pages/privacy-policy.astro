@@ -1,7 +1,6 @@
 ---
-/** Privacy Policy — draft template, noindexed via the page registry. Needs legal review. */
+/** Privacy Policy -- noindexed via the page registry. */
 import PageLayout from "@/layouts/PageLayout.astro";
-import ContentGap from "@/components/content/ContentGap.astro";
 import OwnerDetail from "@/components/content/OwnerDetail.astro";
 import { SITE } from "@/config/site";
 import { getPage } from "@/config/pages";
@@ -10,12 +9,15 @@ const contactPath = getPage("contact").path;
 const disclosurePath = getPage("affiliate-disclosure").path;
 ---
 
-<PageLayout pageId="privacy-policy" title="Privacy Policy" eyebrow="Legal" legalDraft>
+<PageLayout pageId="privacy-policy" title="Privacy Policy" eyebrow="Legal">
+  <p><strong>Effective date:</strong> 2 November 2026</p>
+
   <h2>Who we are</h2>
   <p>
-    This privacy policy explains how {SITE.name} (“we”, “us”) handles information when you use this
-    website. The site is operated by <OwnerDetail field="name" />. You can contact us about privacy
-    at <OwnerDetail field="contactEmail" /> or through our <a href={contactPath}>contact page</a>.
+    This privacy policy explains how {SITE.name} (&ldquo;we&rdquo;, &ldquo;us&rdquo;) handles
+    information when you use this website. The site is operated by <OwnerDetail field="name" />.
+    You can contact us about privacy at <OwnerDetail field="contactEmail" /> or through our
+    <a href={contactPath}>contact page</a>.
   </p>
 
   <h2>Information we collect</h2>
@@ -36,8 +38,12 @@ const disclosurePath = getPage("affiliate-disclosure").path;
     IP address, browser type, and the pages you request.
   </p>
   <p>
-    Analytics:{" "}
-    <ContentGap label="Confirm analytics tools, what they collect, and how consent is requested before launch" />
+    We use Google Analytics 4 (GA4) to understand how the site is used &mdash; which pages are
+    visited, how long visits last, and where visitors come from. GA4 collects data such as your IP
+    address (which Google anonymises), browser type, device type, pages viewed, and approximate
+    location. This data is processed by Google under its own privacy policy. You can opt out by
+    installing the{" "}
+    <a href="https://tools.google.com/dlpage/gaoptout">Google Analytics Opt-out Browser Add-on</a>.
   </p>
 
   <h2>How we use information</h2>
@@ -45,56 +51,90 @@ const disclosurePath = getPage("affiliate-disclosure").path;
     <li>To reply to messages sent through the contact form.</li>
     <li>To send our email updates to the people who have asked for them.</li>
     <li>To operate, secure, and maintain the website.</li>
-    <li>To understand how the site is used so we can improve it, where analytics are enabled.</li>
+    <li>To understand how the site is used so we can improve it.</li>
   </ul>
   <p>
-    Legal basis for processing: <ContentGap label="Legal basis for each purpose (e.g. GDPR)" />
+    For visitors in the European Economic Area or United Kingdom, our legal basis for processing is:
+    consent for email subscriptions and the contact form (you choose to submit your information),
+    and legitimate interest for analytics (understanding site usage to improve it).
   </p>
 
   <h2>Cookies</h2>
+  <p>This site uses the following cookies:</p>
+  <ul>
+    <li>
+      <strong>Google Analytics</strong> (<code>_ga</code>, <code>_ga_*</code>): used to distinguish
+      visitors and track page views. These are set by the GA4 script and expire after 2 years
+      (<code>_ga</code>) or 2 years (<code>_ga_*</code>).
+    </li>
+    <li>
+      <strong>hCaptcha</strong>: may set cookies when you use the contact form to verify you are not
+      a bot. These are set by hCaptcha and are subject to their privacy policy.
+    </li>
+  </ul>
   <p>
-    <ContentGap label="List of cookies used (essential, analytics, advertising), their purpose, and how visitors can manage consent" />
+    You can manage or block cookies through your browser settings. Blocking analytics cookies does
+    not affect how the site works &mdash; you can still read every page and use every tool.
   </p>
 
   <h2>Third-party services</h2>
   <ul>
     <li>
-      <strong>Cloudflare</strong> hosts and serves the website.
+      <strong>Cloudflare</strong> hosts and serves the website.{" "}
+      <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare Privacy Policy</a>.
     </li>
     <li>
       <strong>Web3Forms</strong> receives contact form submissions and emails them to us. The name,
-      email address, subject, and message you type are sent to Web3Forms when you submit the form.
+      email address, subject, and message you type are sent to Web3Forms when you submit the form.{" "}
+      <a href="https://web3forms.com/privacy">Web3Forms Privacy Policy</a>.
     </li>
     <li>
-      <strong>Our email provider</strong> (
-      <ContentGap label="Email provider name and link to its privacy policy" />) receives and stores
-      the address you enter in the subscribe form, and sends the emails you have asked for. The form
-      submits directly to them, so the address reaches them without passing through this website.
+      <strong>Kit (formerly ConvertKit)</strong> receives and stores the address you enter in the
+      subscribe form, and sends the emails you have asked for. The form submits directly to them,
+      so the address reaches them without passing through this website.{" "}
+      <a href="https://kit.com/privacy">Kit Privacy Policy</a>.
     </li>
     <li>
       <strong>hCaptcha</strong> provides the anti-spam check on the contact form, through Web3Forms.
       Loading and completing that check sends your IP address and information about your browser and
       interaction with the page to hCaptcha, and may set cookies in your browser. It runs only on
-      the contact page.
+      the contact page.{" "}
+      <a href="https://www.hcaptcha.com/privacy">hCaptcha Privacy Policy</a>.
     </li>
     <li>
-      <strong>Analytics:</strong> <ContentGap label="Analytics provider(s), if enabled at launch" />
+      <strong>Google Analytics</strong> collects anonymous usage data as described above.{" "}
+      <a href="https://policies.google.com/privacy">Google Privacy Policy</a>.
     </li>
     <li>
       <strong>Affiliate partners:</strong> when you click an affiliate link, the partner may use
-      cookies to attribute a purchase. See our <a href={disclosurePath}>affiliate disclosure</a>.{" "}
-      <ContentGap label="Affiliate programs in use" />
+      cookies to attribute a purchase. See our <a href={disclosurePath}>affiliate disclosure</a>.
+      We currently have no active affiliate partnerships. This section will be updated when we join
+      any affiliate programs.
     </li>
     <li>
-      <strong>Advertising:</strong> <ContentGap label="Ad networks, if any are added" />
+      <strong>Advertising:</strong> we do not currently display advertising on this site. If we add
+      advertising in the future, this section will be updated with the ad networks used and how they
+      collect data.
     </li>
   </ul>
-  <p>These services handle data under their own privacy policies.</p>
+  <p>These services handle data under their own privacy policies, linked above.</p>
 
   <h2>How long we keep information</h2>
-  <p>
-    <ContentGap label="Retention period for contact form submissions, email subscriptions, and other data" />
-  </p>
+  <ul>
+    <li>
+      <strong>Contact form submissions:</strong> we keep messages sent through the contact form for
+      as long as needed to respond and resolve any follow-up, then delete them. We do not keep a
+      permanent archive of contact messages.
+    </li>
+    <li>
+      <strong>Email subscriptions:</strong> your email address is stored by Kit for as long as you
+      remain subscribed. Unsubscribing removes your address from the list.
+    </li>
+    <li>
+      <strong>Analytics data:</strong> Google Analytics retains data according to its own retention
+      settings, which we have set to 14 months.
+    </li>
+  </ul>
 
   <h2>Your rights</h2>
   <p>
@@ -104,11 +144,19 @@ const disclosurePath = getPage("affiliate-disclosure").path;
     details above.
   </p>
   <p>
-    Applicable laws and region-specific rights:{" "}
-    <ContentGap label="Applicable privacy laws (e.g. GDPR, UK GDPR, CCPA/CPRA) and how each is addressed" />
+    <strong>European Economic Area and United Kingdom:</strong> under the GDPR and UK GDPR, you have
+    the right to access, rectify, erase, restrict, or port your data, and to withdraw consent or
+    object to processing. Contact us to exercise any of these rights. If you are not satisfied with
+    our response, you have the right to lodge a complaint with your local data protection authority.
+  </p>
+  <p>
+    <strong>California:</strong> under the CCPA/CPRA, you have the right to know what personal
+    information we collect and how it is used, to request deletion, and to opt out of the sale or
+    sharing of personal information. We do not sell or share personal information as defined by these
+    laws.
   </p>
 
-  <h2>Children’s privacy</h2>
+  <h2>Children&apos;s privacy</h2>
   <p>
     This website is not directed at children, and we do not knowingly collect their information.
   </p>
