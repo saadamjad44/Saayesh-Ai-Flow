@@ -135,5 +135,13 @@ const socialImage = await getSocialImage(page);
     </main>
 
     <SiteFooter />
+    <script is:inline>
+      document.querySelectorAll('a[href^="http"]').forEach(function(a) {
+        if (a.hostname !== location.hostname) {
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+        }
+      });
+    </script>
   </body>
 </html>
