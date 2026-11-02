@@ -805,8 +805,10 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: 'The hub <h1> stays "AI Agents" — 9 characters, and nothing a searcher can act on. The head term is extremely broad and much of it is developer intent (frameworks, SDKs, building one); "When to Use One" points the title at the operator rather than the builder, which is who the page is written for. "what are AI agents" is kept as a supporting keyword rather than given its own page on purpose: the hub answers it in its first section, and a separate definition page would compete with the hub for the same query.',
   },
   "best-ai-agents-for-small-business": {
-    title: "Best AI Agents for Small Business: How to Choose",
+    title: "Best AI Agents for Small Business in 2026: How to Choose",
     brand: "omit",
+    description:
+      "The 4 AI agent categories, 7 questions that separate a good fit from a costly mistake, and the pricing traps to check before you sign up.",
     primaryKeyword: "best AI agents for small business",
     supportingKeywords: [
       "AI agents for small business",
@@ -823,6 +825,14 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
      * products — or a copy of theirs. Selection criteria plus categories is
      * what the page can actually stand behind, so that is what the snippet
      * sells. It costs some clicks from searchers who wanted a table.
+     *
+     * Description override: the MDX description reads well as an intro
+     * paragraph but is generic as a search result — "the categories that
+     * exist, the questions that matter" says what the page does without
+     * numbering any of it. The override leads with concrete counts (4
+     * categories, 7 questions) and names the consequence (costly mistake,
+     * pricing traps), which is specific enough to differentiate in a SERP
+     * full of vendor-written descriptions that all say "ranked" or "compared".
      */
     note: 'Rendered at 48 characters. "How to Choose" rather than a number, because the page is criteria and categories rather than a ranking — there is no hands-on testing behind this cluster, and a ranked table would imply there is. The pricing variant is worth keeping: agent products are priced per resolution or per run far more often than per seat, which the page explains and which is the detail that surprises buyers.',
   },
