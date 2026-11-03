@@ -68,7 +68,7 @@ export const OWNER: OwnerDetails = {
   name: "Saad Amjad",
   contactEmail: "saadamjad.mah@gmail.com",
   location: "Pattoki, Punjab, Pakistan",
-  jurisdiction: null,
+  jurisdiction: "Pakistan",
 };
 
 /**
