@@ -1,0 +1,487 @@
+---
+/**
+ * AI Prompt Cost Calculator — the interactive part of
+ * /ai-business-tools/ai-prompt-token-cost-calculator/.
+ *
+ * Imported by that page's MDX body so the calculator sits in the normal content
+ * flow. All arithmetic, limits, and the model price list live in
+ * ./prompt-cost-calculator.ts, shared with this markup so the hard-coded
+ * attributes and the script's maths cannot drift apart.
+ *
+ * Privacy, which the page states in writing and this implementation guarantees:
+ * there is no <form> element, so nothing can ever be submitted; no fetch, no
+ * localStorage, no cookie write; the pasted prompt and every derived figure
+ * stay in the tab's own DOM for as long as it is open and vanish when it is
+ * closed. The one outbound call is navigator.clipboard.writeText when the
+ * visitor presses Copy, which hands the already-computed summary text to the
+ * platform's clipboard API. Nothing crosses the network.
+ *
+ * The analytics event this file records (copy_result) carries no figure, no
+ * prompt content, and no model name. See src/lib/analytics.ts for the rule.
+ */
+import { MODELS, OUTPUT_LENGTHS, VOLUMES, PRICES_UPDATED, LIMITS } from "./prompt-cost-calculator";
+
+const headingId = "prompt-cost-calculator";
+---
+
+<section
+  aria-labelledby={headingId}
+  class="not-prose my-10 overflow-hidden rounded-panel border border-ink-200 bg-surface shadow-panel"
+  data-prompt-cost-calculator
+>
+  <div class="border-b border-ink-200 bg-ink-50 px-4 py-5 sm:px-6 sm:py-6">
+    <p class="eyebrow eyebrow-accent">Free calculator</p>
+    <h2 id={headingId} class="type-section mt-2">Compare what a prompt costs across models</h2>
+    <p class="mt-2.5 leading-relaxed text-ink-600">
+      Paste any prompt, pick an expected response length, and the table below shows the cost per
+      run and the cost per month across ten popular models. No sign-up, nothing sent anywhere.
+    </p>
+    <p class="mt-3 flex items-start gap-2 text-sm font-medium text-ink-700">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="mt-0.5 size-4 shrink-0 text-accent-700"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+          clip-rule="evenodd"></path>
+      </svg>
+      <span>
+        Your prompt stays in your browser. This tool runs no network requests and keeps no cookie
+        or local-storage record of what you type.
+      </span>
+    </p>
+  </div>
+
+  <div class="px-4 py-6 sm:px-6">
+    {/*
+      Deliberately not a <form>: nothing on this page is ever submitted, and a
+      form would place the prompt in a query string if submit ran by accident.
+    */}
+    <fieldset>
+      <legend class="font-sans text-base font-bold tracking-tight text-ink-900">Your prompt</legend>
+      <label for="prompt-text" class="mt-2 block text-sm font-semibold text-ink-900">
+        Paste the prompt
+      </label>
+      <textarea
+        id="prompt-text"
+        rows="6"
+        maxlength={LIMITS.maxPromptChars}
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Paste your prompt here. The calculator updates as you type."
+        aria-describedby="prompt-text-hint"
+        class="mt-1.5 block w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 font-mono text-sm leading-relaxed text-ink-900 transition-colors duration-180 ease-ui hover:border-ink-400 focus:border-brand-500 focus:outline-none motion-reduce:transition-none"
+        data-prompt-input></textarea>
+      <p id="prompt-text-hint" class="mt-1.5 text-sm text-ink-500">
+        Token counts are estimated from character length. English prose is accurate to around 10
+        per cent; code and non-English can undercount.
+      </p>
+    </fieldset>
+
+    <fieldset class="mt-6 grid gap-4 sm:grid-cols-2">
+      <div>
+        <label for="output-length" class="block text-sm font-semibold text-ink-900">
+          Expected response length
+        </label>
+        <select
+          id="output-length"
+          aria-describedby="output-length-hint"
+          class="mt-1.5 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
+          data-output-length
+        >
+          {
+            OUTPUT_LENGTHS.map((opt, index) => (
+              <option value={opt.value} selected={index === 1}>
+                {opt.label}
+              </option>
+            ))
+          }
+        </select>
+        <input
+          id="output-length-custom"
+          type="number"
+          min="1"
+          max={LIMITS.maxOutputTokens}
+          step="1"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="Tokens per response"
+          hidden
+          class="mt-2 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
+          data-output-length-custom
+        />
+        <p id="output-length-hint" class="mt-1.5 text-sm text-ink-500">
+          Models charge separately for output. This changes the "cost per run" column.
+        </p>
+      </div>
+
+      <div>
+        <label for="volume" class="block text-sm font-semibold text-ink-900">
+          Volume of runs
+        </label>
+        <select
+          id="volume"
+          aria-describedby="volume-hint"
+          class="mt-1.5 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
+          data-volume
+        >
+          {
+            VOLUMES.map((opt, index) => (
+              <option value={opt.value} selected={index === 2}>
+                {opt.label}
+              </option>
+            ))
+          }
+        </select>
+        <input
+          id="volume-custom"
+          type="number"
+          min="1"
+          max={LIMITS.maxVolume}
+          step="1"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="Runs per month"
+          hidden
+          class="mt-2 block min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3 py-2.5 text-ink-900 focus:border-brand-500 focus:outline-none"
+          data-volume-custom
+        />
+        <p id="volume-hint" class="mt-1.5 text-sm text-ink-500">
+          Used for the "cost per month" column. Pick "Just this once" if you only plan to run it.
+        </p>
+      </div>
+    </fieldset>
+
+    <div
+      class="mt-8 rounded-xl border border-accent-200 bg-accent-50 px-4 py-4 text-sm text-ink-800"
+      data-summary
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <p class="font-semibold text-ink-900" data-summary-headline>
+        Paste a prompt above to see the comparison.
+      </p>
+      <p class="mt-1 text-ink-700" data-summary-detail>
+        The cheapest model for your prompt will be highlighted in the table below.
+      </p>
+    </div>
+
+    <div class="mt-6 overflow-x-auto">
+      <table class="w-full min-w-[720px] border-collapse text-left text-sm">
+        <caption class="sr-only">
+          Estimated prompt costs across ten AI models, at the chosen response length and volume.
+        </caption>
+        <thead>
+          <tr class="border-b border-ink-300 bg-ink-50">
+            <th scope="col" class="px-3 py-3 font-sans text-xs font-bold tracking-wide text-ink-700 uppercase">
+              Model
+            </th>
+            <th scope="col" class="px-3 py-3 font-sans text-xs font-bold tracking-wide text-ink-700 uppercase">
+              Input tokens
+            </th>
+            <th scope="col" class="px-3 py-3 font-sans text-xs font-bold tracking-wide text-ink-700 uppercase">
+              Output tokens
+            </th>
+            <th scope="col" class="px-3 py-3 font-sans text-xs font-bold tracking-wide text-ink-700 uppercase">
+              Cost per run
+            </th>
+            <th scope="col" class="px-3 py-3 font-sans text-xs font-bold tracking-wide text-ink-700 uppercase">
+              Cost at this volume
+            </th>
+            <th scope="col" class="px-3 py-3 font-sans text-xs font-bold tracking-wide text-ink-700 uppercase">
+              When it is worth it
+            </th>
+          </tr>
+        </thead>
+        <tbody data-results>
+          {
+            MODELS.map((model) => (
+              <tr
+                class="border-b border-ink-200 align-top transition-colors duration-180 ease-ui motion-reduce:transition-none"
+                data-model={model.id}
+                data-input-per-million={model.inputPerMillion}
+                data-output-per-million={model.outputPerMillion}
+                data-chars-per-token={model.charsPerToken}
+              >
+                <th scope="row" class="px-3 py-4 align-top">
+                  <div class="font-sans font-bold text-ink-900">{model.name}</div>
+                  <div class="mt-0.5 text-xs text-ink-500">{model.provider}</div>
+                  <div
+                    class="mt-1 hidden text-xs font-bold text-emerald-700"
+                    data-cheapest-badge
+                  >
+                    Cheapest for your prompt
+                  </div>
+                </th>
+                <td class="px-3 py-4 font-mono text-xs text-ink-800" data-cell="input-tokens">
+                  —
+                </td>
+                <td class="px-3 py-4 font-mono text-xs text-ink-800" data-cell="output-tokens">
+                  —
+                </td>
+                <td class="px-3 py-4 font-mono text-xs text-ink-800" data-cell="cost-per-run">
+                  —
+                </td>
+                <td class="px-3 py-4 font-mono text-xs text-ink-800" data-cell="cost-at-volume">
+                  —
+                </td>
+                <td class="px-3 py-4 text-xs leading-relaxed text-ink-700">
+                  {model.worthItNote}
+                  {model.caveat && (
+                    <p class="mt-1 text-xs font-semibold text-amber-800">{model.caveat}</p>
+                  )}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-copy-button
+        aria-describedby="copy-help"
+      >
+        Copy results as plain text
+      </button>
+      <span id="copy-help" class="text-xs text-ink-500">
+        Copies the model, input tokens, output tokens, cost per run and monthly cost for every
+        row.
+      </span>
+    </div>
+
+    <p class="mt-6 text-xs text-ink-500">
+      Prices verified against each vendor's own pricing page on
+      <time datetime={PRICES_UPDATED}>{PRICES_UPDATED}</time>. They change often — treat the
+      figures as a comparison between models, not a quote. Discounts, batch pricing, context
+      caching, and enterprise rates are not applied here.
+    </p>
+  </div>
+</section>
+
+<script>
+  /**
+   * Inline script for the prompt cost calculator.
+   *
+   * No external modules. Everything imported from the ESM map at build time is
+   * tree-shaken into this script; nothing is fetched from a CDN at runtime.
+   */
+  import {
+    MODELS,
+    estimateTokens,
+    costPerRun,
+    formatUSD,
+    clamp,
+    LIMITS,
+  } from "./prompt-cost-calculator";
+  import { trackEvent } from "@/lib/analytics";
+
+  type Cell = "input-tokens" | "output-tokens" | "cost-per-run" | "cost-at-volume";
+
+  const root = document.querySelector<HTMLElement>("[data-prompt-cost-calculator]");
+  if (root) {
+    const promptInput = root.querySelector<HTMLTextAreaElement>("[data-prompt-input]");
+    const outputLengthSelect = root.querySelector<HTMLSelectElement>("[data-output-length]");
+    const outputCustomInput = root.querySelector<HTMLInputElement>("[data-output-length-custom]");
+    const volumeSelect = root.querySelector<HTMLSelectElement>("[data-volume]");
+    const volumeCustomInput = root.querySelector<HTMLInputElement>("[data-volume-custom]");
+    const summaryHeadline = root.querySelector<HTMLElement>("[data-summary-headline]");
+    const summaryDetail = root.querySelector<HTMLElement>("[data-summary-detail]");
+    const copyButton = root.querySelector<HTMLButtonElement>("[data-copy-button]");
+
+    function getOutputTokens(): number {
+      if (outputLengthSelect?.value === "custom") {
+        const v = Number(outputCustomInput?.value ?? 0);
+        return clamp(v, LIMITS.maxOutputTokens);
+      }
+      return clamp(Number(outputLengthSelect?.value ?? 500), LIMITS.maxOutputTokens);
+    }
+
+    function getVolume(): number {
+      if (volumeSelect?.value === "custom") {
+        const v = Number(volumeCustomInput?.value ?? 0);
+        return clamp(v, LIMITS.maxVolume);
+      }
+      return clamp(Number(volumeSelect?.value ?? 1), LIMITS.maxVolume);
+    }
+
+    function setCell(row: HTMLTableRowElement, cell: Cell, value: string): void {
+      const target = row.querySelector<HTMLElement>(`[data-cell="${cell}"]`);
+      if (target) target.textContent = value;
+    }
+
+    function refresh(): void {
+      const promptText = promptInput?.value ?? "";
+      const outputTokens = getOutputTokens();
+      const volume = getVolume();
+
+      if (promptText.length === 0) {
+        if (summaryHeadline) summaryHeadline.textContent = "Paste a prompt above to see the comparison.";
+        if (summaryDetail)
+          summaryDetail.textContent =
+            "The cheapest model for your prompt will be highlighted in the table below.";
+      }
+
+      let cheapestIndex = -1;
+      let cheapestCost = Number.POSITIVE_INFINITY;
+      let cheapestName = "";
+
+      const rows = root!.querySelectorAll<HTMLTableRowElement>("[data-model]");
+      const costs: number[] = [];
+
+      rows.forEach((row, index) => {
+        const model = MODELS[index];
+        if (!model) return;
+
+        const inputTokens = estimateTokens(promptText, model.charsPerToken);
+        const runCost = costPerRun(model, inputTokens, outputTokens);
+        const volumeCost = runCost * volume;
+        costs.push(volumeCost);
+
+        setCell(
+          row,
+          "input-tokens",
+          promptText.length === 0 ? "—" : `~${inputTokens.toLocaleString("en-US")}`,
+        );
+        setCell(
+          row,
+          "output-tokens",
+          `~${outputTokens.toLocaleString("en-US")}`,
+        );
+        setCell(row, "cost-per-run", promptText.length === 0 ? "—" : formatUSD(runCost));
+        setCell(row, "cost-at-volume", promptText.length === 0 ? "—" : formatUSD(volumeCost));
+
+        row.classList.remove(
+          "bg-emerald-50",
+          "border-l-4",
+          "border-l-emerald-500",
+          "bg-red-50",
+          "border-l-red-400",
+        );
+        const badge = row.querySelector<HTMLElement>("[data-cheapest-badge]");
+        if (badge) badge.classList.add("hidden");
+
+        if (promptText.length > 0 && volumeCost < cheapestCost) {
+          cheapestCost = volumeCost;
+          cheapestIndex = index;
+          cheapestName = model.name;
+        }
+      });
+
+      if (cheapestIndex >= 0) {
+        const winner = rows[cheapestIndex];
+        if (winner) {
+          winner.classList.add("bg-emerald-50", "border-l-4", "border-l-emerald-500");
+          const badge = winner.querySelector<HTMLElement>("[data-cheapest-badge]");
+          if (badge) badge.classList.remove("hidden");
+        }
+
+        // Highlight the most expensive, too, to make the gap visible.
+        let maxCost = -1;
+        let maxIndex = -1;
+        costs.forEach((c, i) => {
+          if (c > maxCost) {
+            maxCost = c;
+            maxIndex = i;
+          }
+        });
+        if (maxIndex >= 0 && maxIndex !== cheapestIndex) {
+          const loser = rows[maxIndex];
+          if (loser) loser.classList.add("border-l-4", "border-l-red-400");
+        }
+
+        if (summaryHeadline) {
+          summaryHeadline.textContent = `${cheapestName} is cheapest for this prompt`;
+        }
+        if (summaryDetail) {
+          const multiple = maxCost > 0 ? (maxCost / cheapestCost).toFixed(1) : "0";
+          summaryDetail.textContent =
+            volume === 1
+              ? `Cost: ${formatUSD(cheapestCost)} per run. The most expensive model in the list costs ${multiple}x as much.`
+              : `Cost: ${formatUSD(cheapestCost)} across ${volume.toLocaleString("en-US")} runs. The most expensive model costs ${multiple}x as much.`;
+        }
+      }
+    }
+
+    function syncCustomVisibility(): void {
+      if (outputCustomInput) {
+        outputCustomInput.hidden = outputLengthSelect?.value !== "custom";
+      }
+      if (volumeCustomInput) {
+        volumeCustomInput.hidden = volumeSelect?.value !== "custom";
+      }
+    }
+
+    function buildClipboardText(): string {
+      const promptText = promptInput?.value ?? "";
+      const outputTokens = getOutputTokens();
+      const volume = getVolume();
+      const headerVolume = volume === 1 ? "Cost / run" : `Cost / ${volume.toLocaleString("en-US")} runs`;
+      const lines: string[] = [];
+      lines.push("AI Prompt Cost Comparison");
+      lines.push(`Characters in prompt: ${promptText.length.toLocaleString("en-US")}`);
+      lines.push(`Output tokens per run (estimated): ${outputTokens.toLocaleString("en-US")}`);
+      lines.push("");
+      lines.push(["Model", "Input tokens", "Output tokens", "Cost / run", headerVolume].join(" | "));
+      lines.push("---");
+
+      MODELS.forEach((model) => {
+        const inputTokens = estimateTokens(promptText, model.charsPerToken);
+        const runCost = costPerRun(model, inputTokens, outputTokens);
+        const volumeCost = runCost * volume;
+        lines.push(
+          [
+            `${model.name} (${model.provider})`,
+            `~${inputTokens.toLocaleString("en-US")}`,
+            `~${outputTokens.toLocaleString("en-US")}`,
+            formatUSD(runCost),
+            formatUSD(volumeCost),
+          ].join(" | "),
+        );
+      });
+
+      lines.push("");
+      lines.push("Prices are vendor list prices; estimates only. Source: saayeshaiflow.com");
+      return lines.join("\n");
+    }
+
+    syncCustomVisibility();
+    refresh();
+
+    promptInput?.addEventListener("input", refresh);
+    outputLengthSelect?.addEventListener("change", () => {
+      syncCustomVisibility();
+      refresh();
+    });
+    outputCustomInput?.addEventListener("input", refresh);
+    volumeSelect?.addEventListener("change", () => {
+      syncCustomVisibility();
+      refresh();
+    });
+    volumeCustomInput?.addEventListener("input", refresh);
+
+    if (copyButton && navigator.clipboard?.writeText) {
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(buildClipboardText());
+          const original = copyButton.textContent;
+          copyButton.textContent = "Copied to clipboard";
+          trackEvent("share_click", { method: "prompt_cost_copy" });
+          window.setTimeout(() => {
+            if (original) copyButton.textContent = original;
+          }, 2000);
+        } catch {
+          copyButton.textContent = "Press Ctrl+C to copy";
+        }
+      });
+    } else if (copyButton) {
+      copyButton.hidden = true;
+    }
+  }
+</script>

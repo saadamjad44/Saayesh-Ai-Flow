@@ -63,6 +63,17 @@ export async function getStaticPaths() {
       "best-ai-tools-for-small-business",
       "ai-tools-vs-virtual-assistant",
     ],
+    /**
+     * The prompt cost calculator's shortlist pairs it with the three
+     * /ai-business-tools/ guides a reader comparing per-prompt costs tends to
+     * want next: the broader pricing-model guide, the tier-decision page, and
+     * the tool buying roundup.
+     */
+    "ai-prompt-token-cost-calculator": [
+      "how-much-does-ai-cost-small-business",
+      "chatgpt-business-vs-plus",
+      "best-ai-tools-for-small-business",
+    ],
   };
 
   const [pillars, articles, tools] = await Promise.all([

@@ -92,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 34,
+  3: 35,
 };
 
 export const PAGES = [
@@ -1081,6 +1081,31 @@ export const PAGES = [
     type: "article",
     phase: 3,
     pillar: "ai-agents",
+  },
+
+  /**
+   * Phase 3 - the third free interactive utility, approved 2026-11-06.
+   *
+   * It sits beside the cost calculator and the pricing tracker in
+   * /ai-business-tools/ because the three answer halves of the same budgeting
+   * question: the tracker says what vendors charge for subscriptions, the cost
+   * calculator totals an owner's own stack, and this one covers the per-prompt
+   * API arithmetic that neither of the others reaches. The audience that hits
+   * one often wants the other two.
+   *
+   * Carries WebApplication schema rather than Article schema via the `tools`
+   * collection. All token-count estimation and cost arithmetic run in the
+   * browser; no prompt text is ever submitted. The ten models' prices live in a
+   * single constant in prompt-cost-calculator.ts so a vendor repricing is a
+   * single-file update, with the verification date shown on the tool itself.
+   */
+  {
+    id: "ai-prompt-token-cost-calculator",
+    title: "AI Prompt Cost Calculator: Tokens & Price per Model",
+    path: "/ai-business-tools/ai-prompt-token-cost-calculator/",
+    type: "tool",
+    phase: 3,
+    pillar: "ai-business-tools",
   },
 ] as const satisfies readonly SitePage[];
 

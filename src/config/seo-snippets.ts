@@ -1204,6 +1204,23 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Info / Commercial",
     note: "Fresh-feature keyword - SERP competition is still soft because the feature set has moved since launch and few editorial pages have caught up. Title keeps the product name verbatim. Supporting keywords cover the \"how to use\" intent variant, which autocompletes for about a third of this traffic.",
   },
+  "ai-prompt-token-cost-calculator": {
+    title: "AI Prompt Cost Calculator: Tokens, Price per Model",
+    brand: "omit",
+    description:
+      "Paste a prompt, pick an output length, and see the cost per run across ten AI models. Free, in-browser, no signup. Includes 100, 1K and 10K volume math.",
+    primaryKeyword: "AI prompt cost calculator",
+    supportingKeywords: [
+      "AI token cost calculator",
+      "GPT token price calculator",
+      "ChatGPT API cost calculator",
+      "Claude cost calculator",
+      "LLM cost calculator",
+      "token counter cost",
+    ],
+    intent: "Info / Commercial",
+    note: "Utility-tool keyword with strong commercial intent and a SERP currently held by vendor playgrounds and single-model counters. The page's differentiator is the ten-model side-by-side with honest 'when it is worth it' notes and volume math. Supporting keywords cover the per-model variants that autocomplete alongside the head term.",
+  },
 
   // ---- AI Prompts cluster ------------------------------------------------
   "ai-prompts": {

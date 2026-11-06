@@ -1,0 +1,69 @@
+---
+pageId: ai-prompt-token-cost-calculator
+title: "AI Prompt Cost Calculator: Tokens & Price per Model"
+heading: AI Prompt Cost & Token Calculator
+description: Paste any prompt and see the estimated token count plus cost per run on GPT-4o, Claude, Gemini, DeepSeek and more. Includes volume math for 100 / 1K / 10K runs.
+publishedDate: 2026-11-06
+updatedDate: 2026-11-06
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: How accurate is this token counter?
+    answer: Every count on the page is a character-based estimate. For English prose it is accurate to within about ten per cent across the major vendors, which is enough to compare models at a glance. Code, non-English text and prompts with a lot of structured data will undercount by a wider margin. If you need an exact figure before buying volume credits, run the same prompt once in the vendor's own playground, where the exact token count is shown.
+  - question: Where do these prices come from?
+    answer: From each vendor's own public pricing page. The date they were last verified is shown on the tool itself and under the table, and they are updated when we spot a change. Discounts, batch pricing, context caching, enterprise rates and off-peak windows are not applied here because applying them would need figures you do not have at the point you are comparing.
+  - question: Does my prompt get sent anywhere?
+    answer: No. The calculator runs entirely in your browser. There is no form submission, no network request to a server, no analytics parameter carrying the prompt text, and no cookie or local-storage record of what you type. You can disconnect your internet connection after loading the page and the tool still works. The one network call this page makes is to our own analytics, and the only event it sends is that the Copy button was pressed.
+  - question: What is cheaper, ChatGPT Plus or the API?
+    answer: For most small business owners running under about 500 moderate-length prompts a month, the flat ChatGPT Plus plan is cheaper and simpler. Above that, the API with GPT-4o mini is usually cheaper for comparable work. The honest way to decide is to run a representative prompt through this calculator at your expected monthly volume and compare the total against a ChatGPT Plus subscription at the rate you would pay in your region.
+  - question: Why is Claude Opus so expensive?
+    answer: Anthropic positions Opus as its highest-quality model for complex reasoning and research tasks. For most writing, email, chat and small business work, Claude Sonnet is five times cheaper and rarely worse. The honest rule is to pick Opus only when you have tested Sonnet on the same prompt and the gap is specifically what you are paying for.
+  - question: Which model is best for a small business?
+    answer: For almost everything a small business does with AI - emails, blog drafts, basic research, customer replies, summarising documents - GPT-4o mini or Gemini 2.5 Flash is enough, and your monthly API cost at a realistic volume stays under a few dollars. Upgrade to GPT-4o, Claude Sonnet or Gemini 2.5 Pro only when you hit a specific limitation that the cheaper model fails on. The calculator above shows the gap in money terms.
+  - question: Do the estimates include system prompts or context?
+    answer: Only what you paste. If your real workflow includes a long system prompt, retrieval context, or a file you attach every time, add those characters to the prompt box to get a realistic estimate. Context is charged as input tokens on every run, which is the single most common reason a bill ends up higher than expected.
+---
+
+import { PromptCostCalculator } from "@/components/tools";
+
+Most people underestimate what a prompt costs at scale for a predictable reason: a single run is cents, so a thousand runs feels like it should be a few dollars. It is not. At GPT-4o on a two-paragraph reply, a thousand runs a month is roughly $7. At Claude Opus for the same work, it is $40 or more. And at Gemini 2.5 Flash, it is under a dollar.
+
+Paste a prompt below, pick an expected response length, and the table shows the gap across ten popular models. Everything runs in your browser, so nothing leaves the page.
+
+<PromptCostCalculator />
+
+## How token pricing actually works
+
+Every API model is billed by the token, not by the message. A token is a chunk of text — roughly four characters, or three-quarters of a word, for English prose. The word "calculator" is two tokens; "hello" is one; a long compound German word might be several. You pay separately for the tokens you send (input) and the tokens the model sends back (output), and the output rate is always higher — usually three to five times the input rate on the same model.
+
+That matters because the length of the reply drives the bill more than the length of the prompt does. A 200-word prompt that asks for a 50-word reply costs almost nothing, even on an expensive model. The same 200-word prompt that asks for a 2,000-word article can cost twenty times as much on the same model, because the output volume dominates. The second input on the calculator — expected response length — is where that trade-off is visible.
+
+The token counts shown above are estimated from character length. For OpenAI, Claude and Gemini on English prose, that estimate is accurate to within about ten per cent. For code, non-English text, or prompts with lots of punctuation and structure, it can under-count by more. If the exact figure matters, run the prompt once in the vendor's own playground, where the tokeniser is shown.
+
+## The three mistakes that make an AI bill explode
+
+1. **Picking the most expensive model for everything "to be safe".** Most small business work — emails, summaries, draft content, classification — is done well by the cheapest tier. Paying for Opus or GPT-4o on every run of a workflow that GPT-4o mini would have handled is the single most common overpayment pattern.
+2. **Forgetting response length matters more than prompt length.** A long system prompt costs one unit of input per run. A long output costs one unit of output per run, at a higher rate. If your prompt says "answer in detail", you have asked for the larger half of the bill.
+3. **Not testing the cheapest model first.** The honest workflow is to try the cheapest model that could plausibly work, use it on the task for a week, and only upgrade when you hit a specific limitation. The reverse — starting at the top and never checking downwards — is where quiet overpayment lives.
+
+## How to cut AI costs by 50 to 80 per cent
+
+- **Start at the cheapest tier that could plausibly work.** GPT-4o mini, Gemini 2.5 Flash and Claude Haiku are all under a dollar per million input tokens. Try the task there first, for a week, before considering an upgrade.
+- **Batch similar prompts.** If you run the same prompt on ten inputs in a row, most assistants accept all ten in a single call, saving the per-request overhead and often the system prompt tokens.
+- **Shorten the output explicitly.** Add "reply in at most 50 words" or "give me the single best option, no alternatives" to the system prompt. The output rate is the higher one; cutting output is the biggest saving per sentence removed.
+- **Cache repeated context.** If every run uses the same long document, Anthropic's context caching feature lets you charge for it once and reuse the cached version at a fraction of the rate. The vendor pricing pages explain the discount.
+- **Compress prompts.** Remove filler, cut polite preambles, and keep only the instruction and the content. Prompts written like a legal memo cost more than ones written like a direct message, for no quality gain.
+- **Move the quality upgrade to the cases that need it.** A workflow does not need to run on one model. Classify with the cheap one, then route the hard cases to the more capable one. The savings on the first step are usually larger than the extra spend on the second.
+
+## Related tools on this site
+
+- **[Small Business AI Cost Calculator](/ai-business-tools/small-business-ai-cost-calculator/)** — totals every AI subscription and API charge in your stack, not just one model.
+- **[AI Tool Pricing Tracker](/ai-business-tools/ai-tool-pricing-tracker/)** — every AI subscription price we have checked, each with the date we verified it.
+- **[How much does AI cost for a small business](/ai-business-tools/how-much-does-ai-cost-small-business/)** — the pricing-model guide behind the calculators, including the fees that do not appear on a pricing page.
+- **[AI email time savings calculator](/ai-automation/ai-email-time-savings-calculator/)** — the other half of the arithmetic: what an AI email workflow saves, net of human review time.
+
+## About this calculator
+
+It is free, needs no account, and takes no email address. Every price shown is the vendor's public list price on the date at the bottom of the tool; no price is marked up, discounted, or inferred. Token counts are estimates, labelled as such, because this site does not load a multi-megabyte tokeniser bundle for a utility whose purpose is comparison rather than billing.
+
+It does not estimate quality, latency, context window, or fit. Those depend on the specific task, and a calculator that invented those numbers would mislead more than it would help.
