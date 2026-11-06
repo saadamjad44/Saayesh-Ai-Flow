@@ -1049,6 +1049,161 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Informational",
     note: "Rendered at 66 characters, and its old title read almost identically to the buying roundup at /ai-business-tools/best-ai-tools-for-small-business/. The two have genuinely different intents — learn what AI is for, versus choose what to buy — and the titles now say so. Seven is the real number of task sections on the page.",
   },
+  "ai-tools-for-dentists": {
+    title: "AI Tools for Dentists: A 2026 Buying Guide",
+    brand: "omit",
+    description:
+      "Which AI tools genuinely help a dental practice, the four categories they fall into, what to ask about HIPAA and pricing, and where most practices should start.",
+    primaryKeyword: "AI tools for dentists",
+    supportingKeywords: [
+      "AI tools for dental practice",
+      "AI for dentists",
+      "AI dental software",
+      "HIPAA compliant AI tools for dentists",
+      "dental AI scribe",
+    ],
+    intent: "Info / Commercial",
+    note: 'Title 42 characters, description 160. The head term "ai tools for dentists" is held by AI-generated spam and LinkedIn posts, so the title leads with the head term and adds "A 2026 Buying Guide" to signal editorial intent against the listicles. "dental practice" is the near-equal variant autocomplete returns and lands the same page without a word of change; "AI for dentists" is the shorter sibling. The HIPAA and scribe keywords are lifted from the H2s that carry them, both observed autocomplete tails.',
+  },
+  "ai-tools-for-therapists": {
+    title: "AI Tools for Therapists: What Is and Is Not Safe",
+    brand: "omit",
+    description:
+      "Which AI tools genuinely help a therapy practice, where the ethical line sits, how to handle HIPAA and consent, and what AI should never do in a session.",
+    primaryKeyword: "AI tools for therapists",
+    supportingKeywords: [
+      "AI for therapists",
+      "AI tools for therapy practice",
+      "AI for mental health professionals",
+      "HIPAA compliant AI for therapists",
+      "AI therapy notes",
+    ],
+    intent: "Info / Commercial",
+    note: "The therapy SERP is held by vendor pages selling scribes and chatbots, none of which treats the ethics question seriously. The title adds the compliance framing that none of the incumbents carry, and the supporting keywords include both the clinician-facing variant (therapists) and the practice-wide variant (therapy practice, mental health professionals).",
+  },
+  "ai-tools-for-accountants-pakistan": {
+    title: "AI Tools for Accountants in Pakistan (2026)",
+    brand: "omit",
+    description:
+      "Which AI tools a Pakistani accounting practice can actually buy and use, where FBR and SBP rules bite, and where general assistants beat specialised software.",
+    primaryKeyword: "AI tools for accountants in Pakistan",
+    supportingKeywords: [
+      "AI accounting software Pakistan",
+      "AI for Pakistani accountants",
+      "ChatGPT for accountants Pakistan",
+      "AI tools for Pakistani accounting firms",
+    ],
+    intent: "Info / Commercial",
+    note: "Geo-specific head term with weak competition - only ICT.edu.pk and vendor blogs rank for it, with no editorial coverage of the access and payment questions that dominate real Pakistani adoption. The title names the year to signal a current-market read, and the supporting keywords cover the two common variants (Pakistan vs Pakistani).",
+  },
+  "ai-tools-for-coaches": {
+    title: "AI Tools for Coaches: What Helps, What Crosses the Line",
+    brand: "omit",
+    description:
+      "Which AI tools genuinely help a coaching practice, where the ethical line sits, how to handle client data, and the admin wins that start paying off in weeks.",
+    primaryKeyword: "AI tools for coaches",
+    supportingKeywords: [
+      "AI for coaches",
+      "AI tools for coaching business",
+      "AI for life coaches",
+      "AI for business coaches",
+      "AI for executive coaches",
+    ],
+    intent: "Info / Commercial",
+    note: "Head term with high commercial intent and a SERP split between vendor demos and generic coach-productivity blog posts. The title's second clause signals the ethics angle none of the incumbents cover. Supporting keywords include life/business/executive coach variants, all of which land the same page because the ethical framework applies across coaching modalities.",
+  },
+  "ai-tools-for-cleaning-businesses": {
+    title: "AI Tools for Cleaning Businesses: What Earns Its Cost",
+    brand: "omit",
+    description:
+      "Where AI fits in a cleaning business: quotes, scheduling, Google reviews and invoicing. Plus the common AI tools that are overkill for this trade.",
+    primaryKeyword: "AI tools for cleaning businesses",
+    supportingKeywords: [
+      "AI for cleaning companies",
+      "AI tools for cleaning services",
+      "AI for residential cleaning business",
+      "AI for commercial cleaning",
+      "AI software for cleaning businesses",
+    ],
+    intent: "Info / Commercial",
+    note: "Very low competition in the SERP - no established authority covers this specifically, and vendor pages are all either generic service-business roundups or field-service platforms. The title refuses the listicle framing and leads with the test the content applies - does the tool earn its cost? Supporting keywords cover the residential/commercial split autocomplete returns.",
+  },
+  "ai-prompts-for-accountants": {
+    title: "AI Prompts for Accountants: The Conversations",
+    brand: "omit",
+    description:
+      "AI prompts for the accounting conversations that waste the most hours: plain-English tax explanations, chasing records, scope changes, and advisory messages.",
+    primaryKeyword: "AI prompts for accountants",
+    supportingKeywords: [
+      "ChatGPT prompts for accountants",
+      "AI prompts for CPAs",
+      "AI prompts for accounting firms",
+      "best AI prompts for accountants",
+    ],
+    intent: "Informational",
+    note: "The prompts pillar's second profession-specific set after the freelancers page. SERP for the head term is held by prompt packs for sale and generic listicles, so the page differentiates on scope (conversations that cost money, not content prompts) and keeps the overlap with the freelancer set to zero - freelancer page owns scope/rate conversations, this one owns technical-position explanations and record chases.",
+  },
+  "ai-prompts-for-real-estate-agents": {
+    title: "AI Prompts for Real Estate Agents: Listings & Follow-Ups",
+    brand: "omit",
+    description:
+      "AI prompts for the real estate work that eats a week: listing descriptions, showing follow-ups, cold leads, price-reduction conversations, and lowball offers.",
+    primaryKeyword: "AI prompts for real estate agents",
+    supportingKeywords: [
+      "ChatGPT prompts for real estate",
+      "AI prompts for realtors",
+      "AI prompts for real estate business",
+      "best AI prompts for real estate agents",
+    ],
+    intent: "Informational",
+    note: "The prompts pillar's third profession-specific set. The real estate SERP has larger search volume than accountants or freelancers and is held by prompt-pack vendors - differentiator is the specific conversations between a listing and a close, and the honest listing-description workflow that does not pretend to game portal algorithms.",
+  },
+  "make-ai-writing-sound-human": {
+    title: "How to Make AI Writing Sound More Human",
+    brand: "omit",
+    description:
+      "The specific edits that make AI writing sound like a person wrote it: voice samples, banned words, the one-paragraph rewrite rule, and when to stop editing.",
+    primaryKeyword: "how to make AI writing sound more human",
+    supportingKeywords: [
+      "make AI writing sound human",
+      "humanize AI writing",
+      "how to make ChatGPT sound more human",
+      "make AI content sound human",
+      "AI writing tells",
+    ],
+    intent: "Informational",
+    note: "The head term is high-volume and held by vendor content from AI humanizer products, none of which teach the editing discipline that actually works. The title is the verbatim head term - no room for a modifier. Supporting keywords include the ChatGPT-specific variant, which autocompletes for a large share of this traffic and lands the same page.",
+  },
+  "best-free-ai-agents-for-small-business": {
+    title: "Best Free AI Agents for Small Business (What Free Means)",
+    brand: "omit",
+    description:
+      "What free AI agents can actually do for a small business, where the free tier ends, the trial-dressed-as-free traps, and when a paid plan is cheaper than free.",
+    primaryKeyword: "best free AI agents for small business",
+    supportingKeywords: [
+      "free AI agents for small business",
+      "free AI agent tools",
+      "best free AI agents",
+      "open source AI agents for small business",
+    ],
+    intent: "Info / Commercial",
+    note: "Companion to best-ai-agents-for-small-business, deliberately scoped to the free-tier question so the two do not cannibalise - the paid page owns the full category framework; this page owns the free-tier arithmetic and the trial-dressed-as-free trap. Supporting keywords include the open-source variant, which is the one category where free is literal and indefinite.",
+  },
+  "chatgpt-agent-mode-for-small-business": {
+    title: "ChatGPT Agent Mode for Small Business: What It Does",
+    brand: "omit",
+    description:
+      "What ChatGPT Agent Mode does for a small business, where it earns its cost, the safety settings to keep on, and when a plain prompt is the better answer.",
+    primaryKeyword: "ChatGPT Agent Mode for small business",
+    supportingKeywords: [
+      "ChatGPT Agent Mode",
+      "how to use ChatGPT Agent Mode",
+      "ChatGPT agent for business",
+      "ChatGPT agents for small business",
+    ],
+    intent: "Info / Commercial",
+    note: "Fresh-feature keyword - SERP competition is still soft because the feature set has moved since launch and few editorial pages have caught up. Title keeps the product name verbatim. Supporting keywords cover the \"how to use\" intent variant, which autocompletes for about a third of this traffic.",
+  },
 
   // ---- AI Prompts cluster ------------------------------------------------
   "ai-prompts": {

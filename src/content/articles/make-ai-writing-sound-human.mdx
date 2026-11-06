@@ -1,0 +1,162 @@
+---
+pageId: make-ai-writing-sound-human
+title: "How to Make AI Writing Sound More Human"
+heading: "How to Make AI Writing Sound More Human (Without Losing Your Voice)"
+description: "The specific edits that make an AI-written draft sound like a person wrote it: voice samples, banned words, the one-sentence rewrite rule, and when to stop."
+publishedDate: 2026-11-05
+updatedDate: 2026-11-05
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Why does AI writing sound robotic?
+    answer: Because it writes the average of a very large amount of polite business English, and the average of that body of text is a specific kind of blandness - hedged, over-polite, structurally repetitive, and heavy on filler that reads as professional in isolation and as corporate in volume. The tells are not the big ones most people point to. They are the small ones - "it is worth noting", "crucial role", three-adjective lists, every paragraph opening with a topic sentence - that AI produces reliably and humans use intermittently.
+  - question: What is the fastest way to make AI writing sound human?
+    answer: Paste two or three paragraphs of your own real writing and tell the model to match that voice, then name three specific words or phrases you never use. The second half does more work than the first. "Be more conversational" produces generic conversational output; "never write 'leverage', 'robust', or 'at the end of the day'" removes the exact tells that give AI writing away. The combination of imitating your voice and removing the model's defaults is more effective than either alone.
+  - question: Can a tool reliably detect AI writing?
+    answer: In 2026, not with the confidence their marketing implies. AI detectors flag human writing as AI, pass AI writing as human, and change their verdicts between runs on the same text. Teachers, publications and clients have all experienced the false-positive problem badly enough that most serious users of these tools have moved to treating detection as a signal rather than a verdict. The useful lesson is that writing that reads as yours is the test, not whether a detector agrees.
+  - question: Should I use an AI humanizer tool?
+    answer: Most of them do what you could do faster by hand, with more control. Humanizers replace common AI words with their synonyms, shuffle sentence lengths, and introduce informal phrases, which fools some detectors some of the time and produces text that does not sound like anyone in particular. The approach that works - supplying your actual voice as a sample and telling the model what to avoid - is both more effective and free.
+  - question: How do I rewrite AI output without losing hours to it?
+    answer: Work on one paragraph at a time, not the whole draft. Ask the model to rewrite that paragraph keeping the facts unchanged, matching a voice sample you paste, avoiding specific phrases, and reducing the paragraph by 20 to 30 percent. The length cut forces real editing rather than synonym swaps, and working one paragraph at a time keeps your attention on how it reads rather than on how long the whole piece is.
+  - question: What are the most obvious AI words to cut?
+    answer: Delve, leverage, utilize, robust, seamless, comprehensive, pivotal, multifaceted, harness, embark, navigate (used metaphorically), showcase, streamline, paramount. And the phrases - "it is worth noting", "in today's fast-paced", "let's dive in", "plays a crucial role", "in the realm of", "when it comes to". None of these are wrong in isolation. In the quantities AI uses them, they are the signature.
+  - question: When does AI writing not need to sound human?
+    answer: When nobody will read it in a context where sounding human matters. Internal summaries, database records, structured notes, simple transactional confirmations - these are better served by plain, consistent prose than by voice. The humanising work is for anything a reader is meant to feel - client emails, marketing copy, essays, cover letters, website pages - and is overkill for anything they only need to parse.
+---
+
+import { Callout, KeyTakeaways, VerdictBox } from "@/components/content";
+
+The problem with AI writing in 2026 is not that it is bad. It is that it is uniform. Read five pages written by five different companies with five different voices and you will hear the same voice underneath - hedged, over-polite, heavy with filler, everything paragraph starting the same way. It sounds professional until you realise you have been reading the same article all morning.
+
+This page is about the specific edits that break that uniformity and let your own writing through. No humanizer tool, no detector-dodging tricks. Just the small set of things that reliably change the output, and the order to do them in.
+
+<KeyTakeaways>
+
+- **Voice samples beat voice instructions.** Pasting three paragraphs of your own writing teaches the model more than any adjective you could give it.
+- **Name what you never say.** Banned words do more work than requested tones. "Never use 'leverage', 'robust', 'delve'" removes the exact tells that give AI away.
+- **Cut 20 to 30 percent on the rewrite.** The length cut forces real editing rather than synonym swaps, and tight prose reads as human.
+- **Work paragraph by paragraph.** Whole-draft rewrites produce the same averaged tone. One paragraph at a time keeps attention on how it reads.
+- **AI detectors are not a verdict.** They flag human writing as AI and the reverse. Writing that reads as yours is the actual test.
+- **Not every piece of AI writing needs to sound human.** Internal notes and structured records are better served by plain prose than by voice.
+
+</KeyTakeaways>
+
+<VerdictBox
+  heading="The short answer"
+  bestFor="Taking an AI draft of something a reader will actually read - a client email, a blog post, a cover letter - and ending up with your voice on the page"
+  notFor="Fooling an AI detector into passing something you did not write, or pretending the AI's opinions are yours"
+>
+  Paste three paragraphs of your own real writing, tell the model to match that voice, and name
+  three to five words or phrases you never use. That alone does 70 percent of the work. Then ask
+  it to rewrite paragraph by paragraph, cutting each by a quarter. Then read it aloud and change
+  the sentences that trip. That is the whole method. The rest is reps.
+</VerdictBox>
+
+## The six tells that give AI writing away
+
+Before editing, it helps to know what you are editing out. AI writing in 2026 has a recognisable signature, and it is made of smaller tells than most guides describe.
+
+**The vocabulary.** Every model has words it prefers. "Delve", "leverage", "robust", "seamless", "comprehensive", "multifaceted", "harness", "pivotal" - none of these are wrong in isolation. In the density AI uses them, they are the signature, and cutting them does more for the output than any instruction about tone.
+
+**The hedging.** "It is worth noting", "it is important to remember", "it should be noted that", "while it is true that". The model has been trained on business prose that hedges, and it hedges reflexively even when the point is unambiguous. Cut the hedge, state the sentence, and the voice changes.
+
+**The three-adjective list.** "Efficient, scalable, and user-friendly". "Clear, actionable, and measurable". The rule-of-three structure is so trained into the model that it produces it on auto-pilot, and once you see it you cannot unsee it. Replace with two adjectives, or one, or none.
+
+**The topic-sentence opener.** AI writes paragraphs that start with a summary sentence and then support it. Humans do that sometimes and then also start paragraphs with an example, a question, a fragment, or a sentence that only makes sense after reading on. Varying the paragraph opener is the single edit that most changes the feel of a draft.
+
+**The uniform sentence length.** AI drafts tend to run in sentences of 18 to 25 words with low variance. Human writing swings - a 40-word sentence next to a 4-word one. Breaking the rhythm is a mechanical fix with a large effect.
+
+**The participial tack-on.** "...highlighting the importance of X", "...underscoring the value of Y", "...ensuring that Z". These exist to tie a sentence back to a point the paragraph has already made, and they are a model's reflex rather than a choice. Delete or make a separate sentence.
+
+## The method, in order
+
+Five steps, each of which does real work. Do them in this order.
+
+### Step 1: Give it your voice before you give it the task
+
+Before you ask the model to write anything, paste two or three paragraphs of your own real writing - a recent email, a blog post, a note you took - and tell it: "Match the voice of this writing in everything that follows. Match the sentence length, the paragraph structure, and the word choice."
+
+This is not optional and it is not a nicety. A voice sample changes the output more than any adjective you could pick, because the model has something concrete to imitate. "Write in a conversational tone" produces whatever conversational tone the model's training data contains, which is somebody else's. "Match this voice" produces something closer to yours.
+
+Three paragraphs is enough; ten is better; one is not. And the voice sample needs to be work you actually did - a draft of the piece you want is useless, because the model will match its own output.
+
+### Step 2: Name what you never write
+
+This does more work than describing what you do write. "Be more casual" is vague; "never use the word 'leverage', 'robust', or 'at the end of the day'; never open a paragraph with 'In today's'" is specific.
+
+Build your own banned list over time. Every time you catch a word in your own output that makes you wince, add it to the list and stop seeing it. A banned list of 20 to 30 items, specific to you, is one of the most valuable prompt artifacts you can keep.
+
+### Step 3: Ask for the rewrite paragraph by paragraph
+
+A whole-draft rewrite produces whole-draft averaging. One paragraph at a time keeps your attention on how it reads and gives the model something small enough to actually change.
+
+The useful prompt is specific: "Rewrite this paragraph. Keep the facts exactly as they are. Match the voice sample I pasted. Avoid the banned list. Cut the length by 20 to 30 percent. Do not restate the first sentence as the last sentence."
+
+The length cut is the load-bearing instruction. Asking for a shorter paragraph forces the model to make decisions - which clause to keep, which modifier to drop - rather than shuffling synonyms. Short, decisive sentences read as human; long, hedged ones do not.
+
+### Step 4: Read it aloud
+
+A sentence that trips when you read it aloud will trip when a reader reads it silently. Reading aloud catches the rhythms that look fine on screen and sound wrong in speech - the three-clause sentence that had to breathe three times, the two sentences in a row that start with "This", the participial tack-on at the end of a paragraph.
+
+Mark every sentence that trips. Rewrite them one at a time, not by giving the model another pass, but by hand. The rewriting-by-hand step is the one most people skip, and it is the one that produces the version that sounds like you.
+
+### Step 5: Put back what the model could not know
+
+The last edit is the one no prompt can do: add the detail that comes from your experience. The specific project in March, the client who did or did not take your advice, the sentence a colleague used that stuck with you, the way the problem actually showed up in your work. One concrete reference per section is enough, and it is the thing that makes the piece unmistakably yours.
+
+## What a rewrite prompt looks like, end to end
+
+Below is a template that collects everything above. Treat it as a starting point and build a version you actually use.
+
+```
+You are going to rewrite one paragraph at a time from a draft I will paste.
+
+Voice sample to match. Match this voice in sentence length, paragraph structure,
+and word choice:
+
+[paste 3 paragraphs of your real writing here]
+
+Words and phrases I never use:
+- leverage, utilize, robust, seamless, comprehensive, pivotal, multifaceted,
+  delve, harness, embark, navigate (metaphorical), showcase, streamline, paramount
+- "it is worth noting", "in today's fast-paced", "plays a crucial role",
+  "when it comes to", "in the realm of", "let's dive in"
+- three-adjective lists in any form
+- "furthermore", "moreover", "additionally"
+- opening a paragraph with "In today's", "In the", or "When it comes to"
+
+Rules for each rewrite:
+- Keep all facts exactly as they are. Do not add new claims.
+- Cut the length of the paragraph by 20 to 30 percent.
+- Vary sentence length: a short sentence should sit next to a long one.
+- Vary paragraph openers: do not start every paragraph with a topic sentence.
+- Do not end a paragraph with a participial phrase tying it back to an earlier point.
+
+I will paste one paragraph at a time. Rewrite that paragraph and stop.
+```
+
+The paragraph-at-a-time structure is what separates this from the one-shot humanizer tools. The one-shot approach produces plausible but averaged output; the paragraph loop lets you adjust the prompt between paragraphs as you see what the model is or is not doing.
+
+## When to stop
+
+The point at which more editing makes the piece worse, not better. Three signs you have reached it:
+
+1. **The changes stop surprising you.** The model is producing variations of the same voice, which means your voice is now what is driving the output.
+2. **You start recognising your own sentences.** Phrases you would actually say, in rhythms you would actually use.
+3. **Reading aloud is boring.** Not boring in content - boring in the sense that no sentence trips. That is the sound of writing that does not announce itself.
+
+More passes past this point introduce AI smoothness back into the text, because the model's instinct is to tidy. Once you are there, stop editing and press send.
+
+## What this method will not do
+
+It will not fool every AI detector, because those detectors are not consistent enough to fool reliably. Writing that reads as yours will still be flagged sometimes, and so will writing you wrote entirely by hand.
+
+It will not turn a bad argument into a good one. If the underlying claim is weak, humanising the prose just makes the weakness more visible. For that work, [how to write effective AI prompts](/getting-started/how-to-write-effective-ai-prompts/) covers briefing the model so the first draft has something to work with.
+
+And it will not replace writing. The shortest route to writing that sounds human is still writing by hand, especially for anything short - a tweet, a one-paragraph reply, a note you will reread tomorrow. AI-and-edit is slower for those than hand-writing, and it shows.
+
+## Where to go next
+
+- **The prompts for client writing.** [AI prompts for freelancers](/ai-prompts/ai-prompts-for-freelancers/) and [ChatGPT prompts for small business](/ai-prompts/chatgpt-prompts-for-small-business/) cover the conversations where this editing discipline matters most - because the client will read the output more carefully than any other reader.
+- **The broader writing stack.** [AI writing tools](/ai-writing-tools/) covers how the category of writing software is evolving, and [AI tools for blog writing](/ai-writing-tools/ai-tools-for-blog-writing/) covers the longer-form version of the same problem.
+- **If you are starting out.** [How to use AI tools](/getting-started/how-to-use-ai-tools/) covers the basics of briefing a model, which is where most of this starts.

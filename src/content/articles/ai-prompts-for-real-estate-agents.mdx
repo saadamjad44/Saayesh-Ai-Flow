@@ -1,0 +1,205 @@
+---
+pageId: ai-prompts-for-real-estate-agents
+title: "AI Prompts for Real Estate Agents"
+heading: "AI Prompts for Real Estate Agents: Listings, Follow-Ups and Difficult Conversations"
+description: "AI prompts for real estate work that eats a week: listing descriptions, cold outreach, showing follow-ups, and price-cut messages for sellers."
+publishedDate: 2026-11-05
+updatedDate: 2026-11-05
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Which AI prompts are most useful for a real estate agent?
+    answer: Not the ones that write generic listing copy. The prompts that return the most time are for the follow-up conversations between the listing and the close - the chase after a showing, the message to a cold lead that has not replied in weeks, the price-reduction conversation with a seller who does not want to hear it, and the handling of an offer below asking. Those are where the time hides, and where the wrong message either loses the deal or burns the relationship.
+  - question: Will AI-written listing descriptions hurt my rankings on Zillow or Rightmove?
+    answer: The honest answer is that neither platform publishes its algorithm, and the vendors who claim they do are speculating. What does matter is whether the description is accurate - misdescription rules apply regardless of how the text was produced - and whether it reads as written for the specific property rather than as template filler. Portals surface listings on engagement, and engagement comes from honest descriptions of real features, not from the model's favourite adjectives.
+  - question: Is it okay to use AI to write to a lead who thinks a human is responding?
+    answer: Depends where you work, and on the distinction between drafted and sent. A reply drafted by AI that you read, edit and send is still from you - that is how all written communication works, ghostwriters included. A reply sent automatically without your eyes on it is a different product and crosses a line most buyers and sellers would want to know about. The useful discipline is draft-and-review, with your judgement on every message that leaves your inbox.
+  - question: How do I stop AI listings sounding like AI?
+    answer: Paste three of your own real listing descriptions and tell the model to match that voice, then name what you never write - no "nestled", no "boasts", no "epitome of luxury", no three-adjective runs. Then give it the property data as facts rather than features, and let it write to those facts. The combination of your voice and the model's banned list removes most of the AI tells; the property-specific facts remove the template feel.
+  - question: What is the best prompt for a cold lead who has gone quiet?
+    answer: The one that does not pretend the silence has not happened. The prompt on this page writes a message that names the gap briefly, gives the lead a specific reason to reply now (new listings that match, a change in the market segment they were looking at, a question only they can answer), and ends with a single next step. The failure mode of cold-lead messages is pretending to be a fresh conversation; the version that works acknowledges the state of the relationship.
+  - question: Can AI help me handle an offer below asking price?
+    answer: It can draft the message, which is the easiest part. The hard part - what counter to propose, when to hold the line, when to let it go - is the judgement work that is yours. The prompt here writes a response that keeps the door open, asks the one question that reveals the buyer's actual position, and does not respond to the number itself until you have decided your line. Keep the number work out of the model.
+  - question: Should I use AI to generate property photos or virtual staging?
+    answer: Separately from the writing question, and with the same caution. Virtual staging and AI photo enhancement are disclosed on most portals as a matter of policy, and misrepresenting a property's actual condition is an offence in several jurisdictions regardless of the tool used. If you stage virtually, label it clearly and keep the unedited photo available. The prompts on this page are for writing, which has a different risk profile from images.
+---
+
+import { PromptBlock, Callout, KeyTakeaways, VerdictBox } from "@/components/content";
+
+**The prompts worth having as a real estate agent are not the ones that write listing descriptions.** They are the ones for the conversations between a listing going live and a deal closing - the chase after a showing, the message to a cold lead that has not replied in a month, the price-reduction conversation, the response to an offer that is twenty percent low.
+
+Those messages are where the week actually goes. A listing takes forty minutes to write. A price-cut conversation with a seller who does not want to have it takes a day, and you only get one chance to say it well.
+
+<KeyTakeaways>
+
+- **Six prompts, not fifty.** Each is for a conversation that costs a deal when it lands wrong.
+- **Listings are the easy half.** Facts in, voice sample, banned list - the hard part is already solved if you supply your own voice.
+- **Follow-up after a showing has a structure.** Ask about the specific thing they said in the viewing, not "any questions".
+- **Cold-lead messages work when they name the gap.** Pretending the silence did not happen is the failure mode.
+- **Keep offer numbers out of the model.** AI drafts the message, not the counter. The number work is yours.
+- **Price-cut conversations are three jobs in one message.** Acknowledgement, new recommendation, and a specific next step - and most do only the second.
+
+</KeyTakeaways>
+
+<Callout tone="note" heading="Before you paste anything into a prompt">
+  Nothing on this page assumes buyer or seller contact details go into the tool. For a general
+  assistant used on identifiable client data, read the data terms of the plan you are on - the
+  free tiers of ChatGPT and Claude are not covered for personal data under most real estate
+  regulatory regimes. Our [is ChatGPT safe for business
+  data](/ai-business-tools/is-chatgpt-safe-for-business-data/) guide covers what each tier does
+  with what you paste.
+</Callout>
+
+## Before you use any of these
+
+Three things that change the output more than any prompt tweak.
+
+- **Give it your voice.** Paste two or three of your real messages - a listing you wrote recently, a follow-up that worked, a difficult reply you are proud of - and tell the model to match that voice. Generic prompting produces generic, obviously AI prose.
+- **Give it the facts, not the features.** For listings, "corner lot, 1,480 sq ft, single-level, 2017 roof, 20-minute walk to the Caltrain" is the raw material. "Charming open-concept gem" is the output you are trying to avoid.
+- **Name what you never write.** This does more work than any tone instruction. "Never 'nestled', 'boasts', 'stunning', 'epitome', or three adjectives in a row" removes the exact tells that give AI away.
+
+## 1. Listing description that does not sound like a listing
+
+The first prompt is also the easiest to get wrong, because the model's defaults are the clichés of the genre. The fix is giving the model your voice and a short, specific banned list.
+
+<PromptBlock
+  label="Listing description from the facts"
+  prompt={`Write a listing description from these facts. Do not add features that are not on the list. Do not infer a selling point that the facts do not support.
+
+Property facts: [paste the structured property data - size, layout, year, materials, conditions, notable features]
+
+Neighbourhood specifics: [paste the walk-to data, school catchment, amenities, transit, distinctive local details]
+
+The description should be aimed at: [describe the target buyer profile]
+
+Voice match: write this in the voice of my previous listings, which I will paste after this prompt. Match the sentence length, the paragraph structure, and the word choice.
+
+Never use: "nestled", "boasts", "stunning", "charming", "epitome", "a haven", "oasis", "the perfect combination of X and Y", three adjectives in a row, "move-in ready" as a standalone phrase.
+
+Length: around 150 words. One paragraph of three to four sentences on the house itself, one paragraph on the neighbourhood, one line on the next step for a buyer.`}
+  note="Read the output for two things: every claim traces back to a fact you gave it, and the voice reads like a listing you would have written."
+/>
+
+**Limitation:** the output is only as honest as the facts you paste. If the facts stretch the truth, the description inherits the stretch - and misdescription rules apply regardless of how the text was produced.
+
+## 2. Showing follow-up that is not "any questions?"
+
+The follow-up after a viewing is the most skipped prompt in a real estate week because it feels perfunctory. It is also the one most likely to get a reply if it is written as an actual follow-up to the actual conversation, rather than a generic check-in that could have gone to any of twelve buyers.
+
+<PromptBlock
+  label="Showing follow-up that references the viewing"
+  prompt={`Write a showing follow-up message for a buyer. Keep it short - no more than four short paragraphs. The message must:
+
+- open with a reference to [paste what the buyer actually said or noticed in the viewing], as a specific moment rather than a generic recap
+- address [paste the specific concern or detail they raised] directly, with either information I can provide or an honest "I checked and here is what I found"
+- offer [paste the next listing, next viewing, or next step you can offer] as a concrete next move, not a vague "any time"
+- end with a single question they can answer in one sentence
+
+Do not open with "Thanks for coming by". Do not ask if they have "any further questions". Do not close with "I hope to hear from you soon".`}
+  note="The one-sentence question at the end is the whole point. Buyers reply to specific questions and ignore open ones."
+/>
+
+**Limitation:** this message works for a buyer who engaged in the viewing. For a buyer who walked through quietly and left, there is nothing specific to reference - and a generic follow-up to that buyer is probably the wrong message anyway.
+
+## 3. Cold-lead message that names the silence
+
+A lead who has not replied in six weeks is a different conversation from a new lead, and the message has to say so. The failure mode is pretending it is a new conversation and writing a cheery check-in, which reads as pushy because the lead knows they have been ignoring you.
+
+<PromptBlock
+  label="Cold-lead revival message"
+  prompt={`Write a message to a lead who has gone quiet. The lead was looking for [describe what the lead was looking for]. We last spoke [describe the gap in time]. The specific new reason for me to message now is [describe one specific reason - a listing, a market change, a question only they can answer].
+
+Three short paragraphs, no more.
+
+Paragraph 1: name the gap briefly, without over-apologising or pretending it did not happen. One line, like "It has been a while since we spoke".
+
+Paragraph 2: state the specific new reason. If it is a new listing, one line of description. If it is a market change in their segment, one data point. If it is a question only they can answer, ask it.
+
+Paragraph 3: a single next step they can take - one listing to view, one question to reply to, one call to book. Not all three.
+
+Do not start with "Just checking in". Do not use "touching base". Do not say "I wanted to reach out".`}
+  note="Read the first paragraph carefully. Acknowledging the lead's experience ('I know you have been thinking it through') works better than acknowledging yours."
+/>
+
+**Limitation:** if the "specific new reason" is weak, the message will be weak. The cold-lead revival only works when something has actually changed worth reporting - and if nothing has, the right move is to wait for something that has.
+
+## 4. Price-reduction conversation with a seller
+
+Three jobs in one message, and most price-cut messages only do the second one. That is why they feel like an attack and produce a defensive reply instead of a decision. The three jobs: acknowledge the plan you both agreed on, present the new recommendation with the evidence, and propose a specific next step rather than a general "think it over".
+
+<PromptBlock
+  label="Price reduction recommendation for a seller"
+  prompt={`Write a message to a seller recommending a price reduction. Facts: original asking [state the original asking price and listing date]. Showing and offer activity to date: [list showings, feedback themes, offers received]. My recommended new price is [state the new price and the evidence for it]. The next step I want is [state the specific next step].
+
+Five short paragraphs, maximum.
+
+- Para 1: Acknowledge the plan we agreed and the thinking behind the original price. One sentence.
+- Para 2: State the new activity data honestly - showings, feedback themes, the two or three comparable sales since listing. This is the evidence, so it must be precise.
+- Para 3: Give the recommendation and the specific new price. One sentence, no hedging.
+- Para 4: Explain why this price in particular - what band of buyers it opens up, what portal filter it drops under, what comparable it lines up with. Two sentences, no more.
+- Para 5: Propose the specific next step - a call to confirm, a date the new price goes live, or a question I need their answer on before Friday.
+
+Do not apologise for the recommendation. Do not say "the market has changed" without specific comparables. Do not open with "I know this is not what you want to hear".`}
+  note="The evidence paragraph is the load-bearing one. Two actual comparable sales from the last four weeks are worth more than any adjective about the market."
+/>
+
+**Limitation:** the prompt cannot tell you whether this is the right price. That number depends on the buyer segment you are trying to reach next, which is a judgement call built on the activity data - not something a prompt can produce.
+
+## 5. Response to a lowball offer
+
+Keep the number work out of the model. The prompt writes the response that keeps the door open and asks the one question that reveals where the buyer actually is, without committing to a counter you have not decided.
+
+<PromptBlock
+  label="Response to a below-asking offer"
+  prompt={`Write a reply to a below-asking offer. Offer details: [state the offer price and the gap]. What I know about the buyer's position: [describe what the buyer has said or hinted]. The seller has instructed: [describe the seller's position on offers].
+
+Three short paragraphs.
+
+Para 1: Thank the buyer's agent for the offer, specifically naming one thing that is good about it - a clean deposit, a flexible closing date, cash versus financing, something concrete. One sentence.
+
+Para 2: State that I have shared it with the seller and am awaiting their position. One sentence. Do not pre-empt the seller's response, and do not respond to the number.
+
+Para 3: Ask one question that reveals the buyer's actual flexibility - whether price, timeline, or contingencies are the fixed point. Phrased as a question about their priorities, not a hint at a counter. End with a specific time frame for my follow-up.
+
+Do not propose a counter. Do not say "my seller is looking for X". Do not say "we may be able to work with this".`}
+  note="The point is to buy time without losing the buyer. The question in paragraph three is what tells you whether the counter needs to be on price, on timing, or on contingencies."
+/>
+
+**Limitation:** this reply buys 24 to 72 hours. If the seller's position is a firm no, the useful next message after that is a different one entirely - and the honest no is often shorter than the "keep the door open" draft.
+
+## 6. The "we had another offer" message to a disappointed buyer
+
+Short, respectful, and specific enough that the buyer trusts the process. The failure mode is a vague message that reads as a form reply, which tells the buyer they were never really in it.
+
+<PromptBlock
+  label="Message to the buyer who did not get the house"
+  prompt={`Write a message to a buyer whose offer was not accepted. Property and gap: [describe the property and the offer gap]. Their position: [state what the buyer's offer and overall position was]. What I would like to do next: [state the next step - a specific new listing, a conversation, a scheduled call].
+
+Three short paragraphs.
+
+Para 1: Give the news plainly in the first sentence. No preamble, no "unfortunately".
+
+Para 2: Say what specifically made the winning offer stronger - not to defend the decision, but so the buyer knows what the market actually wanted. One honest sentence.
+
+Para 3: Propose the specific next step, which depends on what I wrote above. A listing I want them to see on Thursday. A conversation about what would change their position. A note that I will call Friday.
+
+Do not say "there will be other properties". Do not say "it was not meant to be". Do not include three adjectives about the situation.`}
+  note="A buyer who knows why they lost comes back ready to compete. A buyer who was told 'the seller chose another offer' drifts away."
+/>
+
+**Limitation:** this works for a buyer who offered seriously. For a buyer who offered badly and knew they were long, the message is kinder and shorter than the one above and does not need to explain why they lost.
+
+## What to do with the output
+
+Across every one of these prompts, the same discipline applies:
+
+1. **Read the draft as the recipient will read it.** A seller reads a price-cut message looking for the line they can push back on; a buyer reads a disappointment note looking for whether to trust you again. Read for those readings.
+2. **Cut anything that sounds like a policy.** "As per our agreement" and "going forward" are AI defaults that read as detachment.
+3. **Put back the specific detail only you know.** The renovation the seller mentioned on the second call, the bedroom the buyer kept returning to, the conversation at the open house. One concrete reference per message is enough to transform it.
+4. **Keep the drafts that worked.** Over six months you will have a library of lines in your own voice, and the prompts above will need less and less to produce the message you want.
+
+## Where to go next
+
+- **The rest of the prompts series.** [AI prompts for freelancers](/ai-prompts/ai-prompts-for-freelancers/) covers the audience-adjacent set for solo operators, and [AI prompts for accountants](/ai-prompts/ai-prompts-for-accountants/) covers the equivalent conversations in a different profession.
+- **Writing that reads like yours.** [How to make AI writing sound more human](/ai-writing-tools/make-ai-writing-sound-human/) covers the editing discipline that keeps every one of these outputs out of the AI uncanny valley.
+- **The industry picture.** [AI by industry](/ai-by-industry/) covers how AI shows up across sectors including the specific line between listing descriptions (where it fits) and property measurements or legal statements (where it does not).

@@ -92,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 24,
+  3: 34,
 };
 
 export const PAGES = [
@@ -954,6 +954,133 @@ export const PAGES = [
     type: "tool",
     phase: 3,
     pillar: "ai-business-tools",
+  },
+
+  /**
+   * Phase 3 - the ai-by-industry cluster's first profession-specific guide,
+   * approved 2026-11-04 off live-SERP keyword research. The pillar already
+   * profiles healthcare in a paragraph and had no landing page for the single
+   * largest search within it: dental practices asking which AI tools are for
+   * them.
+   *
+   * The SERP for "ai tools for dentists" is held by AI-generated vendor and
+   * subdomain spam (vercel.app, pages.dev, hashnode, DEV Community) plus a
+   * LinkedIn post, with no editorial authority on the page one that treats the
+   * question seriously. The differentiator this page carries is the one none of
+   * them do: a BAA-first buying order, the four real tool categories named and
+   * separated from each other, and an honest statement that imaging AI is a
+   * clinical procurement rather than a productivity purchase.
+   *
+   * Written as a framework-first explainer rather than a ranked list, matching
+   * the voice set by best-ai-agents-for-small-business: this site has no
+   * hands-on evidence from a live practice, and saying so is more useful than
+   * a ranked table copied from a vendor blog.
+   */
+  {
+    id: "ai-tools-for-dentists",
+    title: "AI Tools for Dentists",
+    path: "/ai-by-industry/ai-tools-for-dentists/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-by-industry",
+  },
+
+  /**
+   * Phase 3 - the 2026-11-04 untapped-keywords batch, approved 2026-11-05.
+   *
+   * Nine articles picked from live-SERP research on queries whose current page
+   * one is held by AI-generated spam, LinkedIn posts and vendor blogs with no
+   * editorial authority. The common property across the batch is that the site
+   * can beat the incumbent page by doing the thing those pages do not: a
+   * category-first framework rather than a ranked list, a compliance read, and
+   * an honest statement that this site has not tested the products.
+   *
+   * Four of the nine extend the ai-by-industry cluster, filling the empty
+   * profession slots the pillar already profiled in a paragraph. Two extend the
+   * ai-prompts cluster into profession-specific sets. Two extend the ai-agents
+   * cluster with the free-tier question and the ChatGPT Agent Mode decision.
+   * One sits in ai-writing-tools and answers the single highest-volume writing
+   * problem the site had no page for.
+   */
+
+  // Profession-specific prompts, extending the ai-prompts cluster.
+  {
+    id: "ai-prompts-for-accountants",
+    title: "AI Prompts for Accountants",
+    path: "/ai-prompts/ai-prompts-for-accountants/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-prompts",
+  },
+  {
+    id: "ai-prompts-for-real-estate-agents",
+    title: "AI Prompts for Real Estate Agents",
+    path: "/ai-prompts/ai-prompts-for-real-estate-agents/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-prompts",
+  },
+
+  // Industry-specific tool guides, extending the ai-by-industry cluster.
+  {
+    id: "ai-tools-for-therapists",
+    title: "AI Tools for Therapists",
+    path: "/ai-by-industry/ai-tools-for-therapists/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-by-industry",
+  },
+  {
+    id: "ai-tools-for-accountants-pakistan",
+    title: "AI Tools for Accountants in Pakistan",
+    path: "/ai-by-industry/ai-tools-for-accountants-pakistan/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-by-industry",
+  },
+  {
+    id: "ai-tools-for-coaches",
+    title: "AI Tools for Coaches",
+    path: "/ai-by-industry/ai-tools-for-coaches/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-by-industry",
+  },
+  {
+    id: "ai-tools-for-cleaning-businesses",
+    title: "AI Tools for Cleaning Businesses",
+    path: "/ai-by-industry/ai-tools-for-cleaning-businesses/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-by-industry",
+  },
+
+  // Writing cluster: the "make it sound human" page that was missing.
+  {
+    id: "make-ai-writing-sound-human",
+    title: "How to Make AI Writing Sound More Human",
+    path: "/ai-writing-tools/make-ai-writing-sound-human/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-writing-tools",
+  },
+
+  // Agents cluster: the free-tier question and the ChatGPT Agent Mode page.
+  {
+    id: "best-free-ai-agents-for-small-business",
+    title: "Best Free AI Agents for Small Business",
+    path: "/ai-agents/best-free-ai-agents-for-small-business/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-agents",
+  },
+  {
+    id: "chatgpt-agent-mode-for-small-business",
+    title: "ChatGPT Agent Mode for Small Business",
+    path: "/ai-agents/chatgpt-agent-mode-for-small-business/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-agents",
   },
 ] as const satisfies readonly SitePage[];
 

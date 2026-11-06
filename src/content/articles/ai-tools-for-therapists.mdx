@@ -1,0 +1,194 @@
+---
+pageId: ai-tools-for-therapists
+title: "AI Tools for Therapists"
+heading: "AI Tools for Therapists in 2026: What Is and Is Not Safe to Use"
+description: "Which AI tools genuinely help a therapy practice, which cross a professional line, and the HIPAA and ethics questions that come before any software decision."
+publishedDate: 2026-11-04
+updatedDate: 2026-11-04
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Can therapists use AI in their practice?
+    answer: For non-clinical administrative work that keeps Protected Health Information out of the tool, yes, and the saving is real. For anything involving client data, the tool needs a signed Business Associate Agreement, data terms you have read, and a consent conversation with the client before the first session is recorded or summarised. For the therapeutic work itself - case formulation, treatment planning, anything presented to the client as advice - the honest answer is that AI is not yet the right place for that work and your professional body is unlikely to agree that it is.
+  - question: Is it HIPAA compliant to use ChatGPT for therapy notes?
+    answer: The free tier of ChatGPT is not HIPAA compliant and must not be used with client information. The paid business and enterprise tiers can be used with a signed Business Associate Agreement in place, and the data terms attached to that tier govern what happens to the content. Without a BAA, no plan of any assistant is covered - "HIPAA ready" on a marketing page is not a BAA, and only the BAA matters. If you cannot get one, the tool is for administrative work with no PHI in it, and the work with PHI needs a tool whose vendor will sign.
+  - question: What are the ethical concerns with AI in therapy?
+    answer: Four come up repeatedly. Client confidentiality - whether the data is used to train models, retained, or accessible to vendor staff. Informed consent - whether the client has been told about the tool and how. Scope of practice - using AI for work that is yours to do because the client is paying for your judgement. And accuracy - a language model can produce a confident, plausible, wrong summary of a session, and a note that is wrong is worse than no note.
+  - question: Will AI replace therapists?
+    answer: Not in any serious sense, and the ways it is marketed as doing so are the ways it is most likely to fail. AI tools today draft letters, structure notes a clinician then edits, chase payments, and schedule appointments. None of those is therapy. The therapeutic relationship, clinical judgement, and the responsibility that comes with a licence sit on the clinician, and no software has yet been built that a professional body would accept as doing those jobs instead.
+  - question: Can I use AI for session notes and clinical documentation?
+    answer: With a signed BAA, informed client consent, and a draft-and-review workflow where you edit every note before it goes into the chart, several platforms market themselves for exactly this. Whether that is clinically appropriate for your work is a separate question from whether it is technically possible. Ask what happens to the recording, how long it is retained, and what the audit trail shows when you edit a draft - the record of what the AI wrote and what you changed is what makes the note defensible.
+  - question: What AI tools are safe to start with as a therapist?
+    answer: The ones that do not touch client data at all. Drafting non-clinical website copy, educational handouts, newsletter sections, continuing professional development summaries, and administrative replies that do not reference a specific client - all of these can use a general assistant you already pay for, and none needs a BAA because no PHI is involved. That is the right place to learn how the tools behave before the stakes rise.
+  - question: What should I never use AI for in therapy?
+    answer: Case formulation, treatment planning, risk assessment, anything presented to a client as advice or psychoeducation about their own case, and any content that implies a therapeutic relationship with the AI rather than with you. The therapeutic value is in the relationship and the judgement - delegating either dilutes the thing the client is paying for and crosses lines most professional bodies have now drawn explicitly.
+---
+
+import { ComparisonTable, Callout, KeyTakeaways, VerdictBox } from "@/components/content";
+
+Most AI-for-therapists content in 2026 is written as though the hard question is which tool to pick. It is not. The hard questions are whether you may use it at all under your regulator's rules, whether the vendor will sign the paperwork that makes client data lawful, and whether the thing you are automating is actually administrative or quietly clinical.
+
+This guide takes those first. It names what AI genuinely helps with in a therapy practice today, what it should not touch regardless of how well the demo runs, and the compliance decisions that come before any software decision. The product recommendations most ranked lists lead with are the last step of this conversation, not the first.
+
+<KeyTakeaways>
+
+- **Compliance before capability.** A signed Business Associate Agreement and your professional body's position decide what you may do, not what the tool can do.
+- **Administrative work is the safe starting point.** Non-clinical drafting, scheduling, and correspondence that contains no client information is where most practices should begin.
+- **Clinical work stays clinical.** Case formulation, treatment planning, and risk assessment are yours to do, and no AI tool has earned a place in that work yet.
+- **Consent is a conversation, not a tick-box.** If a tool will be used on a client's session or notes, the client needs to be told how, with what, and for how long.
+- **Free-tier assistants are not HIPAA compliant.** Any PHI goes into a plan that has a BAA signed, or it does not go in at all.
+
+</KeyTakeaways>
+
+<VerdictBox
+  heading="The short answer"
+  bestFor="Therapists automating the administrative half of a practice while keeping clinical judgement, formulation and the therapeutic relationship human"
+  notFor="Buying an AI note-taker before reading the BAA, or using any tool for case formulation or treatment planning"
+>
+  If your time is disappearing into <strong>admin</strong> - scheduling, letters to GPs or
+  employers, invoicing, website copy, newsletter drafts - start there, with a general assistant you
+  already pay for, and keep client identifiers out. If your time is disappearing into{" "}
+  <strong>note writing</strong> and your professional body permits AI assistance with documentation,
+  a dedicated scribe with a signed BAA, a client consent protocol, and a review-every-draft workflow
+  is the category to look at. For anything that sits on your side of the clinical line - formulation,
+  planning, the work the client is paying for your judgement on - no AI tool is the right answer in
+  2026.
+</VerdictBox>
+
+<Callout tone="note" heading="What this page is based on">
+  Research into vendor documentation, professional body positions, and published clinical
+  guidance, not hands-on use in a therapy practice. This site has not run these products on live
+  clinical work and will not imply it has. Where a category is described, that is what vendors in
+  it publish about themselves, read against the compliance questions that most ranked lists wave
+  past. Our [editorial process](/about/) explains how we label the difference.
+</Callout>
+
+## Decide what you are willing to automate before you decide the tool
+
+The categories of AI tool sold to therapy practices divide cleanly on one question: does client information go into the tool, or does it not? That decision is more important than the tool choice, because it determines what paperwork needs to be in place before anything starts.
+
+<ComparisonTable
+  caption="AI tool categories in therapy practice"
+  rowHeader="Category"
+  columns={["What it is for", "What has to be in place first"]}
+  rows={[
+    {
+      label: "Administrative - no client data",
+      cells: [
+        "Website copy, newsletter drafts, marketing posts, CPD summaries, policy and SOP drafts, generic educational handouts",
+        "Nothing beyond your usual data hygiene - no PHI goes in, so no BAA is required",
+      ],
+    },
+    {
+      label: "Administrative - with client data",
+      cells: [
+        "Appointment reminders, invoicing, letters to GPs and third parties, insurance correspondence",
+        "A signed BAA, data terms you have read, and a process for cases where the client has not consented to the tool",
+      ],
+    },
+    {
+      label: "Clinical documentation assistance",
+      cells: [
+        "AI scribes that record and summarise sessions, draft structured notes a clinician then edits",
+        "A signed BAA, informed client consent per session, your professional body's position, a draft-and-review workflow, and an audit log of changes",
+      ],
+    },
+    {
+      label: "Clinical decision assistance",
+      cells: [
+        "Case formulation, treatment planning, risk assessment, psychoeducation drafts about a specific client",
+        "A position from your professional body that this use is permitted, which most have not written, so this category is effectively off the table",
+      ],
+    },
+  ]}
+/>
+
+Two practical notes on this table. First, the first row is where every therapy practice should start, because the task is bounded, no client data is in play, and the saving is visible within weeks. A general assistant you already pay for will do this work, and the learning carries into the harder categories without any clinical risk.
+
+Second, the fourth row is the one most prone to over-buying. The products marketed in it are usually workflow automation dressed as clinical AI, and the professional body position that would permit their use is, in most jurisdictions, not yet written. Spending money there now is paying to be an early tester of your own regulator's patience.
+
+## The questions that actually separate products
+
+Once you are in the right category, these are what distinguish one product from another. Ask them in this order - the first few disqualify faster than the last.
+
+### 1. Will the vendor sign a Business Associate Agreement, and what are the data terms?
+
+First because it decides whether the tool is lawful with PHI at all. Ask for the BAA by name, read the data-use terms attached to it, and note three specific things:
+
+- **Training.** Is practice data used to train the vendor's models, in any form, including de-identified?
+- **Retention.** How long is a recording, transcript, or message kept, and can you force deletion on client request?
+- **Access.** Who at the vendor can see the data, under what controls, and is that access logged?
+
+A vendor who hesitates on any of these is answering the question. Outside the US, substitute your equivalent - UK GDPR plus the ICO's health-data guidance, the EU's GDPR with any national regime, Canada's PHIPA where it applies - and ask the same three questions. The paperwork has different names; the concern is the same.
+
+### 2. What is your professional body's position on this specific use?
+
+Most psychotherapy and counselling professional bodies have now written guidance on AI assistance, and most of it draws a sharp line between administrative use and clinical use. Before you buy a scribe or anything that touches session content, read your own body's position - ACA, AAMFT, APA, BACP, BPS, UKCP, whichever applies - and treat it as the ceiling on what you may do, regardless of what the tool is capable of.
+
+A vendor's "many therapists use this" is not a regulator's permission. Ask whether the product has been reviewed against your professional body's guidance by anyone other than the vendor, and treat the answer as information about the vendor rather than the product.
+
+### 3. How is consent obtained, and documented?
+
+A client has to know when an AI tool is in use on their work. For an administrative tool that handles identifiable correspondence, consent is a line in the welcome pack and a signature. For a scribe that records a session, it is a conversation at the start of that session and a specific record that the client agreed, including a route to refuse without penalty.
+
+Ask the vendor how consent is captured in the tool itself, what happens if a client later withdraws it, and whether the recording and derived notes can be deleted on request. If the answer is procedural rather than product-level, the discipline sits on you.
+
+### 4. How is the draft verified, and what does the audit trail show?
+
+For anything the AI writes that enters a client record, you need a log of what the AI produced and what you changed. That audit trail is what makes the note defensible later, and it is also the honest record of how reliable the tool actually is on your work.
+
+Review a week of drafts closely. If editing takes longer than writing from scratch, the tool is not saving you time, it is moving the effort - and for clinical documentation, moving the effort in exchange for a worse record is a bad trade.
+
+### 5. How is it billed, and what counts as a billable unit?
+
+Dental AI pricing has the same traps therapy AI has: per seat, per client, per transcribed minute, per message handled, per credit pool. Ask what one billable unit is in plain words, how failed runs are counted, and how escalated or deleted sessions are charged. Price your peak month - the week a wave of new intakes comes in - not your average.
+
+### 6. What happens when the client's situation changes?
+
+Risk, safeguarding, and significant clinical change are not events an AI tool should silently roll into a routine note. Ask the vendor what happens when a session contains content the tool is not supposed to summarise - a disclosure of risk, a reference to a child, anything that would trigger your own escalation process - and whether the tool offers a flag, a stop, or just continues.
+
+### 7. How do you turn it off, mid-session?
+
+Immediately, without losing the record of what it had already produced, and with the client able to see it has stopped. Ask before you need it.
+
+## Where general-purpose assistants fit
+
+A therapy practice can get a real amount of work done with the general assistants it already has access to - [Claude](/ai-business-tools/claude-for-small-business/), ChatGPT, or Copilot through a Microsoft 365 business subscription - provided the bright line is kept between those tasks and anything containing client information.
+
+The jobs that fit this shape, in rough order of safety:
+
+- **Website copy, service descriptions, FAQ pages** for the public, containing no case material.
+- **Marketing drafts** - social captions, Google Business posts, newsletter sections - cleared by a human before publication.
+- **CPD summaries, literature reviews, journal article digests** that you read anyway and now have less time for.
+- **Policy and procedure drafts** - privacy notice, cancellation policy, complaints procedure - with your professional body's framework kept in sight.
+- **Replies to non-client enquiries** - suppliers, recruiters, continuing education providers - containing no PHI.
+
+The discipline is the same one that applies in other regulated fields: if a sentence could identify a client to someone who knew that client, it does not go into a prompt. [Claude vs ChatGPT for small business](/ai-business-tools/claude-vs-chatgpt-for-small-business/) covers how the two assistants differ for administrative work, and [AI use policy template](/ai-business-tools/ai-use-policy-template/) covers writing the house rules that keep the line visible.
+
+## What AI should never do in a therapy practice
+
+Four lines that most professional bodies have now drawn, and that are worth drawing in your own practice regardless of whether yours has written them down yet:
+
+**No case formulation.** The hypothesis about what is happening for this client is the clinical work, and a confident, plausible, wrong hypothesis from an AI is a worse starting point than a blank page.
+
+**No treatment planning.** Deciding what to do with a client across sessions is the plan the client is paying for, and it belongs to the clinician who can read the room.
+
+**No risk assessment.** Safeguarding and risk are not an administrative category. A missed cue in an AI-generated risk note is the failure mode that ends a career.
+
+**No AI delivering content to the client as if it were you.** Psychoeducation handouts a client reads with your name on them are ethically yours, not the model's. Drafting is fine; sending without a careful read, in your name, is not.
+
+The common property across the four is that each is work the client is explicitly paying for a qualified clinician to do. AI assistance there is not a productivity gain; it is an outsourcing of the thing the fee is for.
+
+## What a sensible first purchase looks like
+
+1. **Start with no client data.** Pick one administrative task - newsletter, website copy, policy drafts - and use the general assistant you already pay for.
+2. **Measure the saving.** Not vibes, minutes. If the task was taking an hour and now takes thirty, that is the baseline. If it still takes an hour because editing matches writing, stop using AI for it.
+3. **Decide what you want to automate next.** Only move to the second category - administrative work with PHI - after the first is working, your BAA is signed, and your privacy notice reflects the tool's role.
+4. **Scribes come last and come slowly.** If and when a scribe is on the table, consent every client, review every draft for two full weeks, and keep the audit log open.
+5. **Treat clinical categories as closed** until your professional body has published guidance that opens them.
+
+## The honest summary
+
+AI in therapy practice in 2026 is useful at the administrative end, cautious at the documentation end, and not yet appropriate at the clinical end. The practices that will benefit are the ones that treat the compliance decisions as the first question rather than the last - who signs the BAA, what the professional body permits, how consent is captured, how the audit trail reads - and that keep the therapeutic work itself human for the simple reason that the therapeutic value is in the relationship, and a relationship with a model is a different product the client did not buy.
+
+For the broader picture of how AI shows up across different kinds of practices, [AI by industry](/ai-by-industry/) covers the pattern that holds across regulated work: permission before capability, a qualified person on the output, and the administrative end as the starting point.
