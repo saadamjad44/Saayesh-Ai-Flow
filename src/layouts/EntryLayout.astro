@@ -28,6 +28,8 @@ import PageLayout from "./PageLayout.astro";
 import AffiliateNote from "@/components/content/AffiliateNote.astro";
 import FaqSection from "@/components/content/FaqSection.astro";
 import FeaturedImage from "@/components/content/FeaturedImage.astro";
+import { Image } from "astro:assets";
+import type { ArticleMediaAsset } from "@/config/article-media";
 import LastUpdated from "@/components/content/LastUpdated.astro";
 import RelatedPages, { type RelatedPage } from "@/components/content/RelatedPages.astro";
 import ShareRow from "@/components/content/ShareRow.astro";
@@ -60,6 +62,13 @@ interface Props {
   icon?: PillarIconId;
   /** Category image shown below the header. Omit where a picture adds nothing. */
   mediaId?: MediaId;
+  /**
+   * Per-article hero image from src/config/article-media.ts, used where there
+   * is no category-level image because the page is an article rather than a
+   * pillar hub. Mutually exclusive with `mediaId`: if both are set, `mediaId`
+   * wins so pillar artwork is never overridden by a stock photo.
+   */
+  articleMedia?: ArticleMediaAsset;
 }
 
 const {
@@ -74,6 +83,7 @@ const {
   eyebrowAccent,
   icon,
   mediaId,
+  articleMedia,
 } = Astro.props;
 const { data } = entry;
 
@@ -123,6 +133,24 @@ const openGraphArticle =
       {/* Padding comes from PageLayout's container; only the measure is set here. */}
       <div class="pb-10 lg:max-w-3xl">
         <FeaturedImage id={mediaId} priority />
+      </div>
+    </Fragment>
+  )}
+
+  {!mediaId && articleMedia && (
+    <Fragment slot="hero">
+      <div class="pb-10 lg:max-w-3xl">
+        <div class="not-prose overflow-hidden rounded-card border border-ink-200 bg-ink-100">
+          <Image
+            src={articleMedia.src}
+            alt={articleMedia.alt}
+            widths={[400, 768, 1200, 1600]}
+            sizes="(min-width: 768px) 768px, 100vw"
+            loading="eager"
+            decoding="async"
+            class="h-auto w-full"
+          />
+        </div>
       </div>
     </Fragment>
   )}

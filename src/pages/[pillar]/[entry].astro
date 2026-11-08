@@ -18,6 +18,7 @@ import { MDX_COMPONENTS } from "@/components/content/mdx";
 import type { RelatedPage } from "@/components/content/RelatedPages.astro";
 import { getPublishedEntries, pathSegments } from "@/lib/content";
 import { getPage, type PageId } from "@/config/pages";
+import { ARTICLE_MEDIA } from "@/config/article-media";
 import { articleSchema, getSocialImage, webApplicationSchema, type JsonLd } from "@/lib/seo";
 import { pricingDatasetSchema } from "@/data/ai-tool-pricing-schema";
 
@@ -124,6 +125,7 @@ export async function getStaticPaths() {
       }));
 
     const [pillar, slug] = pathSegments(page);
+    const articleMedia = ARTICLE_MEDIA[page.id as PageId];
     return {
       params: { pillar, entry: slug },
       props: {
@@ -134,6 +136,12 @@ export async function getStaticPaths() {
         eyebrowHref: hub.page.path,
         relatedHeading: "Keep reading",
         related: [hubCard(hub), ...siblings],
+        /**
+         * Per-article hero from the article-media registry. Articles without
+         * a registered image render without one, which is the design before
+         * this feature shipped.
+         */
+        articleMedia,
       },
     };
   });
@@ -179,6 +187,7 @@ export async function getStaticPaths() {
         eyebrowHref: undefined,
         relatedHeading: "Guides behind the numbers",
         related: guides,
+        articleMedia: undefined,
       },
     };
   });
@@ -188,7 +197,7 @@ export async function getStaticPaths() {
 
 type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
 
-const { entry, kind, eyebrow, eyebrowHref, relatedHeading, related } = Astro.props;
+const { entry, kind, eyebrow, eyebrowHref, relatedHeading, related, articleMedia } = Astro.props;
 const { Content, headings } = await render(entry);
 const page = getPage(entry.data.pageId);
 const path = Astro.url.pathname;
@@ -245,6 +254,7 @@ if (kind === "tool") {
   jsonLd={jsonLd}
   relatedHeading={relatedHeading}
   related={related}
+  articleMedia={articleMedia}
 >
   {/* Shared element overrides: link policy, heading anchors, table scrolling. */}
   <Content components={MDX_COMPONENTS} />
