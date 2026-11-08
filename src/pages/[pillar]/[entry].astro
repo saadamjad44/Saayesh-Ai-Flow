@@ -74,6 +74,18 @@ export async function getStaticPaths() {
       "chatgpt-business-vs-plus",
       "best-ai-tools-for-small-business",
     ],
+    /**
+     * The Plus-vs-API calculator's shortlist overlaps with the per-prompt
+     * calculator's on purpose: a reader who is picking between a subscription
+     * and the API wants the tier guide (ChatGPT Business vs Plus), the pricing
+     * model explainer, and the Claude head-to-head that handles the other
+     * common $20 subscription comparison.
+     */
+    "chatgpt-plus-vs-api-calculator": [
+      "chatgpt-business-vs-plus",
+      "how-much-does-ai-cost-small-business",
+      "claude-vs-chatgpt-for-small-business",
+    ],
   };
 
   const [pillars, articles, tools] = await Promise.all([

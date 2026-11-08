@@ -11,12 +11,14 @@
  *   2. Import it and add an entry below, including source and licence.
  *   3. Reference it with <FeaturedImage id="..." /> or MEDIA[id].
  *
- * Provenance (last reviewed 2026-10-20): every picture below is original
- * artwork supplied by the site owner, so the site holds the rights and no
- * third-party attribution is owed — credit is recorded here rather than printed
- * on the page. If an image is ever swapped for one from a stock library or any
- * other source that requires visible credit, record that here and do not ship
- * it until FeaturedImage can render the credit line again.
+ * Provenance (last reviewed 2026-11-08): most of the pictures below are
+ * original artwork supplied by the site owner — the site holds the rights and
+ * no third-party attribution is owed. The ai-news image and the per-article
+ * images added on 2026-11-08 are from Unsplash under its own license, which
+ * explicitly permits free commercial use without attribution (see
+ * https://unsplash.com/license). Credit stays recorded here for audit. If any
+ * image is ever swapped for a source that requires visible credit, record that
+ * here and do not ship it until FeaturedImage can render the credit line.
  */
 import type { ImageMetadata } from "astro";
 
@@ -25,6 +27,7 @@ import aiAgents from "@/assets/images/ai-agents.jpg";
 import aiAutomation from "@/assets/images/ai-automation.jpg";
 import aiBusinessTools from "@/assets/images/ai-business-tools.jpg";
 import aiByIndustry from "@/assets/images/ai-by-industry.jpg";
+import aiNews from "@/assets/images/ai-news.jpg";
 import aiPrompts from "@/assets/images/ai-prompts.jpg";
 import aiWritingTools from "@/assets/images/ai-writing-tools.jpg";
 import gettingStarted from "@/assets/images/getting-started.jpg";
@@ -92,6 +95,19 @@ const owned = (): MediaCredit => ({
   license: "Site-owned — no third-party attribution required",
 });
 
+/**
+ * An Unsplash photograph used under the Unsplash License, which permits free
+ * commercial use with no attribution required. `photoId` is the slug after
+ * /photos/ on the source URL, kept so provenance is auditable if the license
+ * terms ever change.
+ */
+const unsplash = (photoId: string, photographer: string): MediaCredit => ({
+  rightsHolder: photographer,
+  source: `Unsplash (photo id: ${photoId})`,
+  license: "Unsplash License — free for commercial use, no attribution required",
+  url: `https://unsplash.com/photos/${photoId}`,
+});
+
 /** All images share a 16:9 master so heroes and cards line up across the site. */
 export const MEDIA_ASPECT_RATIO = 16 / 9;
 
@@ -130,6 +146,11 @@ export const MEDIA = {
     src: gettingStarted,
     alt: "An open book on a round plinth with a glowing archway rising from its pages, a path running through the arch towards a distant city, and small tiles for ideas and clicks floating alongside.",
     credit: owned(),
+  },
+  "ai-news": {
+    src: aiNews,
+    alt: "A person seated on a wooden bench reading an open broadsheet newspaper that fills the frame, with a blurred urban street in the background.",
+    credit: unsplash("hgou9QNEzQM", "Roman Kraft"),
   },
   /**
    * The homepage hero. Composed with its subject in the right half and open

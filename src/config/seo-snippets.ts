@@ -1221,6 +1221,22 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Info / Commercial",
     note: "Utility-tool keyword with strong commercial intent and a SERP currently held by vendor playgrounds and single-model counters. The page's differentiator is the ten-model side-by-side with honest 'when it is worth it' notes and volume math. Supporting keywords cover the per-model variants that autocomplete alongside the head term.",
   },
+  "chatgpt-plus-vs-api-calculator": {
+    title: "ChatGPT Plus vs API Calculator: Which Is Cheaper?",
+    brand: "omit",
+    description:
+      "Enter your daily prompts and model. See which is cheaper: ChatGPT Plus, Claude Pro, Gemini Advanced, or the OpenAI API. Honest break-even math. No signup.",
+    primaryKeyword: "ChatGPT Plus vs API calculator",
+    supportingKeywords: [
+      "ChatGPT Plus vs API",
+      "ChatGPT Plus vs API break even",
+      "is ChatGPT Plus worth it",
+      "ChatGPT API vs subscription",
+      "OpenAI API vs ChatGPT Plus cost",
+    ],
+    intent: "Info / Commercial",
+    note: "The calculator companion to ai-prompt-token-cost-calculator: that one is per-prompt, this one is per-month. Primary keyword is the exact long-tail the SERP is held by vendor blog posts for, with no interactive tool in the top 10. Supporting keywords cover the question-form variant (\"is ChatGPT Plus worth it\") that autocompletes alongside the head term and lands the same intent.",
+  },
 
   // ---- AI Prompts cluster ------------------------------------------------
   "ai-prompts": {

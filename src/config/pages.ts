@@ -92,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 35,
+  3: 36,
 };
 
 export const PAGES = [
@@ -1103,6 +1103,32 @@ export const PAGES = [
     id: "ai-prompt-token-cost-calculator",
     title: "AI Prompt Cost Calculator: Tokens & Price per Model",
     path: "/ai-business-tools/ai-prompt-token-cost-calculator/",
+    type: "tool",
+    phase: 3,
+    pillar: "ai-business-tools",
+  },
+
+  /**
+   * Phase 3 - the fourth free interactive utility, approved 2026-11-08.
+   *
+   * Sits in /ai-business-tools/ beside the per-prompt cost calculator, the
+   * subscription-stack calculator and the pricing tracker. The four tools now
+   * answer different halves of the same budgeting question: this one ranks
+   * subscriptions against the API at the reader's stated usage, the prompt
+   * calculator handles the per-run arithmetic, the stack calculator totals an
+   * owner's own stack, and the tracker publishes vendor list prices with
+   * verification dates.
+   *
+   * Carries WebApplication schema via the tools collection. All subscription
+   * prices and API rates are in a single constant in plus-vs-api-calculator.ts
+   * so repricing is a single-file update, with the verified date shown on the
+   * tool itself. Privacy: no form submission, no network call for the math,
+   * no cookie or local-storage write.
+   */
+  {
+    id: "chatgpt-plus-vs-api-calculator",
+    title: "ChatGPT Plus vs OpenAI API: Which Is Cheaper?",
+    path: "/ai-business-tools/chatgpt-plus-vs-api-calculator/",
     type: "tool",
     phase: 3,
     pillar: "ai-business-tools",
