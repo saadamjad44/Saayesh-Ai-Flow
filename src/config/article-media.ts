@@ -95,7 +95,7 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
   },
   "ai-chatbot-for-small-business": {
     src: aiChatbotForSmallBusiness,
-    alt: "Abstract illustration of chat message bubbles overlaid on a soft gradient background.",
+    alt: "A customer paying at a café counter on a tablet point-of-sale system, with a barista standing beside them.",
   },
   "ai-customer-service-automation": {
     src: aiCustomerServiceAutomation,
@@ -171,7 +171,7 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
   },
   "ai-tools-vs-virtual-assistant": {
     src: aiToolsVsVirtualAssistant,
-    alt: "A person at a desk writing in a notebook beside an open laptop, in a calm workspace.",
+    alt: "Three people's hands stacked and gripping one another's wrists, suggesting teamwork between humans.",
   },
   "ai-use-policy-template": {
     src: aiUsePolicyTemplate,
@@ -207,7 +207,7 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
   },
   "best-free-ai-agents-for-small-business": {
     src: bestFreeAiAgentsForSmallBusiness,
-    alt: "An abstract rendering of a glowing blue AI-themed sphere with branching lines.",
+    alt: "A close-up of a circuit board illuminated from behind, representing software agents.",
   },
   "chatgpt-agent-mode-for-small-business": {
     src: chatgptAgentModeForSmallBusiness,
@@ -227,19 +227,19 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
   },
   "claude-for-small-business": {
     src: claudeForSmallBusiness,
-    alt: "An abstract purple gradient composition suggesting the Claude product's brand palette.",
+    alt: "Overlapping gears and mechanical parts arranged in an abstract engineering composition.",
   },
   "claude-vs-chatgpt-for-small-business": {
     src: claudeVsChatgptForSmallBusiness,
-    alt: "A hand resting on a calculator on a desk beside papers, representing a cost comparison.",
+    alt: "A humanoid robot seated on a wooden bench, reaching forward with a book or tablet in its hands.",
   },
   "custom-gpts-retiring": {
     src: customGptsRetiring,
-    alt: "A person working alone at a laptop in a dim indoor workspace, portrait orientation.",
+    alt: "An open paper planner on a desk with a pen and coffee cup, representing a date-driven deadline.",
   },
   "how-much-does-ai-cost-small-business": {
     src: howMuchDoesAiCostSmallBusiness,
-    alt: "A close-up of a calculator and a pen on top of accounting papers on a desk.",
+    alt: "A young plant growing out of a pile of copper coins, representing a small budget producing growth.",
   },
   "how-much-time-does-ai-save": {
     src: howMuchTimeDoesAiSave,
@@ -283,7 +283,7 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
   },
   "what-ai-cannot-do": {
     src: whatAiCannotDo,
-    alt: "A person sitting on a wooden bench reading an open broadsheet newspaper, face obscured.",
+    alt: "A person seated on a wooden bench reading an open broadsheet newspaper, face obscured.",
   },
   "what-is-claude-duet": {
     src: whatIsClaudeDuet,
