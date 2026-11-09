@@ -5,8 +5,9 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import { PAGES, getPage, type SitePage } from "@/config/pages";
 import type { MediaId } from "@/config/media";
+import { ARTICLE_MEDIA, type ArticleMediaAsset } from "@/config/article-media";
 import { getPillarPresentation, type PillarIconId } from "@/config/pillars";
-import type { PillarId } from "@/config/pages";
+import type { PageId, PillarId } from "@/config/pages";
 import { readingMinutes } from "@/lib/format";
 import { socialMediaId } from "@/lib/seo";
 
@@ -81,6 +82,12 @@ export interface ArticleCardData {
   updated: Date;
   /** Category image, for the one lead card a listing shows. */
   mediaId: MediaId;
+  /**
+   * Per-article hero image from src/config/article-media.ts, when registered.
+   * Lets a standard grid card carry the article's own photo rather than the
+   * pillar fallback, so a twenty-card archive is twenty different pictures.
+   */
+  articleMedia?: ArticleMediaAsset;
   /** Category glyph, for the grid and row cards, which carry no photo. */
   icon?: PillarIconId;
   /** Estimated minutes to read, from the entry's own body. */
@@ -109,6 +116,7 @@ export function toArticleCard<C extends EntryCollection>(
     published: entry.data.publishedDate,
     updated: entry.data.updatedDate,
     mediaId: socialMediaId(page),
+    articleMedia: ARTICLE_MEDIA[page.id as PageId],
     icon: page.pillar ? getPillarPresentation(page.pillar as PillarId).icon : undefined,
     minutes: readingMinutes(entry.body ?? ""),
   };

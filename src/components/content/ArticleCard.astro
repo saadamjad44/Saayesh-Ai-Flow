@@ -55,13 +55,22 @@ const {
 
 const isLead = variant === "lead";
 const isRow = variant === "row";
-const media = isLead ? getMedia(article.mediaId) : undefined;
+
+/**
+ * Lead cards use the category's own artwork; grid and row cards use the
+ * article's own photo where one is registered, falling back to the category
+ * glyph where it is not. The design concern the card header once documented -
+ * "twenty cards, five pictures, repetitive grid" - was about repeated category
+ * fallbacks; per-article photos are distinct, so the concern does not apply.
+ */
+const leadMedia = isLead ? getMedia(article.mediaId) : undefined;
+const cardMedia = !isLead && article.articleMedia ? article.articleMedia : undefined;
 ---
 
 <article
   class:list={[
-    "card card-link group relative flex flex-col overflow-hidden",
-    isRow ? "p-4" : isLead ? "" : "p-5",
+    "card card-link group relative flex flex-col overflow-hidden transition-transform duration-240 ease-ui hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:transform-none",
+    isRow ? "p-4" : isLead ? "" : cardMedia ? "" : "p-5",
     className,
   ]}
 >
@@ -71,10 +80,10 @@ const media = isLead ? getMedia(article.mediaId) : undefined;
     beneath it, which would make a screen reader read the same words twice and
     tells an image search nothing about the picture.
   */}
-  {isLead && media && (
+  {isLead && leadMedia && (
     <Image
-      src={media.src}
-      alt={media.alt}
+      src={leadMedia.src}
+      alt={leadMedia.alt}
       widths={[640, 960, 1280]}
       sizes={sizes}
       loading={priority ? "eager" : "lazy"}
@@ -84,11 +93,31 @@ const media = isLead ? getMedia(article.mediaId) : undefined;
     />
   )}
 
-  <div class:list={["flex min-w-0 flex-1 flex-col", isLead && "p-6 sm:p-7"]}>
+  {/*
+    Grid card's per-article photo. Kept decorative-looking without being
+    marked decorative: the alt is the registry's factual description, which
+    repeats information the card body does not carry (what is in the picture),
+    so a screen-reader user gains something a glance gives a sighted user.
+  */}
+  {cardMedia && !isRow && (
+    <div class="overflow-hidden border-b border-ink-200">
+      <Image
+        src={cardMedia.src}
+        alt={cardMedia.alt}
+        widths={[400, 640, 960]}
+        sizes="(min-width: 1024px) 24rem, 92vw"
+        loading="lazy"
+        decoding="async"
+        class="aspect-[16/9] w-full object-cover transition-transform duration-500 ease-ui group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+      />
+    </div>
+  )}
+
+  <div class:list={["flex min-w-0 flex-1 flex-col", isLead && "p-6 sm:p-7", cardMedia && !isLead && !isRow && "p-5"]}>
     {/* Category line: the glyph only where there is no photograph above it. */}
     {article.category && (
       <p class="flex items-center gap-2">
-        {!isLead && article.icon && (
+        {!isLead && !cardMedia && article.icon && (
           <span
             class:list={[
               "flex shrink-0 items-center justify-center rounded-lg border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none",
