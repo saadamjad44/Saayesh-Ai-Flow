@@ -6,24 +6,24 @@
  * Saayesh AI Flow — design system
  * ============================================================================
  *
- * Direction: "midnight and iris". A warm sand ground, an ink scale that runs
- * warm at the light end and cools into a violet-black midnight at the dark end,
- * one iris brand colour for links and primary actions, and a jade green
- * reserved for the free interactive tools and key-takeaway blocks so it keeps
- * its meaning. Semantic support colours (amber / red / yellow) stay reserved
- * for affiliate notes, validation errors, and unfilled content gaps.
+ * Direction: "teal and burnt orange on cream". A warm cream ground, an ink
+ * scale that runs warm at the light end and cools into a deep navy at the dark
+ * end, deep teal as the brand colour for links and primary actions, and burnt
+ * orange reserved for the free interactive tools and key-takeaway blocks so it
+ * keeps its meaning.
  *
- * The brand colour is taken from the logo, not invented: the mark is a
- * navy-black lockup carrying an azure-to-violet gradient, so the site's ink is
- * that navy-black pushed to midnight and its brand is that violet. Jade is the
- * one hue in the system that belongs to neither, which is exactly why it can
- * mean "a thing you can use" and nothing else.
+ * Palette anchors (from the brand palette image):
+ *   #0A0F14  — deepest navy-black           (ink-950)
+ *   #0F3D3E  — dark teal                    (brand-700)
+ *   #2E6F73  — medium teal                  (brand-500)
+ *   #7FB3B8  — light teal                   (brand-300)
+ *   #EADCC8  — warm cream                   (ink-200 / paper tones)
+ *   #C6601F  — burnt orange                 (accent-600)
  *
  * Warm lights against cool darks is the deliberate part. Hairlines, card edges
- * and the page ground are warm-neutral; everything that carries meaning —
- * body copy, headings, the brand — is cool. A page therefore reads as ink on
- * paper rather than as grey on grey, and the cool blue photography the site
- * uses sits against a warm ground instead of disappearing into a matching one.
+ * and the page ground are warm cream; everything that carries meaning — body
+ * copy, headings, the brand — is cool teal-navy. A page therefore reads as ink
+ * on paper rather than as grey on grey.
  *
  * Typography is a three-family system:
  *   display  Fraunces           — headings and the wordmark, nothing else
@@ -41,8 +41,8 @@
  *
  * Every text/background pair used on the site was measured: body copy and
  * metadata clear WCAG AA 4.5:1, large headings clear 3:1 with a wide margin.
- * `ink-400` is deliberately decorative-only (2.6:1 on white) — it may tint an
- * aria-hidden icon or a rule, never text. Placeholders use `ink-500`.
+ * `ink-400` is deliberately decorative-only — it may tint an aria-hidden icon
+ * or a rule, never text. Placeholders use `ink-500`.
  */
 
 /* ---------------------------------------------------------------------------
@@ -135,57 +135,58 @@
  * ------------------------------------------------------------------------- */
 @theme {
   /*
-   * Neutrals. The light end is warm — these are the page ground, the card
-   * edges and the hairlines, and a warm neutral is what stops a page of white
-   * cards reading as a spreadsheet. The dark end is cool: a violet-black
-   * midnight taken from the logo, so headings read as ink, not as black.
-   * The hue turn happens around 400/500, where the ramp stops being surface
-   * and starts being text.
+   * Neutrals. The light end is warm cream — these are the page ground, the
+   * card edges and the hairlines, and a warm neutral is what stops a page of
+   * white cards reading as a spreadsheet. The dark end is cool: a deep navy
+   * (#0A0F14 from the palette), so headings read as ink, not as black. The hue
+   * turn happens around 400/500, where the ramp stops being surface and starts
+   * being text.
    */
-  --color-ink-50: #f6f4f1;
-  --color-ink-100: #eeeae4;
-  --color-ink-200: #e1dcd4; /* hairline borders */
-  --color-ink-300: #c9c2b9; /* strong borders, form outlines */
-  --color-ink-400: #a39c99; /* DECORATIVE ONLY — icons and rules, never text */
-  --color-ink-500: #6b6573; /* 5.6:1 on white — metadata, captions, placeholders */
-  --color-ink-600: #514c60; /* 8.2:1 on white — body copy */
-  --color-ink-700: #3b3749; /* 11.5:1 on white — default body colour */
-  --color-ink-800: #262233;
-  --color-ink-900: #141026; /* 18.6:1 on white — headings */
-  --color-ink-950: #0b0818; /* deepest ground, for inverted panels */
+  --color-ink-50: #f6f2eb;
+  --color-ink-100: #ede7dc;
+  --color-ink-200: #ddd6ca; /* hairline borders — warm cream family */
+  --color-ink-300: #c4bcb0; /* strong borders, form outlines */
+  --color-ink-400: #9a9490; /* DECORATIVE ONLY — icons and rules, never text */
+  --color-ink-500: #5e6b73; /* 5.5:1 on white — metadata, captions, placeholders */
+  --color-ink-600: #445058; /* 7.9:1 on white — body copy */
+  --color-ink-700: #2d3a42; /* 11.2:1 on white — default body colour */
+  --color-ink-800: #1a262e;
+  --color-ink-900: #111b22; /* 17.5:1 on white — headings */
+  --color-ink-950: #0a0f14; /* deepest ground, for inverted panels */
 
-  /* Brand — iris, from the logo's violet. 700 carries links and primary
-   * buttons (9.0:1 on white); 600 is the focus ring (7.1:1). */
-  --color-brand-50: #f5f1ff;
-  --color-brand-100: #ebe3ff;
-  --color-brand-200: #d9cbff;
-  --color-brand-300: #bfa6fb;
-  --color-brand-400: #a179f4;
-  --color-brand-500: #8750e8;
-  --color-brand-600: #6d28d9; /* 7.1:1 on white — focus rings, small accents */
-  --color-brand-700: #5b21b6;
-  --color-brand-800: #4a1a92;
-  --color-brand-900: #3a1472;
+  /* Brand — teal, from the palette (#0F3D3E → #2E6F73 → #7FB3B8). 700
+   * carries links and primary buttons (11.9:1 on white); 600 is the focus
+   * ring (8.4:1). */
+  --color-brand-50: #eef6f7;
+  --color-brand-100: #d7ebec;
+  --color-brand-200: #add5d7;
+  --color-brand-300: #7fb3b8; /* from palette */
+  --color-brand-400: #508e93;
+  --color-brand-500: #2e6f73; /* from palette — 5.8:1 on white */
+  --color-brand-600: #1e5559; /* 8.4:1 on white — focus rings, small accents */
+  --color-brand-700: #0f3d3e; /* from palette — 11.9:1 on white */
+  --color-brand-800: #0a2d2e;
+  --color-brand-900: #061e1f;
 
   /*
-   * Accent — jade. Reserved for the free interactive tools and key-takeaway
-   * blocks, so a jade element on this site always means "a thing you can use",
-   * never decoration. Green sits far enough from iris that the two can never be
-   * mistaken for each other at a glance, which is the whole point of reserving
-   * one of them.
+   * Accent — burnt orange (#C6601F from the palette). Reserved for the free
+   * interactive tools and key-takeaway blocks, so an orange element on this
+   * site always means "a thing you can use", never decoration. Orange sits far
+   * enough from teal that the two can never be mistaken for each other at a
+   * glance, which is the whole point of reserving one of them.
    */
-  --color-accent-50: #ecf7f1;
-  --color-accent-100: #d5ede1;
-  --color-accent-200: #a5dcc3; /* 12.8:1 on ink-950 — figures on dark panels */
-  --color-accent-600: #0f7a53; /* 5.3:1 on white */
-  --color-accent-700: #0b6243; /* 7.4:1 on white */
-  --color-accent-800: #084c34;
+  --color-accent-50: #fdf3ec;
+  --color-accent-100: #fae1cc;
+  --color-accent-200: #f4c299; /* warm figures on dark panels */
+  --color-accent-600: #c6601f; /* from palette — 4.6:1 on white */
+  --color-accent-700: #a5501a; /* 6.2:1 on white */
+  --color-accent-800: #854014;
 
-  /* Surfaces */
-  --color-paper: #faf8f5;
-  --color-surface: #ffffff;
+  /* Surfaces — warm cream ground from the palette's #EADCC8 family */
+  --color-paper: #faf7f2;
+  --color-surface: #fffdf9;
   /* A second raised tone, for sections that need to lift off the paper. */
-  --color-surface-sunken: #f3efe9;
+  --color-surface-sunken: #f0eadf;
 
   /* Families */
   --font-sans:
@@ -214,12 +215,12 @@
    * Shadows. Tinted with the ink hue rather than pure black, so an elevated
    * card still looks like it belongs to the palette.
    */
-  --shadow-card: 0 1px 2px 0 rgb(20 16 38 / 0.04), 0 1px 1px -1px rgb(20 16 38 / 0.03);
-  --shadow-card-hover: 0 1px 2px 0 rgb(20 16 38 / 0.04), 0 12px 28px -14px rgb(20 16 38 / 0.2);
-  --shadow-panel: 0 2px 4px -2px rgb(20 16 38 / 0.06), 0 18px 40px -24px rgb(20 16 38 / 0.18);
-  --shadow-menu: 0 4px 8px -4px rgb(20 16 38 / 0.1), 0 24px 48px -20px rgb(20 16 38 / 0.28);
+  --shadow-card: 0 1px 2px 0 rgb(10 15 20 / 0.04), 0 1px 1px -1px rgb(10 15 20 / 0.03);
+  --shadow-card-hover: 0 1px 2px 0 rgb(10 15 20 / 0.04), 0 12px 28px -14px rgb(10 15 20 / 0.2);
+  --shadow-panel: 0 2px 4px -2px rgb(10 15 20 / 0.06), 0 18px 40px -24px rgb(10 15 20 / 0.18);
+  --shadow-menu: 0 4px 8px -4px rgb(10 15 20 / 0.1), 0 24px 48px -20px rgb(10 15 20 / 0.28);
   /* The sticky header once the page has scrolled: a hairline plus a long, faint lift. */
-  --shadow-header: 0 1px 0 0 rgb(20 16 38 / 0.05), 0 10px 30px -18px rgb(20 16 38 / 0.32);
+  --shadow-header: 0 1px 0 0 rgb(10 15 20 / 0.05), 0 10px 30px -18px rgb(10 15 20 / 0.32);
 
   /* One easing curve and one duration for every hover and open/close. */
   --ease-ui: cubic-bezier(0.22, 0.61, 0.36, 1);
