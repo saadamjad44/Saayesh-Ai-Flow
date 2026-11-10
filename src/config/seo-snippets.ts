@@ -948,6 +948,39 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
      */
     note: 'Rendered at 54 characters. A dated story, which makes this the one page on the site where the snippet should age out: if the exploitation picture changes materially, rewrite the description rather than leaving a promise about "retracted" claims that the page no longer explains. The retraction is in the description on purpose — Unit 42 pulled its agentic-AI post-exploitation claim on 2026-10-25 and most of the coverage still carries it, so the correction is the single most useful thing this page offers a searcher who has already read two other articles about it.',
   },
+  "jensen-huang-nvidia-spy-scandal-explained": {
+    title: "Jensen Huang Nvidia Spy Scandal Explained (Nov 2026)",
+    brand: "omit",
+    description:
+      "U.S. intelligence believes Nvidia CEO Jensen Huang was targeted by a Chinese spy operation. What is confirmed, what is alleged, and what it means for AI chips.",
+    primaryKeyword: "Jensen Huang spy scandal",
+    supportingKeywords: [
+      "Jensen Huang Chinese spy",
+      "Nvidia CEO scandal",
+      "Jensen Huang affair",
+      "Nvidia spy scandal explained",
+      "Jensen Huang Congress",
+      "Nvidia stock drop spy",
+    ],
+    intent: "Informational",
+    note: "A breaking-news explainer. The story is developing, so update the description and body as congressional testimony (Nov 18) and investigation outcomes emerge. Primary keyword targets the explainer intent; the bare-name searches belong to NYT and Bloomberg.",
+  },
+  "who-is-alice-huang-nvidia-spy": {
+    title: "Who Is Alice Huang? Nvidia Spy Scandal Explained",
+    brand: "omit",
+    description:
+      "Alice Huang is the Megaspeed executive at the center of the Nvidia spy scandal. Who she is, what Megaspeed does, and what is alleged versus confirmed.",
+    primaryKeyword: "who is Alice Huang",
+    supportingKeywords: [
+      "Alice Huang Nvidia",
+      "Alice Huang Megaspeed",
+      "Alice Huang spy",
+      "Megaspeed Nvidia chips China",
+      "honeypot operation Nvidia",
+    ],
+    intent: "Informational",
+    note: "Targets the person-search intent that news outlets satisfy with a paragraph inside a longer article. A standalone profile page has room to explain Megaspeed and the honeypot allegation in full, which is what the searcher actually wants.",
+  },
 
   // ---- Getting Started cluster -------------------------------------------
   "getting-started": {

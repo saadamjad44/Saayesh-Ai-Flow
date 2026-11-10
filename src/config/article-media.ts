@@ -62,9 +62,11 @@ import howToUseAiTools from "@/assets/images/articles/how-to-use-ai-tools.jpg";
 import howToWriteEffectiveAiPrompts from "@/assets/images/articles/how-to-write-effective-ai-prompts.jpg";
 import isChatgptSafeForBusinessData from "@/assets/images/articles/is-chatgpt-safe-for-business-data.jpg";
 import jasperVsClaudeVsChatgpt from "@/assets/images/articles/jasper-vs-claude-vs-chatgpt.jpg";
+import jensenHuangNvidiaSpyScandal from "@/assets/images/articles/jensen-huang-nvidia-spy-scandal-explained.jpg";
 import makeAiWritingSoundHuman from "@/assets/images/articles/make-ai-writing-sound-human.jpg";
 import n8nVsZapierVsMake from "@/assets/images/articles/n8n-vs-zapier-vs-make.jpg";
 import php2shellAiFoundPhpFlaw from "@/assets/images/articles/php2shell-ai-found-php-flaw.jpg";
+import whoIsAliceHuangNvidiaSpy from "@/assets/images/articles/who-is-alice-huang-nvidia-spy.jpg";
 import signatoroEmailSignatureGuide from "@/assets/images/articles/signatoro-email-signature-guide.jpg";
 import whatAiCannotDo from "@/assets/images/articles/what-ai-cannot-do.jpg";
 import whatIsClaudeDuet from "@/assets/images/articles/what-is-claude-duet.jpg";
@@ -273,6 +275,10 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
     src: n8nVsZapierVsMake,
     alt: "An abstract pattern of interconnected lines and nodes, representing workflow automation.",
   },
+  "jensen-huang-nvidia-spy-scandal-explained": {
+    src: jensenHuangNvidiaSpyScandal,
+    alt: "A close-up of a circuit board with microchips and electronic components, teal-toned.",
+  },
   "php2shell-ai-found-php-flaw": {
     src: php2shellAiFoundPhpFlaw,
     alt: "A detailed close-up of a backlit circuit-board schematic, rendered in cool colours.",
@@ -280,6 +286,10 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
   "signatoro-email-signature-guide": {
     src: signatoroEmailSignatureGuide,
     alt: "A close-up of a laptop showing an email application, photographed from an angle.",
+  },
+  "who-is-alice-huang-nvidia-spy": {
+    src: whoIsAliceHuangNvidiaSpy,
+    alt: "A dark cybersecurity-themed image with glowing digital data streams and circuit patterns.",
   },
   "what-ai-cannot-do": {
     src: whatAiCannotDo,

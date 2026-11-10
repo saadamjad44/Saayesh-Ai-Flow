@@ -92,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 36,
+  3: 38,
 };
 
 export const PAGES = [
@@ -661,6 +661,29 @@ export const PAGES = [
     id: "php2shell-ai-found-php-flaw",
     title: "PHP2Shell: AI Found a Critical Flaw in PHP",
     path: "/ai-news/php2shell-ai-found-php-flaw/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-news",
+  },
+  /**
+   * The Jensen Huang / Nvidia spy scandal broke on 2026-11-08. Two articles
+   * cover it: the full explainer targets people searching "Jensen Huang
+   * Chinese spy" and the Alice Huang profile targets "who is Alice Huang."
+   * Both are news-format pieces under /ai-news/ and carefully attribute every
+   * claim to its source, distinguishing confirmed facts from allegations.
+   */
+  {
+    id: "jensen-huang-nvidia-spy-scandal-explained",
+    title: "Jensen Huang Nvidia Spy Scandal Explained: What We Know So Far",
+    path: "/ai-news/jensen-huang-nvidia-spy-scandal-explained/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-news",
+  },
+  {
+    id: "who-is-alice-huang-nvidia-spy",
+    title: "Who Is Alice Huang? The Woman at the Center of the Nvidia Spy Scandal",
+    path: "/ai-news/who-is-alice-huang-nvidia-spy/",
     type: "article",
     phase: 3,
     pillar: "ai-news",
