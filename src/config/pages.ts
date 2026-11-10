@@ -92,7 +92,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 20,
-  3: 38,
+  3: 43,
 };
 
 export const PAGES = [
@@ -877,6 +877,75 @@ export const PAGES = [
     id: "what-ai-cannot-do",
     title: "What AI Cannot Do for a Small Business",
     path: "/getting-started/what-ai-cannot-do/",
+    type: "article",
+    phase: 3,
+    pillar: "getting-started",
+  },
+  /**
+   * MCP explainer for non-technical small business owners. Targets "what is
+   * MCP model context protocol" and related search terms. Covers the protocol,
+   * 3 practical servers to set up, security, and cost implications.
+   */
+  {
+    id: "what-is-mcp-model-context-protocol",
+    title: "What Is MCP? Plain-English Guide for Small Business Owners",
+    path: "/getting-started/what-is-mcp-model-context-protocol/",
+    type: "article",
+    phase: 3,
+    pillar: "getting-started",
+  },
+
+  /**
+   * AI browser comparison for small business owners. Covers Perplexity Comet,
+   * Dia, and ChatGPT Desktop+Extension after the Atlas shutdown. Research-based
+   * with placeholders for 30-day testing data.
+   */
+  {
+    id: "best-ai-browser-small-business",
+    title: "Best AI Browser for Small Business 2026: Honest Comparison",
+    path: "/ai-business-tools/best-ai-browser-small-business/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-business-tools",
+  },
+
+  /**
+   * SLM cost-saving guide for solopreneurs. Covers Llama 3.2 3B, Phi-4,
+   * Gemma 3, and Mistral Small with practical setup guides (Groq, OpenRouter,
+   * Ollama) and honest task-by-task comparison against frontier models.
+   */
+  {
+    id: "small-language-models-solopreneurs",
+    title: "Small Language Models for Solopreneurs: Save on AI Costs",
+    path: "/ai-business-tools/small-language-models-solopreneurs/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-business-tools",
+  },
+
+  /**
+   * AI voice agent honest review for small business. Covers Synthflow,
+   * Retell AI, Bland AI, Goodcall, and CloudTalk. Framework article with
+   * TO REPLACE markers for interview data from real business owners.
+   */
+  {
+    id: "ai-voice-agents-small-business-honest-review",
+    title: "AI Voice Agents for Small Business: When They Save Money",
+    path: "/ai-agents/ai-voice-agents-small-business-honest-review/",
+    type: "article",
+    phase: 3,
+    pillar: "ai-agents",
+  },
+
+  /**
+   * Vibe coding experiment for non-developers. Framework article with TO
+   * REPLACE markers for Saad's 30-day build log. Covers Lovable, Bolt.new,
+   * and Cursor with honest cost and risk analysis.
+   */
+  {
+    id: "vibe-coding-non-developers-30-day-experiment",
+    title: "Vibe Coding for Non-Developers: Can You Build a SaaS?",
+    path: "/getting-started/vibe-coding-non-developers-30-day-experiment/",
     type: "article",
     phase: 3,
     pillar: "getting-started",

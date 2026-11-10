@@ -1,0 +1,230 @@
+---
+pageId: vibe-coding-non-developers-30-day-experiment
+title: "Vibe Coding for Non-Developers: Can You Build a SaaS?"
+description: A non-developer's 30-day experiment building a real SaaS with Lovable, Bolt.new, and Cursor. What shipped, what broke, and what it actually cost.
+publishedDate: 2026-11-10
+updatedDate: 2026-11-10
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Can I really build a SaaS without coding in 2026?
+    answer: You can build a working prototype. Whether it is production-ready depends on what it does. Simple tools like calculators, directories, and internal dashboards ship well from vibe coding. Apps that handle payments, user authentication, or sensitive data need a developer to review the code before going live. The honest answer is yes for validation, no for production without expert review.
+  - question: How much does vibe coding actually cost?
+    answer: Tool subscriptions run $20 to $50 per month for Lovable, Bolt.new, or Cursor. On top of that, LLM API costs add $5 to $30 per month depending on how much you prompt. Hosting on Vercel or Netlify is free for small projects. Domain is $10 to $15 per year. Total for a 30-day experiment is roughly $50 to $100. But if you need a developer to fix what breaks, that is $50 to $150 per hour on top.
+  - question: Lovable vs Bolt.new — which is better for a first-timer?
+    answer: Lovable is better for first-timers. It walks you through a planning stage before generating code, the interface is more structured, and it handles more of the backend setup automatically. Bolt.new is faster for quick prototypes but gives you less guidance. If you have never written a line of code, start with Lovable. If you have built a website before and want speed, try Bolt.new.
+  - question: What is the biggest risk of vibe coding my SaaS?
+    answer: Maintenance. You can generate a working app in a week, but when something breaks six months later, you cannot fix it without understanding the code. Generated code is often messy, poorly structured, and hard for a hired developer to work with later. The biggest risk is not building it. It is keeping it running after launch without the skills to debug it yourself.
+  - question: Do I need to know anything technical to start?
+    answer: You need to understand what a database is, what an API does, and how web hosting works. You do not need to write code, but you need to describe what you want clearly and know enough to evaluate whether the AI built the right thing. Think of it like hiring a contractor to renovate your house. You do not need to be a plumber, but you need to know what a bathroom should look like.
+  - question: Can my vibe-coded app handle real paying customers?
+    answer: Technically yes. Practically, not without a security review. Lovable had a vulnerability in 2025 that exposed user data in 170 of 1,645 audited apps. The platforms have improved, but generated code does not go through the security review process that professional software does. If your app handles payments or personal data, pay a developer for a 2 to 4 hour security audit before accepting real customers. That $200 to $600 is insurance.
+---
+
+import { Callout, KeyTakeaways } from "@/components/content";
+
+<KeyTakeaways>
+
+- **You can build a working prototype.** Vibe coding tools in 2026 are good enough to ship a basic SaaS for validation. They are not good enough for production without expert review.
+- **Total cost for a 30-day experiment:** roughly $50–100 in tools and hosting, plus your time.
+- **The biggest risk is not building — it is maintaining.** Generated code is hard to debug, hard to modify, and hard for a hired developer to inherit.
+- **Honest verdict:** use vibe coding to validate your idea cheaply. If it gets traction, hire a developer to rebuild it properly.
+
+</KeyTakeaways>
+
+*This page may contain affiliate links. I only link to tools I've personally used or tested. See [affiliate disclosure](/affiliate-disclosure/).*
+
+**By Saad Amjad — Last updated November 2026**
+
+> **How this was written:** This is a research-based framework for a 30-day vibe coding experiment. Sections marked "TO REPLACE" are placeholders for real results, costs, and screenshots from my own experiment. I have used Cursor for small editing tasks but have not yet completed a full 30-day SaaS build with all three tools. Tool capabilities and pricing verified against current documentation in November 2026.
+
+## The goal
+
+Build a real, paying SaaS product using only AI coding tools — no developer hired, no code written by hand. The tools: **Lovable** for the initial build, **Bolt.new** for quick prototyping, and **Cursor** for debugging and refinement.
+
+The constraints:
+- Budget: under $200 for the full 30 days
+- Skills: I can describe what I want, but I cannot write Python, React, or SQL
+- Output: a working app with user accounts, a core feature, and a way to accept payment
+
+## The tools at a glance
+
+| Tool | What it does | Best for | Price (Nov 2026) |
+|------|-------------|----------|-----------------|
+| **Lovable** | Full-stack app builder with AI. Describe what you want, it generates frontend + backend. | First build, non-developers | Free tier; paid from ~$20/mo |
+| **Bolt.new** | Rapid prototype builder. Generate a working app from a prompt in minutes. | Quick prototypes, landing pages | Free tier; paid from ~$20/mo |
+| **Cursor** | AI-powered code editor (VS Code fork). Understands your codebase, suggests and writes code. | Debugging, refining existing code | Free tier; Pro ~$20/mo |
+
+*Verify pricing at each vendor's site. These figures are from November 2026 documentation.*
+
+## Week 1: Lovable prototype
+
+**TO REPLACE: real daily log from Saad's experiment. Below is the expected framework.**
+
+### Day 1–2: Planning
+
+Lovable's planning stage is its best feature for non-developers. You describe your app in plain English, and it breaks it down into components, pages, and data structures before writing any code. This matters because most vibe coding failures happen when you skip planning and start prompting immediately.
+
+Expected approach:
+1. Describe the SaaS concept in 3–5 sentences
+2. Let Lovable generate a project plan
+3. Review the data model (what information the app stores)
+4. Approve the page structure
+
+### Day 3–5: First working version
+
+Lovable generates the full app — frontend, backend, database. The first version will look functional but have rough edges: misaligned elements, missing error states, placeholder text that was not replaced.
+
+**What typically works well:** basic CRUD (create, read, update, delete) functionality, user interface layout, navigation.
+
+**What typically breaks:** authentication setup, database relationships, payment integration.
+
+### Day 6–7: Testing and fixing
+
+This is where non-developers hit a wall. The app looks right but does not behave right. A button leads to a blank page. A form submits but the data does not save. The login works on Chrome but breaks on Safari.
+
+Fixing these issues without understanding the code means describing the problem to the AI and hoping it understands. Sometimes it fixes one thing and breaks another. This cycle is the hidden time cost of vibe coding.
+
+[IMAGE: Screenshot of a Lovable project showing the planning stage breakdown — components, pages, and data model side by side]
+
+## Week 2: Bolt.new rebuild (or not)
+
+**TO REPLACE: real comparison data from using both tools on the same concept.**
+
+### Why you might switch
+
+Bolt.new is faster for prototyping. If Lovable's first build has deep structural issues — wrong framework, overcomplicated data model, slow performance — starting fresh in Bolt.new can be faster than fixing.
+
+### Why you might not
+
+Switching tools means losing all the context your AI assistant built up. Lovable remembers your project structure, your preferences, your past fixes. Bolt.new starts cold.
+
+### The honest comparison
+
+| Aspect | Lovable | Bolt.new |
+|--------|---------|----------|
+| Planning stage | Guided, structured | Minimal, prompt-first |
+| Backend handling | Built-in (Supabase) | Less guided |
+| Speed of first output | 10–30 minutes | 5–15 minutes |
+| Output quality | More polished | More rough |
+| Complex features | Better | Struggles |
+| Learning curve | Lower for beginners | Lower for people with some web experience |
+
+The expected verdict: Lovable for the main build, Bolt.new for throwaway prototypes and landing pages.
+
+## Week 3: Cursor for debugging
+
+**TO REPLACE: real debugging sessions and fixes from the experiment.**
+
+### When the build breaks
+
+Around week 3, the generated app hits problems that AI prompting alone cannot fix. This is where Cursor earns its place.
+
+Cursor is a code editor, not a builder. It opens your existing code, understands the full project structure, and lets you ask questions like "why does the login redirect fail?" while seeing all the relevant files.
+
+**Expected workflow:**
+1. Export your Lovable project code
+2. Open it in Cursor
+3. Ask Cursor to explain the parts that are not working
+4. Let Cursor suggest fixes
+5. Apply fixes and test
+
+### The skill threshold
+
+Cursor is more powerful than Lovable or Bolt.new, but it assumes you can read code even if you do not write it. You need to understand enough to evaluate whether Cursor's suggestion makes sense. If you cannot tell the difference between a good fix and a bad one, you will spend hours going in circles.
+
+This is the honest limit of vibe coding: the tools can write code, but someone still needs to verify it.
+
+## Week 4: Deploy, test, break, fix
+
+**TO REPLACE: real deployment experience, costs, and issues.**
+
+### Deployment
+
+Most vibe-coded apps deploy to **Vercel** or **Netlify** for free or near-free hosting. The process:
+1. Connect your code repository to the hosting platform
+2. Deploy with one click
+3. Point your custom domain at the deployment
+
+Expected cost: **$0** for hosting on the free tier, **$10–15/year** for a custom domain.
+
+### The 5 things that will break
+
+Based on patterns from reviews and community reports, these are the most common failures:
+
+1. **Authentication** — login flows break on edge cases (password reset, email verification timeouts, social login on mobile). Every review of vibe-coded apps mentions auth as the first thing to test heavily.
+
+2. **Database state** — data gets corrupted or lost when users do things in unexpected order. The generated code often lacks proper error handling for database operations.
+
+3. **API cost spikes** — if your app calls an AI model (common for AI-powered SaaS), costs can spike if you do not set rate limits. One prompt-heavy day can cost more than your entire month of tool subscriptions.
+
+4. **Mobile responsive** — the generated UI may look good on desktop and break on mobile. Lovable and Bolt.new have improved here, but always test on an actual phone before launch.
+
+5. **Email deliverability** — transactional emails (signup confirmation, password reset) often go to spam because the default sending domain has no reputation. This is fixable but takes technical setup.
+
+## The real cost breakdown
+
+**TO REPLACE: real receipts and costs from Saad's 30-day experiment. Below is the estimated budget.**
+
+| Item | Estimated cost |
+|------|---------------|
+| Lovable paid tier (1 month) | $20–30 |
+| Bolt.new paid tier (1 month) | $20–30 |
+| Cursor Pro (1 month) | $20 |
+| LLM API costs (Claude/GPT for prompting) | $5–30 |
+| Hosting (Vercel/Netlify free tier) | $0 |
+| Domain name | $12 |
+| **Total** | **$77–122** |
+
+Compare this to hiring a freelance developer: **$2,000–5,000** for a basic SaaS MVP at $50–100/hour for 40–80 hours.
+
+The savings look huge. The catch: if your vibe-coded app needs significant fixes before going live, hiring a developer to fix generated code costs more per hour than hiring one to build it from scratch, because they have to understand someone else's messy code first.
+
+<Callout variant="note">
+
+**Run the numbers:** The [small business AI cost calculator](/ai-business-tools/small-business-ai-cost-calculator/) can estimate your monthly AI tool costs. If you are using [smaller, cheaper models](/ai-business-tools/small-language-models-solopreneurs/) during development, the API costs drop significantly.
+
+</Callout>
+
+## Who should try vibe coding
+
+**Try it if:**
+- You are validating an idea and need a working prototype to show potential customers
+- You are building an internal tool for your own small business (no public users, lower stakes)
+- You have a simple concept — a calculator, a directory, a content tool, a dashboard
+- You are willing to spend 2–4 weeks learning by doing
+- You are comfortable with the result being "good enough for now" and planning to rebuild later
+
+**Do not try it if:**
+- You want to launch a production SaaS with paying customers on day one
+- Your app handles payments, health data, or anything where a bug has legal consequences
+- You need the app to scale past a few hundred users without performance problems
+- You do not have budget for a developer to review the code before launch
+- You expect the AI to handle everything — you will still spend 50% of your time describing, testing, and fixing
+
+## The honest alternative
+
+Here is what nobody in the vibe coding space talks about:
+
+**20 hours of a developer contractor costs $1,000–2,000.** For that, you get:
+- Clean, maintainable code you can modify later
+- Proper authentication and security
+- A developer who can fix things when they break
+- Code that another developer can understand and work on
+
+If your SaaS idea is good enough to build, it is good enough to spend $1,500 on doing it right. Vibe coding is for testing whether the idea is worth that investment, not for replacing it.
+
+The smartest path:
+1. **Week 1:** Vibe code a prototype with Lovable (free or $20)
+2. **Week 2:** Show it to 10 potential customers and get feedback
+3. **Week 3:** If 3+ people say they would pay, hire a developer to build the real version
+4. **Week 4:** Launch the professional version with [MCP integrations](/getting-started/what-is-mcp-model-context-protocol/) connecting it to your business tools
+
+That is $20 for validation and $1,500 for execution. Better than spending $100 on a vibe-coded app you cannot maintain.
+
+## What to do this week
+
+1. **Pick one simple idea.** Not your dream SaaS. Something small: a calculator, a booking page, a directory. You want your first vibe coding experience to teach you the workflow, not to build your business.
+2. **Try Lovable's free tier.** Spend 2 hours. Describe your idea and see what it generates. Do not pay for anything yet.
+3. **Test on your phone.** Whatever Lovable generates, open it on your phone. If it breaks, you have found the first thing vibe coding cannot do for you automatically.
+4. **Budget honestly.** Tool subscriptions, API costs, a domain, and possibly a developer for review. The $50–100 figure only covers the tools. The total real cost of shipping something you trust includes a security review.

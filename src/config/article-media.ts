@@ -18,6 +18,8 @@
 import type { ImageMetadata } from "astro";
 
 import aiAgentUseCases from "@/assets/images/articles/ai-agent-use-cases.jpg";
+import aiVoiceAgentsSmallBusinessHonestReview from "@/assets/images/articles/ai-voice-agents-small-business-honest-review.jpg";
+import bestAiBrowserSmallBusiness from "@/assets/images/articles/best-ai-browser-small-business.jpg";
 import aiAgentsVsAutomation from "@/assets/images/articles/ai-agents-vs-automation.jpg";
 import aiChatbotForSmallBusiness from "@/assets/images/articles/ai-chatbot-for-small-business.jpg";
 import aiCustomerServiceAutomation from "@/assets/images/articles/ai-customer-service-automation.jpg";
@@ -68,8 +70,11 @@ import n8nVsZapierVsMake from "@/assets/images/articles/n8n-vs-zapier-vs-make.jp
 import php2shellAiFoundPhpFlaw from "@/assets/images/articles/php2shell-ai-found-php-flaw.jpg";
 import whoIsAliceHuangNvidiaSpy from "@/assets/images/articles/who-is-alice-huang-nvidia-spy.jpg";
 import signatoroEmailSignatureGuide from "@/assets/images/articles/signatoro-email-signature-guide.jpg";
+import smallLanguageModelsSolopreneurs from "@/assets/images/articles/small-language-models-solopreneurs.jpg";
+import vibeCodingNonDevelopers30DayExperiment from "@/assets/images/articles/vibe-coding-non-developers-30-day-experiment.jpg";
 import whatAiCannotDo from "@/assets/images/articles/what-ai-cannot-do.jpg";
 import whatIsClaudeDuet from "@/assets/images/articles/what-is-claude-duet.jpg";
+import whatIsMcpModelContextProtocol from "@/assets/images/articles/what-is-mcp-model-context-protocol.jpg";
 import zapierAiAutomationExamples from "@/assets/images/articles/zapier-ai-automation-examples.jpg";
 
 import type { PageId } from "./pages";
@@ -98,6 +103,10 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
   "ai-chatbot-for-small-business": {
     src: aiChatbotForSmallBusiness,
     alt: "A customer paying at a café counter on a tablet point-of-sale system, with a barista standing beside them.",
+  },
+  "ai-voice-agents-small-business-honest-review": {
+    src: aiVoiceAgentsSmallBusinessHonestReview,
+    alt: "A person holding a smartphone to their ear, standing in front of a blurred office background.",
   },
   "ai-customer-service-automation": {
     src: aiCustomerServiceAutomation,
@@ -186,6 +195,14 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
   "best-ai-agents-for-small-business": {
     src: bestAiAgentsForSmallBusiness,
     alt: "An expressive white robot head in a softly lit indoor setting, facing the camera.",
+  },
+  "best-ai-browser-small-business": {
+    src: bestAiBrowserSmallBusiness,
+    alt: "A laptop open on a desk showing code on screen, with soft natural light from a window.",
+  },
+  "small-language-models-solopreneurs": {
+    src: smallLanguageModelsSolopreneurs,
+    alt: "A compact circuit board with a microprocessor chip at center, surrounded by electronic components.",
   },
   "best-ai-automation-tools": {
     src: bestAiAutomationTools,
@@ -298,6 +315,14 @@ export const ARTICLE_MEDIA: Partial<Record<PageId, ArticleMediaAsset>> = {
   "what-is-claude-duet": {
     src: whatIsClaudeDuet,
     alt: "An abstract rendering of a glowing AI-themed geometric form in blue and purple tones.",
+  },
+  "vibe-coding-non-developers-30-day-experiment": {
+    src: vibeCodingNonDevelopers30DayExperiment,
+    alt: "A person's hands typing on a laptop keyboard, with code visible on the screen in a warm workspace.",
+  },
+  "what-is-mcp-model-context-protocol": {
+    src: whatIsMcpModelContextProtocol,
+    alt: "A dark server room with rows of illuminated network equipment and glowing blue cable connections.",
   },
   "zapier-ai-automation-examples": {
     src: zapierAiAutomationExamples,

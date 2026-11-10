@@ -441,6 +441,86 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     ],
     intent: "Informational",
   },
+  "what-is-mcp-model-context-protocol": {
+    title: "What Is MCP? Plain-English Guide for Small Business",
+    brand: "omit",
+    description:
+      "MCP lets your AI talk directly to your business tools. What it is, who should care, and the 3 free servers worth setting up this week. Updated Nov 2026.",
+    primaryKeyword: "what is MCP model context protocol",
+    supportingKeywords: [
+      "MCP for small business",
+      "MCP explained simply",
+      "how to use MCP Claude",
+      "MCP server list",
+      "MCP vs Zapier",
+    ],
+    intent: "Informational",
+    note: "Targets the explainer search. Most MCP content is developer-focused; this page owns the small-business angle. Update the 3 recommended servers quarterly as the ecosystem evolves.",
+  },
+  "best-ai-browser-small-business": {
+    title: "Best AI Browser 2026: Comet vs Dia vs ChatGPT Compared",
+    brand: "omit",
+    description:
+      "Perplexity Comet, Dia, and ChatGPT desktop compared for small business. Pricing, agent features, privacy, and which one saves time. Nov 2026.",
+    primaryKeyword: "best AI browser 2026",
+    supportingKeywords: [
+      "ChatGPT Atlas vs Perplexity Comet",
+      "AI browser for small business",
+      "is Perplexity Comet worth it",
+      "Dia browser vs Arc",
+      "AI browser for freelancers",
+    ],
+    intent: "Commercial investigation",
+    note: "Atlas is dead (Aug 2026). Comparison pivoted to Comet vs Dia vs ChatGPT desktop+extension. Update with 30-day testing data when available. Recheck Dia Windows support and pricing tiers quarterly.",
+  },
+  "small-language-models-solopreneurs": {
+    title: "Small Language Models: Save 70% on AI Without Losing Quality",
+    brand: "omit",
+    description:
+      "You are overpaying for GPT-4o. The 4 smaller models that handle 80% of business tasks at a fraction of the cost, and how to start free. Nov 2026.",
+    primaryKeyword: "small language models vs LLM",
+    supportingKeywords: [
+      "cheapest AI model for small business",
+      "Llama 3.2 vs GPT-4o cost",
+      "Groq vs OpenAI pricing",
+      "local AI model for business",
+      "SLM use cases small business",
+    ],
+    intent: "Commercial investigation",
+    note: "Cost angle differentiates from developer-focused SLM content. Groq pricing changed Aug 2026 — recheck model availability on free tier quarterly. Update model list as new SLMs release.",
+  },
+  "ai-voice-agents-small-business-honest-review": {
+    title: "AI Voice Agents for Small Business: Honest 2026 Review",
+    brand: "omit",
+    description:
+      "AI voice agents promise to replace your receptionist. The real costs, where they work, where they fail, and 5 platforms compared. Nov 2026.",
+    primaryKeyword: "AI voice agent small business",
+    supportingKeywords: [
+      "best AI receptionist for small business",
+      "is AI voice agent worth it",
+      "AI voice agent vs human receptionist cost",
+      "AI voice agent problems",
+      "Retell AI vs Synthflow vs Bland AI",
+    ],
+    intent: "Commercial investigation",
+    note: "Framework article with TO REPLACE markers for interview data. Update with real quotes and testing data as Saad completes the 30-business survey. Recheck all vendor pricing quarterly.",
+  },
+  "vibe-coding-non-developers-30-day-experiment": {
+    title: "Vibe Coding for Non-Developers: Build a SaaS in 30 Days?",
+    brand: "omit",
+    description:
+      "A non-developer tries building a real SaaS with Lovable, Bolt.new, and Cursor. What shipped, what broke, and the real cost. Nov 2026.",
+    primaryKeyword: "vibe coding for non developers",
+    supportingKeywords: [
+      "can non developer build SaaS",
+      "Lovable vs Bolt.new vs Cursor",
+      "is vibe coding worth it",
+      "build SaaS without coding 2026",
+      "vibe coding problems",
+    ],
+    intent: "Informational",
+    note: "Framework article with TO REPLACE markers for Saad's 30-day experiment. Update with real costs, screenshots, and daily logs. Lovable had security vulnerabilities in 2025 — recheck before publishing.",
+  },
   /**
    * Added 2026-10-28. The title names the conversations rather than promising
    * a count, because every result on this SERP promises a count — "25 best",

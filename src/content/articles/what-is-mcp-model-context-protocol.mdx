@@ -1,0 +1,174 @@
+---
+pageId: what-is-mcp-model-context-protocol
+title: "What Is MCP? Plain-English Guide for Small Business Owners"
+description: MCP lets your AI talk directly to your tools. What it is, who should care, and the 3 servers worth turning on this week if you run a small business.
+publishedDate: 2026-11-10
+updatedDate: 2026-11-10
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: What is the difference between MCP and Zapier?
+    answer: Zapier moves data between apps on a schedule or trigger you set up in advance. MCP lets an AI model reach into your tools in real time, mid-conversation, without a pre-built automation. Zapier is better for repeating workflows that run the same way every time. MCP is better when you need the AI to pull fresh data or take an action you did not plan ahead of time. They solve different problems and many businesses will keep both.
+  - question: Is MCP free?
+    answer: The protocol itself is free and open source. You pay nothing to use it. Individual MCP servers may charge if their underlying service does - for example, a Stripe MCP server is free but your Stripe account still has its normal transaction fees. Claude Desktop, which runs local MCP servers, is free. The main cost is your time setting things up.
+  - question: Does ChatGPT support MCP?
+    answer: Yes, as of 2026 ChatGPT supports MCP through its Connectors feature in Developer Mode. The key limit is that ChatGPT only supports remote servers over HTTPS. It cannot run local servers on your computer the way Claude Desktop can. This means you need a hosted MCP server with a public URL, not a local file-system server. Check OpenAI's current plan eligibility before signing up, since not all tiers may have access.
+  - question: Can I write my own MCP server?
+    answer: Yes. MCP is an open-source specification with SDKs in TypeScript and Python. If you can follow a tutorial and edit a config file, you can set up a pre-built server. Writing one from scratch requires developer skills, but the community has built servers for most popular tools already. Check the official registry at registry.modelcontextprotocol.io before building your own.
+  - question: Is MCP secure for business data?
+    answer: It depends on how you set it up. Local MCP servers like the filesystem server keep data on your computer and never send it to a third-party service beyond the AI model you are using. Remote servers send data over HTTPS. The biggest security step is starting with read-only permissions and only granting write access after you have tested thoroughly. Never give an MCP server access to production financial data without reviewing what it can do first.
+  - question: Will MCP replace tools like Zapier and n8n?
+    answer: Probably not. MCP and workflow automation tools solve different problems. MCP gives an AI model live access to your tools during a conversation. Zapier and n8n run pre-defined workflows on triggers, reliably, without AI involvement. Most small businesses will use both - MCP for ad-hoc AI queries across tools, and Zapier or n8n for repeating automations that must run the same way every time.
+---
+
+import { Callout, KeyTakeaways } from "@/components/content";
+
+<KeyTakeaways>
+
+- **MCP is a universal adapter** that lets AI models talk directly to your business tools — files, CRM, payments, databases — without custom code for each connection.
+- **If you use Claude Desktop**, you can turn on a free filesystem MCP server in about 10 minutes and let Claude read your local files, spreadsheets, and documents.
+- **It will not replace Zapier.** MCP handles live, ad-hoc AI requests. Zapier handles repeating automations. Most businesses keep both.
+- **Start read-only.** The single most important security step is giving MCP servers read access first, write access later.
+
+</KeyTakeaways>
+
+*This page may contain affiliate links. I only link to tools I've personally used or tested. See [affiliate disclosure](/affiliate-disclosure/).*
+
+**By Saad Amjad — Last updated November 2026**
+
+> **How this was written:** I have been using Claude Desktop with MCP since early 2025 and currently run 5 MCP servers for my own workflow. This guide covers what MCP is, what it changed for me, and which setups I would recommend to another small business owner this month. Prices and features verified November 2026.
+
+## The two-paragraph version
+
+MCP stands for Model Context Protocol. Anthropic [announced it in November 2024](https://www.anthropic.com/news/model-context-protocol) as an open standard — a set of rules that lets any AI model connect to any external tool or data source through one shared interface.
+
+Before MCP, connecting an AI to your tools meant building a custom integration for each one. Want Claude to read your Stripe invoices? Custom code. Want it to search your Google Drive? Different custom code. MCP replaces all of that with a single protocol. Build one connection, and any MCP-compatible AI can use it. The community has already built thousands of servers covering everything from file systems to CRMs to payment platforms.
+
+## The universal-adapter analogy
+
+Think of it like USB.
+
+Before USB, every device had its own cable. Your printer used a parallel port. Your mouse used PS/2. Your modem used serial. If you bought a new device, you needed to check whether your computer had the right port.
+
+USB fixed that. One port, one cable, any device.
+
+MCP does the same thing for AI. One protocol, one connection format, any tool. Your AI model does not need to know the specific API of every tool you use. It just needs to speak MCP, and the MCP server for that tool handles the translation.
+
+[IMAGE: Side-by-side diagram. Left side: "Before MCP" — AI model with separate arrows labeled "custom code" going to Stripe, Google Drive, Notion, files. Each arrow is a different color/style, showing the mess. Right side: "After MCP" — AI model with ONE arrow to a box labeled "MCP", then MCP has uniform arrows to the same tools. Clean, simple.]
+
+The practical difference: instead of waiting for OpenAI or Anthropic to build a specific integration with your CRM, anyone can build an MCP server for that CRM. And once the server exists, it works with Claude, ChatGPT, and every other AI client that supports the protocol.
+
+## 3 MCP servers worth turning on this week
+
+You do not need to be technical. The first one takes about 10 minutes.
+
+### 1. Claude Desktop + filesystem server (free)
+
+This is the easiest starting point. Claude Desktop — Anthropic's free desktop app — can run local MCP servers directly on your machine. The filesystem server lets Claude read files and folders you specify.
+
+What you get: ask Claude to "summarize every PDF in my Q3 reports folder" or "find the invoice from October that mentions hosting." Claude reads the files directly instead of you copying and pasting content into the chat.
+
+**How to set it up:**
+
+1. Download [Claude Desktop](https://claude.ai/download) if you do not have it.
+2. Open Settings → Developer → Edit Config. This opens a file called `claude_desktop_config.json`.
+3. Add the filesystem server:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:/Users/YourName/Documents/Business"
+      ]
+    }
+  }
+}
+```
+
+4. Replace the path with the folder you want Claude to access. You can list multiple folders.
+5. Save the file and restart Claude Desktop.
+6. You should see a small hammer icon in the chat input. That means MCP is active.
+
+That is it. Claude can now read files in that folder when you ask it to.
+
+**Security note:** this server gives Claude read-only access by default. It cannot delete or modify your files unless you explicitly configure write access. Start here.
+
+### 2. Stripe MCP server (if you take payments)
+
+Stripe's official MCP server lives at `mcp.stripe.com` and lets an AI model search your Stripe data — customers, invoices, subscriptions, refunds, products, prices, and payment links.
+
+What you get: ask Claude or ChatGPT "show me all refunds over $100 in October" or "which customer has the most overdue invoices" and get an answer in seconds, without logging into the Stripe dashboard and clicking through filters.
+
+**Pricing:** the MCP server itself is free. Your normal Stripe account fees apply. Verified November 2026 — [Stripe MCP docs](https://docs.stripe.com/mcp).
+
+**Setup:** Stripe uses OAuth authentication for MCP connections in interactive clients. The setup is guided through the Stripe dashboard rather than a config file.
+
+**Important:** Stripe's MCP server has write access by default, meaning the AI could create invoices or issue refunds if you ask it to. Turn on tool approval in your AI client so every write action requires your confirmation before it executes. As of November 2026, Stripe plans to stop accepting full-access secret keys for MCP from December 2026 — verify this date against their docs.
+
+### 3. Notion MCP server (for your knowledge base)
+
+If your business runs on Notion — meeting notes, SOPs, client databases — an MCP server lets Claude search and read that content without you copying it into the chat.
+
+Several community-built Notion MCP servers exist on the [official registry](https://registry.modelcontextprotocol.io). Most use the Notion API and require a Notion integration token, which you create in Notion's developer settings.
+
+What you get: "find the onboarding checklist we use for new clients" or "what did we decide about pricing in last Tuesday's meeting notes." Claude searches your Notion workspace and returns the answer with context.
+
+**Setup complexity:** moderate. You need to create a Notion integration, give it access to the right pages, and configure the MCP server in Claude Desktop. Allow 20–30 minutes the first time.
+
+## What MCP is NOT good for yet
+
+Honesty matters more than enthusiasm here. Three limits to know:
+
+**Writing to production without review.** MCP servers can have write access, and some AI clients will execute write actions without asking. Never let an AI create invoices, send emails, or modify customer records without a human approval step. The technology works. The judgment is not there yet.
+
+**Replacing professionals.** MCP gives an AI access to your data. It does not give it expertise. Letting Claude read your bookkeeping files does not make it an accountant. Letting it read your contracts does not make it a lawyer. Use it to find, summarize, and organize. Keep humans for decisions.
+
+**High-stakes decisions with messy data.** MCP servers pass data to the AI as-is. If your Notion workspace is disorganized, the AI will give you answers based on disorganized data. Garbage in, garbage out applies harder when the AI sounds confident about wrong answers.
+
+## The security question
+
+I will keep this short because it is the part people skip and the part that matters most.
+
+**Start read-only.** Every MCP server I recommend above can run in read-only mode. Start there. Get comfortable. Then add write access one tool at a time, with approval gates on.
+
+**Local is safer than remote.** The filesystem MCP server runs entirely on your machine. Your files never leave your computer (beyond what you send to the AI model in context). Remote MCP servers send data over HTTPS to the server's endpoint — fine for most use cases, but understand the difference.
+
+**Scope your permissions.** Do not give Claude access to your entire file system. Point it at one business folder. Do not give the Stripe MCP server access to your entire Stripe account if you only need it to read invoices. Least privilege is the rule.
+
+**Review the server before installing.** MCP is open source. Anyone can publish a server. Stick with official servers (Stripe, Zoho) and well-maintained community servers with active GitHub repos and visible maintainers.
+
+## How this affects your AI tool stack
+
+Here is the part that saves you money.
+
+If you are paying for three different AI tools because each one connects to a different part of your business, MCP might let you drop one or two of those subscriptions. One AI model with the right MCP servers can do what three separate tools used to do.
+
+Before you rearrange anything, run the numbers. The [AI tool pricing tracker](/ai-business-tools/ai-tool-pricing-tracker/) shows what the major tools cost side by side — verified monthly. And the [small business AI cost calculator](/ai-business-tools/small-business-ai-cost-calculator/) can help you figure out whether adding MCP to your current setup is cheaper than the subscription stack you are paying for now.
+
+The combination of MCP with [smaller, cheaper AI models](/ai-business-tools/small-language-models-solopreneurs/) is where this gets interesting. A small model running locally with MCP access to your files costs almost nothing per query. For routine tasks — finding files, summarizing notes, extracting data — you may not need a $20/month subscription at all.
+
+## The MCP ecosystem in November 2026
+
+Some numbers for context:
+
+- **Announced:** November 25, 2024 by Anthropic ([original post](https://www.anthropic.com/news/model-context-protocol))
+- **Protocol:** open source, free to use and build on
+- **Official registry:** [registry.modelcontextprotocol.io](https://registry.modelcontextprotocol.io) — thousands of servers listed as of late 2026
+- **AI clients with MCP support:** Claude Desktop, ChatGPT (remote servers only, via Connectors), Cursor, Windsurf, and dozens of developer tools
+- **SDKs:** TypeScript and Python, both actively maintained
+
+ChatGPT added MCP support through its Connectors feature in Developer Mode. The catch: ChatGPT only supports remote MCP servers accessible over HTTPS. It cannot run local servers like the filesystem example above. If you want local MCP, Claude Desktop is your option today.
+
+Zoho launched a payments-focused MCP server in mid-2026 for businesses already on the Zoho platform ([SmallBizTrends coverage](https://smallbiztrends.com/zohos-new-mcp-server-connects-ai-agents-to-zoho-and-beyond/)). Their broader MCP rollout is expected by end of 2026.
+
+## What to do this week
+
+1. Install the Claude Desktop filesystem server. Ten minutes. Free. Immediate value.
+2. If you use Stripe, look at the Stripe MCP server and decide whether read-only invoice access would save you time.
+3. Check the [official MCP registry](https://registry.modelcontextprotocol.io) for servers matching the other tools you use. You might be surprised what is already available.
+
+That is it. No need to overhaul your setup. Try one server, see if it saves you time, and go from there. If it does not help after a week, turn it off. You have lost nothing but 10 minutes.
