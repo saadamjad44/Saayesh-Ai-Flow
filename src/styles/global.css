@@ -228,6 +228,82 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Dark mode
+ *
+ * `data-theme="dark"` on <html> flips the palette: deep navy ground, light
+ * text, teal and orange shifted brighter for contrast on the dark surface.
+ * ------------------------------------------------------------------------- */
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-ink-50: #1a2030;
+  --color-ink-100: #222b38;
+  --color-ink-200: #2d3844;
+  --color-ink-300: #3d4a56;
+  --color-ink-400: #5a6878;
+  --color-ink-500: #7d8b98;
+  --color-ink-600: #9aa6b0;
+  --color-ink-700: #b8c2ca;
+  --color-ink-800: #d4dae0;
+  --color-ink-900: #e8ecf0;
+  --color-ink-950: #f4f6f8;
+
+  --color-brand-50: #0e2828;
+  --color-brand-100: #163c3c;
+  --color-brand-200: #1e5555;
+  --color-brand-300: #3a8e93;
+  --color-brand-400: #5aabb0;
+  --color-brand-500: #7fb3b8;
+  --color-brand-600: #8fc4c8;
+  --color-brand-700: #7fb3b8;
+  --color-brand-800: #a8d5d8;
+  --color-brand-900: #d0eaec;
+
+  --color-accent-50: #2a1a0d;
+  --color-accent-100: #3d2510;
+  --color-accent-200: #f4c299;
+  --color-accent-600: #d97a3e;
+  --color-accent-700: #e8884a;
+  --color-accent-800: #f0a060;
+
+  --color-paper: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-sunken: #090d12;
+
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+  --shadow-card-hover: 0 4px 20px -4px rgb(0 0 0 / 0.5);
+  --shadow-panel: 0 4px 30px -8px rgb(0 0 0 / 0.5);
+  --shadow-menu: 0 8px 40px -8px rgb(0 0 0 / 0.6);
+  --shadow-header: 0 1px 0 0 rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+}
+
+html[data-theme="dark"] .btn-primary {
+  background-color: #1e5559;
+}
+
+html[data-theme="dark"] .btn-primary:hover {
+  background-color: #2a6d71;
+}
+
+html[data-theme="dark"] .btn-accent {
+  background-color: #b85a1a;
+}
+
+html[data-theme="dark"] .btn-accent:hover {
+  background-color: #c6601f;
+}
+
+html[data-theme="dark"] .prose {
+  --tw-prose-pre-bg: #1a2030;
+  --tw-prose-pre-code: #d4dae0;
+}
+
+html[data-theme="dark"] [data-icon="moon"],
+html[data-theme="light"] [data-icon="sun"] {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
  * Base
  * ------------------------------------------------------------------------- */
 @layer base {
