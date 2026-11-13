@@ -298,8 +298,24 @@ html[data-theme="dark"] .prose {
   --tw-prose-pre-code: #d4dae0;
 }
 
-html[data-theme="dark"] [data-icon="moon"],
-html[data-theme="light"] [data-icon="sun"] {
+html[data-theme="dark"] .hero-veil {
+  background-color: rgb(13 17 23 / 0.82);
+  background-image: linear-gradient(to top, var(--color-paper) 0%, transparent 22%);
+}
+
+html[data-theme="dark"] .hero-grid {
+  opacity: 0.08;
+}
+
+html[data-theme="dark"] .site-logo {
+  filter: brightness(0) invert(1);
+}
+
+html[data-theme="dark"] [data-icon="moon"] {
+  display: none;
+}
+
+html:not([data-theme="dark"]) [data-icon="sun"] {
   display: none;
 }
 
