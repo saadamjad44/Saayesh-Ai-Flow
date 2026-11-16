@@ -2,37 +2,32 @@
 /**
  * Homepage.
  *
- * Ten sections, in the order a visitor needs them: a centred masthead that
- * says what this site is and gives a way to search it, the categories, the
- * email signup, a short editorial selection of guides, four routes in for
- * someone who does not know which category they want, what the pricing dataset
- * shows, both free calculators, the newest guides, how the site works, and the
- * five questions people arrive with.
+ * Built as a sequence of distinct scenes rather than a stack of card grids:
  *
- * Nothing on this page is hand-listed. The categories come from PILLAR_NAV
- * filtered to published pillars; the featured and "start here" selections are
- * editor's picks in src/config/homepage.ts, typed to the registry so an
- * unpublished pick fails the build; the latest row is the collections sorted by
- * date; the tool panels are rendered from TOOL_PROMOS; and each calculator
- * preview is produced by that calculator's own function at build time, so the
- * figures shown cannot be arithmetic the real tool would not do.
+ *   1. Masthead     dark, full-bleed, running up behind the floating navbar:
+ *                   headline, a search bar inside a turning gradient ring, the
+ *                   categories as pills, and a "look inside" board of real
+ *                   guides that leans back and stands up as it scrolls in
+ *   2. Marquee      the tools in the pricing record, sliding past
+ *   3. Categories   a bento of the category artwork, uneven on purpose
+ *   4. Featured     one magazine-size lead and a numbered list beside it
+ *   5. Compare      the head-to-head guides, a dark rail
+ *   6. Start here   four numbered routes in, joined by a line
+ *   7. Pricing      what the pricing dataset shows
+ *   8. Free tools   both calculators
+ *   9. Latest       the newest guides
+ *  10. Email, method, FAQ
  *
- * Two sets of figures appear in prose. The colophon under the hero headline is
- * counted from the published collections at build time, and every figure in
- * <PricingFindings> is computed from the pricing dataset by the same function
- * the tracker page uses — for the same reason in both cases: a number nobody
- * typed cannot go quietly out of date.
+ * Nothing on this page is hand-listed. Categories come from PILLAR_NAV
+ * filtered to published pillars; featured and "start here" are editor's picks
+ * in src/config/homepage.ts, typed to the registry; the board is the newest
+ * guide of each category; the comparison rail is every guide whose id marks it
+ * a head-to-head; the marquee is the pricing dataset's own tool names; and
+ * each calculator preview is computed by that calculator's own function.
  *
- * The page carries one block of substantive content rather than none — the
- * pricing findings — and one FAQ, because a hub whose every word is a label
- * answers no question at all, including the ones that bring people to it.
- *
- * The structured data is built from the same arrays the sections render; see
- * the comment on the BaseLayout call.
- *
- * Deliberately absent: visitor counts, "most popular" claims, review scores,
- * testimonials, partner logos, and any subscriber or open-rate figure beside
- * the signup. The site has none of them.
+ * Every figure shown is counted or computed at build time. Deliberately
+ * absent: visitor counts, "most popular" claims, review scores, testimonials,
+ * partner logos, and any subscriber figure. The site has none of them.
  */
 import { Image } from "astro:assets";
 
@@ -40,8 +35,9 @@ import ArticleCard from "@/components/content/ArticleCard.astro";
 import FaqSection from "@/components/content/FaqSection.astro";
 import NewsletterSignup from "@/components/forms/NewsletterSignup.astro";
 import PricingFindings from "@/components/home/PricingFindings.astro";
+import SectionHeading from "@/components/home/SectionHeading.astro";
 import ToolPromoPanel from "@/components/home/ToolPromoPanel.astro";
-import PillarIcon from "@/components/layout/PillarIcon.astro";
+import PillarTile from "@/components/layout/PillarTile.astro";
 import SearchBox from "@/components/layout/SearchBox.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { AUTHOR } from "@/config/author";
@@ -54,7 +50,7 @@ import {
   START_HERE,
   TOOL_PROMOS,
 } from "@/config/homepage";
-import { getMedia } from "@/config/media";
+import { getMedia, isMediaId } from "@/config/media";
 import { PILLAR_NAV, menuLabel } from "@/config/navigation";
 import { getPage, type PageId } from "@/config/pages";
 import { getPillarPresentation } from "@/config/pillars";
@@ -71,6 +67,7 @@ import {
   formatHours,
   formatSignedMoney,
 } from "@/components/tools/ai-email-savings-calculator";
+import { PRICING_ROWS } from "@/data/ai-tool-pricing";
 import { getPublishedEntries, toArticleCard } from "@/lib/content";
 import { formatShortDate, isoDate } from "@/lib/format";
 import {
@@ -91,39 +88,46 @@ const [pillars, articles, tools] = await Promise.all([
 const categoryTitles = new Map(pillars.map(({ entry, page }) => [page.id, entry.data.title]));
 const publishedPillarIds = new Set(pillars.map(({ page }) => page.id));
 
-/** Every published pillar, in PILLAR_NAV order, with its guide count. */
+/** Newest first; a stable id tiebreak keeps the order deterministic. */
+const newestFirst = [...articles].sort((a, b) => {
+  const delta = b.entry.data.publishedDate.getTime() - a.entry.data.publishedDate.getTime();
+  return delta !== 0 ? delta : a.page.id.localeCompare(b.page.id);
+});
+
+/** Every published pillar, in PILLAR_NAV order, with its artwork and count. */
 const categories = PILLAR_NAV.filter((entry) => publishedPillarIds.has(entry.pillar)).map(
   (entry) => {
     const page = getPage(entry.pillar);
     const { summary, icon } = getPillarPresentation(entry.pillar);
     return {
+      id: entry.pillar,
       title: categoryTitles.get(page.id) ?? page.title,
       href: page.path,
       summary,
       icon,
+      art: isMediaId(entry.pillar) ? getMedia(entry.pillar) : undefined,
       count: articles.filter(({ page: article }) => article.pillar === entry.pillar).length,
     };
   },
 );
 
 /**
- * How many columns the last category card takes.
+ * The bento's column spans, on a four-column grid.
  *
- * The grid is two columns from `sm` and three from `lg`, and the number of
- * published categories is whatever the pillars happen to be — seven today,
- * which divides evenly by neither. Left alone that ends the section on a
- * half-empty row, which is the most visible sign of a layout nobody looked at.
- *
- * So the final card absorbs whatever columns its row has spare. It is derived
- * from the count rather than written for seven, so publishing or retiring a
- * pillar can never bring the ragged row back.
+ * A repeating wide/narrow rhythm, so the grid reads as composed rather than as
+ * eight equal boxes; whatever the last row has spare is given to the last
+ * card, so the grid closes flush however many categories are published.
  */
-const spareColumns = {
-  sm: ["", "sm:col-span-2"][categories.length % 2],
-  lg: ["", "lg:col-span-3", "lg:col-span-2"][categories.length % 3],
-};
-
-const lastCategory = categories.length - 1;
+const BENTO_RHYTHM = [2, 1, 1, 1, 1, 2];
+const bentoSpans = categories.map((_, index) => BENTO_RHYTHM[index % BENTO_RHYTHM.length] ?? 1);
+const bentoSpare = (4 - (bentoSpans.reduce((sum, span) => sum + span, 0) % 4)) % 4;
+if (bentoSpans.length > 0) {
+  bentoSpans[bentoSpans.length - 1] = Math.min(
+    4,
+    (bentoSpans[bentoSpans.length - 1] ?? 1) + bentoSpare,
+  );
+}
+const SPAN_CLASS = ["", "", "lg:col-span-2", "lg:col-span-3", "lg:col-span-4"];
 
 /** Articles by registry id, for the editor's picks below. */
 const articlesById = new Map(articles.map((article) => [article.page.id, article]));
@@ -138,6 +142,7 @@ function pick(id: PageId) {
 }
 
 const [featuredLead, ...featuredRest] = FEATURED_GUIDES.map(pick);
+const featuredArt = featuredLead ? getMedia(featuredLead.mediaId) : undefined;
 
 const startHere = START_HERE.map((path) => ({
   ...path,
@@ -148,50 +153,61 @@ const startHere = START_HERE.map((path) => ({
   icon: getPillarPresentation(path.pillar).icon,
 }));
 
-/** Newest first; a stable id tiebreak keeps the order deterministic. */
-const latest = [...articles]
-  .sort((a, b) => {
-    const delta = b.entry.data.publishedDate.getTime() - a.entry.data.publishedDate.getTime();
-    return delta !== 0 ? delta : a.page.id.localeCompare(b.page.id);
-  })
+const latest = newestFirst
   .slice(0, LATEST_GUIDE_COUNT)
   .map((article) => toArticleCard(article, categoryTitles));
 
-/*
- * The hero background, described rather than hidden.
- *
- * It used to render with an empty alt and aria-hidden, on the reasoning that
- * the h1 over it already says what the page is. That is true of the page and
- * not of the picture: the registry holds a factual description of the artwork
- * itself, which is what an image result and a screen-reader user both want, and
- * withholding it loses the site's own original illustration from image search
- * for nothing in return. The alt describes the picture; it never repeats the
- * headline, which is the rule MediaAsset.alt is written under.
- */
-const heroArt = getMedia("home");
-
-const blogPath = getPage("blog").path;
-const aboutPath = getPage("about").path;
-
-/* ---- Masthead facts --------------------------------------------------- */
+/** The head-to-head guides: a guide whose registry id says "-vs-". */
+const comparisons = newestFirst
+  .filter(({ page }) => page.id.includes("-vs-"))
+  .map((article) => toArticleCard(article, categoryTitles));
 
 /**
- * The four figures under the hero headline.
- *
- * Every one of them is counted from what is actually published in this
- * repository at build time — guides, category hubs, free tools, and the most
- * recent `updatedDate` across all three collections. None of them can be
- * inflated without publishing the thing it counts, which is the only reason
- * they are allowed on the page at all: the site has no visitor numbers, no
- * "tools reviewed" total, and no popularity claims to put here instead.
- *
- * They are typeset as a colophon rather than as a row of big marketing
- * numerals, because what makes them worth showing is that they are checkable,
- * not that they are large.
+ * The masthead's "look inside" board: the newest guide from each category that
+ * has a photo of its own, six at most — so the board is a cross-section of the
+ * site rather than six guides from whichever category published last.
  */
+const showcase = categories
+  .map((category) =>
+    newestFirst.find(
+      (article) =>
+        article.page.pillar === category.id &&
+        toArticleCard(article, categoryTitles).articleMedia !== undefined,
+    ),
+  )
+  .filter((article) => article !== undefined)
+  .slice(0, 6)
+  .map((article) => toArticleCard(article, categoryTitles));
+
+/** Every product in the pricing record, once, alphabetically. */
+const trackedTools = [...new Set(PRICING_ROWS.map((row) => row.tool))].sort((a, b) =>
+  a.localeCompare(b),
+);
+
+const heroArt = getMedia("home");
+const blogPath = getPage("blog").path;
+const aboutPath = getPage("about").path;
+const trackerPath = getPage("ai-tool-pricing-tracker").path;
+
+/**
+ * The headline is SITE.tagline, word for word — the gradient only picks out
+ * one phrase of it. Without that phrase the headline simply renders plain.
+ */
+const HEADLINE_MARK = "earn their place";
+const markAt = SITE.tagline.indexOf(HEADLINE_MARK);
+const headline =
+  markAt === -1
+    ? { before: SITE.tagline, mark: "", after: "" }
+    : {
+        before: SITE.tagline.slice(0, markAt),
+        mark: HEADLINE_MARK,
+        after: SITE.tagline.slice(markAt + HEADLINE_MARK.length),
+      };
+
+/** Four facts, each counted from what is published at build time. */
 const lastUpdated = [...pillars, ...articles, ...tools]
   .map(({ entry }) => entry.data.updatedDate)
-  .reduce((latest, date) => (date > latest ? date : latest));
+  .reduce((latestDate, date) => (date > latestDate ? date : latestDate));
 
 const MASTHEAD: { value: string; label: string; dateTime?: string }[] = [
   { value: String(articles.length), label: "Guides published" },
@@ -202,18 +218,6 @@ const MASTHEAD: { value: string; label: string; dateTime?: string }[] = [
 
 /* ---- Free tools ------------------------------------------------------- */
 
-/**
- * Both calculators get a panel, rendered from TOOL_PROMOS rather than written
- * out twice. A promo for a tool that is not published is skipped rather than
- * rendered as a dead card, which matters because a tool can be unpublished by
- * its own frontmatter without the registry changing.
- *
- * Any free tool with no panel of its own is listed under the first panel's
- * actions instead, so every tool keeps a route in from the homepage however the
- * promo list changes. With both current tools promoted, that list is empty and
- * nothing is rendered. Tools are also reachable from the header's Free tools
- * menu, the footer, the blog archive and each category sidebar.
- */
 const publishedToolIds = new Set(tools.map(({ page }) => page.id));
 
 const promos = TOOL_PROMOS.filter((promo) => publishedToolIds.has(promo.tool)).map((promo) => ({
@@ -230,59 +234,58 @@ const alsoFree = tools
   .filter(({ page }) => !promotedToolIds.has(page.id))
   .map(({ page }) => ({ href: page.path, label: menuLabel(page) }));
 
-/**
- * The cost calculator preview's figures, from the calculator's own function.
- * The inputs are round illustrative numbers, labelled as such on the page — no
- * vendor price appears anywhere.
- */
+/** Cost preview: the calculator's own function over illustrative inputs. */
 const preview = computeTotals(
   CALCULATOR_PREVIEW.tools.map((tool) => ({ ...tool })),
   { ...CALCULATOR_PREVIEW.business },
 );
 const money = (value: number | null) => formatMoney(value, DEFAULT_CURRENCY.symbol);
 
-/**
- * The email calculator preview, computed the same way — from that tool's own
- * engine, run on its own published defaults, so the homepage shows exactly the
- * worked example a visitor sees when the calculator first opens. Those defaults
- * are illustrative placeholders, not averages or benchmarks, and the panel says
- * so; deriving the figures here rather than typing them means the two pages
- * cannot drift apart, and the homepage can never claim arithmetic the
- * calculator would not produce.
- */
+const COST_PREVIEW_ROWS = [
+  { label: "Monthly", value: money(preview.monthlyRecurring), size: "text-3xl text-ink-900" },
+  { label: "Annual", value: money(preview.annualRecurring), size: "text-xl text-ink-900" },
+  {
+    label: "First year, with setup",
+    value: money(preview.firstYearTotal),
+    size: "text-xl text-accent-700",
+  },
+  {
+    label: "Per employee, monthly",
+    value: money(preview.perEmployee),
+    size: "text-base text-ink-900",
+  },
+];
+
+/** Email preview: that calculator's engine over its own published defaults. */
 const emailPreview = computeEmailSavings(EMAIL_DEFAULTS);
 const emailMoney = (value: number) => formatSignedMoney(value, DEFAULT_CURRENCY.symbol);
 
-/** Headline figure first, then the volume it came from. Four rows, no more. */
 const EMAIL_PREVIEW_ROWS = [
   {
     label: "Hours saved, monthly",
     value: `${formatHours(emailPreview.hoursSaved)} hours`,
-    size: "text-2xl font-extrabold text-ink-900",
+    size: "text-3xl text-ink-900",
   },
   {
     label: "Net benefit, monthly",
     value: emailMoney(emailPreview.monthlyNetBenefit),
-    size: "text-xl font-bold text-accent-700",
+    size: "text-xl text-accent-700",
   },
   {
     label: "Emails a month",
     value: formatCount(emailPreview.monthlyEmails),
-    size: "text-base font-bold text-ink-900",
+    size: "text-base text-ink-900",
   },
   {
     label: "AI-eligible",
     value: formatCount(emailPreview.eligibleEmails),
-    size: "text-base font-bold text-ink-900",
+    size: "text-base text-ink-900",
   },
 ];
 
-/* ---- Editorial method ------------------------------------------------- */
-
 /**
  * How the guides are made, summarised from the About + Editorial Process page.
- * Every line restates something that page already commits to; none of it is a
- * claim about testing, popularity, or endorsement.
+ * Every line restates something that page already commits to.
  */
 const METHOD = [
   {
@@ -302,17 +305,21 @@ const METHOD = [
     body: "Some pages carry affiliate links and say so before the recommendation. Commissions do not decide what gets recommended or how it ranks.",
   },
 ];
+
+const ARROW =
+  "M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z";
+
+const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`;
+const two = (index: number) => String(index + 1).padStart(2, "0");
+
+/** The dark wash under white type on a photograph. Fixed in both themes. */
+const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
 ---
 
 {/*
-  The homepage's structured data. WebSite and the Organization behind it, the
-  root of the breadcrumb hierarchy, the category navigation, and the editor's
-  picks as an ordered list — the last three all built from the same arrays the
-  page renders below, so none of them can describe a page that is not there.
-
-  FAQPage is NOT in this list: <FaqSection> emits it itself, from the same
-  strings it renders, which is the only way the visible answer and the markup
-  cannot drift apart.
+  WebSite, Organization, the breadcrumb root, the category navigation and the
+  editor's picks — the last three built from the arrays rendered below.
+  FAQPage is emitted by <FaqSection> itself, from the strings it renders.
 */}
 <BaseLayout
   pageId="home"
@@ -331,108 +338,178 @@ const METHOD = [
     }),
   ]}
 >
-  {/* ---- 1. Hero ---------------------------------------------------- */}
-  {/*
-    A light masthead, centred on one measure.
-
-    The artwork is a bright cool-blue field. It used to carry white copy, which
-    meant dimming the picture to 80% and laying a near-opaque midnight panel
-    over one half of it: the headline read, but what a visitor met first was a
-    black rectangle with a photograph somewhere behind it. So the ink is
-    flipped instead. The picture now runs at full strength and the only thing
-    between it and the copy is one even white veil, thin enough that the face,
-    the network and all four panels still read through it. The styles at the
-    foot of this file hold the arithmetic that sets how thin it can be.
-
-    Kicker, headline, lead, search box, both buttons and the colophon are all
-    centred on the same 48rem measure, so the masthead reads as one column down
-    the middle of the picture rather than as a copy half and a picture half.
-  */}
-  <section class="hero relative isolate flex items-center overflow-hidden bg-paper">
+  {/* ==== 1. Masthead ================================================= */}
+  <section class="hero theme-dark bg-night relative isolate -mt-[4.75rem] overflow-hidden pt-[4.75rem]">
+    {/* Atmosphere: drifting colour, a fading grid, and the brand artwork as light. */}
+    <div aria-hidden="true" class="orb orb-sky -top-32 -left-24 size-[30rem]"></div>
+    <div
+      aria-hidden="true"
+      class="orb orb-violet top-10 -right-32 size-[34rem] [animation-delay:-6s]"
+    ></div>
+    <div
+      aria-hidden="true"
+      class="orb orb-indigo top-[38rem] left-1/3 size-[30rem] [animation-delay:-11s]"
+    ></div>
+    <div
+      aria-hidden="true"
+      class="bg-grid-inverse pointer-events-none absolute inset-0 -z-10 [mask-image:radial-gradient(75%_60%_at_50%_0%,#000,transparent)]"
+    ></div>
     <Image
       src={heroArt.src}
       alt={heroArt.alt}
-      widths={[640, 960, 1280, 1672]}
-      sizes="100vw"
+      widths={[640, 960, 1280]}
+      sizes="60vw"
       loading="eager"
-      decoding="sync"
-      fetchpriority="high"
-      class="hero-art absolute inset-0 -z-10 size-full object-cover"
+      class="hero-art pointer-events-none absolute top-0 right-0 -z-10 hidden h-[44rem] w-[62%] object-cover lg:block"
     />
-    <div aria-hidden="true" class="hero-veil absolute inset-0 -z-10"></div>
-    <div aria-hidden="true" class="hero-grid bg-grid absolute inset-0 -z-10 opacity-40"></div>
 
-    <div class="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
-      <div class="mx-auto max-w-3xl text-center">
-        {/*
-          Iris rather than jade. Jade is reserved for the free interactive
-          tools — see global.css — and a masthead kicker is not one of them.
-          The short rule the section heads carry beside their eyebrow is
-          dropped here: on a centred line it would hang off one end only.
-        */}
-        <p class="eyebrow">Independent AI tool guides</p>
+    <div class="relative mx-auto max-w-6xl px-4 pt-14 pb-10 text-center sm:px-6 sm:pt-20 lg:pt-24">
+      <p class="rise" style="--d:0ms">
+        <a
+          href={blogPath}
+          class="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.06] py-1.5 pr-4 pl-3 font-mono text-[0.6875rem] font-semibold tracking-[0.08em] text-ink-800 uppercase backdrop-blur-md transition-colors duration-180 ease-ui hover:border-white/35 hover:bg-white/10 motion-reduce:transition-none"
+        >
+          <span
+            aria-hidden="true"
+            class="pulse-dot size-1.5 rounded-full bg-emerald-400 text-emerald-400"
+          ></span>
+          Independent AI tool guides
+          <span aria-hidden="true" class="text-ink-500">
+            &rarr;
+          </span>
+        </a>
+      </p>
 
-        <h1 class="type-display mt-5 text-ink-900">{SITE.tagline}</h1>
+      <h1 class="hero-title rise-solid mx-auto mt-7 max-w-5xl" style="--d:90ms">
+        {headline.before}
+        {headline.mark && <span class="text-shine">{headline.mark}</span>}
+        {headline.after}
+      </h1>
 
-        <p class="type-lead mx-auto mt-6 max-w-2xl text-ink-700">
-          Independent guides to AI tools, automation workflows, and prompts for solopreneurs and
-          small business owners — what each tool actually does, what it costs, and when it is not
-          worth paying for.
-        </p>
+      <p
+        class="rise mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-ink-700 sm:text-xl"
+        style="--d:180ms"
+      >
+        Independent guides to AI tools, automation workflows, and prompts for solopreneurs and small
+        business owners — what each tool actually does, what it costs, and when it is not worth
+        paying for.
+      </p>
 
-        <div class="mx-auto mt-8 max-w-xl">
-          <SearchBox
-            id="hero"
-            variant="hero"
-            label="Search guides, tools and prompts"
-            placeholder="Search guides, tools and prompts..."
-          />
-        </div>
-
-        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
-          <a href="#categories" class="btn btn-primary">
-            Browse categories
-            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-              <path
-                fill-rule="evenodd"
-                d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-          <a href={blogPath} class="btn btn-secondary">
-            Explore AI guides
-          </a>
+      {/* The search bar, inside a turning ring of the brand colours. */}
+      <div class="rise relative z-20 mx-auto mt-9 max-w-2xl" style="--d:270ms">
+        <div class="glow-border">
+          <div class="rounded-2xl bg-[#0b1128]">
+            <SearchBox
+              id="hero"
+              variant="hero"
+              label="Search guides, tools and prompts"
+              placeholder="Search guides, tools and prompts..."
+            />
+          </div>
         </div>
       </div>
 
-      {/*
-        The colophon. A hairline and four counted facts, set in the technical
-        register the rest of the site uses for metadata — not a statistics
-        band. It is held to the copy's own measure and centred under it.
+      {/* Every category, one tap away. */}
+      <ul
+        class="rise mx-auto mt-7 flex max-w-4xl flex-wrap justify-center gap-2.5"
+        style="--d:360ms"
+      >
+        {categories.map((category) => (
+          <li>
+            <a
+              href={category.href}
+              class="group inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.05] py-1.5 pr-3.5 pl-1.5 text-sm font-semibold text-ink-800 backdrop-blur-md transition-[border-color,background-color,transform] duration-180 ease-ui hover:-translate-y-0.5 hover:border-white/35 hover:bg-white/12 motion-reduce:transition-none motion-reduce:hover:transform-none"
+            >
+              <PillarTile icon={category.icon} size="sm" class="size-7! rounded-full!" />
+              {category.title}
+            </a>
+          </li>
+        ))}
+      </ul>
 
-        The three figures count up from zero each time the row scrolls into
-        view. The markup is rendered at the final value, so the count is
-        decoration over a number that is already correct — a crawler, a visitor
-        with scripting off, and anyone who has asked for reduced motion all get
-        the figure and no animation. The date does not count: counting a date
-        up from zero would be nonsense, and it is a time element whose text has
-        to stay the date it is marked up as.
+      {/*
+        The board: real guides, one per category, in a window frame. It starts
+        leaning back and stands upright as it scrolls into view — the tilt is
+        applied by script, so without it the board is simply flat.
       */}
-      <dl class="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t border-ink-900/15 pt-7 text-center sm:mt-14 sm:grid-cols-4">
-        {MASTHEAD.map((fact) => (
-          <div>
-            <dt class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-600 uppercase">
-              {fact.label}
-            </dt>
-            <dd class="mt-1.5 font-sans text-lg font-bold text-ink-900 tabular-nums">
+      {showcase.length > 0 && (
+        <div
+          class="rise relative mx-auto mt-16 max-w-5xl [perspective:1600px] sm:mt-20"
+          style="--d:460ms"
+        >
+          <div
+            aria-hidden="true"
+            class="absolute -inset-x-10 -top-10 bottom-10 -z-10 rounded-[3rem] bg-[image:var(--gradient-brand)] opacity-35 blur-3xl"
+          ></div>
+          <div
+            class="board origin-top overflow-hidden rounded-2xl border border-white/15 bg-[#0b1128]/85 text-left shadow-[0_40px_120px_-30px_rgb(79_70_229/0.9)] backdrop-blur-xl will-change-transform"
+            data-scroll-tilt
+          >
+            <div class="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+              <span aria-hidden="true" class="size-2.5 rounded-full bg-[#ff5f57]"></span>
+              <span aria-hidden="true" class="size-2.5 rounded-full bg-[#febc2e]"></span>
+              <span aria-hidden="true" class="size-2.5 rounded-full bg-[#28c840]"></span>
+              <p class="ml-3 font-mono text-[0.6875rem] tracking-[0.06em] text-ink-500">
+                A look inside — the newest guide from each category
+              </p>
+            </div>
+            <ul class="grid gap-3 p-3 sm:grid-cols-2 sm:p-4 lg:grid-cols-3">
+              {showcase.map((article) => (
+                <li>
+                  <a
+                    href={article.path}
+                    class="group relative isolate block overflow-hidden rounded-xl"
+                  >
+                    {article.articleMedia && (
+                      <Image
+                        src={article.articleMedia.src}
+                        alt=""
+                        widths={[320, 480, 640]}
+                        sizes="(min-width: 1024px) 20rem, (min-width: 640px) 45vw, 92vw"
+                        loading="lazy"
+                        decoding="async"
+                        class="aspect-[16/10] w-full object-cover transition-transform duration-700 ease-ui group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                      />
+                    )}
+                    <span aria-hidden="true" class:list={["absolute inset-0", SHADE]}></span>
+                    <span class="absolute inset-x-0 bottom-0 p-3.5">
+                      {article.category && (
+                        <span class="block font-mono text-[0.5625rem] font-semibold tracking-[0.1em] text-sky-300 uppercase">
+                          {article.category.title}
+                        </span>
+                      )}
+                      <span class="mt-1 line-clamp-2 block text-[0.9375rem] leading-snug font-bold tracking-[-0.015em] text-white">
+                        {article.title}
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/*
+        Four counted facts. The figures count up when they scroll into view;
+        the markup holds the final value, so the count is decoration over a
+        number that is already right.
+      */}
+      <dl class="mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-y-8 sm:mt-16 sm:grid-cols-4">
+        {MASTHEAD.map((fact, index) => (
+          <div
+            class="sm:border-l sm:border-white/10 sm:first:border-l-0"
+            style={stagger(index)}
+            data-reveal
+          >
+            <dd class="font-display text-4xl font-bold tracking-[-0.04em] tabular-nums sm:text-5xl">
               {fact.dateTime ? (
-                <time datetime={fact.dateTime}>{fact.value}</time>
+                <time datetime={fact.dateTime} class="text-2xl text-ink-900 sm:text-[1.75rem]">
+                  {fact.value}
+                </time>
               ) : (
-                /* The reserved width is the final value's own digit count, so
-                   the row cannot reflow as a counter passes 9. */
                 <span
-                  class="inline-block text-center"
+                  class="text-gradient inline-block text-center"
                   style={`min-width:${fact.value.length}ch`}
                   data-count-to={fact.value}
                 >
@@ -440,226 +517,344 @@ const METHOD = [
                 </span>
               )}
             </dd>
+            <dt class="mt-2 font-mono text-[0.6875rem] tracking-[0.1em] text-ink-500 uppercase">
+              {fact.label}
+            </dt>
           </div>
         ))}
       </dl>
     </div>
+
+    {/* ==== 2. Marquee ================================================ */}
+    {/*
+      The products in the pricing record — what the site has actually checked
+      a price for, not partners and not endorsements, and the label says so.
+      The second copy of the list is aria-hidden; it only closes the loop.
+    */}
+    <div class="relative border-t border-white/10 py-7">
+      <p class="mb-5 text-center font-mono text-[0.6875rem] tracking-[0.1em] text-ink-500 uppercase">
+        List prices tracked for {trackedTools.length} tools —{" "}
+        <a
+          href={trackerPath}
+          class="text-ink-700 underline decoration-white/30 underline-offset-4 hover:text-ink-900"
+        >
+          see the tracker
+        </a>
+      </p>
+      <div class="marquee">
+        <div class="marquee-track">
+          {[0, 1].map((copy) => (
+            <ul class="flex shrink-0 items-center" aria-hidden={copy === 1 ? "true" : undefined}>
+              {trackedTools.map((tool) => (
+                <li class="flex items-center font-display text-xl font-bold tracking-[-0.02em] whitespace-nowrap text-ink-600 sm:text-2xl">
+                  {tool}
+                  <span
+                    aria-hidden="true"
+                    class="mx-7 size-1.5 rounded-full bg-[image:var(--gradient-brand)]"
+                  ></span>
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      </div>
+    </div>
   </section>
 
-  {/* ---- 2. Categories ---------------------------------------------- */}
-  <section id="categories" aria-labelledby="categories-heading" class="scroll-mt-20">
-    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-      <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-        <div class="max-w-2xl">
-          <p class="eyebrow eyebrow-rule">Categories</p>
-          {/*
-            The one heading on the page written for search as well as for the
-            reader. "Explore AI by category" said nothing a visitor could not
-            see from the grid under it and nothing a crawler could use; this
-            says the same thing and names the territory the page occupies. The
-            <title> and the clusters below already own that language — see the
-            home entry in src/config/seo-snippets.ts — so the heading agreeing
-            with them costs the reader nothing.
-          */}
-          <h2 id="categories-heading" class="type-section mt-3">
-            AI tools for small business, by category
-          </h2>
-        </div>
-        <a
-          href={blogPath}
-          class="-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-sans text-sm font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
-        >
-          All guides
-          <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-            <path
-              fill-rule="evenodd"
-              d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </a>
+  {/* ==== 3. Categories — the bento ==================================== */}
+  <section id="categories" aria-labelledby="categories-heading" class="scroll-mt-24">
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
+      <div class="mx-auto max-w-3xl text-center" data-reveal>
+        <p class="eyebrow eyebrow-rule eyebrow-center">Categories</p>
+        <h2 id="categories-heading" class="section-title mt-4">
+          AI tools for small business, <span class="text-gradient">by category</span>
+        </h2>
+        <p class="type-lead mt-5">
+          Different ways into the same question: which tool is worth it for the job in front of you.
+        </p>
       </div>
 
-      <ul class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul class="mt-14 grid auto-rows-[17rem] gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
         {categories.map((category, index) => (
           <li
             class:list={[
-              "card card-link group relative flex flex-col p-6",
-              index === lastCategory && [spareColumns.sm, spareColumns.lg],
+              "group spotlight relative isolate flex flex-col justify-end overflow-hidden rounded-panel p-6 shadow-panel ring-1 ring-black/5 transition-transform duration-300 ease-ui hover:-translate-y-1.5 motion-reduce:transition-none motion-reduce:hover:transform-none",
+              SPAN_CLASS[bentoSpans[index] ?? 1],
             ]}
+            style={stagger(index, 60)}
+            data-reveal
           >
-            <span class="flex size-11 items-center justify-center rounded-xl border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none">
-              <PillarIcon icon={category.icon} class="size-6" />
-            </span>
+            {category.art && (
+              <Image
+                src={category.art.src}
+                alt=""
+                widths={[480, 768, 1024]}
+                sizes="(min-width: 1024px) 40rem, (min-width: 640px) 50vw, 92vw"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 -z-20 size-full object-cover transition-transform duration-[900ms] ease-ui group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+              />
+            )}
+            <div aria-hidden="true" class:list={["absolute inset-0 -z-10", SHADE]}></div>
 
-            <h3 class="type-card-title mt-5">
-              <a href={category.href} class="stretch-target group-hover:text-brand-800">
+            <div class="absolute top-5 right-5 left-5 flex items-start justify-between">
+              <PillarTile icon={category.icon} size="lg" />
+              <span class="rounded-full bg-black/45 px-2.5 py-1 font-mono text-[0.625rem] font-semibold tracking-[0.08em] text-white uppercase backdrop-blur-md">
+                {category.count} {category.count === 1 ? "guide" : "guides"}
+              </span>
+            </div>
+
+            <h3 class="font-display text-[1.375rem] leading-tight font-bold tracking-[-0.025em] text-white">
+              <a href={category.href} class="stretch-target">
                 {category.title}
               </a>
             </h3>
-
-            {/* Capped, so the one card that may span the row does not set a
-                40-word line the six beside it never do. */}
-            <p class="mt-2.5 max-w-2xl flex-1 text-[0.9375rem] leading-relaxed text-ink-600">
+            <p class="mt-2 line-clamp-2 max-w-xl text-[0.9375rem] leading-relaxed text-white/80">
               {category.summary}
             </p>
-
-            <p class="mt-5 flex items-center justify-between gap-3 border-t border-ink-100 pt-4">
-              <span class="font-mono text-[0.6875rem] tracking-[0.06em] text-ink-500 uppercase">
-                {category.count} {category.count === 1 ? "guide" : "guides"}
-              </span>
-              <span
-                aria-hidden="true"
-                class="inline-flex items-center gap-1.5 font-sans text-sm font-bold text-brand-700"
-              >
-                Explore
-                <svg
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-4 transition-transform duration-180 ease-ui group-hover:translate-x-0.5 motion-reduce:transition-none"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </span>
-            </p>
+            <span
+              aria-hidden="true"
+              class="mt-4 inline-flex translate-y-1 items-center gap-1.5 text-sm font-bold text-white opacity-70 transition-[opacity,transform] duration-300 ease-ui group-hover:translate-y-0 group-hover:opacity-100 motion-reduce:transition-none"
+            >
+              Explore
+              <svg viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
+              </svg>
+            </span>
           </li>
         ))}
       </ul>
     </div>
   </section>
 
-  {/* ---- 3. Email ---------------------------------------------------- */}
-  {/*
-    The signup, directly under the category grid.
-
-    Here rather than lower down because this is where a visitor has just seen
-    the whole site and decided whether it is for them, and the only thing the
-    site could previously ask of them at that moment was another click. It
-    posts to the owner's email provider, keeps no address here, and renders
-    disabled until PUBLIC_NEWSLETTER_ENDPOINT is set — see the component.
-
-    No count, no open rate, no "join N readers". The site has no such figure.
-  */}
-  <div class="border-t border-ink-200 bg-surface-sunken">
-    <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
-      <NewsletterSignup location="homepage" />
-    </div>
-  </div>
-
-  {/* ---- 4. Featured guides ----------------------------------------- */}
+  {/* ==== 4. Featured — the magazine spread ============================= */}
   <section aria-labelledby="featured-heading" class="border-y border-ink-200 bg-surface">
-    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-      <div class="max-w-2xl">
-        <p class="eyebrow eyebrow-rule">Editor's picks</p>
-        <h2 id="featured-heading" class="type-section mt-3">
-          Featured guides
-        </h2>
-        <p class="type-body mt-3">{FEATURED_GUIDES_INTRO}</p>
-      </div>
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
+      <SectionHeading
+        eyebrow="Editor's picks"
+        heading="Featured guides"
+        id="featured-heading"
+        intro={FEATURED_GUIDES_INTRO}
+        link={{ href: blogPath, label: "All guides" }}
+      />
 
-      <div class="mt-9 grid gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
+      <div class="mt-12 grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-12">
         {featuredLead && (
-          <ArticleCard
-            article={featuredLead}
-            variant="lead"
-            as="h3"
-            sizes="(min-width: 1024px) 36rem, 92vw"
-          />
+          <article
+            class="group spotlight relative isolate flex min-h-[26rem] flex-col justify-end overflow-hidden rounded-panel p-7 shadow-panel sm:p-9 lg:min-h-[34rem]"
+            data-reveal
+          >
+            {featuredArt && (
+              <Image
+                src={featuredArt.src}
+                alt={featuredArt.alt}
+                widths={[640, 960, 1280]}
+                sizes="(min-width: 1024px) 42rem, 92vw"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 -z-20 size-full object-cover transition-transform duration-[900ms] ease-ui group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+              />
+            )}
+            <div aria-hidden="true" class:list={["absolute inset-0 -z-10", SHADE]}></div>
+
+            <p class="flex items-center gap-3">
+              <span class="badge badge-solid">Start with this one</span>
+              {featuredLead.category && (
+                <a
+                  href={featuredLead.category.path}
+                  class="relative z-10 font-mono text-[0.6875rem] font-semibold tracking-[0.08em] text-white/85 uppercase hover:text-white"
+                >
+                  {featuredLead.category.title}
+                </a>
+              )}
+            </p>
+            <h3 class="mt-4 max-w-2xl font-display text-3xl leading-[1.08] font-bold tracking-[-0.035em] text-balance text-white sm:text-[2.5rem]">
+              <a href={featuredLead.path} class="stretch-target">
+                {featuredLead.title}
+              </a>
+            </h3>
+            <p class="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-white/80">
+              {featuredLead.description}
+            </p>
+            <p class="mt-6 flex items-center gap-3 font-mono text-[0.6875rem] tracking-[0.06em] text-white/65 uppercase">
+              <time datetime={isoDate(featuredLead.updated)}>
+                {formatShortDate(featuredLead.updated)}
+              </time>
+              <span aria-hidden="true">&middot;</span>
+              <span>{featuredLead.minutes} min read</span>
+            </p>
+          </article>
         )}
 
-        <ul class="grid gap-3 self-start">
-          {featuredRest.map((article) => (
-            <li>
-              <ArticleCard article={article} variant="row" as="h3" />
+        <ol class="flex flex-col">
+          {featuredRest.map((article, index) => (
+            <li
+              class="group relative flex items-center gap-5 border-b border-ink-200 py-6 first:pt-0 last:border-b-0"
+              style={stagger(index + 1)}
+              data-reveal
+            >
+              <span
+                aria-hidden="true"
+                class="text-gradient w-14 shrink-0 font-display text-5xl leading-none font-bold tracking-[-0.05em] opacity-60 transition-opacity duration-300 ease-ui group-hover:opacity-100 motion-reduce:transition-none"
+              >
+                {two(index + 1)}
+              </span>
+              <div class="min-w-0 flex-1">
+                {article.category && (
+                  <a href={article.category.path} class="eyebrow relative z-10">
+                    {article.category.title}
+                  </a>
+                )}
+                <h3 class="mt-1.5 font-display text-lg leading-snug font-bold tracking-[-0.02em] text-ink-900 sm:text-xl">
+                  <a
+                    href={article.path}
+                    class="stretch-target transition-colors duration-180 ease-ui group-hover:text-brand-700 motion-reduce:transition-none"
+                  >
+                    {article.title}
+                  </a>
+                </h3>
+                <p class="mt-1.5 font-mono text-[0.6875rem] tracking-[0.04em] text-ink-500 uppercase">
+                  {article.minutes} min read
+                </p>
+              </div>
+              {article.articleMedia && (
+                <Image
+                  src={article.articleMedia.src}
+                  alt=""
+                  widths={[160, 320]}
+                  sizes="7rem"
+                  loading="lazy"
+                  decoding="async"
+                  class="hidden aspect-[4/3] w-28 shrink-0 rounded-xl object-cover transition-transform duration-500 ease-ui group-hover:scale-105 group-hover:-rotate-2 sm:block motion-reduce:transition-none motion-reduce:group-hover:transform-none"
+                />
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  {/* ==== 5. Head-to-head comparisons ================================== */}
+  {comparisons.length > 0 && (
+    <section aria-labelledby="compare-heading" class="theme-dark bg-night relative overflow-hidden">
+      <div aria-hidden="true" class="orb orb-violet -top-40 right-0 size-[30rem] opacity-40"></div>
+      {/* A watermark, not a word: the section is about one thing against another. */}
+      <p
+        aria-hidden="true"
+        class="pointer-events-none absolute -top-10 -right-6 font-display text-[16rem] leading-none font-bold tracking-[-0.06em] text-white/[0.04] select-none sm:text-[24rem]"
+      >
+        VS
+      </p>
+
+      <div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
+        <SectionHeading
+          eyebrow="Head to head"
+          heading="Choosing between two? Compare them"
+          id="compare-heading"
+          intro="Side-by-side guides for the tools people actually weigh against each other — what each costs, what each is for, and which one fits which kind of business."
+        >
+          <div class="flex gap-2" data-rail-controls hidden>
+            <button type="button" class="rail-button" data-rail-prev aria-controls="compare-rail">
+              <span class="sr-only">Scroll comparisons back</span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class="size-5 rotate-180"
+              >
+                <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
+              </svg>
+            </button>
+            <button type="button" class="rail-button" data-rail-next aria-controls="compare-rail">
+              <span class="sr-only">Scroll comparisons forward</span>
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
+              </svg>
+            </button>
+          </div>
+        </SectionHeading>
+
+        <ul
+          id="compare-rail"
+          class="rail mt-10"
+          tabindex="0"
+          aria-label="Comparison guides"
+          data-rail
+        >
+          {comparisons.map((article) => (
+            <li class="flex w-[18rem] sm:w-[22rem]">
+              <ArticleCard article={article} variant="compare" as="h3" class="spotlight w-full" />
             </li>
           ))}
         </ul>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
-  {/* ---- 5. Start here ---------------------------------------------- */}
+  {/* ==== 6. Start here — four steps on a line ========================== */}
   <section aria-labelledby="start-here-heading">
-    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-      <div class="max-w-2xl">
-        <p class="eyebrow eyebrow-rule">Start here</p>
-        <h2 id="start-here-heading" class="type-section mt-3">
-          Where do you want to begin?
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
+      <div class="mx-auto max-w-3xl text-center" data-reveal>
+        <p class="eyebrow eyebrow-rule eyebrow-center">Start here</p>
+        <h2 id="start-here-heading" class="section-title mt-4">
+          Where do you want <span class="text-gradient">to begin?</span>
         </h2>
-        <p class="type-body mt-3">
+        <p class="type-lead mt-5">
           Four ways in. Each one opens a category and points at the guide most people read first.
         </p>
       </div>
 
-      <ul class="mt-9 grid gap-4 sm:grid-cols-2">
-        {startHere.map((path) => (
-          <li class="card group relative flex flex-col p-6">
-            <div class="flex items-start gap-4">
-              <span class="flex size-10 shrink-0 items-center justify-center rounded-xl border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none">
-                <PillarIcon icon={path.icon} class="size-5" />
+      <ol class="steps relative mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {startHere.map((path, index) => (
+          <li
+            class:list={["start-card group relative flex flex-col", `tile-${path.icon}`]}
+            style={stagger(index, 110)}
+            data-reveal
+          >
+            {/* The node on the line. */}
+            <div class="relative z-10 mb-6 flex items-center gap-3">
+              <span class="step-node flex size-12 items-center justify-center rounded-full bg-[image:var(--gradient-cta)] font-display text-base font-bold text-white shadow-[var(--shadow-glow)] ring-4 ring-paper transition-transform duration-300 ease-ui group-hover:scale-110 motion-reduce:transition-none">
+                {two(index)}
               </span>
-              <div class="min-w-0">
-                <h3 class="font-display text-lg font-bold tracking-[-0.008em] text-ink-900">
-                  “{path.question}”
-                </h3>
-                <p class="mt-2 text-[0.9375rem] leading-relaxed text-ink-600">{path.summary}</p>
-              </div>
             </div>
 
-            <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-ink-100 pt-4 text-sm">
-              <a
-                href={path.hub.path}
-                class="inline-flex items-center gap-1.5 font-sans font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
-              >
-                {path.hubTitle}
-                <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-                  <path
-                    fill-rule="evenodd"
-                    d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </a>
-              <a
-                href={path.guidePage.path}
-                class="text-ink-500 underline decoration-ink-300 underline-offset-2 transition-colors duration-180 ease-ui hover:text-brand-700 hover:decoration-current motion-reduce:transition-none"
-              >
-                Start with: {path.guideTitle}
-              </a>
+            <div class="card spotlight flex flex-1 flex-col overflow-hidden p-6 transition-[transform,box-shadow,border-color] duration-300 ease-ui group-hover:-translate-y-1.5 group-hover:border-brand-300 group-hover:shadow-[var(--shadow-card-hover)] motion-reduce:transition-none motion-reduce:group-hover:transform-none">
+              <PillarTile icon={path.icon} />
+              <h3 class="mt-5 font-display text-xl leading-snug font-bold tracking-[-0.025em] text-ink-900">
+                “{path.question}”
+              </h3>
+              <p class="mt-2.5 flex-1 text-[0.9375rem] leading-relaxed text-ink-600">
+                {path.summary}
+              </p>
+              <div class="relative z-10 mt-6 space-y-2.5 border-t border-ink-100 pt-4 text-sm">
+                <a href={path.hub.path} class="link-arrow">
+                  {path.hubTitle}
+                  <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
+                  </svg>
+                </a>
+                <a
+                  href={path.guidePage.path}
+                  class="block text-ink-500 underline decoration-ink-300 underline-offset-2 transition-colors duration-180 ease-ui hover:text-brand-700 hover:decoration-current motion-reduce:transition-none"
+                >
+                  Start with: {path.guideTitle}
+                </a>
+              </div>
             </div>
           </li>
         ))}
-      </ul>
+      </ol>
     </div>
   </section>
 
-  {/* ---- 6. What the pricing data shows ------------------------------ */}
-  {/*
-    The page's one section of substantive content, and the only place on it
-    that states a finding rather than a label. It sits here because it leads
-    into the calculators directly below: the figures say what vendors list, and
-    the tool under them works out what a particular stack costs.
-
-    The sunken ground separates it from the plain section above and the surface
-    band below, so three substantial sections in a row still read as three.
-  */}
+  {/* ==== 7. What the pricing data shows =============================== */}
   <PricingFindings />
 
-  {/* ---- 7. Free tools ----------------------------------------------- */}
-  {/*
-    Both calculators, one band. Each panel is its own <section> with its own
-    <h2>, so neither tool is demoted to a sub-heading of the other and the
-    heading outline stays flat under the page's single <h1>. The band itself is
-    a plain wrapper: it groups them visually without inventing a heading of its
-    own that would say nothing a visitor needs.
-  */}
+  {/* ==== 8. Free tools ================================================ */}
   {promos.length > 0 && (
-    <div id="free-tools" class="scroll-mt-20 border-y border-ink-200 bg-surface">
-      <div class="mx-auto grid max-w-6xl gap-6 px-4 py-16 sm:px-6 sm:py-20">
+    <div id="free-tools" class="scroll-mt-24 border-b border-ink-200 bg-surface">
+      <div class="mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-6 sm:py-28">
         {promos.map((promo, index) => (
           <section aria-labelledby={promo.headingId}>
             <ToolPromoPanel
@@ -680,89 +875,59 @@ const METHOD = [
               alsoFree={index === 0 ? alsoFree : []}
             >
               <Fragment slot="preview">
-                {promo.tool === "small-business-ai-cost-calculator" ? (
-                  /*
-                    Preview of the output, computed at build time by the
-                    calculator's own computeTotals() from the illustrative
-                    inputs in src/config/homepage.ts.
-                  */
-                  <div class="rounded-card border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm">
-                    <p class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-400 uppercase">
-                      Example — not vendor prices
-                    </p>
+                {/* Each preview is that tool's own calculation, run at build time. */}
+                <div class="glass float-slow rounded-card p-6 shadow-panel">
+                  <p class="flex items-center gap-2 font-mono text-[0.625rem] tracking-[0.08em] text-ink-500 uppercase">
+                    <span aria-hidden="true" class="size-1.5 rounded-full bg-accent-600"></span>
+                    {promo.tool === "small-business-ai-cost-calculator"
+                      ? "Example — not vendor prices"
+                      : "Example — the calculator's opening figures"}
+                  </p>
 
-                    <dl class="mt-5 space-y-4">
-                      <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
-                        <dt class="text-sm text-ink-300">Monthly</dt>
-                        <dd class="font-sans text-2xl font-extrabold text-white tabular-nums">
-                          {money(preview.monthlyRecurring)}
-                        </dd>
-                      </div>
-                      <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
-                        <dt class="text-sm text-ink-300">Annual</dt>
-                        <dd class="font-sans text-xl font-bold text-white tabular-nums">
-                          {money(preview.annualRecurring)}
-                        </dd>
-                      </div>
-                      <div class="flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
-                        <dt class="text-sm text-ink-300">First year, with setup</dt>
-                        <dd class="font-sans text-xl font-bold text-accent-200 tabular-nums">
-                          {money(preview.firstYearTotal)}
-                        </dd>
-                      </div>
-                      <div class="flex items-baseline justify-between gap-4">
-                        <dt class="text-sm text-ink-300">Per employee, monthly</dt>
-                        <dd class="font-sans text-base font-bold text-white tabular-nums">
-                          {money(preview.perEmployee)}
-                        </dd>
-                      </div>
-                    </dl>
-
-                    <p class="mt-6 border-t border-white/10 pt-4 text-xs leading-relaxed text-ink-400">
-                      From {preview.perTool.length} example tools at{" "}
-                      {money(preview.monthlyRecurring)} a month plus {money(preview.totalSetup)} of
-                      one-off setup, across {CALCULATOR_PREVIEW.business.employees} people. Your own
-                      figures replace all of these.
-                    </p>
-                  </div>
-                ) : (
-                  /*
-                    The same idea for the email calculator: every figure below is
-                    computeEmailSavings() run on that tool's own published
-                    defaults, so this panel shows exactly what the calculator
-                    shows on a visitor's first look at it.
-                  */
-                  <div class="rounded-card border border-ink-200 bg-surface p-6 shadow-card">
-                    <p class="font-mono text-[0.625rem] tracking-[0.08em] text-ink-500 uppercase">
-                      Example — the calculator's opening figures
-                    </p>
-
-                    <dl class="mt-5 space-y-4">
-                      {EMAIL_PREVIEW_ROWS.map((row, rowIndex) => (
-                        <div
+                  <dl class="mt-5 space-y-4">
+                    {(promo.tool === "small-business-ai-cost-calculator"
+                      ? COST_PREVIEW_ROWS
+                      : EMAIL_PREVIEW_ROWS
+                    ).map((row, rowIndex, rows) => (
+                      <div
+                        class:list={[
+                          "flex items-baseline justify-between gap-4",
+                          rowIndex < rows.length - 1 && "border-b border-ink-200 pb-4",
+                        ]}
+                      >
+                        <dt class="text-sm text-ink-600">{row.label}</dt>
+                        <dd
                           class:list={[
-                            "flex items-baseline justify-between gap-4",
-                            rowIndex < EMAIL_PREVIEW_ROWS.length - 1 &&
-                              "border-b border-ink-100 pb-4",
+                            "font-display font-bold tracking-[-0.03em] whitespace-nowrap tabular-nums",
+                            row.size,
                           ]}
                         >
-                          <dt class="text-sm text-ink-600">{row.label}</dt>
-                          <dd class:list={["font-sans whitespace-nowrap tabular-nums", row.size]}>
-                            {row.value}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
+                          {row.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
 
-                    <p class="mt-6 border-t border-ink-100 pt-4 text-xs leading-relaxed text-ink-500">
-                      From {EMAIL_DEFAULTS.emailsPerDay} emails a working day at{" "}
-                      {EMAIL_DEFAULTS.manualMinutes} minutes each, {EMAIL_DEFAULTS.reviewMinutes}{" "}
-                      minutes to review an AI draft, and {money(EMAIL_DEFAULTS.monthlySoftwareCost)}{" "}
-                      a month of software. Illustrative placeholders, not averages — your own
-                      figures replace all of them.
-                    </p>
-                  </div>
-                )}
+                  <p class="mt-6 border-t border-ink-200 pt-4 text-xs leading-relaxed text-ink-500">
+                    {promo.tool === "small-business-ai-cost-calculator" ? (
+                      <>
+                        From {preview.perTool.length} example tools at{" "}
+                        {money(preview.monthlyRecurring)} a month plus {money(preview.totalSetup)}{" "}
+                        of one-off setup, across {CALCULATOR_PREVIEW.business.employees} people.
+                        Your own figures replace all of these.
+                      </>
+                    ) : (
+                      <>
+                        From {EMAIL_DEFAULTS.emailsPerDay} emails a working day at{" "}
+                        {EMAIL_DEFAULTS.manualMinutes} minutes each, {EMAIL_DEFAULTS.reviewMinutes}{" "}
+                        minutes to review an AI draft, and{" "}
+                        {money(EMAIL_DEFAULTS.monthlySoftwareCost)} a month of software.
+                        Illustrative placeholders, not averages — your own figures replace all of
+                        them.
+                      </>
+                    )}
+                  </p>
+                </div>
               </Fragment>
             </ToolPromoPanel>
           </section>
@@ -771,60 +936,44 @@ const METHOD = [
     </div>
   )}
 
-  {/* ---- 8. Latest guides ------------------------------------------- */}
+  {/* ==== 9. Latest guides ============================================= */}
   <section aria-labelledby="latest-heading">
-    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-      <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-        <div class="max-w-2xl">
-          <p class="eyebrow eyebrow-rule">Latest</p>
-          <h2 id="latest-heading" class="type-section mt-3">
-            Newest guides
-          </h2>
-        </div>
-        <a
-          href={blogPath}
-          class="-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-sans text-sm font-bold text-brand-700 transition-colors duration-180 ease-ui hover:text-brand-800 motion-reduce:transition-none"
-        >
-          Browse every guide
-          <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-            <path
-              fill-rule="evenodd"
-              d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </a>
-      </div>
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
+      <SectionHeading
+        eyebrow="Latest"
+        heading="Newest guides"
+        id="latest-heading"
+        link={{ href: blogPath, label: "Browse every guide" }}
+      />
 
-      <ul class="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {latest.map((article) => (
-          <li class="flex">
-            <ArticleCard article={article} as="h3" class="w-full" />
+      <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {latest.map((article, index) => (
+          <li class="flex" style={stagger(index % 3)} data-reveal>
+            <ArticleCard article={article} as="h3" class="spotlight w-full" />
           </li>
         ))}
       </ul>
     </div>
   </section>
 
-  {/* ---- 9. How these guides are made ------------------------------- */}
+  {/* ==== 10. Email ==================================================== */}
+  {/* No count, no open rate, no "join N readers": the site has no such figure. */}
+  <div class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 sm:pb-28">
+    <div data-reveal>
+      <NewsletterSignup location="homepage" />
+    </div>
+  </div>
+
+  {/* ==== 11. How these guides are made ================================ */}
   <section aria-labelledby="method-heading" class="border-t border-ink-200 bg-surface">
-    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-      <div class="grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
-        <div>
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
+      <div class="grid gap-12 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-20">
+        <div class="lg:sticky lg:top-28 lg:self-start" data-reveal>
           <p class="eyebrow eyebrow-rule">How we work</p>
-          <h2 id="method-heading" class="type-section mt-3">
-            Why trust these guides
+          <h2 id="method-heading" class="section-title mt-4">
+            Why trust <span class="text-gradient">these guides</span>
           </h2>
-          {/*
-            The author's name is a link now rather than plain text. The person
-            who writes every guide on the site had no route to his own page from
-            the homepage at all, which is the one page an answer engine or a
-            reader checking "who is behind this" reaches first. The link is the
-            whole fix: the author page already holds the bio, the Person node
-            and the owner-supplied profiles, and nothing is claimed here that
-            that page does not already state.
-          */}
-          <p class="type-body mt-4">
+          <p class="type-body mt-5">
             {SITE.name} is written and researched by{" "}
             <a
               href={AUTHOR.path}
@@ -835,48 +984,40 @@ const METHOD = [
             . There is no team behind it, so the method is published instead: what the guides are
             based on, what they will not claim, and how the site makes money.
           </p>
-          <a href={aboutPath} class="btn btn-secondary mt-6">
+          <a href={aboutPath} class="btn btn-primary mt-7">
             Read the editorial process
           </a>
         </div>
 
-        <ul class="grid gap-x-8 gap-y-7 sm:grid-cols-2">
-          {METHOD.map((item) => (
-            <li>
-              <h3 class="flex items-center gap-2.5 font-display text-[1.0625rem] font-bold text-ink-900">
-                <span
-                  aria-hidden="true"
-                  class="h-5 w-0.5 shrink-0 rounded-full bg-brand-600"
-                ></span>
-                {item.title}
-              </h3>
-              <p class="mt-2 pl-[1.125rem] leading-relaxed text-ink-600">{item.body}</p>
+        <ol class="relative space-y-5">
+          {METHOD.map((item, index) => (
+            <li
+              class="card spotlight group flex gap-5 overflow-hidden p-6 transition-[transform,border-color] duration-300 ease-ui hover:translate-x-2 hover:border-brand-300 sm:gap-7 sm:p-8 motion-reduce:transition-none motion-reduce:hover:transform-none"
+              style={stagger(index)}
+              data-reveal
+            >
+              <span
+                aria-hidden="true"
+                class="text-gradient font-display text-5xl leading-none font-bold tracking-[-0.05em] sm:text-6xl"
+              >
+                {two(index)}
+              </span>
+              <div>
+                <h3 class="font-display text-xl font-bold tracking-[-0.025em] text-ink-900">
+                  {item.title}
+                </h3>
+                <p class="mt-2 leading-relaxed text-ink-600">{item.body}</p>
+              </div>
             </li>
           ))}
-        </ul>
+        </ol>
       </div>
     </div>
   </section>
 
-  {/* ---- 10. Questions people arrive with --------------------------- */}
-  {/*
-    The five questions HOME_FAQ answers, rendered by the same component every
-    guide uses — so the visible answer and the FAQPage JSON-LD are built from
-    one string and cannot disagree. FaqSection emits that schema itself, which
-    is why no faqSchema() is passed to the layout above.
-
-    It closes the page on purpose. A visitor who has read this far has not found
-    the guide they want from eleven routes in, and the thing most likely to help
-    them now is a direct answer rather than a twelfth card.
-  */}
-  {/*
-    No <section> wrapper: FaqSection is its own labelled section, so wrapping it
-    in a second one would nest two regions around one heading. The div only
-    holds the page's measure and gutters, and the component's own vertical
-    margin supplies the band's spacing.
-  */}
+  {/* ==== 12. Questions people arrive with ============================== */}
   <div class="border-t border-ink-200">
-    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+    <div class="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-12">
       <FaqSection
         items={HOME_FAQ}
         heading="Common questions about AI tools for small business"
@@ -887,87 +1028,93 @@ const METHOD = [
 </BaseLayout>
 
 <style>
+  /* The masthead headline: larger than anything else on the site. */
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 1.2rem + 5.6vw, 5.25rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    color: var(--color-ink-900);
+    text-wrap: balance;
+  }
+
+  /* Centred section titles, a step above the shared section heading. */
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: var(--color-ink-900);
+    text-wrap: balance;
+  }
+
   /*
-   * The hero background.
-   *
-   * Nothing dark goes over the artwork. It runs at full strength and the only
-   * layer between it and the copy is a flat white veil at 76%.
-   *
-   * Flat, rather than a wash shaped around the copy, because the copy is
-   * centred and the crop moves: between a phone and a wide monitor the box
-   * goes from taller-than-square to nearly 2:1, and any part of the picture
-   * can end up under any line of the masthead. A veil that is only strong
-   * where the text sits today is a veil that fails at some width nobody
-   * checked. One value that holds everywhere cannot.
-   *
-   * 76% is set by the darkest pixel in the picture — #001536, in the core of
-   * the brain. Under the veil that composites to #c2c7cf, which gives 10.9:1
-   * to the ink-900 headline and figures, 6.8:1 to the ink-700 lead, 5.3:1 to
-   * the iris kicker, and 4.8:1 to the ink-600 colophon labels. Those labels
-   * are the smallest type on the section and the floor for the whole
-   * arrangement: thinning the veil drops them below AA, so the picture cannot
-   * be brought up without darkening them in the same move.
-   *
-   * The second gradient closes the foot of the section into the warm paper
-   * below it, so the picture does not stop dead against the next section.
+   * The brand artwork as light. Inverted with its hue turned back, the white
+   * field goes black and the blues stay blue; `screen` drops the black out
+   * against the navy, and the mask lets it fade into the page.
    */
   .hero-art {
-    object-position: 60% 42%;
+    filter: invert(1) hue-rotate(180deg) saturate(1.3);
+    mix-blend-mode: screen;
+    opacity: 0.55;
+    object-position: 100% 30%;
+    mask-image: radial-gradient(70% 75% at 78% 30%, #000 20%, transparent 78%);
   }
 
-  .hero-veil {
-    /* The colour is the veil; the gradient paints over it, which is the order
-       the foot of the section needs — paper on top of the wash, not under. */
-    background-color: rgb(255 255 255 / 0.76);
-    background-image: linear-gradient(to top, var(--color-paper) 0%, transparent 22%);
-  }
-
-  /*
-   * The grid is texture under the copy, and it has no business over the
-   * subject. Its mask fades out over a long run: a short ramp reads as an
-   * edge, a long one as depth.
-   */
-  .hero-grid {
-    mask-image: radial-gradient(120% 105% at 50% 44%, #000 0%, #000 48%, transparent 86%);
-  }
-
+  /* The line the four steps sit on, from the first node to the last. */
   @media (min-width: 1024px) {
-    /*
-     * A floor, not a fixed height: the copy sets the height whenever it needs
-     * more, and the vh term keeps the masthead off a full screen on a large
-     * monitor. Below `lg` the section is as tall as its copy, which on a phone
-     * crops the artwork to a strip through the middle of the picture — hence
-     * the object-position above, which holds the head and the top of the
-     * network rather than the empty sky beside them.
-     */
-    .hero {
-      min-height: min(52vw, 84vh);
+    .steps::before {
+      content: "";
+      position: absolute;
+      top: 1.5rem;
+      right: 12.5%;
+      left: 1.5rem;
+      height: 2px;
+      background-image: var(--gradient-brand);
+      opacity: 0.45;
     }
+  }
 
-    /*
-     * From `lg` up the box is close enough to the master's own 1672x941 that
-     * centring it trims only a little off the top and bottom, and the copy now
-     * sits over the subject rather than beside it, so there is no empty column
-     * left to protect.
-     */
-    .hero-art {
-      object-position: center;
+  /* The comparison rail's arrow buttons, on the dark band. */
+  .rail-button {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--color-ink-300);
+    background-color: color-mix(in srgb, var(--color-surface) 70%, transparent);
+    color: var(--color-ink-900);
+    transition:
+      background-color var(--duration-ui) var(--ease-ui),
+      border-color var(--duration-ui) var(--ease-ui),
+      opacity var(--duration-ui) var(--ease-ui);
+  }
+
+  .rail-button:hover:not(:disabled) {
+    border-color: var(--color-brand-400);
+    background-color: var(--color-brand-100);
+  }
+
+  .rail-button:disabled {
+    cursor: default;
+    opacity: 0.35;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rail-button {
+      transition: none;
     }
   }
 </style>
 
 <script>
   /**
-   * The homepage's analytics listener: a call to action that declares an event
-   * name gets one, and nothing else in this file is instrumented.
-   *
-   * What is sent is that the click happened, and where. Never a value — the
-   * calculators' own figures are not touched here and must never be; see the
-   * contract in src/lib/analytics.ts.
-   *
-   * <NewsletterSignup> tracks its own submit in its own script, so nothing
-   * below fires twice for it, and the address typed into it is never a
-   * parameter of anything.
+   * Analytics: a call to action that declares an event name gets one. What is
+   * sent is that the click happened and where — never a value.
    */
   import { trackEvent, type AnalyticsEventName } from "@/lib/analytics";
 
@@ -977,31 +1124,18 @@ const METHOD = [
     element.addEventListener("click", () => trackEvent(name, { location: "homepage" }));
   }
 
-  /**
-   * The colophon counters.
-   *
-   * Each figure is rendered at its final value by the build, so it is already
-   * right for a crawler and for a visitor with scripting off. This only
-   * decorates it: the counter reads the number the build wrote, runs up to it
-   * from zero whenever the row scrolls into view, and lands on exactly the
-   * text it started with. The observer is never disconnected, so scrolling
-   * away and back runs it again; the width each figure occupies is reserved in
-   * the markup, so a count that passes 9 cannot reflow the row.
-   *
-   * Anyone who has asked for reduced motion is left with the rendered numbers.
-   */
-  const COUNT_MS = 1100;
-  const COUNT_THRESHOLD = 0.6;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /**
+   * The masthead counters. Each figure is rendered at its final value by the
+   * build; this only runs it up from zero when it scrolls into view and lands
+   * on the text it started with. Skipped under reduced motion.
+   */
+  const COUNT_MS = 1400;
   const counters = document.querySelectorAll<HTMLElement>("[data-count-to]");
 
-  if (counters.length > 0 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    /* Fast first, easing out — a count that decelerates into its final value
-       reads as arriving somewhere rather than as a stopwatch. */
+  if (counters.length > 0 && !reducedMotion) {
     const easeOut = (progress: number) => 1 - Math.pow(1 - progress, 3);
-
-    /* One pending frame per element, so a re-entry replaces its own run
-       instead of racing it. */
     const frames = new WeakMap<HTMLElement, number>();
 
     const count = (element: HTMLElement) => {
@@ -1030,9 +1164,40 @@ const METHOD = [
           if (entry.isIntersecting) count(entry.target as HTMLElement);
         }
       },
-      { threshold: COUNT_THRESHOLD },
+      { threshold: 0.6 },
     );
 
     for (const counter of counters) observer.observe(counter);
+  }
+
+  /**
+   * The comparison rail's arrow buttons. The rail scrolls natively; these only
+   * nudge it, and are rendered `hidden` until this script shows them.
+   */
+  for (const rail of document.querySelectorAll<HTMLElement>("[data-rail]")) {
+    const section = rail.closest("section");
+    const controls = section?.querySelector<HTMLElement>("[data-rail-controls]");
+    const prev = controls?.querySelector<HTMLButtonElement>("[data-rail-prev]");
+    const next = controls?.querySelector<HTMLButtonElement>("[data-rail-next]");
+    if (!controls || !prev || !next) continue;
+
+    const sync = () => {
+      const max = rail.scrollWidth - rail.clientWidth;
+      prev.disabled = rail.scrollLeft <= 4;
+      next.disabled = rail.scrollLeft >= max - 4;
+      controls.hidden = max <= 4;
+    };
+
+    const nudge = (direction: 1 | -1) =>
+      rail.scrollBy({
+        left: direction * rail.clientWidth * 0.85,
+        behavior: reducedMotion ? "auto" : "smooth",
+      });
+
+    prev.addEventListener("click", () => nudge(-1));
+    next.addEventListener("click", () => nudge(1));
+    rail.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync, { passive: true });
+    sync();
   }
 </script>

@@ -25,10 +25,18 @@ const { heading, items, id } = Astro.props;
     </h2>
     <ul class="mt-7 grid gap-4 sm:grid-cols-2">
       {items.map((item) => (
-        <li class="card card-link group relative flex flex-col p-5">
+        <li class="card card-link group relative flex flex-col overflow-hidden p-5 sm:p-6">
+          {/* The brand gradient down the card's leading edge, shown on hover. */}
+          <span
+            aria-hidden="true"
+            class="absolute inset-y-0 left-0 w-1 bg-[image:var(--gradient-brand)] opacity-0 transition-opacity duration-180 ease-ui group-hover:opacity-100 motion-reduce:transition-none"
+          ></span>
           {item.kicker && <p class="eyebrow">{item.kicker}</p>}
           <h3 class:list={["type-card-title", item.kicker && "mt-1.5"]}>
-            <a href={item.path} class="stretch-target group-hover:text-brand-800">
+            <a
+              href={item.path}
+              class="stretch-target transition-colors duration-180 ease-ui group-hover:text-brand-700 motion-reduce:transition-none"
+            >
               {item.title}
             </a>
           </h3>

@@ -75,27 +75,45 @@ const WARNING_PATH =
   "M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.63-1.516 2.63H3.72c-1.347 0-2.189-1.463-1.515-2.63L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z";
 ---
 
+{/*
+  The band is dark in both themes (`theme-dark`), over the brand's own aurora,
+  so the one thing on the homepage that asks for something looks like nothing
+  else on it. Every colour inside is a token, resolved dark by that scope.
+*/}
 <div
   class:list={[
     "not-prose",
-    isBand && "card overflow-hidden p-6 sm:p-9",
+    isBand &&
+      "theme-dark bg-night relative overflow-hidden rounded-panel border border-ink-200 p-7 shadow-panel sm:p-10 lg:p-12",
     !isBand && "rounded-card border border-ink-200 bg-surface p-5",
     className,
   ]}
 >
-  <div class:list={[isBand && "grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-12"]}>
+  {isBand && (
+    <div
+      aria-hidden="true"
+      class="bg-grid-inverse pointer-events-none absolute inset-0 [mask-image:radial-gradient(100%_100%_at_0%_0%,#000,transparent_70%)]"
+    ></div>
+  )}
+
+  <div
+    class:list={[
+      "relative",
+      isBand && "grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-center lg:gap-14",
+    ]}
+  >
     <div>
-      <p class="eyebrow">One email</p>
+      <p class:list={[isBand ? "badge" : "eyebrow"]}>One email</p>
       <h2
         id={`${inputId}-heading`}
         class:list={[
-          "mt-2 font-display font-bold tracking-[-0.01em] text-ink-900",
-          isBand ? "text-2xl sm:text-[1.75rem]" : "text-xl",
+          "font-display font-bold text-ink-900",
+          isBand ? "type-section mt-4" : "mt-2 text-xl tracking-[-0.02em]",
         ]}
       >
         Get the next guide before it is indexed
       </h2>
-      <p class="mt-3 leading-relaxed text-ink-600">
+      <p class:list={["mt-3 leading-relaxed text-ink-600", isBand && "max-w-xl text-[1.0625rem]"]}>
         When a new guide goes up — or a price we published moves — you get one email saying what
         changed and whether it affects you. No course, no funnel, no forwarded vendor press
         releases. Unsubscribe in one click, from any of them.
@@ -113,7 +131,7 @@ const WARNING_PATH =
       method="POST"
       target="_blank"
       {...FORM_REL}
-      class="self-center"
+      class:list={["self-center", isBand && "glass rounded-card p-5 sm:p-6"]}
       data-newsletter-form
       data-location={location}
       data-configured={String(isConfigured)}
@@ -131,7 +149,7 @@ const WARNING_PATH =
           maxlength="254"
           placeholder="you@yourbusiness.com"
           disabled={!isConfigured}
-          class="min-h-11 w-full rounded-lg border border-ink-300 bg-surface px-3.5 py-2.5 text-base text-ink-900 shadow-card placeholder:text-ink-500 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/25 focus:outline-none disabled:cursor-not-allowed disabled:bg-ink-50 disabled:text-ink-500"
+          class="min-h-11.5 w-full rounded-xl border border-ink-300 bg-surface px-3.5 py-2.5 text-base text-ink-900 shadow-card placeholder:text-ink-500 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/25 focus:outline-none disabled:cursor-not-allowed disabled:bg-ink-50 disabled:text-ink-500"
         />
         <button type="submit" class="btn btn-primary shrink-0" disabled={!isConfigured}>
           Subscribe
@@ -150,7 +168,14 @@ const WARNING_PATH =
       </p>
 
       {!isConfigured && (
-        <p class="mt-3 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-medium text-red-800">
+        <p
+          class:list={[
+            "mt-3 flex items-start gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium",
+            isBand
+              ? "border-red-400/40 bg-red-500/15 text-red-200"
+              : "border-red-200 bg-red-50 text-red-800",
+          ]}
+        >
           <svg
             aria-hidden="true"
             viewBox="0 0 20 20"

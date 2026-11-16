@@ -1,0 +1,270 @@
+/* ---------------------------------------------------------------------------
+ * Article prose
+ *
+ * The typography plugin's variables keep MDX body copy on the same palette as
+ * the components around it; the rules after them tune the reading experience:
+ * measure, leading, heading spacing, list and link treatment, tables, and
+ * prompt/code blocks.
+ *
+ * These rules are deliberately NOT inside `@layer components`.
+ * `@tailwindcss/typography` registers `.prose` in the `utilities` layer, which
+ * the cascade places after `components` — so an override written there loses to
+ * the plugin's own default no matter how specific it is, and what the page
+ * actually rendered was plugin type at plugin sizes. Unlayered rules beat every
+ * layered rule, which is what makes this block the one that governs body copy.
+ * Keep it unlayered, and keep every selector scoped to `.prose` so nothing in
+ * here can escape an article body.
+ * ------------------------------------------------------------------------- */
+.prose {
+  --tw-prose-body: var(--color-ink-700);
+  --tw-prose-headings: var(--color-ink-900);
+  --tw-prose-lead: var(--color-ink-600);
+  --tw-prose-links: var(--color-brand-700);
+  --tw-prose-bold: var(--color-ink-900);
+  --tw-prose-counters: var(--color-ink-500);
+  --tw-prose-bullets: var(--color-brand-300);
+  --tw-prose-hr: var(--color-ink-200);
+  --tw-prose-quotes: var(--color-ink-800);
+  --tw-prose-quote-borders: var(--color-brand-200);
+  --tw-prose-captions: var(--color-ink-500);
+  --tw-prose-code: var(--color-ink-900);
+  /* Fixed in both themes: a prompt block is a dark panel wherever it sits. */
+  --tw-prose-pre-code: var(--color-code-text);
+  --tw-prose-pre-bg: var(--color-code-bg);
+  --tw-prose-th-borders: var(--color-ink-300);
+  --tw-prose-td-borders: var(--color-ink-200);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+@media (min-width: 640px) {
+  .prose {
+    font-size: 1.125rem;
+    line-height: 1.78;
+  }
+}
+
+/* ---- Headings ------------------------------------------------------ */
+/*
+ * A hairline rule above each H2 gives a 2,000-word guide a visible rhythm
+ * and marks where one section ends, which is what makes a long article
+ * skimmable rather than a wall of text.
+ */
+.prose :where(h2):not(:where(.not-prose, .not-prose *)) {
+  margin-top: 3rem;
+  margin-bottom: 1.125rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-ink-200);
+  font-size: clamp(1.4375rem, 1.3rem + 0.6vw, 1.75rem);
+  line-height: 1.22;
+  letter-spacing: var(--tracking-display);
+  font-weight: 700;
+}
+
+/* The first H2 of a body has the header's own rule above it already. */
+.prose > :where(h2:first-child):not(:where(.not-prose, .not-prose *)) {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.prose :where(h3):not(:where(.not-prose, .not-prose *)) {
+  margin-top: 2.25rem;
+  margin-bottom: 0.625rem;
+  font-size: clamp(1.1875rem, 1.12rem + 0.3vw, 1.3125rem);
+  line-height: 1.32;
+  letter-spacing: var(--tracking-tight);
+  font-weight: 700;
+}
+
+.prose :where(h4):not(:where(.not-prose, .not-prose *)) {
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-ink-800);
+}
+
+/*
+ * Deep-linkable headings. The anchor is invisible until the heading is
+ * hovered or the link itself is focused, so it never clutters the page but
+ * is still reachable from the keyboard.
+ */
+/*
+ * The anchor hangs in the left margin, so its box is sized in rem rather
+ * than em: at `em` a 28px H2 produced a 35px anchor that reached past the
+ * page's 24px gutter and off the screen.
+ */
+.prose :where(h2, h3) > .heading-anchor {
+  float: left;
+  width: 1.5rem;
+  margin-left: -1.5rem;
+  padding-right: 0.375rem;
+  text-align: right;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: inherit;
+  color: var(--color-brand-400);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--duration-ui) var(--ease-ui);
+}
+
+.prose :where(h2, h3):hover > .heading-anchor,
+.prose :where(h2, h3) > .heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+/* Below `lg` the page gutter is the only margin there is, so nothing hangs. */
+@media (max-width: 63.99rem) {
+  .prose :where(h2, h3) > .heading-anchor {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prose :where(h2, h3) > .heading-anchor {
+    transition: none;
+  }
+}
+
+/* ---- Body ---------------------------------------------------------- */
+.prose :where(p):not(:where(.not-prose, .not-prose *)) {
+  text-wrap: pretty;
+}
+
+/* The opening paragraph of a section carries slightly more presence. */
+.prose :where(h2 + p):not(:where(.not-prose, .not-prose *)) {
+  font-size: 1.0625em;
+  color: var(--color-ink-600);
+}
+
+.prose :where(a):not(:where(.not-prose, .not-prose *)) {
+  font-weight: 500;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--color-brand-300);
+  transition:
+    color var(--duration-ui) var(--ease-ui),
+    text-decoration-color var(--duration-ui) var(--ease-ui);
+}
+
+.prose :where(a):not(:where(.not-prose, .not-prose *)):hover {
+  color: var(--color-brand-800);
+  text-decoration-color: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prose :where(a):not(:where(.not-prose, .not-prose *)) {
+    transition: none;
+  }
+}
+
+.prose :where(strong):not(:where(.not-prose, .not-prose *)) {
+  font-weight: 650;
+}
+
+/* ---- Lists --------------------------------------------------------- */
+.prose :where(ul > li):not(:where(.not-prose, .not-prose *)),
+.prose :where(ol > li):not(:where(.not-prose, .not-prose *)) {
+  padding-left: 0.375em;
+}
+
+.prose :where(ul > li):not(:where(.not-prose, .not-prose *))::marker {
+  font-size: 1.1em;
+}
+
+/* Ordered lists are often step sequences here, so the number is emphasised. */
+.prose :where(ol > li):not(:where(.not-prose, .not-prose *))::marker {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--color-brand-700);
+}
+
+/* ---- Quotes -------------------------------------------------------- */
+.prose :where(blockquote):not(:where(.not-prose, .not-prose *)) {
+  font-style: normal;
+  border-left-width: 3px;
+  padding: 0.125rem 0 0.125rem 1.375rem;
+  font-size: 1.0625em;
+  color: var(--color-ink-800);
+}
+
+.prose :where(blockquote p:first-of-type):not(:where(.not-prose, .not-prose *))::before,
+.prose :where(blockquote p:last-of-type):not(:where(.not-prose, .not-prose *))::after {
+  content: "";
+}
+
+/* ---- Code and prompts ---------------------------------------------- */
+/*
+ * Inline code is a chip rather than backticked body text, so a model name or
+ * a setting is visibly a literal string.
+ */
+.prose :where(code):not(:where(pre *, .not-prose *)) {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  font-weight: 500;
+  padding: 0.15em 0.4em;
+  border: 1px solid var(--color-ink-200);
+  border-radius: 0.375rem;
+  background-color: var(--color-ink-50);
+}
+
+.prose :where(code):not(:where(pre *, .not-prose *))::before,
+.prose :where(code):not(:where(pre *, .not-prose *))::after {
+  content: "";
+}
+
+/*
+ * A fenced block in these guides is almost always a prompt to copy, so it is
+ * typeset as a quotable panel: dark ground, mono, comfortable leading, and
+ * horizontal scroll kept inside the block rather than on the page.
+ */
+.prose :where(pre):not(:where(.not-prose, .not-prose *)) {
+  border-radius: var(--radius-card);
+  padding: 1.125rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  box-shadow: var(--shadow-card);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---- Tables -------------------------------------------------------- */
+/*
+ * Plain Markdown tables (the authored ones use <ComparisonTable>, which has
+ * its own shell). Wrapped in a scroll container by the MDX table component
+ * so a wide table never widens the page.
+ */
+.prose :where(table):not(:where(.not-prose, .not-prose *)) {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.prose :where(thead th):not(:where(.not-prose, .not-prose *)) {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-ink-700);
+  vertical-align: bottom;
+}
+
+.prose :where(tbody td):not(:where(.not-prose, .not-prose *)) {
+  vertical-align: top;
+}
+
+/* ---- Rules and images ---------------------------------------------- */
+.prose :where(hr):not(:where(.not-prose, .not-prose *)) {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.prose :where(figure figcaption):not(:where(.not-prose, .not-prose *)) {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}

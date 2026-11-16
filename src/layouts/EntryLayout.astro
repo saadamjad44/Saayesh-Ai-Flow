@@ -128,29 +128,36 @@ const openGraphArticle =
     {data.hasAffiliateLinks && <AffiliateNote />}
   </Fragment>
 
+  {/*
+    The picture sits in the header band: beside the title from `lg`, under it
+    below. PageLayout owns the column; only the frame is set here, and it is
+    the same frame for a category's artwork and a guide's own photo, so every
+    entry page opens on the same shape.
+  */}
   {mediaId && (
-    <Fragment slot="hero">
-      {/* Padding comes from PageLayout's container; only the measure is set here. */}
-      <div class="pb-10 lg:max-w-3xl">
-        <FeaturedImage id={mediaId} priority />
-      </div>
+    <Fragment slot="media">
+      <FeaturedImage
+        id={mediaId}
+        priority
+        sizes="(min-width: 1024px) 26rem, 100vw"
+        class="rounded-panel shadow-panel"
+      />
     </Fragment>
   )}
 
   {!mediaId && articleMedia && (
-    <Fragment slot="hero">
-      <div class="pb-10 lg:max-w-3xl">
-        <div class="not-prose overflow-hidden rounded-card border border-ink-200 bg-ink-100">
-          <Image
-            src={articleMedia.src}
-            alt={articleMedia.alt}
-            widths={[400, 768, 1200, 1600]}
-            sizes="(min-width: 768px) 768px, 100vw"
-            loading="eager"
-            decoding="async"
-            class="h-auto w-full"
-          />
-        </div>
+    <Fragment slot="media">
+      <div class="not-prose overflow-hidden rounded-panel border border-ink-200 bg-ink-100 shadow-panel">
+        <Image
+          src={articleMedia.src}
+          alt={articleMedia.alt}
+          widths={[400, 768, 1200, 1600]}
+          sizes="(min-width: 1024px) 26rem, 100vw"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          class="aspect-video w-full object-cover lg:aspect-[4/3]"
+        />
       </div>
     </Fragment>
   )}

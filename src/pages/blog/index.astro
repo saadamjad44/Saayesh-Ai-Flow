@@ -14,7 +14,7 @@
  */
 import ArticleCard from "@/components/content/ArticleCard.astro";
 import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
-import PillarIcon from "@/components/layout/PillarIcon.astro";
+import PillarTile from "@/components/layout/PillarTile.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { PILLAR_NAV } from "@/config/navigation";
 import { getPage } from "@/config/pages";
@@ -81,43 +81,52 @@ const breadcrumbs = getBreadcrumbs(page);
     ),
   ]}
 >
-  <div class="border-b border-ink-200 bg-surface">
-    <div class="mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 sm:pb-14">
-      <Breadcrumbs items={breadcrumbs} class="mb-6" />
+  <div class="theme-dark bg-night relative -mt-[4.75rem] overflow-hidden pt-[4.75rem]">
+    <div aria-hidden="true" class="bg-aurora pointer-events-none absolute inset-0"></div>
+    <div
+      aria-hidden="true"
+      class="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_90%_at_100%_0%,#000,transparent)]"
+    ></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 pt-6 pb-12 sm:px-6 sm:pt-8 sm:pb-14">
+      <Breadcrumbs items={breadcrumbs} class="mb-7" />
 
       <div class="max-w-3xl">
-        <p class="eyebrow eyebrow-rule">The library</p>
-        <h1 class="type-title mt-3">Every guide we publish</h1>
+        <p class="badge">The library</p>
+        <h1 class="type-title mt-4">
+          Every guide <span class="text-gradient">we publish</span>
+        </h1>
         <p class="type-lead mt-5">{description}</p>
         <p class="mt-5 font-mono text-xs tracking-[0.06em] text-ink-500 uppercase">
           {cards.length} guides &middot; {categories.length} categories
         </p>
       </div>
+
+      {/* ---- Category row ------------------------------------------- */}
+      <section aria-labelledby="blog-categories" class="mt-10">
+        <h2 id="blog-categories" class="eyebrow">
+          Browse by category
+        </h2>
+        <ul class="mt-4 flex flex-wrap gap-2.5">
+          {categories.map((category) => (
+            <li>
+              {/* The tile sits tighter to the chip's edge than a label would. */}
+              <a href={category.href} class="chip group pl-1.5!">
+                <PillarTile icon={category.icon} size="sm" class="size-7! rounded-full!" />
+                {category.title}
+                <span class="chip-count">{category.count}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   </div>
 
-  <div class="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-    {/* ---- Category row --------------------------------------------- */}
-    <section aria-labelledby="blog-categories" class="py-10 sm:py-12">
-      <h2 id="blog-categories" class="eyebrow">
-        Browse by category
-      </h2>
-      <ul class="mt-4 flex flex-wrap gap-2.5">
-        {categories.map((category) => (
-          <li>
-            <a href={category.href} class="chip">
-              <PillarIcon icon={category.icon} class="size-4 text-brand-700" />
-              {category.title}
-              <span class="chip-count">{category.count}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-
+  <div class="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
     {/* ---- Newest guide ---------------------------------------------- */}
     {lead && (
-      <section aria-labelledby="blog-latest" class="border-t border-ink-200 pt-10 sm:pt-12">
+      <section aria-labelledby="blog-latest" class="pt-10 sm:pt-14">
         <h2 id="blog-latest" class="eyebrow eyebrow-rule">
           Latest guide
         </h2>
@@ -143,9 +152,9 @@ const breadcrumbs = getBreadcrumbs(page);
           <p class="font-mono text-xs tracking-[0.06em] text-ink-500 uppercase">Newest first</p>
         </div>
 
-        <ul class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {rest.map((article) => (
-            <li class="flex">
+        <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {rest.map((article, index) => (
+            <li class="flex" style={`--reveal-delay:${(index % 3) * 70}ms`} data-reveal>
               <ArticleCard article={article} as="h3" class="w-full" />
             </li>
           ))}
@@ -161,8 +170,9 @@ const breadcrumbs = getBreadcrumbs(page);
         </h2>
         <ul class="mt-5 grid gap-4 sm:grid-cols-2">
           {toolLinks.map((tool) => (
-            <li class="card card-link group relative flex flex-col border-accent-200/70 p-5 sm:p-6">
-              <h3 class="type-card-title">
+            <li class="card card-link group relative flex flex-col p-5 sm:p-6" data-reveal>
+              <span class="badge badge-accent self-start">Free tool</span>
+              <h3 class="type-card-title mt-3.5">
                 <a href={tool.href} class="stretch-target group-hover:text-accent-800">
                   {tool.title}
                 </a>

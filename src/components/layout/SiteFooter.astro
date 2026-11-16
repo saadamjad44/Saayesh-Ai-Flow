@@ -19,12 +19,45 @@ import { AUTHOR } from "@/config/author";
 const year = new Date().getFullYear();
 const disclosurePath = getPage("affiliate-disclosure").path;
 const aboutPath = getPage("about").path;
+const blogPath = getPage("blog").path;
 
 const logoWidth = Math.round((BRAND_LOGO.src.width / BRAND_LOGO.src.height) * 32);
 ---
 
-<footer class="mt-auto border-t border-ink-200 bg-ink-50">
-  <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16">
+{/*
+  Dark in both themes. `theme-dark` re-resolves every colour token inside the
+  footer against the dark palette, so nothing below needs a dark variant of its
+  own — see "Dark palette" in global.css.
+*/}
+<footer class="theme-dark bg-night relative mt-auto overflow-hidden">
+  <div aria-hidden="true" class="h-[3px] bg-[image:var(--gradient-brand)]"></div>
+  <div
+    aria-hidden="true"
+    class="bg-grid-inverse pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,#000,transparent_55%)]"
+  ></div>
+
+  <div class="relative mx-auto max-w-7xl px-4 pt-14 pb-14 sm:px-6 sm:pt-16 sm:pb-16">
+    {/*
+      One last route in, for a reader who reached the foot of a page without
+      finding the next thing to read. It points at the archive, which lists
+      every published guide — a page that already exists, not a new claim.
+    */}
+    <div class="mb-12 flex flex-col gap-5 border-b border-ink-200 pb-12 sm:mb-14 sm:flex-row sm:items-center sm:justify-between sm:pb-14">
+      <p class="max-w-xl font-display text-2xl font-bold tracking-[-0.03em] text-balance text-ink-900 sm:text-[1.75rem]">
+        Still deciding which AI tool is worth paying for?
+      </p>
+      <a href={blogPath} class="btn btn-primary shrink-0">
+        Browse every guide
+        <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+          <path
+            fill-rule="evenodd"
+            d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </div>
+
     <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-[minmax(0,1.15fr)_repeat(4,minmax(0,1fr))] lg:gap-8">
       {/* Brand column */}
       <div class="md:col-span-2 lg:col-span-1">
@@ -46,10 +79,10 @@ const logoWidth = Math.round((BRAND_LOGO.src.width / BRAND_LOGO.src.height) * 32
           */}
           <span
             aria-hidden="true"
-            class="font-display text-lg font-extrabold tracking-[-0.01em] text-ink-900 group-hover:text-brand-800"
+            class="font-display text-xl font-bold tracking-[-0.03em] text-ink-900"
           >
             {SITE.name.split(" ")[0]}{" "}
-            <span class="text-brand-700">{SITE.name.split(" ").slice(1).join(" ")}</span>
+            <span class="text-gradient">{SITE.name.split(" ").slice(1).join(" ")}</span>
           </span>
         </a>
         <p class="mt-4 max-w-sm text-sm leading-relaxed text-ink-600">
@@ -110,7 +143,14 @@ const logoWidth = Math.round((BRAND_LOGO.src.width / BRAND_LOGO.src.height) * 32
     </div>
   </div>
 
-  <div class="border-t border-ink-200">
+  <p
+    aria-hidden="true"
+    class="text-gradient pointer-events-none relative -mb-[0.18em] overflow-hidden px-4 text-center font-display text-[17vw] leading-[0.85] font-bold tracking-[-0.06em] whitespace-nowrap opacity-25 select-none"
+  >
+    {SITE.name}
+  </p>
+
+  <div class="relative border-t border-ink-200">
     <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm sm:px-6 md:flex-row-reverse md:items-center md:justify-between">
       <p class="max-w-2xl text-ink-500">
         Some links on this site may be affiliate links. If you buy through them, we may earn a

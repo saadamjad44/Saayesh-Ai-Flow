@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./prose.css";
+@import "./motion.css";
 @plugin "@tailwindcss/typography";
 
 /*
@@ -6,84 +8,53 @@
  * Saayesh AI Flow — design system
  * ============================================================================
  *
- * Direction: "teal and burnt orange on cream". A warm cream ground, an ink
- * scale that runs warm at the light end and cools into a deep navy at the dark
- * end, deep teal as the brand colour for links and primary actions, and burnt
- * orange reserved for the free interactive tools and key-takeaway blocks so it
- * keeps its meaning.
+ * Direction: "electric navy". The palette is read straight off the logo — a
+ * deep navy mark with a triangle that runs electric blue into violet — so the
+ * site and the mark finally belong to each other.
  *
- * Palette anchors (from the brand palette image):
- *   #0A0F14  — deepest navy-black           (ink-950)
- *   #0F3D3E  — dark teal                    (brand-700)
- *   #2E6F73  — medium teal                  (brand-500)
- *   #7FB3B8  — light teal                   (brand-300)
- *   #EADCC8  — warm cream                   (ink-200 / paper tones)
- *   #C6601F  — burnt orange                 (accent-600)
+ *   navy      #0F1629   headings and ink                     (ink-900)
+ *   blue      #3F66F1   links, primary actions, focus        (brand-500)
+ *   violet    #7C3AED   the far end of the brand gradient
+ *   sky       #0EA5E9   the near end of the brand gradient
+ *   orange    #EA580C   the free interactive tools, only     (accent-600)
  *
- * Warm lights against cool darks is the deliberate part. Hairlines, card edges
- * and the page ground are warm cream; everything that carries meaning — body
- * copy, headings, the brand — is cool teal-navy. A page therefore reads as ink
- * on paper rather than as grey on grey.
+ * Cool neutrals on a faintly blue paper, one gradient (sky → blue → violet)
+ * that marks the brand wherever it appears, and orange kept back for the free
+ * tools so a warm element on this site still means "a thing you can use".
  *
- * Typography is a three-family system:
- *   display  Fraunces           — headings and the wordmark, nothing else
- *   body     Inter              — paragraphs, UI, buttons, metadata, figures
- *   mono     JetBrains Mono     — eyebrow labels, prompts, code, table units
+ * Typography is a two-family system:
+ *   sans   Inter            — everything a visitor reads: headings, body, UI
+ *   mono   JetBrains Mono   — eyebrow labels, prompts, code, table units
  *
- * The split is deliberate: one editorial serif carries the voice of the page
- * — the headline, the section heads, the card titles, the brand — and a single
- * sans does all the work, so a button, a nav item, a table header, and a
- * calculator read as interface rather than as writing. A serif at 13px inside
- * a badge would be neither. Emphasis in UI comes from weight, not family.
- *
- * All three are self-hosted variable subsets (below), so there is no
+ * Headings are Inter at 700 with tight tracking, which is what lets the same
+ * family carry a 64px masthead and a 14px button without either looking
+ * borrowed. Both families are self-hosted variable subsets, so there is no
  * third-party font request and no render-blocking external stylesheet.
+ *
+ * THEMES
+ *
+ * Light is the default. The dark palette lives in ONE rule shared by two
+ * selectors: `html[data-theme="dark"]` (the visitor's toggle) and `.theme-dark`
+ * (a section that is dark in both themes — the footer, the data band, a promo
+ * panel). Because every colour utility resolves a token, wrapping a subtree in
+ * `.theme-dark` re-skins it with no per-component dark styles at all.
  *
  * Every text/background pair used on the site was measured: body copy and
  * metadata clear WCAG AA 4.5:1, large headings clear 3:1 with a wide margin.
  * `ink-400` is deliberately decorative-only — it may tint an aria-hidden icon
  * or a rule, never text. Placeholders use `ink-500`.
+ *
+ * Article body typography lives in ./prose.css.
  */
 
 /* ---------------------------------------------------------------------------
  * Self-hosted variable fonts
  *
- * Latin and Latin Extended subsets of each family, from Google Fonts (all three
+ * Latin and Latin Extended subsets of each family, from Google Fonts (both
  * under the SIL Open Font License 1.1). `unicode-range` means the Extended file
  * is only fetched by a page that actually needs those glyphs, and the variable
  * axis means one file covers every weight the site uses.
  * ------------------------------------------------------------------------- */
-/*
- * Fraunces carries two variable axes here, weight and optical size. `opsz` is
- * the reason it is worth its file size: the browser tracks it to the rendered
- * font-size on its own (font-optical-sizing is `auto` by default), so the
- * 60px hero headline gets the high-contrast, tight-fitting cut and a 17px card
- * title gets the sturdier one with open spacing — one file, two real designs.
- * The quirkier SOFT and WONK axes are left at their defaults.
- */
-@font-face {
-  font-family: "Fraunces";
-  font-style: normal;
-  font-weight: 400 800;
-  font-display: swap;
-  src: url("../assets/fonts/fraunces-latin.woff2") format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Fraunces";
-  font-style: normal;
-  font-weight: 400 800;
-  font-display: swap;
-  src: url("../assets/fonts/fraunces-latin-ext.woff2") format("woff2");
-  unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
-    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F,
-    U+A720-A7FF;
-}
-
 @font-face {
   font-family: "Inter";
   font-style: normal;
@@ -135,180 +106,197 @@
  * ------------------------------------------------------------------------- */
 @theme {
   /*
-   * Neutrals. The light end is warm cream — these are the page ground, the
-   * card edges and the hairlines, and a warm neutral is what stops a page of
-   * white cards reading as a spreadsheet. The dark end is cool: a deep navy
-   * (#0A0F14 from the palette), so headings read as ink, not as black. The hue
-   * turn happens around 400/500, where the ramp stops being surface and starts
-   * being text.
+   * Neutrals: a cool navy-slate ramp. The light end is the page ground, card
+   * edges and hairlines; the dark end is the logo's own navy, so headings read
+   * as ink rather than as black.
    */
-  --color-ink-50: #f6f2eb;
-  --color-ink-100: #ede7dc;
-  --color-ink-200: #ddd6ca; /* hairline borders — warm cream family */
-  --color-ink-300: #c4bcb0; /* strong borders, form outlines */
-  --color-ink-400: #9a9490; /* DECORATIVE ONLY — icons and rules, never text */
-  --color-ink-500: #5e6b73; /* 5.5:1 on white — metadata, captions, placeholders */
-  --color-ink-600: #445058; /* 7.9:1 on white — body copy */
-  --color-ink-700: #2d3a42; /* 11.2:1 on white — default body colour */
-  --color-ink-800: #1a262e;
-  --color-ink-900: #111b22; /* 17.5:1 on white — headings */
-  --color-ink-950: #0a0f14; /* deepest ground, for inverted panels */
+  --color-ink-50: #f4f6fb;
+  --color-ink-100: #eaeef6;
+  --color-ink-200: #dde3ee; /* hairline borders */
+  --color-ink-300: #c2cbdb; /* strong borders, form outlines */
+  --color-ink-400: #95a0b5; /* DECORATIVE ONLY — icons and rules, never text */
+  --color-ink-500: #5d6880; /* 5.6:1 on white — metadata, captions, placeholders */
+  --color-ink-600: #455068; /* 8.1:1 on white — body copy */
+  --color-ink-700: #2f3950; /* 11.5:1 on white — default body colour */
+  --color-ink-800: #1b2338;
+  --color-ink-900: #0f1629; /* 17.6:1 on white — headings */
+  --color-ink-950: #080c1a;
 
-  /* Brand — teal, from the palette (#0F3D3E → #2E6F73 → #7FB3B8). 700
-   * carries links and primary buttons (11.9:1 on white); 600 is the focus
-   * ring (8.4:1). */
-  --color-brand-50: #eef6f7;
-  --color-brand-100: #d7ebec;
-  --color-brand-200: #add5d7;
-  --color-brand-300: #7fb3b8; /* from palette */
-  --color-brand-400: #508e93;
-  --color-brand-500: #2e6f73; /* from palette — 5.8:1 on white */
-  --color-brand-600: #1e5559; /* 8.4:1 on white — focus rings, small accents */
-  --color-brand-700: #0f3d3e; /* from palette — 11.9:1 on white */
-  --color-brand-800: #0a2d2e;
-  --color-brand-900: #061e1f;
+  /* Brand — the logo's electric blue. 700 carries links and solid buttons
+   * (8.2:1 on white); 600 is the focus ring (6.4:1). */
+  --color-brand-50: #eef3ff;
+  --color-brand-100: #dde7ff;
+  --color-brand-200: #c0d2ff;
+  --color-brand-300: #94b2ff;
+  --color-brand-400: #6289fb;
+  --color-brand-500: #3f66f1; /* 4.8:1 on white */
+  --color-brand-600: #2c4ee0; /* 6.4:1 on white — focus rings, small accents */
+  --color-brand-700: #2340c4; /* 8.2:1 on white — links */
+  --color-brand-800: #1f37a0;
+  --color-brand-900: #1c3180;
+
+  /* Violet — the far end of the logo's gradient. Decoration and highlights. */
+  --color-violet-50: #f5f1ff;
+  --color-violet-100: #ebe3ff;
+  --color-violet-200: #d6c7ff;
+  --color-violet-300: #b69bff;
+  --color-violet-500: #8b5cf6;
+  --color-violet-600: #7c3aed; /* 5.7:1 on white */
+  --color-violet-700: #6d28d9;
 
   /*
-   * Accent — burnt orange (#C6601F from the palette). Reserved for the free
-   * interactive tools and key-takeaway blocks, so an orange element on this
-   * site always means "a thing you can use", never decoration. Orange sits far
-   * enough from teal that the two can never be mistaken for each other at a
-   * glance, which is the whole point of reserving one of them.
+   * Accent — orange. Reserved for the free interactive tools and key-takeaway
+   * blocks, so a warm element on this site always means "a thing you can use",
+   * never decoration. It sits opposite the brand blue on the wheel, which is
+   * the whole point of reserving it.
    */
-  --color-accent-50: #fdf3ec;
-  --color-accent-100: #fae1cc;
-  --color-accent-200: #f4c299; /* warm figures on dark panels */
-  --color-accent-600: #c6601f; /* from palette — 4.6:1 on white */
-  --color-accent-700: #a5501a; /* 6.2:1 on white */
-  --color-accent-800: #854014;
+  --color-accent-50: #fff5ed;
+  --color-accent-100: #ffe6d1;
+  --color-accent-200: #ffc99c; /* warm figures on dark panels */
+  --color-accent-600: #ea580c; /* icons and rules; 3.6:1, so never body text */
+  --color-accent-700: #c2410c; /* 5.2:1 on white */
+  --color-accent-800: #9a3412; /* 7.3:1 on white */
 
-  /* Surfaces — warm cream ground from the palette's #EADCC8 family */
-  --color-paper: #faf7f2;
-  --color-surface: #fffdf9;
-  /* A second raised tone, for sections that need to lift off the paper. */
-  --color-surface-sunken: #f0eadf;
+  /* Surfaces */
+  --color-paper: #f6f8fd;
+  --color-surface: #ffffff;
+  /* A second tone, for bands that need to sit back from the paper. */
+  --color-surface-sunken: #edf1f9;
 
-  /* Families */
+  /* Families. `display` is the same family as `sans` on purpose — see the
+   * header comment — but stays its own token so headings can be re-set alone. */
   --font-sans:
     "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
     "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  --font-display: "Fraunces", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-display:
+    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
   --font-mono:
     "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
     monospace;
 
-  /*
-   * Editorial rhythm: tracking tightens as type grows. These are set for
-   * Fraunces, which already fits tightly at high optical sizes — a negative
-   * track sized for a geometric sans would close its counters up — so they
-   * stay modest and all but vanish by card-title size.
-   */
-  --tracking-display: -0.012em;
-  --tracking-tight: -0.004em;
+  /* Tracking tightens as type grows; a grotesque needs it far more than a serif. */
+  --tracking-display: -0.028em;
+  --tracking-tight: -0.016em;
   --tracking-label: 0.08em;
 
   /* Radius scale. `card` is the shared surface radius. */
-  --radius-card: 0.875rem;
-  --radius-panel: 1.25rem;
+  --radius-card: 1rem;
+  --radius-panel: 1.5rem;
 
   /*
-   * Shadows. Tinted with the ink hue rather than pure black, so an elevated
-   * card still looks like it belongs to the palette.
+   * Shadows. Tinted with the navy and the brand blue rather than pure black,
+   * so an elevated card glows faintly in the palette instead of going grey.
    */
-  --shadow-card: 0 1px 2px 0 rgb(10 15 20 / 0.04), 0 1px 1px -1px rgb(10 15 20 / 0.03);
-  --shadow-card-hover: 0 1px 2px 0 rgb(10 15 20 / 0.04), 0 12px 28px -14px rgb(10 15 20 / 0.2);
-  --shadow-panel: 0 2px 4px -2px rgb(10 15 20 / 0.06), 0 18px 40px -24px rgb(10 15 20 / 0.18);
-  --shadow-menu: 0 4px 8px -4px rgb(10 15 20 / 0.1), 0 24px 48px -20px rgb(10 15 20 / 0.28);
+  --shadow-card: 0 1px 2px 0 rgb(15 22 41 / 0.05), 0 1px 1px -1px rgb(15 22 41 / 0.04);
+  --shadow-card-hover: 0 2px 4px 0 rgb(15 22 41 / 0.04), 0 20px 40px -18px rgb(63 102 241 / 0.42);
+  --shadow-panel: 0 2px 4px -2px rgb(15 22 41 / 0.06), 0 24px 48px -24px rgb(35 64 196 / 0.28);
+  --shadow-menu: 0 4px 8px -4px rgb(15 22 41 / 0.1), 0 28px 56px -20px rgb(15 22 41 / 0.32);
   /* The sticky header once the page has scrolled: a hairline plus a long, faint lift. */
-  --shadow-header: 0 1px 0 0 rgb(10 15 20 / 0.05), 0 10px 30px -18px rgb(10 15 20 / 0.32);
+  --shadow-header: 0 1px 0 0 rgb(15 22 41 / 0.05), 0 12px 32px -18px rgb(35 64 196 / 0.3);
+  /* The coloured lift under a gradient button. */
+  --shadow-glow: 0 10px 28px -10px rgb(79 70 229 / 0.65);
 
   /* One easing curve and one duration for every hover and open/close. */
   --ease-ui: cubic-bezier(0.22, 0.61, 0.36, 1);
   --duration-ui: 180ms;
 }
 
+/*
+ * Gradients and the few values that are not colour utilities. Declared on
+ * :root rather than in @theme because Tailwind has no namespace for them and
+ * they are only ever read with var().
+ */
+:root {
+  /* The brand mark's own run: sky → blue → violet. Decoration only. */
+  --gradient-brand: linear-gradient(120deg, #0ea5e9 0%, #3f66f1 48%, #7c3aed 100%);
+  /* The same run started darker, so white button text clears 4.5:1 end to end. */
+  --gradient-cta: linear-gradient(120deg, #2563eb 0%, #4f46e5 52%, #7c3aed 100%);
+  /* For type on the page ground: every stop clears 4.5:1 on white. */
+  --gradient-text: linear-gradient(100deg, #1d5fd6 0%, #4f46e5 50%, #7c3aed 100%);
+  /* Ground behind a code or prompt block: dark in both themes. */
+  --color-code-bg: #0b1124;
+  --color-code-text: #e3e9f7;
+}
+
 /* ---------------------------------------------------------------------------
- * Dark mode
+ * Dark palette
  *
- * `data-theme="dark"` on <html> flips the palette: deep navy ground, light
- * text, teal and orange shifted brighter for contrast on the dark surface.
+ * One rule, two ways in: the visitor's theme toggle on <html>, and
+ * `.theme-dark` on any section that is dark in both themes.
  * ------------------------------------------------------------------------- */
-html[data-theme="dark"] {
+html[data-theme="dark"],
+.theme-dark {
   color-scheme: dark;
 
-  --color-ink-50: #1a2030;
-  --color-ink-100: #222b38;
-  --color-ink-200: #2d3844;
-  --color-ink-300: #3d4a56;
-  --color-ink-400: #5a6878;
-  --color-ink-500: #7d8b98;
-  --color-ink-600: #9aa6b0;
-  --color-ink-700: #b8c2ca;
-  --color-ink-800: #d4dae0;
-  --color-ink-900: #e8ecf0;
-  --color-ink-950: #f4f6f8;
+  --color-ink-50: #101833;
+  --color-ink-100: #17203e;
+  --color-ink-200: #222c4c;
+  --color-ink-300: #34405f;
+  --color-ink-400: #58647f;
+  --color-ink-500: #8793ad; /* 5.9:1 on surface */
+  --color-ink-600: #a5b0c6;
+  --color-ink-700: #c1c9da;
+  --color-ink-800: #dadfeb;
+  --color-ink-900: #eff2f8;
+  --color-ink-950: #f8f9fc;
 
-  --color-brand-50: #0e2828;
-  --color-brand-100: #163c3c;
-  --color-brand-200: #1e5555;
-  --color-brand-300: #3a8e93;
-  --color-brand-400: #5aabb0;
-  --color-brand-500: #7fb3b8;
-  --color-brand-600: #8fc4c8;
-  --color-brand-700: #7fb3b8;
-  --color-brand-800: #a8d5d8;
-  --color-brand-900: #d0eaec;
+  --color-brand-50: #111c44;
+  --color-brand-100: #18275c;
+  --color-brand-200: #233a85;
+  --color-brand-300: #3c5bd0;
+  --color-brand-400: #6289fb;
+  --color-brand-500: #7f9fff;
+  --color-brand-600: #8fabff;
+  --color-brand-700: #9db6ff; /* 8.9:1 on surface — links */
+  --color-brand-800: #bccdff;
+  --color-brand-900: #dbe5ff;
 
-  --color-accent-50: #2a1a0d;
-  --color-accent-100: #3d2510;
-  --color-accent-200: #f4c299;
-  --color-accent-600: #d97a3e;
-  --color-accent-700: #e8884a;
-  --color-accent-800: #f0a060;
+  --color-violet-50: #1a1440;
+  --color-violet-100: #281d5c;
+  --color-violet-200: #3f2c8f;
+  --color-violet-300: #7c5cf0;
+  --color-violet-500: #a78bfa;
+  --color-violet-600: #b9a2ff;
+  --color-violet-700: #cdbcff;
 
-  --color-paper: #0d1117;
-  --color-surface: #161b22;
-  --color-surface-sunken: #090d12;
+  --color-accent-50: #2a1609;
+  --color-accent-100: #44220c;
+  --color-accent-200: #ffc99c;
+  --color-accent-600: #fb8a3c;
+  --color-accent-700: #ff9d57;
+  --color-accent-800: #ffb680;
 
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3);
-  --shadow-card-hover: 0 4px 20px -4px rgb(0 0 0 / 0.5);
-  --shadow-panel: 0 4px 30px -8px rgb(0 0 0 / 0.5);
-  --shadow-menu: 0 8px 40px -8px rgb(0 0 0 / 0.6);
-  --shadow-header: 0 1px 0 0 rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+  --color-paper: #070b1a;
+  --color-surface: #0e1530;
+  --color-surface-sunken: #050814;
+
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.35);
+  --shadow-card-hover: 0 2px 4px 0 rgb(0 0 0 / 0.3), 0 20px 44px -18px rgb(98 137 251 / 0.5);
+  --shadow-panel: 0 4px 30px -8px rgb(0 0 0 / 0.55);
+  --shadow-menu: 0 8px 40px -8px rgb(0 0 0 / 0.65);
+  --shadow-header: 0 1px 0 0 rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.55);
+
+  --gradient-text: linear-gradient(100deg, #5cc8ff 0%, #8fa8ff 50%, #c0a3ff 100%);
 }
 
-html[data-theme="dark"] .btn-primary {
-  background-color: #1e5559;
+/*
+ * A dark section inherits its text colour from <body>, where it was already
+ * resolved against the light palette — so it has to be asked for again here,
+ * inside the scope, or the section prints dark ink on a dark ground.
+ */
+.theme-dark {
+  color: var(--color-ink-700);
 }
 
-html[data-theme="dark"] .btn-primary:hover {
-  background-color: #2a6d71;
-}
-
-html[data-theme="dark"] .btn-accent {
-  background-color: #b85a1a;
-}
-
-html[data-theme="dark"] .btn-accent:hover {
-  background-color: #c6601f;
-}
-
-html[data-theme="dark"] .prose {
-  --tw-prose-pre-bg: #1a2030;
-  --tw-prose-pre-code: #d4dae0;
-}
-
-html[data-theme="dark"] .hero-veil {
-  background-color: rgb(13 17 23 / 0.82);
-  background-image: linear-gradient(to top, var(--color-paper) 0%, transparent 22%);
-}
-
-html[data-theme="dark"] .hero-grid {
-  opacity: 0.08;
-}
-
-html[data-theme="dark"] .site-logo {
-  filter: brightness(0) invert(1);
+/*
+ * The logo on a dark ground. Inverting lightness and turning the hue back
+ * flips the navy letters to near-white while the blue-to-violet triangle stays
+ * blue-to-violet, which a plain invert would turn orange.
+ */
+html[data-theme="dark"] .site-logo,
+.theme-dark .site-logo {
+  filter: invert(1) hue-rotate(180deg) saturate(1.35) brightness(1.08);
 }
 
 html[data-theme="dark"] [data-icon="moon"] {
@@ -345,6 +333,7 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
   h6 {
     font-family: var(--font-display);
     color: var(--color-ink-900);
+    letter-spacing: var(--tracking-tight);
     text-wrap: pretty;
   }
 
@@ -379,7 +368,7 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
 
   /* Selection picks up the brand rather than the browser default blue. */
   ::selection {
-    background-color: var(--color-brand-100);
+    background-color: var(--color-brand-200);
     color: var(--color-ink-900);
   }
 }
@@ -394,43 +383,33 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
  * tighter both get.
  * ------------------------------------------------------------------------- */
 @layer components {
-  /*
-   * The hero headline, and the only thing set at this step.
-   *
-   * Sized and weighted together so the masthead line lands in three lines over
-   * the 34rem copy column at every width from `md` up, and on a typical phone:
-   * at 800 and 60px it ran to four, which read as a paragraph rather than a
-   * masthead. 650 is the lighter end of Fraunces' useful display range — the
-   * `opsz` axis already adds contrast at this size, so the letterforms keep
-   * their authority without the extra weight, and the tracking relaxes a
-   * little because a lighter cut needs less of it.
-   */
+  /* The homepage masthead, and the only thing set at this step. */
   .type-display {
     font-family: var(--font-display);
-    font-size: clamp(1.875rem, 1.35rem + 2.1vw, 3rem);
-    font-weight: 650;
-    line-height: 1.08;
-    letter-spacing: -0.014em;
+    font-size: clamp(2.25rem, 1.5rem + 3.2vw, 3.75rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
     color: var(--color-ink-900);
     text-wrap: balance;
   }
 
   .type-title {
     font-family: var(--font-display);
-    font-size: clamp(1.9375rem, 1.45rem + 2vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.016em;
+    font-size: clamp(2rem, 1.5rem + 2.2vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.034em;
     color: var(--color-ink-900);
     text-wrap: balance;
   }
 
   .type-section {
     font-family: var(--font-display);
-    font-size: clamp(1.5rem, 1.3rem + 0.85vw, 2.125rem);
+    font-size: clamp(1.625rem, 1.3rem + 1.4vw, 2.5rem);
     font-weight: 700;
-    line-height: 1.18;
-    letter-spacing: var(--tracking-display);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
     color: var(--color-ink-900);
     text-wrap: balance;
   }
@@ -440,7 +419,7 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     font-size: clamp(1.125rem, 1.06rem + 0.3vw, 1.375rem);
     font-weight: 700;
     line-height: 1.3;
-    letter-spacing: var(--tracking-tight);
+    letter-spacing: -0.02em;
     color: var(--color-ink-900);
   }
 
@@ -449,14 +428,14 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     font-family: var(--font-display);
     font-size: 1.0625rem;
     font-weight: 700;
-    line-height: 1.35;
-    letter-spacing: var(--tracking-tight);
+    line-height: 1.32;
+    letter-spacing: -0.018em;
     color: var(--color-ink-900);
   }
 
   @media (min-width: 640px) {
     .type-card-title {
-      font-size: 1.1875rem;
+      font-size: 1.125rem;
     }
   }
 
@@ -492,10 +471,10 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     font-weight: 600;
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
-    color: var(--color-brand-700);
+    color: var(--color-brand-600);
   }
 
-  /* Same label, teal: free tools and key takeaways only. */
+  /* Same label, orange: free tools and key takeaways only. */
   .eyebrow-accent {
     color: var(--color-accent-700);
   }
@@ -506,8 +485,8 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
   }
 
   /*
-   * A section label with a short rule beside it. Used at the top of homepage
-   * and archive sections, where an eyebrow alone sits too quietly.
+   * A section label with a short gradient rule beside it. Used at the top of
+   * homepage and archive sections, where an eyebrow alone sits too quietly.
    */
   .eyebrow-rule {
     display: flex;
@@ -517,11 +496,33 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
 
   .eyebrow-rule::before {
     content: "";
-    width: 1.5rem;
-    height: 2px;
-    border-radius: 1px;
-    background-color: currentColor;
-    opacity: 0.55;
+    width: 1.75rem;
+    height: 3px;
+    border-radius: 2px;
+    background-image: var(--gradient-brand);
+  }
+
+  /* On a centred heading the rule sits either side of nothing, so it goes above. */
+  .eyebrow-center {
+    justify-content: center;
+  }
+
+  /* Gradient type, for the one phrase in a heading that should carry the brand. */
+  .text-gradient {
+    background-image: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* Descenders are clipped by the background box at tight leading without it. */
+    padding-bottom: 0.08em;
+  }
+
+  /* A page that prints or forces colours gets plain ink rather than nothing. */
+  @media (forced-colors: active) {
+    .text-gradient {
+      background-image: none;
+      color: CanvasText;
+    }
   }
 }
 
@@ -530,19 +531,19 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
  * ------------------------------------------------------------------------- */
 @layer components {
   /* ---- Buttons ------------------------------------------------------- */
-  /* Min height 44px keeps every control comfortably touch-friendly. */
+  /* Min height 46px keeps every control comfortably touch-friendly. */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     min-height: 2.875rem;
-    padding: 0.6875rem 1.25rem;
-    border-radius: 0.625rem;
+    padding: 0.6875rem 1.375rem;
+    border-radius: 0.75rem;
     font-family: var(--font-sans);
     font-size: 0.9375rem;
     font-weight: 700;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.01em;
     line-height: 1.25rem;
     text-align: center;
     transition:
@@ -550,7 +551,12 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
       border-color var(--duration-ui) var(--ease-ui),
       color var(--duration-ui) var(--ease-ui),
       box-shadow var(--duration-ui) var(--ease-ui),
+      filter var(--duration-ui) var(--ease-ui),
       transform var(--duration-ui) var(--ease-ui);
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
   }
 
   /* A pressed button dips rather than bouncing — restrained, and it reads. */
@@ -558,15 +564,26 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     transform: translateY(1px);
   }
 
+  .btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+  }
+
+  /*
+   * The brand gradient, started dark enough that the white label clears AA at
+   * both ends. The same in light and dark — it is a ground of its own.
+   */
   .btn-primary {
-    background-color: var(--color-brand-700);
+    background-image: var(--gradient-cta);
+    background-color: #4f46e5;
     color: #fff;
     box-shadow: var(--shadow-card);
   }
 
   .btn-primary:hover {
-    background-color: var(--color-brand-800);
-    box-shadow: var(--shadow-card-hover);
+    filter: brightness(1.08) saturate(1.1);
+    box-shadow: var(--shadow-glow);
   }
 
   .btn-secondary {
@@ -576,21 +593,22 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
   }
 
   .btn-secondary:hover {
-    border-color: var(--color-brand-300);
+    border-color: var(--color-brand-400);
     color: var(--color-brand-700);
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-card-hover);
   }
 
-  /* Teal primary, for the free interactive tools only. */
+  /* Orange, for the free interactive tools only. Fixed in both themes. */
   .btn-accent {
-    background-color: var(--color-accent-700);
+    background-image: linear-gradient(120deg, #c2410c 0%, #d9480f 100%);
+    background-color: #c2410c;
     color: #fff;
     box-shadow: var(--shadow-card);
   }
 
   .btn-accent:hover {
-    background-color: var(--color-accent-800);
-    box-shadow: var(--shadow-card-hover);
+    filter: brightness(1.08);
+    box-shadow: 0 10px 28px -10px rgb(234 88 12 / 0.6);
   }
 
   /* Quiet tertiary action: text plus an icon, no chrome until hover. */
@@ -604,32 +622,30 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     color: var(--color-brand-700);
   }
 
-  /* Inverted, for dark panels. */
+  /* Solid white, for gradient and dark panels. Fixed in both themes. */
   .btn-inverse {
-    background-color: var(--color-surface);
-    color: var(--color-ink-900);
+    background-color: #fff;
+    color: #0f1629;
+    box-shadow: 0 8px 24px -12px rgb(0 0 0 / 0.5);
   }
 
   .btn-inverse:hover {
-    background-color: var(--color-ink-100);
+    background-color: #eef3ff;
   }
 
   /*
    * The quiet partner to `.btn-inverse`, for a dark panel that needs two
    * actions without two solid white slabs competing for the same attention.
-   * The label is plain white (19.8:1 on ink-950); the hairline is white at 25%,
-   * which is decorative — the button's own text carries its meaning, so the
-   * border never has to clear a contrast threshold of its own.
    */
   .btn-outline-inverse {
-    background-color: transparent;
+    background-color: rgb(255 255 255 / 0.06);
     color: #fff;
-    border: 1px solid rgb(255 255 255 / 0.25);
+    border: 1px solid rgb(255 255 255 / 0.28);
   }
 
   .btn-outline-inverse:hover {
-    background-color: rgb(255 255 255 / 0.1);
-    border-color: rgb(255 255 255 / 0.45);
+    background-color: rgb(255 255 255 / 0.14);
+    border-color: rgb(255 255 255 / 0.5);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -637,7 +653,46 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
       transition: none;
     }
 
+    .btn:hover,
     .btn:active {
+      transform: none;
+    }
+  }
+
+  /* A text link with an arrow that nudges on hover: "All guides →". */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-brand-700);
+    transition: color var(--duration-ui) var(--ease-ui);
+  }
+
+  .link-arrow svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--duration-ui) var(--ease-ui);
+  }
+
+  .link-arrow:hover {
+    color: var(--color-brand-800);
+  }
+
+  .link-arrow:hover svg,
+  .group:hover .link-arrow svg {
+    transform: translateX(3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link-arrow,
+    .link-arrow svg {
+      transition: none;
+    }
+
+    .link-arrow:hover svg,
+    .group:hover .link-arrow svg {
       transform: none;
     }
   }
@@ -650,15 +705,15 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     box-shadow: var(--shadow-card);
     transition:
       border-color var(--duration-ui) var(--ease-ui),
-      box-shadow var(--duration-ui) var(--ease-ui),
-      transform var(--duration-ui) var(--ease-ui);
+      box-shadow 260ms var(--ease-ui),
+      transform 260ms var(--ease-ui);
   }
 
   /* Add to a card whose whole body is one link target. */
   .card-link:hover {
     border-color: var(--color-brand-300);
     box-shadow: var(--shadow-card-hover);
-    transform: translateY(-2px);
+    transform: translateY(-4px);
   }
 
   /* A larger surface that groups a whole section rather than one item. */
@@ -667,6 +722,14 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     border: 1px solid var(--color-ink-200);
     border-radius: var(--radius-panel);
     box-shadow: var(--shadow-panel);
+  }
+
+  /* Translucent surface over artwork or a gradient. */
+  .glass {
+    background-color: color-mix(in srgb, var(--color-surface) 72%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-ink-300) 55%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    backdrop-filter: blur(14px) saturate(1.4);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -679,14 +742,14 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     }
   }
 
-  /* ---- Pills and chips ----------------------------------------------- */
+  /* ---- Pills, chips and badges --------------------------------------- */
   /* Category filters and tag-style navigation. */
   .chip {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    min-height: 2.25rem;
-    padding: 0.375rem 0.875rem;
+    min-height: 2.5rem;
+    padding: 0.375rem 0.9375rem;
     border: 1px solid var(--color-ink-200);
     border-radius: 999px;
     background-color: var(--color-surface);
@@ -697,13 +760,15 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     transition:
       border-color var(--duration-ui) var(--ease-ui),
       color var(--duration-ui) var(--ease-ui),
-      background-color var(--duration-ui) var(--ease-ui);
+      background-color var(--duration-ui) var(--ease-ui),
+      transform var(--duration-ui) var(--ease-ui);
   }
 
   .chip:hover {
     border-color: var(--color-brand-300);
     color: var(--color-brand-700);
     background-color: var(--color-brand-50);
+    transform: translateY(-1px);
   }
 
   .chip-count {
@@ -713,16 +778,127 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     color: var(--color-ink-500);
   }
 
+  /* A small label pinned to a card or a heading: "Free", "Compare", "New". */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3125rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-brand-200);
+    background-color: var(--color-brand-50);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    line-height: 1rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-brand-700);
+  }
+
+  .badge-accent {
+    border-color: var(--color-accent-200);
+    background-color: var(--color-accent-50);
+    color: var(--color-accent-700);
+  }
+
+  /* Solid, for a badge that sits on a photograph. Fixed in both themes. */
+  .badge-solid {
+    border-color: transparent;
+    background-image: var(--gradient-cta);
+    color: #fff;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .chip {
       transition: none;
+    }
+
+    .chip:hover {
+      transform: none;
+    }
+  }
+
+  /* ---- Category tiles ------------------------------------------------ */
+  /*
+   * The coloured square behind a category glyph. Each category owns a hue, so
+   * a card, a menu row and a chip for the same category are recognisably the
+   * same thing before the label is read. Fixed in both themes: a saturated
+   * gradient with a white glyph is its own ground.
+   *
+   * The glyph is always decorative (the category name sits beside it), which
+   * is why these pairs are chosen for distinctness rather than text contrast.
+   */
+  .tile {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.8125rem;
+    color: #fff;
+    background-image: linear-gradient(135deg, var(--tile-from, #4f7df7), var(--tile-to, #4f46e5));
+    box-shadow:
+      0 8px 18px -8px var(--tile-to, #4f46e5),
+      inset 0 1px 0 rgb(255 255 255 / 0.28);
+    transition: transform 260ms var(--ease-ui);
+  }
+
+  .group:hover .tile {
+    transform: scale(1.08) rotate(-4deg);
+  }
+
+  .tile-compass {
+    --tile-from: #38bdf8;
+    --tile-to: #2563eb;
+  }
+  .tile-nib {
+    --tile-from: #a78bfa;
+    --tile-to: #7c3aed;
+  }
+  .tile-briefcase {
+    --tile-from: #4f7df7;
+    --tile-to: #3730a3;
+  }
+  .tile-workflow {
+    --tile-from: #2dd4bf;
+    --tile-to: #0f766e;
+  }
+  .tile-agent {
+    --tile-from: #e879f9;
+    --tile-to: #a21caf;
+  }
+  .tile-news {
+    --tile-from: #fb7185;
+    --tile-to: #e11d48;
+  }
+  .tile-prompt {
+    --tile-from: #fbbf24;
+    --tile-to: #d97706;
+  }
+  .tile-industry {
+    --tile-from: #4ade80;
+    --tile-to: #15803d;
+  }
+  /* The free tools: the reserved orange. */
+  .tile-tool {
+    --tile-from: #fb923c;
+    --tile-to: #ea580c;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile {
+      transition: none;
+    }
+
+    .group:hover .tile {
+      transform: none;
     }
   }
 
   /* ---- Callouts ------------------------------------------------------ */
   /* Shared shape for every in-content note: affiliate, verdict, tool, tip. */
   .callout {
-    border-radius: 0.75rem;
+    border-radius: 0.875rem;
     border-width: 1px;
     border-left-width: 3px;
     padding: 0.9375rem 1.125rem;
@@ -730,22 +906,73 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
 
   /* ---- Decorative background washes ---------------------------------- */
   /*
-   * The grid wash behind the hero and a few section heads. Declared once here
-   * because three templates use it; always on an aria-hidden element.
+   * A faint grid. Always on an aria-hidden element, and always masked by the
+   * section that uses it so it reads as texture rather than as ruled paper.
    */
   .bg-grid {
     background-image:
-      linear-gradient(to right, var(--color-ink-100) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--color-ink-100) 1px, transparent 1px);
-    background-size: 64px 64px;
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--color-ink-400) 16%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-ink-400) 16%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 56px 56px;
   }
 
   /* The same grid on a dark panel. */
   .bg-grid-inverse {
     background-image:
-      linear-gradient(to right, rgb(255 255 255 / 0.07) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.07) 1px, transparent 1px);
-    background-size: 64px 64px;
+      linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /*
+   * A soft pool of brand colour behind a section. Two radial gradients rather
+   * than blurred elements: no filter, no extra layer to composite, and nothing
+   * to animate that could cost a frame.
+   */
+  .bg-aurora {
+    background-image:
+      radial-gradient(42rem 26rem at 12% 0%, rgb(14 165 233 / 0.2), transparent 62%),
+      radial-gradient(40rem 28rem at 92% 12%, rgb(124 58 237 / 0.2), transparent 62%);
+  }
+
+  /* The dark band's own ground: deep navy with the aurora burnt into it. */
+  .bg-night {
+    background-color: #070b1a;
+    background-image:
+      radial-gradient(46rem 30rem at 8% -10%, rgb(14 165 233 / 0.28), transparent 60%),
+      radial-gradient(44rem 30rem at 96% 4%, rgb(124 58 237 / 0.34), transparent 62%),
+      radial-gradient(38rem 26rem at 50% 118%, rgb(63 102 241 / 0.28), transparent 62%);
+  }
+
+  /* ---- Rails --------------------------------------------------------- */
+  /*
+   * A horizontal row that scrolls on its own axis and snaps card by card.
+   * Native scrolling, so touch, trackpad, keyboard and a screen reader all get
+   * the row for free; the arrow buttons beside it are an extra, not the means.
+   */
+  .rail {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 1.25rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1rem;
+    padding-block: 0.5rem 1.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-ink-300) transparent;
+  }
+
+  .rail > * {
+    scroll-snap-align: start;
   }
 
   /* ---- Utilities ------------------------------------------------------ */
@@ -763,271 +990,52 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
 }
 
 /* ---------------------------------------------------------------------------
- * Article prose
+ * Scroll reveal
  *
- * The typography plugin's variables keep MDX body copy on the same palette as
- * the components around it; the rules after them tune the reading experience:
- * measure, leading, heading spacing, list and link treatment, tables, and
- * prompt/code blocks.
+ * Sections rise into place as they enter the viewport. The hidden state only
+ * exists once the inline script in BaseLayout has put `reveal-ready` on <html>
+ * — which it does only where IntersectionObserver exists and the visitor has
+ * not asked for reduced motion — so with scripting off, in an old browser, or
+ * under reduced motion, every element is simply visible. Nothing above the
+ * fold carries `data-reveal`, so the first paint is never held back.
  *
- * These rules are deliberately NOT inside `@layer components`.
- * `@tailwindcss/typography` registers `.prose` in the `utilities` layer, which
- * the cascade places after `components` — so an override written there loses to
- * the plugin's own default no matter how specific it is, and what the page
- * actually rendered was plugin type at plugin sizes. Unlayered rules beat every
- * layered rule, which is what makes this block the one that governs body copy.
- * Keep it unlayered, and keep every selector scoped to `.prose` so nothing in
- * here can escape an article body.
+ * It is a keyframe animation on `translate`, not a transition on `transform`,
+ * for two reasons: a card's own hover `transform` and `transition` are left
+ * completely alone, and with `backwards` fill the animation lets go of the
+ * element the moment it ends, so nothing here outlives the entrance.
  * ------------------------------------------------------------------------- */
-.prose {
-  --tw-prose-body: var(--color-ink-700);
-  --tw-prose-headings: var(--color-ink-900);
-  --tw-prose-lead: var(--color-ink-600);
-  --tw-prose-links: var(--color-brand-700);
-  --tw-prose-bold: var(--color-ink-900);
-  --tw-prose-counters: var(--color-ink-500);
-  --tw-prose-bullets: var(--color-brand-300);
-  --tw-prose-hr: var(--color-ink-200);
-  --tw-prose-quotes: var(--color-ink-800);
-  --tw-prose-quote-borders: var(--color-brand-200);
-  --tw-prose-captions: var(--color-ink-500);
-  --tw-prose-code: var(--color-ink-900);
-  --tw-prose-pre-code: var(--color-ink-100);
-  --tw-prose-pre-bg: var(--color-ink-950);
-  --tw-prose-th-borders: var(--color-ink-300);
-  --tw-prose-td-borders: var(--color-ink-200);
-  font-size: 1.0625rem;
-  line-height: 1.75;
-}
-
-@media (min-width: 640px) {
-  .prose {
-    font-size: 1.125rem;
-    line-height: 1.78;
+@media (prefers-reduced-motion: no-preference) {
+  html.reveal-ready [data-reveal]:not(.is-revealed) {
+    opacity: 0;
   }
-}
 
-/* ---- Headings ------------------------------------------------------ */
-/*
- * A hairline rule above each H2 gives a 2,000-word guide a visible rhythm
- * and marks where one section ends, which is what makes a long article
- * skimmable rather than a wall of text.
- */
-.prose :where(h2):not(:where(.not-prose, .not-prose *)) {
-  margin-top: 3rem;
-  margin-bottom: 1.125rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--color-ink-200);
-  font-size: clamp(1.4375rem, 1.3rem + 0.6vw, 1.75rem);
-  line-height: 1.22;
-  letter-spacing: var(--tracking-display);
-  font-weight: 700;
-}
-
-/* The first H2 of a body has the header's own rule above it already. */
-.prose > :where(h2:first-child):not(:where(.not-prose, .not-prose *)) {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
-}
-
-.prose :where(h3):not(:where(.not-prose, .not-prose *)) {
-  margin-top: 2.25rem;
-  margin-bottom: 0.625rem;
-  font-size: clamp(1.1875rem, 1.12rem + 0.3vw, 1.3125rem);
-  line-height: 1.32;
-  letter-spacing: var(--tracking-tight);
-  font-weight: 700;
-}
-
-.prose :where(h4):not(:where(.not-prose, .not-prose *)) {
-  margin-top: 1.75rem;
-  margin-bottom: 0.5rem;
-  font-size: 1.0625rem;
-  font-weight: 700;
-  color: var(--color-ink-800);
-}
-
-/*
- * Deep-linkable headings. The anchor is invisible until the heading is
- * hovered or the link itself is focused, so it never clutters the page but
- * is still reachable from the keyboard.
- */
-/*
- * The anchor hangs in the left margin, so its box is sized in rem rather
- * than em: at `em` a 28px H2 produced a 35px anchor that reached past the
- * page's 24px gutter and off the screen.
- */
-.prose :where(h2, h3) > .heading-anchor {
-  float: left;
-  width: 1.5rem;
-  margin-left: -1.5rem;
-  padding-right: 0.375rem;
-  text-align: right;
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: inherit;
-  color: var(--color-brand-400);
-  text-decoration: none;
-  opacity: 0;
-  transition: opacity var(--duration-ui) var(--ease-ui);
-}
-
-.prose :where(h2, h3):hover > .heading-anchor,
-.prose :where(h2, h3) > .heading-anchor:focus-visible {
-  opacity: 1;
-}
-
-/* Below `lg` the page gutter is the only margin there is, so nothing hangs. */
-@media (max-width: 63.99rem) {
-  .prose :where(h2, h3) > .heading-anchor {
-    display: none;
+  html.reveal-ready [data-reveal].is-revealed {
+    animation: reveal-up 640ms var(--ease-ui) var(--reveal-delay, 0ms) backwards;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .prose :where(h2, h3) > .heading-anchor {
-    transition: none;
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      translate: 0 22px;
+    }
   }
-}
 
-/* ---- Body ---------------------------------------------------------- */
-.prose :where(p):not(:where(.not-prose, .not-prose *)) {
-  text-wrap: pretty;
-}
-
-/* The opening paragraph of a section carries slightly more presence. */
-.prose :where(h2 + p):not(:where(.not-prose, .not-prose *)) {
-  font-size: 1.0625em;
-  color: var(--color-ink-600);
-}
-
-.prose :where(a):not(:where(.not-prose, .not-prose *)) {
-  font-weight: 500;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-  text-decoration-color: var(--color-brand-300);
-  transition:
-    color var(--duration-ui) var(--ease-ui),
-    text-decoration-color var(--duration-ui) var(--ease-ui);
-}
-
-.prose :where(a):not(:where(.not-prose, .not-prose *)):hover {
-  color: var(--color-brand-800);
-  text-decoration-color: currentColor;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .prose :where(a):not(:where(.not-prose, .not-prose *)) {
-    transition: none;
+  /* Slow drift for a decorative layer. Never on anything that carries text. */
+  @keyframes float-slow {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -10px, 0);
+    }
   }
-}
 
-.prose :where(strong):not(:where(.not-prose, .not-prose *)) {
-  font-weight: 650;
-}
+  .float-slow {
+    animation: float-slow 7s ease-in-out infinite;
+  }
 
-/* ---- Lists --------------------------------------------------------- */
-.prose :where(ul > li):not(:where(.not-prose, .not-prose *)),
-.prose :where(ol > li):not(:where(.not-prose, .not-prose *)) {
-  padding-left: 0.375em;
-}
-
-.prose :where(ul > li):not(:where(.not-prose, .not-prose *))::marker {
-  font-size: 1.1em;
-}
-
-/* Ordered lists are often step sequences here, so the number is emphasised. */
-.prose :where(ol > li):not(:where(.not-prose, .not-prose *))::marker {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  color: var(--color-brand-700);
-}
-
-/* ---- Quotes -------------------------------------------------------- */
-.prose :where(blockquote):not(:where(.not-prose, .not-prose *)) {
-  font-style: normal;
-  border-left-width: 3px;
-  padding: 0.125rem 0 0.125rem 1.375rem;
-  font-size: 1.0625em;
-  color: var(--color-ink-800);
-}
-
-.prose :where(blockquote p:first-of-type):not(:where(.not-prose, .not-prose *))::before,
-.prose :where(blockquote p:last-of-type):not(:where(.not-prose, .not-prose *))::after {
-  content: "";
-}
-
-/* ---- Code and prompts ---------------------------------------------- */
-/*
- * Inline code is a chip rather than backticked body text, so a model name or
- * a setting is visibly a literal string.
- */
-.prose :where(code):not(:where(pre *, .not-prose *)) {
-  font-family: var(--font-mono);
-  font-size: 0.86em;
-  font-weight: 500;
-  padding: 0.15em 0.4em;
-  border: 1px solid var(--color-ink-200);
-  border-radius: 0.375rem;
-  background-color: var(--color-ink-50);
-}
-
-.prose :where(code):not(:where(pre *, .not-prose *))::before,
-.prose :where(code):not(:where(pre *, .not-prose *))::after {
-  content: "";
-}
-
-/*
- * A fenced block in these guides is almost always a prompt to copy, so it is
- * typeset as a quotable panel: dark ground, mono, comfortable leading, and
- * horizontal scroll kept inside the block rather than on the page.
- */
-.prose :where(pre):not(:where(.not-prose, .not-prose *)) {
-  border-radius: var(--radius-card);
-  padding: 1.125rem 1.25rem;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.7;
-  box-shadow: var(--shadow-card);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* ---- Tables -------------------------------------------------------- */
-/*
- * Plain Markdown tables (the authored ones use <ComparisonTable>, which has
- * its own shell). Wrapped in a scroll container by the MDX table component
- * so a wide table never widens the page.
- */
-.prose :where(table):not(:where(.not-prose, .not-prose *)) {
-  font-size: 0.9375rem;
-  line-height: 1.55;
-}
-
-.prose :where(thead th):not(:where(.not-prose, .not-prose *)) {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--color-ink-700);
-  vertical-align: bottom;
-}
-
-.prose :where(tbody td):not(:where(.not-prose, .not-prose *)) {
-  vertical-align: top;
-}
-
-/* ---- Rules and images ---------------------------------------------- */
-.prose :where(hr):not(:where(.not-prose, .not-prose *)) {
-  margin-top: 3rem;
-  margin-bottom: 3rem;
-}
-
-.prose :where(figure figcaption):not(:where(.not-prose, .not-prose *)) {
-  font-size: 0.8125rem;
-  line-height: 1.5;
+  .float-slow-delayed {
+    animation: float-slow 8.5s ease-in-out -3s infinite;
+  }
 }

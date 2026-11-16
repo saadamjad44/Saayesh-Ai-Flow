@@ -1,40 +1,40 @@
 ---
 /**
- * One guide in a listing. Three shapes, one component, so the homepage, the
+ * One guide in a listing. Four shapes, one component, so the homepage, the
  * blog archive, and the pillar hubs cannot drift apart:
  *
- *   lead      the card that opens a section: a wide category image, a long
- *             summary, and display-size type
- *   standard  the ordinary grid card: a category glyph and label, then the
- *             title, summary and metadata
- *   row       a compact horizontal row: a small glyph chip beside the title
- *
- * Only the lead card carries a photograph, and deliberately so. Images on this
- * site belong to a *category*, not an article, so a twenty-card archive grid of
- * them showed the same five photographs four times each — the exact repetitive
- * grid a listing should avoid, and twenty image requests for no information.
- * The grid and row cards use the category's own glyph instead, which is
- * distinct per category, legible at 20px, and free.
+ *   lead      the card that opens a section: a wide image, a long summary, and
+ *             display-size type
+ *   standard  the ordinary grid card: the guide's own photo with its category
+ *             pinned to it, then the title, summary and metadata
+ *   row       a compact horizontal row: a thumbnail beside the title
+ *   compare   a rail card for a head-to-head guide: photo, a "Compare" badge,
+ *             title and reading time, and no summary — a rail is scanned, not
+ *             read
  *
  * Every field comes from ArticleCardData, which is built from the entry's own
  * frontmatter and the page registry — there is nothing here a template can fill
  * in differently.
  *
+ * Pictures: a card uses the guide's own registered photo where there is one.
+ * The lead card falls back to the category artwork, and the others to the
+ * category's coloured tile, so a card is never an empty box.
+ *
  * The whole card is one link target (`.stretch-target` on the title's <a>), so
  * only the title is in the tab order and the clickable area is still the card.
- * The category kicker is a separate link, lifted above the overlay with
+ * The category label is a separate link, lifted above the overlay with
  * `relative z-10` so it stays independently clickable.
  */
 import { Image } from "astro:assets";
 
-import PillarIcon from "@/components/layout/PillarIcon.astro";
+import PillarTile from "@/components/layout/PillarTile.astro";
 import { getMedia } from "@/config/media";
 import type { ArticleCardData } from "@/lib/content";
 import { formatShortDate, isoDate } from "@/lib/format";
 
 interface Props {
   article: ArticleCardData;
-  variant?: "lead" | "standard" | "row";
+  variant?: "lead" | "standard" | "row" | "compare";
   /** Loads the lead image eagerly. Use only for an above-the-fold card. */
   priority?: boolean;
   /** The `sizes` attribute for a lead card's image. */
@@ -55,52 +55,69 @@ const {
 
 const isLead = variant === "lead";
 const isRow = variant === "row";
+const isCompare = variant === "compare";
 
 /**
- * Lead cards use the category's own artwork; grid and row cards use the
- * article's own photo where one is registered, falling back to the category
- * glyph where it is not. The design concern the card header once documented -
- * "twenty cards, five pictures, repetitive grid" - was about repeated category
- * fallbacks; per-article photos are distinct, so the concern does not apply.
+ * The picture a card shows. The lead card uses its category's artwork, which
+ * was drawn for a wide crop; a guide's own photo is a stock picture of any
+ * shape, and blown up to lead size a centre crop of one lands wherever it
+ * lands. Grid, row and rail cards are small enough that the guide's own photo
+ * crops acceptably, and distinct enough that twenty cards are twenty pictures.
  */
 const leadMedia = isLead ? getMedia(article.mediaId) : undefined;
-const cardMedia = !isLead && article.articleMedia ? article.articleMedia : undefined;
+const cardMedia = !isLead ? article.articleMedia : undefined;
+
+/** The arrow every card ends on; it slides on hover via the `group`. */
+const ARROW =
+  "M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z";
+
+/**
+ * The category label when it sits on a photograph. Fixed colours rather than
+ * tokens: it is a white pill on a picture in both themes.
+ */
+const photoLabel =
+  "relative z-10 inline-flex items-center rounded-full bg-white/92 px-2.5 py-1 font-mono text-[0.625rem] leading-4 font-semibold tracking-[0.07em] text-[#16204a] uppercase shadow-sm backdrop-blur-sm transition-colors duration-180 ease-ui hover:bg-white motion-reduce:transition-none";
 ---
 
 <article
   class:list={[
-    "card card-link group relative flex flex-col overflow-hidden transition-transform duration-240 ease-ui hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:transform-none",
-    isRow ? "p-4" : isLead ? "" : cardMedia ? "" : "p-5",
+    "card card-link group relative flex overflow-hidden",
+    isRow ? "items-center gap-4 p-3 sm:p-3.5" : "flex-col",
+    !isRow && !isLead && !cardMedia && "p-5",
     className,
   ]}
 >
   {/*
     The lead card's picture is described, not decorative. Its alt is the
-    registry's own factual description of the artwork — never the headline
+    registry's own factual description of the picture — never the headline
     beneath it, which would make a screen reader read the same words twice and
     tells an image search nothing about the picture.
   */}
   {isLead && leadMedia && (
-    <Image
-      src={leadMedia.src}
-      alt={leadMedia.alt}
-      widths={[640, 960, 1280]}
-      sizes={sizes}
-      loading={priority ? "eager" : "lazy"}
-      decoding={priority ? "sync" : "async"}
-      fetchpriority={priority ? "high" : "auto"}
-      class="aspect-[16/8] w-full border-b border-ink-200 object-cover"
-    />
+    <div class="relative overflow-hidden">
+      <Image
+        src={leadMedia.src}
+        alt={leadMedia.alt}
+        widths={[640, 960, 1280]}
+        sizes={sizes}
+        loading={priority ? "eager" : "lazy"}
+        decoding={priority ? "sync" : "async"}
+        fetchpriority={priority ? "high" : "auto"}
+        class="aspect-[16/9] w-full object-cover transition-transform duration-700 ease-ui group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+      />
+      {article.category && (
+        <p class="absolute top-4 left-4">
+          <a href={article.category.path} class={photoLabel}>
+            {article.category.title}
+          </a>
+        </p>
+      )}
+    </div>
   )}
 
-  {/*
-    Grid card's per-article photo. Kept decorative-looking without being
-    marked decorative: the alt is the registry's factual description, which
-    repeats information the card body does not carry (what is in the picture),
-    so a screen-reader user gains something a glance gives a sighted user.
-  */}
+  {/* Grid and rail cards: the guide's own photo, with its category on it. */}
   {cardMedia && !isRow && (
-    <div class="overflow-hidden border-b border-ink-200">
+    <div class="relative overflow-hidden">
       <Image
         src={cardMedia.src}
         alt={cardMedia.alt}
@@ -108,25 +125,49 @@ const cardMedia = !isLead && article.articleMedia ? article.articleMedia : undef
         sizes="(min-width: 1024px) 24rem, 92vw"
         loading="lazy"
         decoding="async"
-        class="aspect-[16/9] w-full object-cover transition-transform duration-500 ease-ui group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+        class="aspect-[16/9] w-full object-cover transition-transform duration-700 ease-ui group-hover:scale-[1.06] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
       />
+      <p class="absolute top-3 left-3 flex items-center gap-1.5">
+        {isCompare && <span class="badge badge-solid relative z-10 shadow-sm">Compare</span>}
+        {!isCompare && article.category && (
+          <a href={article.category.path} class={photoLabel}>
+            {article.category.title}
+          </a>
+        )}
+      </p>
     </div>
   )}
 
-  <div class:list={["flex min-w-0 flex-1 flex-col", isLead && "p-6 sm:p-7", cardMedia && !isLead && !isRow && "p-5"]}>
-    {/* Category line: the glyph only where there is no photograph above it. */}
-    {article.category && (
-      <p class="flex items-center gap-2">
-        {!isLead && !cardMedia && article.icon && (
-          <span
-            class:list={[
-              "flex shrink-0 items-center justify-center rounded-lg border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none",
-              isRow ? "size-7" : "size-8",
-            ]}
-          >
-            <PillarIcon icon={article.icon} class={isRow ? "size-4" : "size-4.5"} />
-          </span>
-        )}
+  {/* Row card: a thumbnail, or the category tile where no photo is registered. */}
+  {isRow &&
+    (cardMedia ? (
+      <Image
+        src={cardMedia.src}
+        alt=""
+        widths={[160, 320]}
+        sizes="6rem"
+        loading="lazy"
+        decoding="async"
+        class="size-20 shrink-0 rounded-xl object-cover sm:size-24"
+      />
+    ) : (
+      article.icon && <PillarTile icon={article.icon} size="lg" />
+    ))}
+
+  <div
+    class:list={[
+      "flex min-w-0 flex-1 flex-col",
+      isLead && "p-6 sm:p-7",
+      cardMedia && !isRow && "p-5",
+    ]}
+  >
+    {/*
+      Category line, for the shapes that do not already carry it on a photo:
+      the row card, and a grid card with no photo of its own.
+    */}
+    {article.category && (isRow || (!isLead && !cardMedia)) && (
+      <p class="flex items-center gap-2.5">
+        {!isRow && article.icon && <PillarTile icon={article.icon} size="sm" />}
         <a
           href={article.category.path}
           class="eyebrow relative z-10 -my-1 py-1 transition-colors duration-180 ease-ui hover:text-ink-900 motion-reduce:transition-none"
@@ -138,31 +179,38 @@ const cardMedia = !isLead && article.articleMedia ? article.articleMedia : undef
 
     <Heading
       class:list={[
-        article.category && (isRow ? "mt-2.5" : "mt-3"),
+        isRow && article.category && "mt-1.5",
+        !isRow && !isLead && !cardMedia && article.category && "mt-3.5",
         isLead
-          ? "font-display text-xl font-extrabold tracking-[-0.01em] text-balance text-ink-900 sm:text-2xl"
-          : "type-card-title",
+          ? "font-display text-[1.375rem] leading-[1.2] font-bold tracking-[-0.028em] text-balance text-ink-900 sm:text-[1.75rem]"
+          : isRow
+            ? "font-display text-[0.9375rem] leading-snug font-bold tracking-[-0.015em] text-ink-900 sm:text-base"
+            : "type-card-title",
       ]}
     >
-      <a href={article.path} class="stretch-target group-hover:text-brand-800">
+      <a
+        href={article.path}
+        class="stretch-target transition-colors duration-180 ease-ui group-hover:text-brand-700 motion-reduce:transition-none"
+      >
         {article.title}
       </a>
     </Heading>
 
-    <p
-      class:list={[
-        "mt-2 flex-1 leading-relaxed text-ink-600",
-        isLead ? "text-[1.0625rem]" : "text-[0.9375rem]",
-        isRow && "line-clamp-2",
-      ]}
-    >
-      {article.description}
-    </p>
+    {!isRow && !isCompare && (
+      <p
+        class:list={[
+          "mt-2.5 flex-1 leading-relaxed text-ink-600",
+          isLead ? "text-[1.0625rem]" : "line-clamp-3 text-[0.9375rem]",
+        ]}
+      >
+        {article.description}
+      </p>
+    )}
 
     <p
       class:list={[
-        "flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] tracking-[0.04em] text-ink-500 uppercase",
-        isRow ? "mt-2.5" : "mt-5",
+        "flex items-center gap-x-2.5 font-mono text-[0.6875rem] tracking-[0.04em] text-ink-500 uppercase",
+        isRow ? "mt-2" : isCompare ? "mt-auto pt-4" : "mt-5 border-t border-ink-100 pt-4",
       ]}
     >
       <time datetime={isoDate(article.updated)}>{formatShortDate(article.updated)}</time>
@@ -170,6 +218,16 @@ const cardMedia = !isLead && article.articleMedia ? article.articleMedia : undef
         &middot;
       </span>
       <span>{article.minutes} min read</span>
+      {!isRow && (
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="ml-auto size-4.5 text-brand-600 transition-transform duration-180 ease-ui group-hover:translate-x-1 motion-reduce:transition-none"
+        >
+          <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd" />
+        </svg>
+      )}
     </p>
   </div>
 </article>

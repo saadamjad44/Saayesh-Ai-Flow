@@ -6,7 +6,7 @@
  * built from the registry and the published collections, so this page can never
  * offer a route that does not exist.
  */
-import PillarIcon from "@/components/layout/PillarIcon.astro";
+import PillarTile from "@/components/layout/PillarTile.astro";
 import SearchBox from "@/components/layout/SearchBox.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { FALLBACK_NAV, PILLAR_NAV } from "@/config/navigation";
@@ -57,10 +57,8 @@ const categories = PILLAR_NAV.filter((entry) => titles.has(entry.pillar)).map((e
               href={category.href}
               class="card card-link group flex min-h-14 items-center gap-3.5 px-4 py-3"
             >
-              <span class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-ink-200 bg-paper text-brand-700 transition-colors duration-180 ease-ui group-hover:border-brand-200 group-hover:bg-brand-50 motion-reduce:transition-none">
-                <PillarIcon icon={category.icon} class="size-5" />
-              </span>
-              <span class="font-sans font-bold text-ink-900 group-hover:text-brand-800">
+              <PillarTile icon={category.icon} size="sm" />
+              <span class="font-sans font-bold text-ink-900 group-hover:text-brand-700">
                 {category.title}
               </span>
             </a>

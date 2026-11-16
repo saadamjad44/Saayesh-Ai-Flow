@@ -25,13 +25,13 @@
  */
 import "@/styles/global.css";
 /**
- * The two latin font subsets every page needs for its first paint, imported for
- * their hashed build URLs so they can be preloaded. The latin-extended and
- * monospace faces are deliberately not preloaded: `unicode-range` means the
- * extended files are only fetched by a page that needs those glyphs, and the
- * monospace face is used for small labels well after first paint.
+ * The one latin font subset every page needs for its first paint — headings and
+ * body copy are the same family — imported for its hashed build URL so it can
+ * be preloaded. The latin-extended and monospace faces are deliberately not
+ * preloaded: `unicode-range` means the extended files are only fetched by a
+ * page that needs those glyphs, and the monospace face is used for small labels
+ * well after first paint.
  */
-import displayFontUrl from "@/assets/fonts/fraunces-latin.woff2?url";
 import bodyFontUrl from "@/assets/fonts/inter-latin.woff2?url";
 import SeoHead, { type OpenGraphArticle } from "@/components/seo/SeoHead.astro";
 import SiteHeader from "@/components/layout/SiteHeader.astro";
@@ -82,16 +82,32 @@ const socialImage = await getSocialImage(page);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/*
+      Two things that must be settled before the first paint, so neither can
+      flash: the visitor's saved theme, and whether scroll-reveal is on. The
+      reveal class is only set where the observer exists and motion is welcome
+      — see "Scroll reveal" in global.css — so everywhere else the page simply
+      renders with everything visible.
+    */}
     <script is:inline>
-      (function(){var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark')})();
+      (function () {
+        var d = document.documentElement;
+        try {
+          if (localStorage.getItem("theme") === "dark") d.setAttribute("data-theme", "dark");
+        } catch (e) {}
+        if (
+          "IntersectionObserver" in window &&
+          !matchMedia("(prefers-reduced-motion: reduce)").matches
+        )
+          d.classList.add("reveal-ready");
+      })();
     </script>
     {/*
       Self-hosted fonts, so there is no third-party connection to open and no
-      external stylesheet in front of the first paint. Both files are
-      same-origin but still need `crossorigin`: fonts are always fetched in
-      CORS mode, and a preload without it would be fetched twice.
+      external stylesheet in front of the first paint. The file is same-origin
+      but still needs `crossorigin`: fonts are always fetched in CORS mode, and
+      a preload without it would be fetched twice.
     */}
-    <link rel="preload" href={displayFontUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={bodyFontUrl} as="font" type="font/woff2" crossorigin />
     <SeoHead
       title={snippet.title}
@@ -122,13 +138,13 @@ const socialImage = await getSocialImage(page);
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#0f3d3e" />
+    <meta name="theme-color" content="#f6f8fd" />
     <link rel="sitemap" href="/sitemap.xml" />
   </head>
   <body class="flex min-h-screen flex-col overflow-x-clip bg-paper text-ink-700 antialiased">
     <a
       href="#main-content"
-      class="sr-only rounded-md bg-brand-700 px-4 py-2 font-semibold text-white focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60]"
+      class="btn btn-primary sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60]"
     >
       Skip to main content
     </a>
@@ -141,12 +157,84 @@ const socialImage = await getSocialImage(page);
 
     <SiteFooter />
     <script is:inline>
-      document.querySelectorAll('a[href^="http"]').forEach(function(a) {
+      document.querySelectorAll('a[href^="http"]').forEach(function (a) {
         if (a.hostname !== location.hostname) {
           a.target = "_blank";
           a.rel = "noopener noreferrer";
         }
       });
+
+      /*
+        Scroll reveal. `reveal-ready` was set in <head> under the same two
+        conditions checked there, so this only ever runs where the hidden state
+        exists. Each element is revealed once and then left alone.
+      */
+      (function () {
+        var root = document.documentElement;
+        if (!root.classList.contains("reveal-ready")) return;
+        var items = document.querySelectorAll("[data-reveal]");
+        var observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add("is-revealed");
+              observer.unobserve(entry.target);
+            });
+          },
+          { rootMargin: "0px 0px -6% 0px", threshold: 0.06 },
+        );
+        items.forEach(function (item) {
+          observer.observe(item);
+        });
+      })();
+
+      /*
+        Two pointer- and scroll-driven effects, both decoration:
+        - the spotlight: a card marked `.spotlight` is told where the pointer
+          is, and its own CSS draws the pool of light there;
+        - the showcase tilt: `[data-scroll-tilt]` starts leaning back and
+          stands up as it scrolls into view.
+        Neither runs for a visitor who has asked for reduced motion.
+      */
+      (function () {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        document.addEventListener(
+          "pointermove",
+          function (event) {
+            var card = event.target.closest && event.target.closest(".spotlight");
+            if (!card) return;
+            var box = card.getBoundingClientRect();
+            card.style.setProperty("--mx", event.clientX - box.left + "px");
+            card.style.setProperty("--my", event.clientY - box.top + "px");
+          },
+          { passive: true },
+        );
+
+        var board = document.querySelector("[data-scroll-tilt]");
+        if (!board) return;
+        var queued = false;
+        var tilt = function () {
+          queued = false;
+          var box = board.parentElement.getBoundingClientRect();
+          var view = window.innerHeight;
+          var progress = Math.min(Math.max((view - box.top) / (view * 0.75), 0), 1);
+          board.style.transform =
+            "perspective(1600px) rotateX(" +
+            (26 * (1 - progress)).toFixed(2) +
+            "deg) scale(" +
+            (0.88 + 0.12 * progress).toFixed(3) +
+            ")";
+        };
+        var schedule = function () {
+          if (queued) return;
+          queued = true;
+          requestAnimationFrame(tilt);
+        };
+        tilt();
+        window.addEventListener("scroll", schedule, { passive: true });
+        window.addEventListener("resize", schedule, { passive: true });
+      })();
     </script>
   </body>
 </html>

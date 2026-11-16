@@ -32,7 +32,12 @@ import { PAGES, type PageId, type SitePage } from "./pages";
 import { SITE } from "./site";
 
 /** Editorial search-intent label, for prioritization. Never rendered. */
-export type SearchIntent = "Commercial" | "Informational" | "Transactional" | "Info / Commercial";
+export type SearchIntent =
+  | "Commercial"
+  | "Commercial investigation"
+  | "Informational"
+  | "Transactional"
+  | "Info / Commercial";
 
 /** Whether the brand suffix is appended to this page's <title>. */
 export type BrandMode = "append" | "omit";
@@ -1315,7 +1320,7 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
       "ChatGPT agents for small business",
     ],
     intent: "Info / Commercial",
-    note: "Fresh-feature keyword - SERP competition is still soft because the feature set has moved since launch and few editorial pages have caught up. Title keeps the product name verbatim. Supporting keywords cover the \"how to use\" intent variant, which autocompletes for about a third of this traffic.",
+    note: 'Fresh-feature keyword - SERP competition is still soft because the feature set has moved since launch and few editorial pages have caught up. Title keeps the product name verbatim. Supporting keywords cover the "how to use" intent variant, which autocompletes for about a third of this traffic.',
   },
   "ai-prompt-token-cost-calculator": {
     title: "AI Prompt Cost Calculator: Tokens, Price per Model",
@@ -1348,7 +1353,7 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
       "OpenAI API vs ChatGPT Plus cost",
     ],
     intent: "Info / Commercial",
-    note: "The calculator companion to ai-prompt-token-cost-calculator: that one is per-prompt, this one is per-month. Primary keyword is the exact long-tail the SERP is held by vendor blog posts for, with no interactive tool in the top 10. Supporting keywords cover the question-form variant (\"is ChatGPT Plus worth it\") that autocompletes alongside the head term and lands the same intent.",
+    note: 'The calculator companion to ai-prompt-token-cost-calculator: that one is per-prompt, this one is per-month. Primary keyword is the exact long-tail the SERP is held by vendor blog posts for, with no interactive tool in the top 10. Supporting keywords cover the question-form variant ("is ChatGPT Plus worth it") that autocompletes alongside the head term and lands the same intent.',
   },
 
   // ---- AI Prompts cluster ------------------------------------------------

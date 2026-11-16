@@ -106,10 +106,12 @@ const coverage = [...new Set(allRows.map((row) => row.tool))]
 
 <section
   aria-labelledby="pricing-findings-heading"
-  class="border-y border-ink-200 bg-surface-sunken"
+  class="relative overflow-hidden border-y border-ink-200 bg-surface-sunken"
 >
-  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-    <div class="max-w-3xl">
+  <div aria-hidden="true" class="bg-aurora pointer-events-none absolute inset-0"></div>
+
+  <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+    <div class="max-w-3xl" data-reveal>
       <p class="eyebrow eyebrow-rule">From the data</p>
       <h2 id="pricing-findings-heading" class="type-section mt-3">
         What the pricing data shows
@@ -122,16 +124,25 @@ const coverage = [...new Set(allRows.map((row) => row.tool))]
       </p>
     </div>
 
-    <dl class="mt-10 grid gap-4 sm:grid-cols-2">
-      {FINDINGS.map((finding) => (
-        <div class="card flex flex-col p-6">
-          <dd class="font-sans text-3xl font-extrabold text-ink-900 tabular-nums">
-            {finding.value}
+    <dl class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {FINDINGS.map((finding, index) => (
+        <div
+          class="card relative flex flex-col overflow-hidden p-6"
+          style={`--reveal-delay:${index * 70}ms`}
+          data-reveal
+        >
+          {/* The brand gradient as a rule across the head of each figure. */}
+          <span
+            aria-hidden="true"
+            class="absolute inset-x-0 top-0 h-1 bg-[image:var(--gradient-brand)]"
+          ></span>
+          <dd class="font-display text-[2.5rem] leading-none font-bold tracking-[-0.04em] tabular-nums">
+            <span class="text-gradient">{finding.value}</span>
           </dd>
-          <dt class="mt-1.5 font-mono text-[0.6875rem] tracking-[0.06em] text-ink-600 uppercase">
+          <dt class="mt-3 font-mono text-[0.6875rem] tracking-[0.06em] text-ink-700 uppercase">
             {finding.label}
           </dt>
-          <p class="mt-3.5 flex-1 border-t border-ink-100 pt-3.5 text-[0.9375rem] leading-relaxed text-ink-600">
+          <p class="mt-4 flex-1 border-t border-ink-100 pt-4 text-[0.9375rem] leading-relaxed text-ink-600">
             {finding.detail}
           </p>
         </div>

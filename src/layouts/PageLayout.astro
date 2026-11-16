@@ -5,8 +5,17 @@
  * notice, and a prose body.
  *
  * Slots: default (prose body), "meta" (end of the header, e.g. the byline),
+ * "media" (a picture, set beside the title from `lg` and under it below),
  * "hero" (below the header), "after" (below the prose), "sidebar" (the
  * contextual rail: table of contents and category navigation).
+ *
+ * The header is a full-width band of its own — the title, standfirst and
+ * byline over a faint wash of the brand colours — so every page opens on
+ * something designed rather than on a column of text that starts under the
+ * navigation. The body below it keeps exactly the measure it always had.
+ *
+ * A page with the rail is a long read, so it also drives the reading-progress
+ * bar in the site header (see the script at the foot of this file).
  *
  * With no "sidebar" slot the page is a single measured column. Fill that slot
  * and the page widens at `lg` into a two-column grid — the same measured
@@ -21,7 +30,7 @@
  */
 import BaseLayout from "./BaseLayout.astro";
 import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
-import PillarIcon from "@/components/layout/PillarIcon.astro";
+import PillarTile from "@/components/layout/PillarTile.astro";
 import type { PillarIconId } from "@/config/pillars";
 import ContentGap from "@/components/content/ContentGap.astro";
 import type { OpenGraphArticle } from "@/components/seo/SeoHead.astro";
@@ -75,6 +84,17 @@ const {
 } = Astro.props;
 
 const hasSidebar = Astro.slots.has("sidebar");
+
+/**
+ * The "media" slot is rendered up front and tested for content, rather than
+ * asked for with Astro.slots.has(): EntryLayout fills it conditionally, and a
+ * slot passed from inside a condition counts as present even when the
+ * condition was false. Asking the rendered markup instead is what stops a page
+ * with no picture from reserving an empty column beside its title.
+ */
+const mediaHtml = Astro.slots.has("media") ? await Astro.slots.render("media") : "";
+const hasMedia = mediaHtml.trim().length > 0;
+
 const page = getPage(pageId);
 const breadcrumbs = getBreadcrumbs(page);
 
@@ -94,87 +114,162 @@ const pageHeading = heading ?? title ?? page.title;
   article={openGraphArticle}
   jsonLd={jsonLd}
 >
-  <article
-    class:list={[
-      "mx-auto max-w-3xl px-4 pb-16 sm:px-6 sm:pb-24",
-      // Only the grid row widens; the prose column keeps its measure.
-      hasSidebar && "lg:max-w-6xl",
-    ]}
-  >
-    <header class:list={["pt-6 pb-8 sm:pt-8 sm:pb-10", hasSidebar && "lg:max-w-3xl"]}>
-      <Breadcrumbs items={breadcrumbs} class="mb-6" />
+  <article data-reading-progress={hasSidebar ? "" : undefined}>
+    {/* ---- Header band ------------------------------------------------ */}
+    <div class="theme-dark bg-night relative -mt-[4.75rem] overflow-hidden pt-[4.75rem]">
+      <div aria-hidden="true" class="bg-aurora pointer-events-none absolute inset-0"></div>
+      <div
+        aria-hidden="true"
+        class="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_90%_at_100%_0%,#000,transparent)]"
+      ></div>
 
-      {icon && (
-        <span class="mb-5 flex size-12 items-center justify-center rounded-xl border border-ink-200 bg-surface text-brand-700 shadow-card">
-          <PillarIcon icon={icon} class="size-6" />
-        </span>
-      )}
+      <header
+        class:list={[
+          "relative mx-auto max-w-3xl px-4 pt-6 pb-10 sm:px-6 sm:pt-8 sm:pb-12",
+          hasSidebar && "lg:max-w-6xl",
+        ]}
+      >
+        <Breadcrumbs items={breadcrumbs} class="mb-7" />
 
-      {eyebrow && (
-        <p class:list={["eyebrow", eyebrowAccent && "eyebrow-accent"]}>
-          {eyebrowHref ? (
-            <a
-              href={eyebrowHref}
-              class="-my-1 inline-block py-1 transition-colors duration-180 ease-ui hover:text-ink-900 motion-reduce:transition-none"
-            >
-              {eyebrow}
-            </a>
-          ) : (
-            eyebrow
-          )}
-        </p>
-      )}
+        <div
+          class:list={[
+            hasMedia &&
+              "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-center lg:gap-12",
+          ]}
+        >
+          {/* With no picture beside it, the copy keeps the body's own measure. */}
+          <div class:list={[hasSidebar && !hasMedia && "lg:max-w-3xl"]}>
+            {icon && <PillarTile icon={icon} size="lg" class="mb-5" />}
 
-      <h1 class:list={["type-title", eyebrow && "mt-3"]}>{pageHeading}</h1>
+            {eyebrow && (
+              <p>
+                {eyebrowHref ? (
+                  <a
+                    href={eyebrowHref}
+                    class:list={[
+                      "badge transition-colors duration-180 ease-ui hover:border-brand-400 motion-reduce:transition-none",
+                      eyebrowAccent && "badge-accent",
+                    ]}
+                  >
+                    {eyebrow}
+                  </a>
+                ) : (
+                  <span class:list={["badge", eyebrowAccent && "badge-accent"]}>{eyebrow}</span>
+                )}
+              </p>
+            )}
 
-      {intro && <p class="type-lead mt-5">{intro}</p>}
+            <h1 class:list={["type-title", eyebrow && "mt-4"]}>{pageHeading}</h1>
 
-      {legalDraft && (
-        <>
-          <div
-            role="note"
-            data-content-gap
-            class="callout mt-7 border-yellow-300 bg-yellow-50 text-sm text-yellow-900"
-          >
-            <p class="font-semibold">Draft template — not final</p>
-            <p class="mt-1">
-              This page is a draft and requires final legal review before launch. It is not legal
-              advice.
-            </p>
+            {intro && <p class="type-lead mt-5">{intro}</p>}
+
+            {legalDraft && (
+              <>
+                <div
+                  role="note"
+                  data-content-gap
+                  class="callout mt-7 border-yellow-300 bg-yellow-50 text-sm text-yellow-900"
+                >
+                  <p class="font-semibold">Draft template — not final</p>
+                  <p class="mt-1">
+                    This page is a draft and requires final legal review before launch. It is not
+                    legal advice.
+                  </p>
+                </div>
+                <p class="mt-4 text-sm text-ink-500">
+                  Effective date: <ContentGap label="Effective date" />
+                </p>
+              </>
+            )}
+
+            {Astro.slots.has("meta") && (
+              <div class="mt-8 space-y-4 border-t border-ink-200 pt-6">
+                <slot name="meta" />
+              </div>
+            )}
           </div>
-          <p class="mt-4 text-sm text-ink-500">
-            Effective date: <ContentGap label="Effective date" />
-          </p>
-        </>
-      )}
 
-      {Astro.slots.has("meta") && (
-        <div class="mt-8 space-y-4 border-t border-ink-200 pt-6">
-          <slot name="meta" />
+          {hasMedia && (
+            <div class="mt-9 lg:mt-0">
+              <Fragment set:html={mediaHtml} />
+            </div>
+          )}
         </div>
-      )}
-    </header>
+      </header>
+    </div>
 
-    <slot name="hero" />
-
+    {/* ---- Body -------------------------------------------------------- */}
     <div
       class:list={[
-        hasSidebar && "lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-x-12",
+        "mx-auto max-w-3xl px-4 pt-10 pb-16 sm:px-6 sm:pt-12 sm:pb-24",
+        // Only the grid row widens; the prose column keeps its measure.
+        hasSidebar && "lg:max-w-6xl",
       ]}
     >
-      {hasSidebar && (
-        <aside class="mb-8 space-y-3 lg:sticky lg:top-24 lg:order-2 lg:mb-0 lg:max-h-[calc(100vh-7.5rem)] lg:space-y-7 lg:overflow-y-auto lg:overscroll-contain lg:border-l lg:border-ink-200 lg:pl-7">
-          <slot name="sidebar" />
-        </aside>
-      )}
+      <slot name="hero" />
 
-      <div class:list={["min-w-0", hasSidebar && "lg:order-1 lg:max-w-3xl"]}>
-        <div class="prose max-w-none">
-          <slot />
+      <div
+        class:list={[
+          hasSidebar && "lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-x-12",
+        ]}
+      >
+        {hasSidebar && (
+          <aside class="mb-8 space-y-3 lg:sticky lg:top-24 lg:order-2 lg:mb-0 lg:max-h-[calc(100vh-7.5rem)] lg:space-y-7 lg:overflow-y-auto lg:overscroll-contain lg:border-l lg:border-ink-200 lg:pl-7">
+            <slot name="sidebar" />
+          </aside>
+        )}
+
+        <div class:list={["min-w-0", hasSidebar && "lg:order-1 lg:max-w-3xl"]}>
+          <div class="prose max-w-none">
+            <slot />
+          </div>
+
+          <slot name="after" />
         </div>
-
-        <slot name="after" />
       </div>
     </div>
   </article>
 </BaseLayout>
+
+<script>
+  /**
+   * Reading progress, for long reads only.
+   *
+   * The bar itself lives in the site header (`[data-progress-bar]`) so it rides
+   * the sticky bar's bottom edge; this script only shows it on a page that has
+   * an article marked `data-reading-progress`, and sets how far along it is.
+   *
+   * Progress is measured over the article — from where its body reaches the top
+   * of the viewport to where its end reaches the bottom — rather than over the
+   * whole document, so the bar is full when the guide is finished, not when the
+   * footer is.
+   *
+   * One write per frame at most, and only a transform: the bar is composited,
+   * so scrolling never triggers layout.
+   */
+  const article = document.querySelector<HTMLElement>("[data-reading-progress]");
+  const bar = document.querySelector<HTMLElement>("[data-progress-bar]");
+
+  if (article && bar) {
+    bar.hidden = false;
+    let queued = false;
+
+    const update = () => {
+      queued = false;
+      const rect = article.getBoundingClientRect();
+      const distance = rect.height - window.innerHeight;
+      const progress = distance <= 0 ? 1 : Math.min(Math.max(-rect.top / distance, 0), 1);
+      bar.style.transform = `scaleX(${progress})`;
+    };
+
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+  }
+</script>

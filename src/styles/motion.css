@@ -1,0 +1,243 @@
+/* ---------------------------------------------------------------------------
+ * Motion and showpiece effects
+ *
+ * Everything on the site that moves by itself lives here: the masthead's
+ * entrance, the rotating border round the search bar, drifting colour, the
+ * marquee, the pointer spotlight on cards, and page-to-page transitions.
+ *
+ * All of it is decoration over content that is already in the document and
+ * already legible, and all of it stops under `prefers-reduced-motion` — see
+ * the block at the foot of this file.
+ * ------------------------------------------------------------------------- */
+
+/* A soft cross-fade between pages, where the browser supports it. No script. */
+@view-transition {
+  navigation: auto;
+}
+
+/* Registered so a gradient angle can be animated rather than snapped. */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* ---- Rotating gradient border ------------------------------------------ */
+/* A 2px ring of the brand colours turning round whatever it wraps. */
+.glow-border {
+  position: relative;
+  padding: 2px;
+  border-radius: 1.125rem;
+  background: conic-gradient(from var(--angle), #0ea5e9, #4f46e5, #a855f7, #f97316, #0ea5e9);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06),
+    0 0 70px -14px rgb(99 102 241 / 0.85);
+  animation: spin-angle 5s linear infinite;
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+/* ---- Drifting colour ---------------------------------------------------- */
+.orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: orb-drift 16s ease-in-out infinite alternate;
+}
+
+.orb-sky {
+  background: #0ea5e9;
+}
+.orb-indigo {
+  background: #4f46e5;
+}
+.orb-violet {
+  background: #a855f7;
+}
+
+@keyframes orb-drift {
+  to {
+    transform: translate3d(8%, -10%, 0) scale(1.2);
+  }
+}
+
+/* ---- Masthead entrance -------------------------------------------------- */
+/* Each piece rises out of a blur, one after another: set `--d` per element. */
+.rise {
+  animation: rise 900ms var(--ease-ui) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(10px);
+  }
+}
+
+/*
+ * The headline moves but never fades: it is the page's largest paint, and a
+ * tab opened in the background must not hold it invisible until it is shown.
+ */
+.rise-solid {
+  animation: rise-solid 900ms var(--ease-ui) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes rise-solid {
+  from {
+    transform: translateY(26px);
+  }
+}
+
+/* The gradient phrase in a headline, with the light running through it. */
+.text-shine {
+  background-image: linear-gradient(
+    100deg,
+    #38bdf8 0%,
+    #818cf8 28%,
+    #e0c3ff 50%,
+    #818cf8 72%,
+    #38bdf8 100%
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
+  animation: shine 7s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: -220% center;
+  }
+}
+
+/* ---- Marquee ------------------------------------------------------------ */
+/*
+ * The track holds its items twice and slides by exactly half its width, so
+ * the loop has no seam. The second copy is aria-hidden in the markup.
+ */
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 48s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---- Pointer spotlight -------------------------------------------------- */
+/*
+ * A pool of light that follows the pointer across a card. The script in
+ * BaseLayout writes `--mx` / `--my`; without it the card is simply unlit.
+ */
+.spotlight {
+  position: relative;
+}
+
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(
+    24rem circle at var(--mx, 50%) var(--my, 50%),
+    rgb(129 140 248 / 0.28),
+    transparent 62%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms var(--ease-ui);
+}
+
+.spotlight:hover::after {
+  opacity: 1;
+}
+
+/* ---- Dropdown entrance -------------------------------------------------- */
+.menu-pop {
+  animation: menu-pop 220ms var(--ease-ui) both;
+  transform-origin: top center;
+}
+
+@keyframes menu-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+/* ---- Pulse dot ---------------------------------------------------------- */
+.pulse-dot {
+  position: relative;
+}
+
+.pulse-dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  animation: pulse-ring 2.2s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  from {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* ---- Reduced motion ----------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .glow-border,
+  .orb,
+  .rise,
+  .rise-solid,
+  .text-shine,
+  .marquee-track,
+  .menu-pop,
+  .pulse-dot::after {
+    animation: none;
+  }
+
+  .marquee-track {
+    flex-wrap: wrap;
+    width: auto;
+    justify-content: center;
+  }
+
+  .spotlight::after {
+    transition: none;
+  }
+
+  @view-transition {
+    navigation: none;
+  }
+}
