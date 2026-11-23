@@ -37,6 +37,7 @@ export const PILLAR_IDS = [
   "getting-started",
   "ai-by-industry",
   "ai-prompts",
+  "free-ai-tools",
 ] as const;
 
 export type PillarId = (typeof PILLAR_IDS)[number];
@@ -91,7 +92,7 @@ export interface SitePage {
  */
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
-  2: 20,
+  2: 24,
   3: 43,
 };
 
@@ -422,6 +423,56 @@ export const PAGES = [
     type: "tool",
     phase: 2,
     pillar: "ai-business-tools",
+  },
+
+  // Phase 2G — Free AI Tools pillar: the interactive hub that houses the site's
+  // free utilities that do not belong to a single content cluster. The tool
+  // finder, the prompt library, and the weekly radar all serve every category,
+  // so they sit under their own top-level segment rather than being filed into
+  // a cluster whose guides they outgrew.
+  {
+    id: "free-ai-tools",
+    title: "Free AI Tools",
+    path: "/free-ai-tools/",
+    type: "pillar",
+    phase: 2,
+  },
+
+  // Phase 2G — Tool Finder Quiz: the first interactive utility under the new
+  // pillar. A short questionnaire (use case, budget, experience, team size)
+  // that recommends AI tools from the site's own review coverage. All logic
+  // runs client-side; no form submission, no backend.
+  {
+    id: "ai-tool-finder-quiz",
+    title: "AI Tool Finder Quiz: Which AI Tool Is Right for You?",
+    path: "/free-ai-tools/ai-tool-finder-quiz/",
+    type: "tool",
+    phase: 2,
+    pillar: "free-ai-tools",
+  },
+
+  // Phase 2G — Prompt Library: a searchable, copy-paste collection of AI
+  // prompts organised by category and task. Each prompt carries a one-click
+  // copy button and links to the relevant guide. All filtering is client-side.
+  {
+    id: "prompt-library",
+    title: "Free AI Prompt Library: Copy-Paste Prompts by Category",
+    path: "/free-ai-tools/prompt-library/",
+    type: "tool",
+    phase: 2,
+    pillar: "free-ai-tools",
+  },
+
+  // Phase 2G — Weekly AI Radar: a curated digest of the week's AI tool
+  // launches, price changes, and feature updates. Short-format, skimmable,
+  // updated weekly. Ties into the newsletter signup for return visits.
+  {
+    id: "ai-weekly-radar",
+    title: "AI Weekly Radar: This Week in AI Tools",
+    path: "/free-ai-tools/ai-weekly-radar/",
+    type: "tool",
+    phase: 2,
+    pillar: "free-ai-tools",
   },
 
   // Phase 2F — the automation cluster's free interactive utility, and the

@@ -872,6 +872,71 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     note: 'The <h1> is "AI Email Time Savings & ROI Calculator"; the search title drops the ampersand, which search results render inconsistently, and leads on the saving a searcher is looking for. "Free" is factually true — no sign-up, runs in the browser — and is the first thing a searcher decides. The brand suffix is dropped because the title is 46 characters and the suffix would push it to 64. The ROI framing is carried in the title rather than the description so the description can spend its length on the three inputs that make this calculator different from a naive savings estimate: manual reply time, human review time, and software cost.',
   },
 
+  // ---- Free AI Tools pillar -----------------------------------------------
+  "free-ai-tools": {
+    title: "Free AI Tools: Quiz, Prompt Library & Weekly Radar",
+    brand: "omit",
+    description:
+      "Free interactive tools for small business: an AI tool finder quiz, a searchable prompt library, and a weekly radar of new AI launches and price changes.",
+    primaryKeyword: "free AI tools",
+    supportingKeywords: [
+      "free AI tools for small business",
+      "AI tool finder quiz",
+      "free AI prompt library",
+      "AI tools this week",
+    ],
+    intent: "Commercial",
+    note: "Hub for the interactive utilities that sit outside any single content cluster. Title leads with 'Free' because every searcher on this query filters by price first.",
+  },
+  "ai-tool-finder-quiz": {
+    title: "AI Tool Finder Quiz: Which AI Tool Is Right for You?",
+    brand: "omit",
+    description:
+      "Answer 4 quick questions about your use case, budget, and experience level, and get a personalised AI tool recommendation with alternatives and honest trade-offs.",
+    primaryKeyword: "which AI tool should I use",
+    supportingKeywords: [
+      "AI tool finder quiz",
+      "AI tool recommendation quiz",
+      "best AI tool for me",
+      "AI tool quiz",
+      "find the right AI tool",
+    ],
+    intent: "Commercial investigation",
+    note: "The quiz format targets navigational-commercial intent: the searcher knows they want a tool but not which one. Title is a question-answer pair because that is what the SERP shows for this query shape.",
+  },
+  "prompt-library": {
+    title: "Free AI Prompt Library: Ready-Made Prompts by Category",
+    brand: "omit",
+    description:
+      "Browse and copy free AI prompts for writing, marketing, business, and more. Each prompt is tagged by task and difficulty, with a one-click copy button.",
+    primaryKeyword: "free AI prompt library",
+    supportingKeywords: [
+      "AI prompts copy paste",
+      "ChatGPT prompts library",
+      "free prompts for AI tools",
+      "AI prompt templates",
+      "ready-made AI prompts",
+    ],
+    intent: "Informational",
+    note: "Leads on 'Free' and 'Ready-Made' because the SERP is dominated by paid prompt packs. The differentiator is that every prompt is free, copyable, and links to the relevant guide.",
+  },
+  "ai-weekly-radar": {
+    title: "AI Weekly Radar: New Tools, Price Changes & Feature Launches",
+    brand: "omit",
+    description:
+      "A curated weekly digest of AI tool launches, pricing updates, and notable feature changes. Skimmable, honest, and written for small business owners.",
+    primaryKeyword: "AI tools this week",
+    supportingKeywords: [
+      "new AI tools weekly",
+      "AI tool news this week",
+      "AI weekly update",
+      "latest AI tools launched",
+      "AI tool price changes",
+    ],
+    intent: "Informational",
+    note: "Freshness-driven page. The title leads on the cadence (weekly) and the three things the page tracks. No count claims — the page has no archive yet.",
+  },
+
   // ---- AI Agents cluster -------------------------------------------------
   /**
    * The newest cluster, and the one whose SERP is least trustworthy: on the

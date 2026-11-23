@@ -17,7 +17,7 @@
 import type { PillarId } from "./pages";
 
 export type PillarIconId =
-  "compass" | "nib" | "briefcase" | "workflow" | "prompt" | "industry" | "agent" | "news";
+  "compass" | "nib" | "briefcase" | "workflow" | "prompt" | "industry" | "agent" | "news" | "toolkit";
 
 export interface PillarPresentation {
   /** Card-length description, for the homepage grid and archive headers. */
@@ -75,6 +75,12 @@ export const PILLAR_PRESENTATION: Readonly<Record<PillarId, PillarPresentation>>
       "Where AI fits in a specific line of work, from small business and e-commerce to marketing teams.",
     menu: "Marketing, e-commerce and small business",
     icon: "industry",
+  },
+  "free-ai-tools": {
+    summary:
+      "Free interactive tools to help you find the right AI tool, grab ready-made prompts, and stay up to date with what launched this week.",
+    menu: "Tool finder, prompt library and weekly radar",
+    icon: "toolkit",
   },
 };
 

@@ -11,3 +11,4 @@ export { default as AiEmailSavingsCalculator } from "./AiEmailSavingsCalculator.
 export { default as AiToolPricingTracker } from "./AiToolPricingTracker.astro";
 export { default as PlusVsApiCalculator } from "./PlusVsApiCalculator.astro";
 export { default as PromptCostCalculator } from "./PromptCostCalculator.astro";
+export { default as AiToolFinderQuiz } from "./AiToolFinderQuiz.astro";

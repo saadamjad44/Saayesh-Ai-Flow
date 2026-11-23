@@ -66,8 +66,9 @@ export const PILLAR_NAV: readonly NavSection[] = [
   section("AI Agents", "ai-agents"),
   section("AI Prompts", "ai-prompts"),
   section("By Industry", "ai-by-industry"),
+  section("Free AI Tools", "free-ai-tools"),
   /**
-   * Last on purpose. The menu is for topic discovery, and the seven hubs above
+   * Last on purpose. The menu is for topic discovery, and the eight hubs above
    * are where a visitor with a question should land; news is what they read
    * once they are already here, so it sits at the end rather than pushing an
    * evergreen hub down the list.
@@ -105,6 +106,9 @@ const MENU_LABELS: Partial<Record<PageId, string>> = {
   "best-ai-automation-tools": "Best AI Automation Tools",
   "small-business-ai-cost-calculator": "AI Cost Calculator",
   "ai-email-time-savings-calculator": "AI Email Savings Calculator",
+  "ai-tool-finder-quiz": "AI Tool Finder Quiz",
+  "prompt-library": "Prompt Library",
+  "ai-weekly-radar": "AI Weekly Radar",
 };
 
 /** Short nav label for a page: the override if there is one, else its title. */
@@ -149,7 +153,7 @@ export function getToolLinks(pillar: PillarId, builtPageIds: ReadonlySet<string>
 }
 
 /** Glyph ids ToolIcon.astro draws, on the same 24-grid as the pillar icons. */
-export type ToolIconId = "calculator" | "mail-clock";
+export type ToolIconId = "calculator" | "mail-clock" | "search" | "clipboard" | "radar";
 
 /** A free-tool nav entry: the link, plus how the header's Tools menu shows it. */
 export interface ToolNavLink extends NavLink {
@@ -171,6 +175,18 @@ const TOOL_MENU: Partial<Record<PageId, { blurb: string; icon: ToolIconId }>> = 
   "ai-email-time-savings-calculator": {
     blurb: "Estimate the hours an AI email workflow saves, net of review time.",
     icon: "mail-clock",
+  },
+  "ai-tool-finder-quiz": {
+    blurb: "Answer 4 questions and get a personalised AI tool recommendation.",
+    icon: "search",
+  },
+  "prompt-library": {
+    blurb: "Ready-made prompts organised by task — search, copy, paste.",
+    icon: "clipboard",
+  },
+  "ai-weekly-radar": {
+    blurb: "What launched, changed, or broke in AI tools this week.",
+    icon: "radar",
   },
 };
 
@@ -198,8 +214,10 @@ export const FOOTER_NAV: readonly { heading: string; links: readonly NavLink[] }
     heading: "Guides & tools",
     links: [
       link("All guides", "blog"),
+      link("AI Tool Finder Quiz", "ai-tool-finder-quiz"),
+      link("Prompt Library", "prompt-library"),
+      link("AI Weekly Radar", "ai-weekly-radar"),
       link("AI Cost Calculator", "small-business-ai-cost-calculator"),
-      link("AI Email Savings Calculator", "ai-email-time-savings-calculator"),
     ],
   },
   {

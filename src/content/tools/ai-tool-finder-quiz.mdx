@@ -1,0 +1,45 @@
+---
+pageId: ai-tool-finder-quiz
+title: "AI Tool Finder Quiz: Which AI Tool Is Right for You?"
+heading: Which AI Tool Is Right for You?
+description: Answer four quick questions and get a personalised AI tool recommendation based on your use case, budget and experience level. Free, no sign-up.
+publishedDate: 2026-11-23
+updatedDate: 2026-11-23
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: How does the quiz pick a tool?
+    answer: Each answer adds points to the tools in our catalogue. The tool with the highest total score for your combination of answers comes out on top. The scoring weights are based on our research into each tool's strengths and trade-offs — not on affiliate commissions or sponsorships.
+  - question: Why are there only seven tools?
+    answer: The quiz only recommends tools this site has reviewed. Including a tool we have not covered would mean linking you to someone else's review, which we cannot vouch for. As we publish more guides, we add more tools to the quiz.
+  - question: Is the quiz biased towards paid tools?
+    answer: No. The quiz includes free tiers for ChatGPT and Google Gemini, and the scoring gives a large bonus to free options when you select a free-only budget. If your answers point to a free tool, the quiz will say so.
+  - question: Does the quiz store my answers?
+    answer: No. Everything runs in your browser. No data is sent to a server, no cookies are set, and nothing is saved when you close the tab.
+  - question: What if I disagree with the recommendation?
+    answer: The quiz shows three options, not one. Read the trade-offs for each, follow the guide links, and decide for yourself. The quiz is a starting point, not a verdict.
+---
+
+import { AiToolFinderQuiz } from "@/components/tools";
+
+Not sure which AI tool to try first? This quiz narrows it down in under a minute.
+
+Answer four questions about what you need, what you can spend, how much experience you have, and what matters most to you. The quiz scores every tool this site has reviewed against your answers and shows the three best matches, with honest trade-offs and a link to the full guide for each one.
+
+No sign-up. No email. No data leaves your browser.
+
+<AiToolFinderQuiz />
+
+## How the scoring works
+
+Every tool in the quiz carries a set of scores — one for each possible answer across the four questions. When you pick "Writing blog posts, emails, or marketing copy" as your use case, tools that are strong at writing get more points; when you pick "Free only", tools with a capable free tier jump ahead.
+
+Your four answers produce a total score for each tool. The highest scorer is your top recommendation; the next two are your alternatives.
+
+The weights come from our own research into each tool — published guides on this site that you can read and verify. No tool is boosted because of an affiliate deal, and the scoring logic is [open in the source code](https://github.com/saadamjad44/SAF/blob/main/src/components/tools/tool-finder-quiz.ts) for anyone who wants to check.
+
+## What the quiz does not do
+
+It does not test the tools for you. The recommendations are based on published capabilities, pricing, and our research — not on automated benchmarks or live API calls. For hands-on comparisons, follow the guide links in your results.
+
+It also does not cover every AI tool that exists. It covers the ones this site has reviewed, which means the catalogue is small but every recommendation links to a guide you can actually read.
