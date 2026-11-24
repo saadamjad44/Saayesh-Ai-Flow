@@ -892,7 +892,7 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     title: "AI Tool Finder Quiz: Which AI Tool Is Right for You?",
     brand: "omit",
     description:
-      "Answer 4 quick questions about your use case, budget and experience. Get a personalised AI tool recommendation with alternatives and honest trade-offs.",
+      "Answer 4 quick questions about your role, budget and experience. Get a personalised AI tool recommendation with alternatives and honest trade-offs.",
     primaryKeyword: "which AI tool should I use",
     supportingKeywords: [
       "AI tool finder quiz",
