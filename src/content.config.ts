@@ -48,6 +48,8 @@ const entrySchema = (type: PageType) =>
       hasAffiliateLinks: z.boolean(),
       /** Date prices on the page were last checked, if the page states prices. */
       pricingVerifiedDate: z.coerce.date().optional(),
+      /** One-line TL;DR verdict shown as a bold box before the article body. */
+      verdict: z.string().trim().min(10).max(200).optional(),
       faq: z.array(faqItem).min(1).optional(),
     })
     .superRefine((entry, ctx) => {

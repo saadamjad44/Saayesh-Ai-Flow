@@ -28,6 +28,8 @@ import ToolPromoPanel from "@/components/home/ToolPromoPanel.astro";
 import PillarTile from "@/components/layout/PillarTile.astro";
 import SearchBox from "@/components/layout/SearchBox.astro";
 import StackFinder from "@/components/home/StackFinder.astro";
+import OverpayChecker from "@/components/home/OverpayChecker.astro";
+import PromptMadLibs from "@/components/home/PromptMadLibs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import {
   CALCULATOR_PREVIEW,
@@ -563,7 +565,15 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
   {/* ==== 3. What the pricing data shows =============================== */}
   <PricingFindings />
 
-  {/* ==== 4. Head-to-head comparisons ================================== */}
+  {/* ==== 4. Roast my AI stack ========================================= */}
+  <section class="theme-dark bg-night relative overflow-hidden border-t border-white/10">
+    <div aria-hidden="true" class="orb orb-sky -top-20 -left-20 size-[24rem] opacity-30"></div>
+    <div class="relative mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-20">
+      <OverpayChecker />
+    </div>
+  </section>
+
+  {/* ==== 5. Head-to-head comparisons ================================== */}
   {comparisons.length > 0 && (
     <section aria-labelledby="compare-heading" class="theme-dark bg-night relative overflow-hidden">
       <div aria-hidden="true" class="orb orb-violet -top-40 right-0 size-[30rem] opacity-40"></div>
@@ -619,7 +629,15 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
     </section>
   )}
 
-  {/* ==== 5. Latest guides ============================================= */}
+  {/* ==== 6. Prompt Mad-Libs ============================================ */}
+  <section class="theme-dark bg-night relative overflow-hidden border-t border-white/10">
+    <div aria-hidden="true" class="orb orb-violet -top-16 right-0 size-[22rem] opacity-25"></div>
+    <div class="relative mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-20">
+      <PromptMadLibs />
+    </div>
+  </section>
+
+  {/* ==== 7. Latest guides ============================================= */}
   <section aria-labelledby="latest-heading">
     <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
       <SectionHeading
