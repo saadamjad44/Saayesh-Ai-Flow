@@ -123,19 +123,61 @@ const comparisons = newestFirst
  * The masthead's "look inside" board: the newest guide from each category,
  * six at most — rendered as gradient UI cards with the pillar icon.
  */
-const showcase = categories
-  .map((category) => {
-    const article = newestFirst.find((a) => a.page.pillar === category.id);
-    if (!article) return undefined;
-    return { ...toArticleCard(article, categoryTitles), icon: category.icon };
-  })
-  .filter((item) => item !== undefined)
-  .slice(0, 6);
+const showcase = newestFirst.slice(0, 9).map((article) => {
+  const cat = categories.find((c) => c.id === article.page.pillar);
+  return {
+    ...toArticleCard(article, categoryTitles),
+    icon: cat?.icon ?? "getting-started",
+    pillar: article.page.pillar,
+  };
+});
+
+const FILTER_LABELS: Record<string, string> = {
+  "getting-started": "Getting Started",
+  "ai-writing-tools": "AI Writing",
+  "ai-business-tools": "Productivity",
+  "ai-automation": "Automation",
+  "ai-agents": "AI Agents",
+  "ai-prompts": "Prompts",
+  "ai-by-industry": "By Industry",
+  "free-ai-tools": "Free Tools",
+  "ai-news": "AI News",
+};
+
+const showcasePillars = categories.filter((cat) =>
+  showcase.some((s) => s.pillar === cat.id),
+);
 
 /** Every product in the pricing record, once, alphabetically. */
 const trackedTools = [...new Set(PRICING_ROWS.map((row) => row.tool))].sort((a, b) =>
   a.localeCompare(b),
 );
+
+/** Per-tool starting price for the ticker pills. */
+const toolPriceMap = new Map<string, { free: boolean; lowestPaid: number | null }>();
+for (const row of PRICING_ROWS) {
+  const existing = toolPriceMap.get(row.tool);
+  if (!existing) {
+    toolPriceMap.set(row.tool, {
+      free: row.monthlyUsd === 0,
+      lowestPaid: row.monthlyUsd && row.monthlyUsd > 0 ? row.monthlyUsd : null,
+    });
+  } else {
+    if (row.monthlyUsd === 0) existing.free = true;
+    if (row.monthlyUsd && row.monthlyUsd > 0 && (existing.lowestPaid === null || row.monthlyUsd < existing.lowestPaid)) {
+      existing.lowestPaid = row.monthlyUsd;
+    }
+  }
+}
+
+const tickerTools = trackedTools.map((name) => {
+  const data = toolPriceMap.get(name);
+  let price = "Custom";
+  if (data?.free && data.lowestPaid) price = `Free / $${data.lowestPaid}/mo`;
+  else if (data?.free) price = "Free";
+  else if (data?.lowestPaid) price = `$${data.lowestPaid}/mo`;
+  return { name, price, monogram: name[0].toUpperCase() };
+});
 
 const blogPath = getPage("blog").path;
 const trackerPath = getPage("ai-tool-pricing-tracker").path;
@@ -370,20 +412,31 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
               <span aria-hidden="true" class="size-2.5 rounded-full bg-[#ff5f57]"></span>
               <span aria-hidden="true" class="size-2.5 rounded-full bg-[#febc2e]"></span>
               <span aria-hidden="true" class="size-2.5 rounded-full bg-[#28c840]"></span>
-              <p class="ml-3 font-mono text-[0.6875rem] tracking-[0.06em] text-ink-500">
-                A look inside — the newest guide from each category
-              </p>
+              <nav class="ml-3 flex items-center gap-1.5 overflow-x-auto" aria-label="Filter guides">
+                <button type="button" class="showcase-tab showcase-tab--active" data-filter="all">All</button>
+                {showcasePillars.map((cat) => (
+                  <button type="button" class="showcase-tab" data-filter={cat.id}>
+                    {FILTER_LABELS[cat.id] ?? cat.title}
+                  </button>
+                ))}
+              </nav>
             </div>
-            <ul class="grid gap-3 p-3 sm:grid-cols-2 sm:p-4 lg:grid-cols-3">
-              {showcase.map((article) => (
-                <li>
+            <ul class="grid gap-3 p-3 sm:grid-cols-2 sm:p-4 lg:grid-cols-3" data-showcase-grid>
+              {showcase.map((article, index) => (
+                <li data-pillar={article.pillar} class:list={[index === 0 && "sm:col-span-2"]}>
                   <a
                     href={article.path}
                     class:list={[
                       "showcase-card group relative flex flex-col justify-between overflow-hidden rounded-xl border border-white/8 p-4 transition-[border-color,transform] duration-300 ease-ui hover:-translate-y-0.5 hover:border-white/20 motion-reduce:transition-none motion-reduce:hover:transform-none",
                       `tile-${article.icon}`,
+                      index === 0 && "sm:min-h-[11rem]",
                     ]}
                   >
+                    {index === 0 && (
+                      <span class="absolute top-3 right-3 rounded-full bg-amber-500/90 px-2.5 py-0.5 font-mono text-[0.5625rem] font-bold tracking-[0.08em] text-black uppercase">
+                        Editor's Pick
+                      </span>
+                    )}
                     <span class="flex items-center gap-2.5">
                       <PillarTile icon={article.icon} size="sm" class="size-7! rounded-lg!" />
                       {article.category && (
@@ -457,17 +510,27 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
           see the tracker
         </a>
       </p>
-      <div class="marquee">
+      <div class="marquee" data-ticker>
         <div class="marquee-track">
           {[0, 1].map((copy) => (
-            <ul class="flex shrink-0 items-center" aria-hidden={copy === 1 ? "true" : undefined}>
-              {trackedTools.map((tool) => (
-                <li class="flex items-center font-display text-xl font-bold tracking-[-0.02em] whitespace-nowrap text-ink-600 sm:text-2xl">
-                  {tool}
-                  <span
-                    aria-hidden="true"
-                    class="mx-7 size-1.5 rounded-full bg-[image:var(--gradient-brand)]"
-                  ></span>
+            <ul class="flex shrink-0 items-center gap-3" aria-hidden={copy === 1 ? "true" : undefined}>
+              {tickerTools.map((tool) => (
+                <li>
+                  <a
+                    href={trackerPath}
+                    class="ticker-pill group inline-flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-1.5 whitespace-nowrap transition-[border-color,background-color] duration-180 hover:border-indigo-400/30 hover:bg-white/[0.06]"
+                  >
+                    <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/10 font-mono text-[0.625rem] font-bold text-white">
+                      {tool.monogram}
+                    </span>
+                    <span class="font-display text-sm font-bold tracking-tight text-white">{tool.name}</span>
+                    <span class:list={[
+                      "font-mono text-[0.75rem] font-semibold tabular-nums",
+                      tool.price.startsWith("Free") ? "text-emerald-400" : "text-cyan-400",
+                    ]}>
+                      {tool.price}
+                    </span>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -565,11 +628,15 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
   {/* ==== 3. What the pricing data shows =============================== */}
   <PricingFindings />
 
-  {/* ==== 4. Roast my AI stack ========================================= */}
+  {/* ==== 4. Interactive AI widgets ===================================== */}
   <section class="theme-dark bg-night relative overflow-hidden border-t border-white/10">
     <div aria-hidden="true" class="orb orb-sky -top-20 -left-20 size-[24rem] opacity-30"></div>
-    <div class="relative mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-20">
-      <OverpayChecker />
+    <div aria-hidden="true" class="orb orb-violet top-[18rem] -right-16 size-[22rem] opacity-25"></div>
+    <div class="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
+      <div class="grid gap-10 lg:grid-cols-2 lg:items-start">
+        <OverpayChecker />
+        <PromptMadLibs />
+      </div>
     </div>
   </section>
 
@@ -629,15 +696,7 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
     </section>
   )}
 
-  {/* ==== 6. Prompt Mad-Libs ============================================ */}
-  <section class="theme-dark bg-night relative overflow-hidden border-t border-white/10">
-    <div aria-hidden="true" class="orb orb-violet -top-16 right-0 size-[22rem] opacity-25"></div>
-    <div class="relative mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-20">
-      <PromptMadLibs />
-    </div>
-  </section>
-
-  {/* ==== 7. Latest guides ============================================= */}
+  {/* ==== 6. Latest guides ============================================= */}
   <section aria-labelledby="latest-heading">
     <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
       <SectionHeading
@@ -675,6 +734,37 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
   .showcase-card {
     background: linear-gradient(145deg, rgb(255 255 255 / 0.06) 0%, rgb(255 255 255 / 0.02) 100%);
     min-height: 7.5rem;
+  }
+
+  /* Showcase filter tab pills in the macOS window header. */
+  .showcase-tab {
+    white-space: nowrap;
+    border-radius: 999px;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    background-color: transparent;
+    padding: 0.25rem 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-500);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-ui) var(--ease-ui),
+      border-color var(--duration-ui) var(--ease-ui),
+      color var(--duration-ui) var(--ease-ui);
+  }
+
+  .showcase-tab:hover {
+    border-color: rgb(255 255 255 / 0.2);
+    color: var(--color-ink-700);
+  }
+
+  .showcase-tab--active {
+    border-color: rgb(99 102 241 / 0.5);
+    background-color: rgb(99 102 241 / 0.15);
+    color: rgb(165 180 252);
   }
 
   /* The comparison rail's arrow buttons, on the dark band. */
@@ -725,6 +815,23 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
   }
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* Showcase filter tabs: show/hide cards by pillar. */
+  const showcaseGrid = document.querySelector<HTMLElement>("[data-showcase-grid]");
+  const filterTabs = document.querySelectorAll<HTMLButtonElement>(".showcase-tab");
+  if (showcaseGrid && filterTabs.length > 0) {
+    for (const tab of filterTabs) {
+      tab.addEventListener("click", () => {
+        const filter = tab.dataset.filter;
+        for (const t of filterTabs) t.classList.remove("showcase-tab--active");
+        tab.classList.add("showcase-tab--active");
+        for (const card of showcaseGrid.children as Iterable<HTMLElement>) {
+          card.style.display =
+            filter === "all" || card.dataset.pillar === filter ? "" : "none";
+        }
+      });
+    }
+  }
 
   /**
    * The masthead counters. Each figure is rendered at its final value by the

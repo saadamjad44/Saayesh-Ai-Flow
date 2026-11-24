@@ -267,15 +267,15 @@ html[data-theme="dark"],
   --color-accent-700: #ff9d57;
   --color-accent-800: #ffb680;
 
-  --color-paper: #070b1a;
-  --color-surface: #0e1530;
-  --color-surface-sunken: #050814;
+  --color-paper: #07090e;
+  --color-surface: #0d111a;
+  --color-surface-sunken: #050710;
 
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.35);
-  --shadow-card-hover: 0 2px 4px 0 rgb(0 0 0 / 0.3), 0 20px 44px -18px rgb(98 137 251 / 0.5);
-  --shadow-panel: 0 4px 30px -8px rgb(0 0 0 / 0.55);
-  --shadow-menu: 0 8px 40px -8px rgb(0 0 0 / 0.65);
-  --shadow-header: 0 1px 0 0 rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.55);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.4), inset 0 1px 0 0 rgb(255 255 255 / 0.06);
+  --shadow-card-hover: 0 2px 4px 0 rgb(0 0 0 / 0.3), 0 20px 44px -18px rgb(99 102 241 / 0.5), inset 0 1px 0 0 rgb(255 255 255 / 0.08);
+  --shadow-panel: 0 4px 30px -8px rgb(0 0 0 / 0.6), inset 0 1px 0 0 rgb(255 255 255 / 0.05);
+  --shadow-menu: 0 8px 40px -8px rgb(0 0 0 / 0.7), inset 0 1px 0 0 rgb(255 255 255 / 0.06);
+  --shadow-header: 0 1px 0 0 rgb(255 255 255 / 0.06), 0 8px 32px -12px rgb(0 0 0 / 0.6);
 
   --gradient-text: linear-gradient(100deg, #5cc8ff 0%, #8fa8ff 50%, #c0a3ff 100%);
 }
@@ -949,11 +949,12 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
 
   /* The dark band's own ground: deep navy with the aurora burnt into it. */
   .bg-night {
-    background-color: #070b1a;
+    background-color: #07090e;
     background-image:
-      radial-gradient(46rem 30rem at 8% -10%, rgb(14 165 233 / 0.28), transparent 60%),
-      radial-gradient(44rem 30rem at 96% 4%, rgb(124 58 237 / 0.34), transparent 62%),
-      radial-gradient(38rem 26rem at 50% 118%, rgb(63 102 241 / 0.28), transparent 62%);
+      radial-gradient(ellipse at 50% -5%, rgb(99 102 241 / 0.14), transparent 55%),
+      radial-gradient(46rem 30rem at 8% -10%, rgb(14 165 233 / 0.24), transparent 60%),
+      radial-gradient(44rem 30rem at 96% 4%, rgb(124 58 237 / 0.30), transparent 62%),
+      radial-gradient(38rem 26rem at 50% 118%, rgb(63 102 241 / 0.24), transparent 62%);
   }
 
   /* ---- Rails --------------------------------------------------------- */
