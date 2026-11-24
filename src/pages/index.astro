@@ -39,6 +39,7 @@ import SectionHeading from "@/components/home/SectionHeading.astro";
 import ToolPromoPanel from "@/components/home/ToolPromoPanel.astro";
 import PillarTile from "@/components/layout/PillarTile.astro";
 import SearchBox from "@/components/layout/SearchBox.astro";
+import StackFinder from "@/components/home/StackFinder.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { AUTHOR } from "@/config/author";
 import {
@@ -409,10 +410,17 @@ const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
         </div>
       </div>
 
+      {/* AI Stack Finder — the interactive hero widget. */}
+      <div class="rise relative z-10 mx-auto mt-9 max-w-2xl" style="--d:310ms">
+        <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-lg sm:p-6">
+          <StackFinder />
+        </div>
+      </div>
+
       {/* Every category, one tap away. */}
       <ul
         class="rise mx-auto mt-7 flex max-w-4xl flex-wrap justify-center gap-2.5"
-        style="--d:360ms"
+        style="--d:400ms"
       >
         {categories.map((category) => (
           <li>
@@ -435,7 +443,7 @@ const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
       {showcase.length > 0 && (
         <div
           class="rise relative mx-auto mt-16 max-w-5xl [perspective:1600px] sm:mt-20"
-          style="--d:460ms"
+          style="--d:500ms"
         >
           <div
             aria-hidden="true"
