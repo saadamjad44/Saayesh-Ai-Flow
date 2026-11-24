@@ -2,28 +2,20 @@
 /**
  * Homepage.
  *
- * Built as a sequence of distinct scenes rather than a stack of card grids:
+ * Five scenes, tight and interactive:
  *
- *   1. Masthead     dark, full-bleed, running up behind the floating navbar:
- *                   headline, a search bar inside a turning gradient ring, the
- *                   categories as pills, and a "look inside" board of real
- *                   guides that leans back and stands up as it scrolls in
- *   2. Marquee      the tools in the pricing record, sliding past
- *   3. Categories   a bento of the category artwork, uneven on purpose
- *   4. Featured     one magazine-size lead and a numbered list beside it
- *   5. Compare      the head-to-head guides, a dark rail
- *   6. Start here   four numbered routes in, joined by a line
- *   7. Pricing      what the pricing dataset shows
- *   8. Free tools   both calculators
- *   9. Latest       the newest guides
- *  10. Email, method, FAQ
+ *   1. Masthead     hero with Stack Finder widget, search bar, category pills,
+ *                   showcase board, stats counter, and a tool-name marquee
+ *   2. Free tools   calculator promo panels
+ *   3. Pricing      what the pricing dataset shows
+ *   4. Compare      the head-to-head guides, a dark rail
+ *   5. Latest       the newest guides
  *
  * Nothing on this page is hand-listed. Categories come from PILLAR_NAV
- * filtered to published pillars; featured and "start here" are editor's picks
- * in src/config/homepage.ts, typed to the registry; the board is the newest
- * guide of each category; the comparison rail is every guide whose id marks it
- * a head-to-head; the marquee is the pricing dataset's own tool names; and
- * each calculator preview is computed by that calculator's own function.
+ * filtered to published pillars; the board is the newest guide of each
+ * category; the comparison rail is every guide whose id marks it a head-to-
+ * head; the marquee is the pricing dataset's own tool names; and each
+ * calculator preview is computed by that calculator's own function.
  *
  * Every figure shown is counted or computed at build time. Deliberately
  * absent: visitor counts, "most popular" claims, review scores, testimonials,
@@ -32,8 +24,6 @@
 import { Image } from "astro:assets";
 
 import ArticleCard from "@/components/content/ArticleCard.astro";
-import FaqSection from "@/components/content/FaqSection.astro";
-import NewsletterSignup from "@/components/forms/NewsletterSignup.astro";
 import PricingFindings from "@/components/home/PricingFindings.astro";
 import SectionHeading from "@/components/home/SectionHeading.astro";
 import ToolPromoPanel from "@/components/home/ToolPromoPanel.astro";
@@ -41,21 +31,17 @@ import PillarTile from "@/components/layout/PillarTile.astro";
 import SearchBox from "@/components/layout/SearchBox.astro";
 import StackFinder from "@/components/home/StackFinder.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { AUTHOR } from "@/config/author";
 import {
   CALCULATOR_PREVIEW,
   FEATURED_GUIDES,
-  FEATURED_GUIDES_INTRO,
-  HOME_FAQ,
   LATEST_GUIDE_COUNT,
-  START_HERE,
   TOOL_PROMOS,
 } from "@/config/homepage";
 import { getMedia, isMediaId } from "@/config/media";
 import { PILLAR_NAV, menuLabel } from "@/config/navigation";
 import { getPage, type PageId } from "@/config/pages";
 import { getPillarPresentation } from "@/config/pillars";
-import { INTEGRATIONS, SITE } from "@/config/site";
+import { SITE } from "@/config/site";
 import {
   computeTotals,
   formatMoney,
@@ -112,24 +98,6 @@ const categories = PILLAR_NAV.filter((entry) => publishedPillarIds.has(entry.pil
   },
 );
 
-/**
- * The bento's column spans, on a four-column grid.
- *
- * A repeating wide/narrow rhythm, so the grid reads as composed rather than as
- * eight equal boxes; whatever the last row has spare is given to the last
- * card, so the grid closes flush however many categories are published.
- */
-const BENTO_RHYTHM = [2, 1, 1, 1, 1, 2];
-const bentoSpans = categories.map((_, index) => BENTO_RHYTHM[index % BENTO_RHYTHM.length] ?? 1);
-const bentoSpare = (4 - (bentoSpans.reduce((sum, span) => sum + span, 0) % 4)) % 4;
-if (bentoSpans.length > 0) {
-  bentoSpans[bentoSpans.length - 1] = Math.min(
-    4,
-    (bentoSpans[bentoSpans.length - 1] ?? 1) + bentoSpare,
-  );
-}
-const SPAN_CLASS = ["", "", "lg:col-span-2", "lg:col-span-3", "lg:col-span-4"];
-
 /** Articles by registry id, for the editor's picks below. */
 const articlesById = new Map(articles.map((article) => [article.page.id, article]));
 
@@ -142,17 +110,7 @@ function pick(id: PageId) {
   return toArticleCard(article, categoryTitles);
 }
 
-const [featuredLead, ...featuredRest] = FEATURED_GUIDES.map(pick);
-const featuredArt = featuredLead ? getMedia(featuredLead.mediaId) : undefined;
-
-const startHere = START_HERE.map((path) => ({
-  ...path,
-  hub: getPage(path.pillar),
-  hubTitle: categoryTitles.get(path.pillar) ?? getPage(path.pillar).title,
-  guidePage: getPage(path.guide),
-  guideTitle: articlesById.get(path.guide)?.entry.data.title ?? getPage(path.guide).title,
-  icon: getPillarPresentation(path.pillar).icon,
-}));
+const featuredPicks = FEATURED_GUIDES.map(pick);
 
 const latest = newestFirst
   .slice(0, LATEST_GUIDE_COUNT)
@@ -187,7 +145,6 @@ const trackedTools = [...new Set(PRICING_ROWS.map((row) => row.tool))].sort((a, 
 
 const heroArt = getMedia("home");
 const blogPath = getPage("blog").path;
-const aboutPath = getPage("about").path;
 const trackerPath = getPage("ai-tool-pricing-tracker").path;
 
 /**
@@ -284,34 +241,10 @@ const EMAIL_PREVIEW_ROWS = [
   },
 ];
 
-/**
- * How the guides are made, summarised from the About + Editorial Process page.
- * Every line restates something that page already commits to.
- */
-const METHOD = [
-  {
-    title: "Research you can check",
-    body: "Guides are written from official product documentation, pricing pages, and product announcements, summarised in our own words with the sources linked.",
-  },
-  {
-    title: "Testing is labelled",
-    body: "A tool is only called tested when it has actually been tested. Research-based guides say so on the page and carry no scores.",
-  },
-  {
-    title: "Dates are visible",
-    body: "Every guide shows when it was last updated, and where it quotes prices, the date those prices were checked on the vendor's own page.",
-  },
-  {
-    title: "Affiliate links are disclosed",
-    body: "Some pages carry affiliate links and say so before the recommendation. Commissions do not decide what gets recommended or how it ranks.",
-  },
-];
-
 const ARROW =
   "M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z";
 
 const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`;
-const two = (index: number) => String(index + 1).padStart(2, "0");
 
 /** The dark wash under white type on a photograph. Fixed in both themes. */
 const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
@@ -333,9 +266,7 @@ const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
     ),
     itemListSchema({
       name: `Featured guides on ${SITE.name}`,
-      items: [featuredLead, ...featuredRest]
-        .filter((article) => article !== undefined)
-        .map((article) => ({ name: article.title, path: article.path })),
+      items: featuredPicks.map((article) => ({ name: article.title, path: article.path })),
     }),
   ]}
 >
@@ -569,297 +500,7 @@ const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
     </div>
   </section>
 
-  {/* ==== 3. Categories — the bento ==================================== */}
-  <section id="categories" aria-labelledby="categories-heading" class="scroll-mt-24">
-    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
-      <div class="mx-auto max-w-3xl text-center" data-reveal>
-        <p class="eyebrow eyebrow-rule eyebrow-center">Categories</p>
-        <h2 id="categories-heading" class="section-title mt-4">
-          AI tools for small business, <span class="text-gradient">by category</span>
-        </h2>
-        <p class="type-lead mt-5">
-          Different ways into the same question: which tool is worth it for the job in front of you.
-        </p>
-      </div>
-
-      <ul class="mt-14 grid auto-rows-[17rem] gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-        {categories.map((category, index) => (
-          <li
-            class:list={[
-              "group spotlight relative isolate flex flex-col justify-end overflow-hidden rounded-panel p-6 shadow-panel ring-1 ring-black/5 transition-transform duration-300 ease-ui hover:-translate-y-1.5 motion-reduce:transition-none motion-reduce:hover:transform-none",
-              SPAN_CLASS[bentoSpans[index] ?? 1],
-            ]}
-            style={stagger(index, 60)}
-            data-reveal
-          >
-            {category.art && (
-              <Image
-                src={category.art.src}
-                alt=""
-                widths={[480, 768, 1024]}
-                sizes="(min-width: 1024px) 40rem, (min-width: 640px) 50vw, 92vw"
-                loading="lazy"
-                decoding="async"
-                class="absolute inset-0 -z-20 size-full object-cover transition-transform duration-[900ms] ease-ui group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-              />
-            )}
-            <div aria-hidden="true" class:list={["absolute inset-0 -z-10", SHADE]}></div>
-
-            <div class="absolute top-5 right-5 left-5 flex items-start justify-between">
-              <PillarTile icon={category.icon} size="lg" />
-              <span class="rounded-full bg-black/45 px-2.5 py-1 font-mono text-[0.625rem] font-semibold tracking-[0.08em] text-white uppercase backdrop-blur-md">
-                {category.count} {category.count === 1 ? "guide" : "guides"}
-              </span>
-            </div>
-
-            <h3 class="font-display text-[1.375rem] leading-tight font-bold tracking-[-0.025em] text-white">
-              <a href={category.href} class="stretch-target">
-                {category.title}
-              </a>
-            </h3>
-            <p class="mt-2 line-clamp-2 max-w-xl text-[0.9375rem] leading-relaxed text-white/80">
-              {category.summary}
-            </p>
-            <span
-              aria-hidden="true"
-              class="mt-4 inline-flex translate-y-1 items-center gap-1.5 text-sm font-bold text-white opacity-70 transition-[opacity,transform] duration-300 ease-ui group-hover:translate-y-0 group-hover:opacity-100 motion-reduce:transition-none"
-            >
-              Explore
-              <svg viewBox="0 0 20 20" fill="currentColor" class="size-4">
-                <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
-              </svg>
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  {/* ==== 4. Featured — the magazine spread ============================= */}
-  <section aria-labelledby="featured-heading" class="border-y border-ink-200 bg-surface">
-    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
-      <SectionHeading
-        eyebrow="Editor's picks"
-        heading="Featured guides"
-        id="featured-heading"
-        intro={FEATURED_GUIDES_INTRO}
-        link={{ href: blogPath, label: "All guides" }}
-      />
-
-      <div class="mt-12 grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-12">
-        {featuredLead && (
-          <article
-            class="group spotlight relative isolate flex min-h-[26rem] flex-col justify-end overflow-hidden rounded-panel p-7 shadow-panel sm:p-9 lg:min-h-[34rem]"
-            data-reveal
-          >
-            {featuredArt && (
-              <Image
-                src={featuredArt.src}
-                alt={featuredArt.alt}
-                widths={[640, 960, 1280]}
-                sizes="(min-width: 1024px) 42rem, 92vw"
-                loading="lazy"
-                decoding="async"
-                class="absolute inset-0 -z-20 size-full object-cover transition-transform duration-[900ms] ease-ui group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-              />
-            )}
-            <div aria-hidden="true" class:list={["absolute inset-0 -z-10", SHADE]}></div>
-
-            <p class="flex items-center gap-3">
-              <span class="badge badge-solid">Start with this one</span>
-              {featuredLead.category && (
-                <a
-                  href={featuredLead.category.path}
-                  class="relative z-10 font-mono text-[0.6875rem] font-semibold tracking-[0.08em] text-white/85 uppercase hover:text-white"
-                >
-                  {featuredLead.category.title}
-                </a>
-              )}
-            </p>
-            <h3 class="mt-4 max-w-2xl font-display text-3xl leading-[1.08] font-bold tracking-[-0.035em] text-balance text-white sm:text-[2.5rem]">
-              <a href={featuredLead.path} class="stretch-target">
-                {featuredLead.title}
-              </a>
-            </h3>
-            <p class="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-white/80">
-              {featuredLead.description}
-            </p>
-            <p class="mt-6 flex items-center gap-3 font-mono text-[0.6875rem] tracking-[0.06em] text-white/65 uppercase">
-              <time datetime={isoDate(featuredLead.updated)}>
-                {formatShortDate(featuredLead.updated)}
-              </time>
-              <span aria-hidden="true">&middot;</span>
-              <span>{featuredLead.minutes} min read</span>
-            </p>
-          </article>
-        )}
-
-        <ol class="flex flex-col">
-          {featuredRest.map((article, index) => (
-            <li
-              class="group relative flex items-center gap-5 border-b border-ink-200 py-6 first:pt-0 last:border-b-0"
-              style={stagger(index + 1)}
-              data-reveal
-            >
-              <span
-                aria-hidden="true"
-                class="text-gradient w-14 shrink-0 font-display text-5xl leading-none font-bold tracking-[-0.05em] opacity-60 transition-opacity duration-300 ease-ui group-hover:opacity-100 motion-reduce:transition-none"
-              >
-                {two(index + 1)}
-              </span>
-              <div class="min-w-0 flex-1">
-                {article.category && (
-                  <a href={article.category.path} class="eyebrow relative z-10">
-                    {article.category.title}
-                  </a>
-                )}
-                <h3 class="mt-1.5 font-display text-lg leading-snug font-bold tracking-[-0.02em] text-ink-900 sm:text-xl">
-                  <a
-                    href={article.path}
-                    class="stretch-target transition-colors duration-180 ease-ui group-hover:text-brand-700 motion-reduce:transition-none"
-                  >
-                    {article.title}
-                  </a>
-                </h3>
-                <p class="mt-1.5 font-mono text-[0.6875rem] tracking-[0.04em] text-ink-500 uppercase">
-                  {article.minutes} min read
-                </p>
-              </div>
-              {article.articleMedia && (
-                <Image
-                  src={article.articleMedia.src}
-                  alt=""
-                  widths={[160, 320]}
-                  sizes="7rem"
-                  loading="lazy"
-                  decoding="async"
-                  class="hidden aspect-[4/3] w-28 shrink-0 rounded-xl object-cover transition-transform duration-500 ease-ui group-hover:scale-105 group-hover:-rotate-2 sm:block motion-reduce:transition-none motion-reduce:group-hover:transform-none"
-                />
-              )}
-            </li>
-          ))}
-        </ol>
-      </div>
-    </div>
-  </section>
-
-  {/* ==== 5. Head-to-head comparisons ================================== */}
-  {comparisons.length > 0 && (
-    <section aria-labelledby="compare-heading" class="theme-dark bg-night relative overflow-hidden">
-      <div aria-hidden="true" class="orb orb-violet -top-40 right-0 size-[30rem] opacity-40"></div>
-      {/* A watermark, not a word: the section is about one thing against another. */}
-      <p
-        aria-hidden="true"
-        class="pointer-events-none absolute -top-10 -right-6 font-display text-[16rem] leading-none font-bold tracking-[-0.06em] text-white/[0.04] select-none sm:text-[24rem]"
-      >
-        VS
-      </p>
-
-      <div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
-        <SectionHeading
-          eyebrow="Head to head"
-          heading="Choosing between two? Compare them"
-          id="compare-heading"
-          intro="Side-by-side guides for the tools people actually weigh against each other — what each costs, what each is for, and which one fits which kind of business."
-        >
-          <div class="flex gap-2" data-rail-controls hidden>
-            <button type="button" class="rail-button" data-rail-prev aria-controls="compare-rail">
-              <span class="sr-only">Scroll comparisons back</span>
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                class="size-5 rotate-180"
-              >
-                <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
-              </svg>
-            </button>
-            <button type="button" class="rail-button" data-rail-next aria-controls="compare-rail">
-              <span class="sr-only">Scroll comparisons forward</span>
-              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-                <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
-              </svg>
-            </button>
-          </div>
-        </SectionHeading>
-
-        <ul
-          id="compare-rail"
-          class="rail mt-10"
-          tabindex="0"
-          aria-label="Comparison guides"
-          data-rail
-        >
-          {comparisons.map((article) => (
-            <li class="flex w-[18rem] sm:w-[22rem]">
-              <ArticleCard article={article} variant="compare" as="h3" class="spotlight w-full" />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  )}
-
-  {/* ==== 6. Start here — four steps on a line ========================== */}
-  <section aria-labelledby="start-here-heading">
-    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
-      <div class="mx-auto max-w-3xl text-center" data-reveal>
-        <p class="eyebrow eyebrow-rule eyebrow-center">Start here</p>
-        <h2 id="start-here-heading" class="section-title mt-4">
-          Where do you want <span class="text-gradient">to begin?</span>
-        </h2>
-        <p class="type-lead mt-5">
-          Four ways in. Each one opens a category and points at the guide most people read first.
-        </p>
-      </div>
-
-      <ol class="steps relative mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {startHere.map((path, index) => (
-          <li
-            class:list={["start-card group relative flex flex-col", `tile-${path.icon}`]}
-            style={stagger(index, 110)}
-            data-reveal
-          >
-            {/* The node on the line. */}
-            <div class="relative z-10 mb-6 flex items-center gap-3">
-              <span class="step-node flex size-12 items-center justify-center rounded-full bg-[image:var(--gradient-cta)] font-display text-base font-bold text-white shadow-[var(--shadow-glow)] ring-4 ring-paper transition-transform duration-300 ease-ui group-hover:scale-110 motion-reduce:transition-none">
-                {two(index)}
-              </span>
-            </div>
-
-            <div class="card spotlight flex flex-1 flex-col overflow-hidden p-6 transition-[transform,box-shadow,border-color] duration-300 ease-ui group-hover:-translate-y-1.5 group-hover:border-brand-300 group-hover:shadow-[var(--shadow-card-hover)] motion-reduce:transition-none motion-reduce:group-hover:transform-none">
-              <PillarTile icon={path.icon} />
-              <h3 class="mt-5 font-display text-xl leading-snug font-bold tracking-[-0.025em] text-ink-900">
-                “{path.question}”
-              </h3>
-              <p class="mt-2.5 flex-1 text-[0.9375rem] leading-relaxed text-ink-600">
-                {path.summary}
-              </p>
-              <div class="relative z-10 mt-6 space-y-2.5 border-t border-ink-100 pt-4 text-sm">
-                <a href={path.hub.path} class="link-arrow">
-                  {path.hubTitle}
-                  <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
-                  </svg>
-                </a>
-                <a
-                  href={path.guidePage.path}
-                  class="block text-ink-500 underline decoration-ink-300 underline-offset-2 transition-colors duration-180 ease-ui hover:text-brand-700 hover:decoration-current motion-reduce:transition-none"
-                >
-                  Start with: {path.guideTitle}
-                </a>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  {/* ==== 7. What the pricing data shows =============================== */}
-  <PricingFindings />
-
-  {/* ==== 8. Free tools ================================================ */}
+  {/* ==== 2. Free tools ================================================ */}
   {promos.length > 0 && (
     <div id="free-tools" class="scroll-mt-24 border-b border-ink-200 bg-surface">
       <div class="mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-6 sm:py-28">
@@ -944,7 +585,66 @@ const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
     </div>
   )}
 
-  {/* ==== 9. Latest guides ============================================= */}
+  {/* ==== 3. What the pricing data shows =============================== */}
+  <PricingFindings />
+
+  {/* ==== 4. Head-to-head comparisons ================================== */}
+  {comparisons.length > 0 && (
+    <section aria-labelledby="compare-heading" class="theme-dark bg-night relative overflow-hidden">
+      <div aria-hidden="true" class="orb orb-violet -top-40 right-0 size-[30rem] opacity-40"></div>
+      <p
+        aria-hidden="true"
+        class="pointer-events-none absolute -top-10 -right-6 font-display text-[16rem] leading-none font-bold tracking-[-0.06em] text-white/[0.04] select-none sm:text-[24rem]"
+      >
+        VS
+      </p>
+
+      <div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
+        <SectionHeading
+          eyebrow="Head to head"
+          heading="Choosing between two? Compare them"
+          id="compare-heading"
+          intro="Side-by-side guides for the tools people actually weigh against each other — what each costs, what each is for, and which one fits which kind of business."
+        >
+          <div class="flex gap-2" data-rail-controls hidden>
+            <button type="button" class="rail-button" data-rail-prev aria-controls="compare-rail">
+              <span class="sr-only">Scroll comparisons back</span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class="size-5 rotate-180"
+              >
+                <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
+              </svg>
+            </button>
+            <button type="button" class="rail-button" data-rail-next aria-controls="compare-rail">
+              <span class="sr-only">Scroll comparisons forward</span>
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                <path fill-rule="evenodd" d={ARROW} clip-rule="evenodd"></path>
+              </svg>
+            </button>
+          </div>
+        </SectionHeading>
+
+        <ul
+          id="compare-rail"
+          class="rail mt-10"
+          tabindex="0"
+          aria-label="Comparison guides"
+          data-rail
+        >
+          {comparisons.map((article) => (
+            <li class="flex w-[18rem] sm:w-[22rem]">
+              <ArticleCard article={article} variant="compare" as="h3" class="spotlight w-full" />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* ==== 5. Latest guides ============================================= */}
   <section aria-labelledby="latest-heading">
     <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
       <SectionHeading
@@ -964,77 +664,6 @@ const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
     </div>
   </section>
 
-  {/* ==== 10. Email ==================================================== */}
-  {/* No count, no open rate, no "join N readers": the site has no such figure. */}
-  {INTEGRATIONS.newsletterEndpoint.length > 0 && (
-    <div class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 sm:pb-28">
-      <div data-reveal>
-        <NewsletterSignup location="homepage" />
-      </div>
-    </div>
-  )}
-
-  {/* ==== 11. How these guides are made ================================ */}
-  <section aria-labelledby="method-heading" class="border-t border-ink-200 bg-surface">
-    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
-      <div class="grid gap-12 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-20">
-        <div class="lg:sticky lg:top-28 lg:self-start" data-reveal>
-          <p class="eyebrow eyebrow-rule">How we work</p>
-          <h2 id="method-heading" class="section-title mt-4">
-            Why trust <span class="text-gradient">these guides</span>
-          </h2>
-          <p class="type-body mt-5">
-            {SITE.name} is written and researched by{" "}
-            <a
-              href={AUTHOR.path}
-              class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 transition-colors duration-180 ease-ui hover:text-brand-800 hover:decoration-current motion-reduce:transition-none"
-            >
-              {AUTHOR.name}
-            </a>
-            . There is no team behind it, so the method is published instead: what the guides are
-            based on, what they will not claim, and how the site makes money.
-          </p>
-          <a href={aboutPath} class="btn btn-primary mt-7">
-            Read the editorial process
-          </a>
-        </div>
-
-        <ol class="relative space-y-5">
-          {METHOD.map((item, index) => (
-            <li
-              class="card spotlight group flex gap-5 overflow-hidden p-6 transition-[transform,border-color] duration-300 ease-ui hover:translate-x-2 hover:border-brand-300 sm:gap-7 sm:p-8 motion-reduce:transition-none motion-reduce:hover:transform-none"
-              style={stagger(index)}
-              data-reveal
-            >
-              <span
-                aria-hidden="true"
-                class="text-gradient font-display text-5xl leading-none font-bold tracking-[-0.05em] sm:text-6xl"
-              >
-                {two(index)}
-              </span>
-              <div>
-                <h3 class="font-display text-xl font-bold tracking-[-0.025em] text-ink-900">
-                  {item.title}
-                </h3>
-                <p class="mt-2 leading-relaxed text-ink-600">{item.body}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </div>
-  </section>
-
-  {/* ==== 12. Questions people arrive with ============================== */}
-  <div class="border-t border-ink-200">
-    <div class="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-12">
-      <FaqSection
-        items={HOME_FAQ}
-        heading="Common questions about AI tools for small business"
-        id="home-faq-heading"
-      />
-    </div>
-  </div>
 </BaseLayout>
 
 <style>
@@ -1045,17 +674,6 @@ const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.045em;
-    color: var(--color-ink-900);
-    text-wrap: balance;
-  }
-
-  /* Centred section titles, a step above the shared section heading. */
-  .section-title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.04em;
     color: var(--color-ink-900);
     text-wrap: balance;
   }
@@ -1071,20 +689,6 @@ const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
     opacity: 0.55;
     object-position: 100% 30%;
     mask-image: radial-gradient(70% 75% at 78% 30%, #000 20%, transparent 78%);
-  }
-
-  /* The line the four steps sit on, from the first node to the last. */
-  @media (min-width: 1024px) {
-    .steps::before {
-      content: "";
-      position: absolute;
-      top: 1.5rem;
-      right: 12.5%;
-      left: 1.5rem;
-      height: 2px;
-      background-image: var(--gradient-brand);
-      opacity: 0.45;
-    }
   }
 
   /* The comparison rail's arrow buttons, on the dark band. */
