@@ -54,7 +54,7 @@ import { getMedia, isMediaId } from "@/config/media";
 import { PILLAR_NAV, menuLabel } from "@/config/navigation";
 import { getPage, type PageId } from "@/config/pages";
 import { getPillarPresentation } from "@/config/pillars";
-import { SITE } from "@/config/site";
+import { INTEGRATIONS, SITE } from "@/config/site";
 import {
   computeTotals,
   formatMoney,
@@ -958,11 +958,13 @@ const SHADE = "bg-gradient-to-t from-[#060918] via-[#060918]/75 to-[#060918]/5";
 
   {/* ==== 10. Email ==================================================== */}
   {/* No count, no open rate, no "join N readers": the site has no such figure. */}
-  <div class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 sm:pb-28">
-    <div data-reveal>
-      <NewsletterSignup location="homepage" />
+  {INTEGRATIONS.newsletterEndpoint.length > 0 && (
+    <div class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 sm:pb-28">
+      <div data-reveal>
+        <NewsletterSignup location="homepage" />
+      </div>
     </div>
-  </div>
+  )}
 
   {/* ==== 11. How these guides are made ================================ */}
   <section aria-labelledby="method-heading" class="border-t border-ink-200 bg-surface">
