@@ -305,20 +305,21 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
 >
   {/* ==== 1. Masthead ================================================= */}
   <section class="hero relative isolate -mt-[4.75rem] overflow-hidden bg-white pt-[4.75rem]">
-    {/* Full-bleed hero video, with a white overlay so the headline reads clearly. */}
-    <video
-      class="absolute inset-0 -z-20 h-full w-full object-cover"
-      src="/hero-video.mp4"
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="metadata"
-      aria-hidden="true"
-    ></video>
+    {/* Hero video, bounded to the search-bar area and faded into white. */}
+    <div aria-hidden="true" class="absolute top-0 right-0 left-0 -z-20 h-[38rem] overflow-hidden">
+      <video
+        class="h-full w-full object-cover opacity-50"
+        src="/hero-video.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+      ></video>
+    </div>
     <div
       aria-hidden="true"
-      class="absolute inset-0 -z-10 bg-white/80"
+      class="absolute top-0 right-0 left-0 -z-10 h-[38rem] bg-gradient-to-b from-white/60 via-white/80 to-white"
     ></div>
     <div class="relative mx-auto max-w-6xl px-4 pt-14 pb-10 text-center sm:px-6 sm:pt-20 lg:pt-24">
       <p class="rise" style="--d:0ms">
