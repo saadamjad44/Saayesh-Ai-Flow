@@ -11,7 +11,7 @@ import { ROLES, BUDGETS } from "./stack-finder-data";
 
 <div class="stack-finder mx-auto w-full max-w-2xl" data-stack-finder>
   {/* ---- Heading ---- */}
-  <p class="mb-5 text-center font-mono text-[0.6875rem] font-semibold tracking-[0.1em] text-sky-300 uppercase">
+  <p class="mb-5 text-center font-mono text-[0.6875rem] font-semibold tracking-[0.1em] text-[#ffa36a] uppercase">
     30-second AI stack finder
   </p>
 
@@ -95,12 +95,12 @@ import { ROLES, BUDGETS } from "./stack-finder-data";
         .map(
           (tool) => `
         <a href="${tool.guide}"
-           class="sf-card group relative flex flex-col rounded-xl border border-white/10 bg-white/[0.04] p-3.5 transition-[border-color,background-color,transform] duration-180 ease-out hover:-translate-y-0.5 hover:border-sky-400/40 hover:bg-white/[0.07]">
+           class="sf-card group relative flex flex-col rounded-xl border border-white/10 bg-white/[0.04] p-3.5 transition-[border-color,background-color,transform] duration-180 ease-out hover:-translate-y-0.5 hover:border-[#ff7733]/50 hover:bg-white/[0.07]">
           <span class="text-[0.9375rem] font-bold leading-tight text-white">${tool.name}</span>
           <span class="mt-0.5 text-[0.75rem] text-ink-500">${tool.plan}</span>
-          <span class="mt-auto pt-2 font-mono text-lg font-bold tracking-tight text-sky-300">${tool.price}</span>
+          <span class="mt-auto pt-2 font-mono text-lg font-bold tracking-tight text-[#ff7733]">${tool.price}</span>
           <span class="mt-1 line-clamp-2 text-[0.75rem] leading-snug text-ink-600">${tool.use}</span>
-          <span class="mt-2 inline-flex items-center gap-1 text-[0.6875rem] font-semibold text-sky-400 opacity-0 transition-opacity duration-180 group-hover:opacity-100">
+          <span class="mt-2 inline-flex items-center gap-1 text-[0.6875rem] font-semibold text-[#ffa36a] opacity-0 transition-opacity duration-180 group-hover:opacity-100">
             Read guide <span aria-hidden="true">&rarr;</span>
           </span>
         </a>`,
@@ -159,10 +159,10 @@ import { ROLES, BUDGETS } from "./stack-finder-data";
     transform: translateY(-1px);
   }
   .sf-pill--active {
-    border-color: rgb(56 189 248 / 0.5) !important;
-    background: rgb(56 189 248 / 0.12) !important;
-    color: rgb(186 230 253) !important;
-    box-shadow: 0 0 12px -2px rgb(56 189 248 / 0.3);
+    border-color: rgb(255 119 51 / 0.5) !important;
+    background: rgb(255 119 51 / 0.15) !important;
+    color: #ffc9a3 !important;
+    box-shadow: 0 0 12px -2px rgb(255 119 51 / 0.4);
   }
 
   @media (prefers-reduced-motion: reduce) {

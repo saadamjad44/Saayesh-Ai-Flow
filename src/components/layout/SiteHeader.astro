@@ -641,7 +641,7 @@ const navDivider =
       const isDark = document.documentElement.getAttribute("data-theme") === "dark";
       toggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
       const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-      if (meta) meta.content = isDark ? "#070b1a" : "#f6f8fd";
+      if (meta) meta.content = isDark ? "#2f2504" : "#ffffff";
     };
 
     toggle.addEventListener("click", () => {

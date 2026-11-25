@@ -106,62 +106,62 @@
  * ------------------------------------------------------------------------- */
 @theme {
   /*
-   * Neutrals: a cool navy-slate ramp. The light end is the page ground, card
-   * edges and hairlines; the dark end is the logo's own navy, so headings read
-   * as ink rather than as black.
+   * Neutrals: a warm brown ramp ending at the brand brown #2F2504. The light
+   * end is the page ground, card edges and hairlines; the dark end is the
+   * brand brown so headings read as warm ink rather than as flat black.
    */
-  --color-ink-50: #f4f6fb;
-  --color-ink-100: #eaeef6;
-  --color-ink-200: #dde3ee; /* hairline borders */
-  --color-ink-300: #c2cbdb; /* strong borders, form outlines */
-  --color-ink-400: #95a0b5; /* DECORATIVE ONLY — icons and rules, never text */
-  --color-ink-500: #5d6880; /* 5.6:1 on white — metadata, captions, placeholders */
-  --color-ink-600: #455068; /* 8.1:1 on white — body copy */
-  --color-ink-700: #2f3950; /* 11.5:1 on white — default body colour */
-  --color-ink-800: #1b2338;
-  --color-ink-900: #0f1629; /* 17.6:1 on white — headings */
-  --color-ink-950: #080c1a;
+  --color-ink-50: #faf7f2;
+  --color-ink-100: #f3eee4;
+  --color-ink-200: #e5dcc7; /* hairline borders */
+  --color-ink-300: #c9b894; /* strong borders, form outlines */
+  --color-ink-400: #9c8650; /* DECORATIVE ONLY — icons and rules, never text */
+  --color-ink-500: #6e5b30; /* 5.4:1 on white — metadata, captions, placeholders */
+  --color-ink-600: #4f3f20; /* 8.6:1 on white — body copy */
+  --color-ink-700: #3f3110; /* 11.4:1 on white — default body colour */
+  --color-ink-800: #342608;
+  --color-ink-900: #2f2504; /* the brand brown — headings */
+  --color-ink-950: #1e1803;
 
-  /* Brand — the logo's electric blue. 700 carries links and solid buttons
-   * (8.2:1 on white); 600 is the focus ring (6.4:1). */
-  --color-brand-50: #eef3ff;
-  --color-brand-100: #dde7ff;
-  --color-brand-200: #c0d2ff;
-  --color-brand-300: #94b2ff;
-  --color-brand-400: #6289fb;
-  --color-brand-500: #3f66f1; /* 4.8:1 on white */
-  --color-brand-600: #2c4ee0; /* 6.4:1 on white — focus rings, small accents */
-  --color-brand-700: #2340c4; /* 8.2:1 on white — links */
-  --color-brand-800: #1f37a0;
-  --color-brand-900: #1c3180;
+  /* Brand — #FF7733 orange. 700 carries links and solid buttons
+   * (4.9:1 on white); 600 is the focus ring (3.8:1). */
+  --color-brand-50: #fff2ea;
+  --color-brand-100: #ffe4d1;
+  --color-brand-200: #ffc9a3;
+  --color-brand-300: #ffa86b;
+  --color-brand-400: #ff8f4a;
+  --color-brand-500: #ff7733; /* the brand orange */
+  --color-brand-600: #e65e1a;
+  --color-brand-700: #c44e13; /* 4.9:1 on white — links */
+  --color-brand-800: #9a3d0e;
+  --color-brand-900: #7a3209;
 
-  /* Violet — the far end of the logo's gradient. Decoration and highlights. */
-  --color-violet-50: #f5f1ff;
-  --color-violet-100: #ebe3ff;
-  --color-violet-200: #d6c7ff;
-  --color-violet-300: #b69bff;
-  --color-violet-500: #8b5cf6;
-  --color-violet-600: #7c3aed; /* 5.7:1 on white */
-  --color-violet-700: #6d28d9;
+  /* Violet slot — kept as a deeper brown-orange so decorative uses still have
+   * a second temperature, but stays inside the 3-colour brand system. */
+  --color-violet-50: #fff2ea;
+  --color-violet-100: #ffe4d1;
+  --color-violet-200: #ffc9a3;
+  --color-violet-300: #ff8f4a;
+  --color-violet-500: #e65e1a;
+  --color-violet-600: #c44e13; /* 4.9:1 on white */
+  --color-violet-700: #9a3d0e;
 
   /*
-   * Accent — orange. Reserved for the free interactive tools and key-takeaway
-   * blocks, so a warm element on this site always means "a thing you can use",
-   * never decoration. It sits opposite the brand blue on the wheel, which is
-   * the whole point of reserving it.
+   * Accent — same orange, kept as its own ramp so "free interactive tools"
+   * and key-takeaway blocks stay distinguishable through intent even though
+   * the colour matches the brand.
    */
-  --color-accent-50: #fff5ed;
-  --color-accent-100: #ffe6d1;
-  --color-accent-200: #ffc99c; /* warm figures on dark panels */
-  --color-accent-600: #ea580c; /* icons and rules; 3.6:1, so never body text */
-  --color-accent-700: #c2410c; /* 5.2:1 on white */
-  --color-accent-800: #9a3412; /* 7.3:1 on white */
+  --color-accent-50: #fff2ea;
+  --color-accent-100: #ffe4d1;
+  --color-accent-200: #ffc9a3; /* warm figures on dark panels */
+  --color-accent-600: #e65e1a; /* icons and rules */
+  --color-accent-700: #c44e13; /* 4.9:1 on white */
+  --color-accent-800: #9a3d0e; /* 7.1:1 on white */
 
   /* Surfaces */
-  --color-paper: #f6f8fd;
+  --color-paper: #ffffff;
   --color-surface: #ffffff;
   /* A second tone, for bands that need to sit back from the paper. */
-  --color-surface-sunken: #edf1f9;
+  --color-surface-sunken: #faf7f2;
 
   /* Families. `display` is the same family as `sans` on purpose — see the
    * header comment — but stays its own token so headings can be re-set alone. */
@@ -185,17 +185,17 @@
   --radius-panel: 1.5rem;
 
   /*
-   * Shadows. Tinted with the navy and the brand blue rather than pure black,
+   * Shadows. Tinted with the brand brown and orange rather than pure black,
    * so an elevated card glows faintly in the palette instead of going grey.
    */
-  --shadow-card: 0 1px 2px 0 rgb(15 22 41 / 0.05), 0 1px 1px -1px rgb(15 22 41 / 0.04);
-  --shadow-card-hover: 0 2px 4px 0 rgb(15 22 41 / 0.04), 0 20px 40px -18px rgb(63 102 241 / 0.42);
-  --shadow-panel: 0 2px 4px -2px rgb(15 22 41 / 0.06), 0 24px 48px -24px rgb(35 64 196 / 0.28);
-  --shadow-menu: 0 4px 8px -4px rgb(15 22 41 / 0.1), 0 28px 56px -20px rgb(15 22 41 / 0.32);
+  --shadow-card: 0 1px 2px 0 rgb(47 37 4 / 0.06), 0 1px 1px -1px rgb(47 37 4 / 0.04);
+  --shadow-card-hover: 0 2px 4px 0 rgb(47 37 4 / 0.04), 0 20px 40px -18px rgb(255 119 51 / 0.42);
+  --shadow-panel: 0 2px 4px -2px rgb(47 37 4 / 0.08), 0 24px 48px -24px rgb(196 78 19 / 0.28);
+  --shadow-menu: 0 4px 8px -4px rgb(47 37 4 / 0.12), 0 28px 56px -20px rgb(47 37 4 / 0.32);
   /* The sticky header once the page has scrolled: a hairline plus a long, faint lift. */
-  --shadow-header: 0 1px 0 0 rgb(15 22 41 / 0.05), 0 12px 32px -18px rgb(35 64 196 / 0.3);
+  --shadow-header: 0 1px 0 0 rgb(47 37 4 / 0.06), 0 12px 32px -18px rgb(196 78 19 / 0.3);
   /* The coloured lift under a gradient button. */
-  --shadow-glow: 0 10px 28px -10px rgb(79 70 229 / 0.65);
+  --shadow-glow: 0 10px 28px -10px rgb(255 119 51 / 0.65);
 
   /* One easing curve and one duration for every hover and open/close. */
   --ease-ui: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -208,15 +208,15 @@
  * they are only ever read with var().
  */
 :root {
-  /* The brand mark's own run: sky → blue → violet. Decoration only. */
-  --gradient-brand: linear-gradient(120deg, #0ea5e9 0%, #3f66f1 48%, #7c3aed 100%);
+  /* The brand mark's own run: deep brown → orange. Decoration only. */
+  --gradient-brand: linear-gradient(120deg, #2f2504 0%, #c44e13 50%, #ff7733 100%);
   /* The same run started darker, so white button text clears 4.5:1 end to end. */
-  --gradient-cta: linear-gradient(120deg, #2563eb 0%, #4f46e5 52%, #7c3aed 100%);
+  --gradient-cta: linear-gradient(120deg, #9a3d0e 0%, #c44e13 52%, #e65e1a 100%);
   /* For type on the page ground: every stop clears 4.5:1 on white. */
-  --gradient-text: linear-gradient(100deg, #1d5fd6 0%, #4f46e5 50%, #7c3aed 100%);
+  --gradient-text: linear-gradient(100deg, #9a3d0e 0%, #c44e13 50%, #e65e1a 100%);
   /* Ground behind a code or prompt block: dark in both themes. */
-  --color-code-bg: #0b1124;
-  --color-code-text: #e3e9f7;
+  --color-code-bg: #2f2504;
+  --color-code-text: #faf7f2;
 }
 
 /* ---------------------------------------------------------------------------
@@ -229,55 +229,55 @@ html[data-theme="dark"],
 .theme-dark {
   color-scheme: dark;
 
-  --color-ink-50: #101833;
-  --color-ink-100: #17203e;
-  --color-ink-200: #222c4c;
-  --color-ink-300: #34405f;
-  --color-ink-400: #58647f;
-  --color-ink-500: #8793ad; /* 5.9:1 on surface */
-  --color-ink-600: #a5b0c6;
-  --color-ink-700: #c1c9da;
-  --color-ink-800: #dadfeb;
-  --color-ink-900: #eff2f8;
-  --color-ink-950: #f8f9fc;
+  --color-ink-50: #2f2504;
+  --color-ink-100: #3a2e08;
+  --color-ink-200: #4a3a0e;
+  --color-ink-300: #5e4a15;
+  --color-ink-400: #806830; /* decorative */
+  --color-ink-500: #b89e6e; /* 5.6:1 on brown surface */
+  --color-ink-600: #d6c29a;
+  --color-ink-700: #e8dcc0;
+  --color-ink-800: #f0e8d6;
+  --color-ink-900: #fdfbf5; /* near-white — headings */
+  --color-ink-950: #ffffff;
 
-  --color-brand-50: #111c44;
-  --color-brand-100: #18275c;
-  --color-brand-200: #233a85;
-  --color-brand-300: #3c5bd0;
-  --color-brand-400: #6289fb;
-  --color-brand-500: #7f9fff;
-  --color-brand-600: #8fabff;
-  --color-brand-700: #9db6ff; /* 8.9:1 on surface — links */
-  --color-brand-800: #bccdff;
-  --color-brand-900: #dbe5ff;
+  --color-brand-50: #3a2608;
+  --color-brand-100: #4a3010;
+  --color-brand-200: #6b4215;
+  --color-brand-300: #c44e13;
+  --color-brand-400: #ff7733;
+  --color-brand-500: #ff8f4a;
+  --color-brand-600: #ffa36a;
+  --color-brand-700: #ffb48a; /* links on dark brown */
+  --color-brand-800: #ffcbab;
+  --color-brand-900: #ffe4d1;
 
-  --color-violet-50: #1a1440;
-  --color-violet-100: #281d5c;
-  --color-violet-200: #3f2c8f;
-  --color-violet-300: #7c5cf0;
-  --color-violet-500: #a78bfa;
-  --color-violet-600: #b9a2ff;
-  --color-violet-700: #cdbcff;
+  --color-violet-50: #3a2608;
+  --color-violet-100: #4a3010;
+  --color-violet-200: #6b4215;
+  --color-violet-300: #c44e13;
+  --color-violet-500: #ff7733;
+  --color-violet-600: #ff8f4a;
+  --color-violet-700: #ffa36a;
 
-  --color-accent-50: #2a1609;
-  --color-accent-100: #44220c;
-  --color-accent-200: #ffc99c;
-  --color-accent-600: #fb8a3c;
-  --color-accent-700: #ff9d57;
-  --color-accent-800: #ffb680;
+  --color-accent-50: #3a2608;
+  --color-accent-100: #4a3010;
+  --color-accent-200: #ffc9a3;
+  --color-accent-600: #ff8f4a;
+  --color-accent-700: #ffa36a;
+  --color-accent-800: #ffb48a;
 
-  --color-paper: #07090e;
-  --color-surface: #0d111a;
-  --color-surface-sunken: #050710;
+  --color-paper: #2f2504;
+  --color-surface: #3a2e08;
+  --color-surface-sunken: #1e1803;
 
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.4), inset 0 1px 0 0 rgb(255 255 255 / 0.06);
-  --shadow-card-hover: 0 2px 4px 0 rgb(0 0 0 / 0.3), 0 20px 44px -18px rgb(99 102 241 / 0.5), inset 0 1px 0 0 rgb(255 255 255 / 0.08);
-  --shadow-panel: 0 4px 30px -8px rgb(0 0 0 / 0.6), inset 0 1px 0 0 rgb(255 255 255 / 0.05);
-  --shadow-menu: 0 8px 40px -8px rgb(0 0 0 / 0.7), inset 0 1px 0 0 rgb(255 255 255 / 0.06);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.4), inset 0 1px 0 0 rgb(255 255 255 / 0.05);
+  --shadow-card-hover: 0 2px 4px 0 rgb(0 0 0 / 0.3), 0 20px 44px -18px rgb(255 119 51 / 0.5), inset 0 1px 0 0 rgb(255 255 255 / 0.08);
+  --shadow-panel: 0 4px 30px -8px rgb(0 0 0 / 0.6), inset 0 1px 0 0 rgb(255 255 255 / 0.04);
+  --shadow-menu: 0 8px 40px -8px rgb(0 0 0 / 0.7), inset 0 1px 0 0 rgb(255 255 255 / 0.05);
   --shadow-header: 0 1px 0 0 rgb(255 255 255 / 0.06), 0 8px 32px -12px rgb(0 0 0 / 0.6);
 
-  --gradient-text: linear-gradient(100deg, #5cc8ff 0%, #8fa8ff 50%, #c0a3ff 100%);
+  --gradient-text: linear-gradient(100deg, #ff8f4a 0%, #ffa36a 50%, #ffc9a3 100%);
 }
 
 /*
@@ -576,7 +576,7 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
    */
   .btn-primary {
     background-image: var(--gradient-cta);
-    background-color: #4f46e5;
+    background-color: #c44e13;
     color: #fff;
     box-shadow: var(--shadow-card);
   }
@@ -625,12 +625,12 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
   /* Solid white, for gradient and dark panels. Fixed in both themes. */
   .btn-inverse {
     background-color: #fff;
-    color: #0f1629;
+    color: #2f2504;
     box-shadow: 0 8px 24px -12px rgb(0 0 0 / 0.5);
   }
 
   .btn-inverse:hover {
-    background-color: #eef3ff;
+    background-color: #fff2ea;
   }
 
   /*
@@ -836,9 +836,9 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     justify-content: center;
     border-radius: 0.8125rem;
     color: #fff;
-    background-image: linear-gradient(135deg, var(--tile-from, #4f7df7), var(--tile-to, #4f46e5));
+    background-image: linear-gradient(135deg, var(--tile-from, #ff8f4a), var(--tile-to, #c44e13));
     box-shadow:
-      0 8px 18px -8px var(--tile-to, #4f46e5),
+      0 8px 18px -8px var(--tile-to, #c44e13),
       inset 0 1px 0 rgb(255 255 255 / 0.28);
     transition: transform 260ms var(--ease-ui);
   }
@@ -847,46 +847,51 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
     transform: scale(1.08) rotate(-4deg);
   }
 
+  /*
+   * All category tiles share the 3-colour brand palette. Each category still
+   * owns a distinguishable intensity within the orange→brown range so a
+   * glance tells them apart, but every tile stays inside the brand system.
+   */
   .tile-compass {
-    --tile-from: #38bdf8;
-    --tile-to: #2563eb;
+    --tile-from: #ff8f4a;
+    --tile-to: #c44e13;
   }
   .tile-nib {
-    --tile-from: #a78bfa;
-    --tile-to: #7c3aed;
+    --tile-from: #ff7733;
+    --tile-to: #9a3d0e;
   }
   .tile-briefcase {
-    --tile-from: #4f7df7;
-    --tile-to: #3730a3;
+    --tile-from: #c44e13;
+    --tile-to: #2f2504;
   }
   .tile-workflow {
-    --tile-from: #2dd4bf;
-    --tile-to: #0f766e;
+    --tile-from: #ffa36a;
+    --tile-to: #e65e1a;
   }
   .tile-agent {
-    --tile-from: #e879f9;
-    --tile-to: #a21caf;
+    --tile-from: #ff7733;
+    --tile-to: #4a3010;
   }
   .tile-news {
-    --tile-from: #fb7185;
-    --tile-to: #e11d48;
+    --tile-from: #e65e1a;
+    --tile-to: #7a3209;
   }
   .tile-prompt {
-    --tile-from: #fbbf24;
-    --tile-to: #d97706;
+    --tile-from: #ffb48a;
+    --tile-to: #c44e13;
   }
   .tile-industry {
-    --tile-from: #4ade80;
-    --tile-to: #15803d;
+    --tile-from: #ff8f4a;
+    --tile-to: #6b4215;
   }
   .tile-toolkit {
-    --tile-from: #38bdf8;
-    --tile-to: #6366f1;
+    --tile-from: #ffa36a;
+    --tile-to: #c44e13;
   }
-  /* The free tools: the reserved orange. */
+  /* The free tools: the brand orange. */
   .tile-tool {
-    --tile-from: #fb923c;
-    --tile-to: #ea580c;
+    --tile-from: #ff7733;
+    --tile-to: #e65e1a;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -943,18 +948,18 @@ html:not([data-theme="dark"]) [data-icon="sun"] {
    */
   .bg-aurora {
     background-image:
-      radial-gradient(42rem 26rem at 12% 0%, rgb(14 165 233 / 0.2), transparent 62%),
-      radial-gradient(40rem 28rem at 92% 12%, rgb(124 58 237 / 0.2), transparent 62%);
+      radial-gradient(42rem 26rem at 12% 0%, rgb(255 119 51 / 0.14), transparent 62%),
+      radial-gradient(40rem 28rem at 92% 12%, rgb(255 119 51 / 0.18), transparent 62%);
   }
 
-  /* The dark band's own ground: deep navy with the aurora burnt into it. */
+  /* The dark band's own ground: deep brown with the orange aurora burnt into it. */
   .bg-night {
-    background-color: #07090e;
+    background-color: #2f2504;
     background-image:
-      radial-gradient(ellipse at 50% -5%, rgb(99 102 241 / 0.14), transparent 55%),
-      radial-gradient(46rem 30rem at 8% -10%, rgb(14 165 233 / 0.24), transparent 60%),
-      radial-gradient(44rem 30rem at 96% 4%, rgb(124 58 237 / 0.30), transparent 62%),
-      radial-gradient(38rem 26rem at 50% 118%, rgb(63 102 241 / 0.24), transparent 62%);
+      radial-gradient(ellipse at 50% -5%, rgb(255 119 51 / 0.18), transparent 55%),
+      radial-gradient(46rem 30rem at 8% -10%, rgb(255 119 51 / 0.24), transparent 60%),
+      radial-gradient(44rem 30rem at 96% 4%, rgb(255 139 70 / 0.28), transparent 62%),
+      radial-gradient(38rem 26rem at 50% 118%, rgb(255 119 51 / 0.22), transparent 62%);
   }
 
   /* ---- Rails --------------------------------------------------------- */

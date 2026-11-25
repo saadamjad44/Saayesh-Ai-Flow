@@ -4,8 +4,8 @@
   "description": "Independent guides to AI tools, automation workflows, and prompts for small business owners.",
   "start_url": "/",
   "display": "browser",
-  "background_color": "#f6f8fd",
-  "theme_color": "#f6f8fd",
+  "background_color": "#ffffff",
+  "theme_color": "#ff7733",
   "icons": [
     {
       "src": "/favicon-48x48.png",

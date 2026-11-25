@@ -327,7 +327,7 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
         >
           <span
             aria-hidden="true"
-            class="pulse-dot size-1.5 rounded-full bg-emerald-400 text-emerald-400"
+            class="pulse-dot size-1.5 rounded-full bg-[#ff7733] text-[#ff7733]"
           ></span>
           Independent AI tool guides
           <span aria-hidden="true" class="text-ink-500">
@@ -351,10 +351,26 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
         paying for.
       </p>
 
+      {/* Hero brand video. */}
+      <div class="rise relative z-10 mx-auto mt-10 max-w-3xl" style="--d:220ms">
+        <div class="relative overflow-hidden rounded-2xl border border-[#ff7733]/30 bg-[#2f2504] shadow-[0_30px_80px_-20px_rgb(255_119_51/0.45)]">
+          <video
+            class="block h-auto w-full"
+            src="/hero-video.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label="Saayesh AI Flow brand video"
+          ></video>
+        </div>
+      </div>
+
       {/* The search bar, inside a turning ring of the brand colours. */}
       <div class="rise relative z-20 mx-auto mt-9 max-w-2xl" style="--d:270ms">
         <div class="glow-border">
-          <div class="rounded-2xl bg-[#0b1128]">
+          <div class="rounded-2xl bg-[#2f2504]">
             <SearchBox
               id="hero"
               variant="hero"
@@ -405,7 +421,7 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
             class="absolute -inset-x-10 -top-10 bottom-10 -z-10 rounded-[3rem] bg-[image:var(--gradient-brand)] opacity-35 blur-3xl"
           ></div>
           <div
-            class="board origin-top overflow-hidden rounded-2xl border border-white/15 bg-[#0b1128]/85 text-left shadow-[0_40px_120px_-30px_rgb(79_70_229/0.9)] backdrop-blur-xl will-change-transform"
+            class="board origin-top overflow-hidden rounded-2xl border border-white/15 bg-[#2f2504]/85 text-left shadow-[0_40px_120px_-30px_rgb(255_119_51/0.7)] backdrop-blur-xl will-change-transform"
             data-scroll-tilt
           >
             <div class="flex items-center gap-2 border-b border-white/10 px-4 py-3">
@@ -433,14 +449,14 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
                     ]}
                   >
                     {index === 0 && (
-                      <span class="absolute top-3 right-3 rounded-full bg-amber-500/90 px-2.5 py-0.5 font-mono text-[0.5625rem] font-bold tracking-[0.08em] text-black uppercase">
+                      <span class="absolute top-3 right-3 rounded-full bg-[#ff7733] px-2.5 py-0.5 font-mono text-[0.5625rem] font-bold tracking-[0.08em] text-[#2f2504] uppercase">
                         Editor's Pick
                       </span>
                     )}
                     <span class="flex items-center gap-2.5">
                       <PillarTile icon={article.icon} size="sm" class="size-7! rounded-lg!" />
                       {article.category && (
-                        <span class="font-mono text-[0.5625rem] font-semibold tracking-[0.1em] text-sky-300 uppercase">
+                        <span class="font-mono text-[0.5625rem] font-semibold tracking-[0.1em] text-[#ffa36a] uppercase">
                           {article.category.title}
                         </span>
                       )}
@@ -518,7 +534,7 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
                 <li>
                   <a
                     href={trackerPath}
-                    class="ticker-pill group inline-flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-1.5 whitespace-nowrap transition-[border-color,background-color] duration-180 hover:border-indigo-400/30 hover:bg-white/[0.06]"
+                    class="ticker-pill group inline-flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-1.5 whitespace-nowrap transition-[border-color,background-color] duration-180 hover:border-[#ff7733]/40 hover:bg-white/[0.06]"
                   >
                     <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/10 font-mono text-[0.625rem] font-bold text-white">
                       {tool.monogram}
@@ -526,7 +542,7 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
                     <span class="font-display text-sm font-bold tracking-tight text-white">{tool.name}</span>
                     <span class:list={[
                       "font-mono text-[0.75rem] font-semibold tabular-nums",
-                      tool.price.startsWith("Free") ? "text-emerald-400" : "text-cyan-400",
+                      tool.price.startsWith("Free") ? "text-white" : "text-[#ff7733]",
                     ]}>
                       {tool.price}
                     </span>
@@ -762,9 +778,9 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
   }
 
   .showcase-tab--active {
-    border-color: rgb(99 102 241 / 0.5);
-    background-color: rgb(99 102 241 / 0.15);
-    color: rgb(165 180 252);
+    border-color: rgb(255 119 51 / 0.5);
+    background-color: rgb(255 119 51 / 0.18);
+    color: #ffc9a3;
   }
 
   /* The comparison rail's arrow buttons, on the dark band. */
