@@ -93,8 +93,9 @@ const socialImage = await getSocialImage(page);
       (function () {
         var d = document.documentElement;
         try {
-          if (localStorage.getItem("theme") === "dark") d.setAttribute("data-theme", "dark");
+          localStorage.removeItem("theme");
         } catch (e) {}
+        d.removeAttribute("data-theme");
         if (
           "IntersectionObserver" in window &&
           !matchMedia("(prefers-reduced-motion: reduce)").matches

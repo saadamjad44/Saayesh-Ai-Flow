@@ -308,7 +308,7 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
     {/* Hero video, bounded to the search-bar area and faded into white. */}
     <div aria-hidden="true" class="absolute top-0 right-0 left-0 -z-20 h-[38rem] overflow-hidden">
       <video
-        class="h-full w-full object-cover opacity-50"
+        class="h-full w-full object-cover opacity-25"
         src="/hero-video.mp4"
         autoplay
         muted
@@ -319,7 +319,7 @@ const stagger = (index: number, step = 80) => `--reveal-delay:${index * step}ms`
     </div>
     <div
       aria-hidden="true"
-      class="absolute top-0 right-0 left-0 -z-10 h-[38rem] bg-gradient-to-b from-white/60 via-white/80 to-white"
+      class="absolute top-0 right-0 left-0 -z-10 h-[38rem] bg-gradient-to-b from-white/80 via-white/90 to-white"
     ></div>
     <div class="relative mx-auto max-w-6xl px-4 pt-14 pb-10 text-center sm:px-6 sm:pt-20 lg:pt-24">
       <p class="rise" style="--d:0ms">
