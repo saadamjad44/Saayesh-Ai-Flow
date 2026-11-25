@@ -75,12 +75,10 @@ const dark = tone === "dark";
  */
 const t = {
   panel: dark
-    ? "theme-dark bg-night border border-ink-200 shadow-panel"
-    : "border border-accent-100 bg-accent-50 shadow-panel",
-  wash: dark
-    ? "bg-grid-inverse [mask-image:radial-gradient(120%_100%_at_100%_0%,#000,transparent_70%)]"
-    : "bg-grid opacity-60 [mask-image:radial-gradient(120%_100%_at_0%_0%,#000,transparent_70%)]",
-  footerRule: dark ? "border-ink-200" : "border-accent-100",
+    ? "border border-[#ff7733] bg-white shadow-panel"
+    : "border border-[#ff7733]/30 bg-[#fff2ea] shadow-panel",
+  wash: "",
+  footerRule: dark ? "border-[#ff7733]/30" : "border-[#ff7733]/30",
 };
 ---
 

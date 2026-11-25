@@ -116,12 +116,7 @@ const pageHeading = heading ?? title ?? page.title;
 >
   <article data-reading-progress={hasSidebar ? "" : undefined}>
     {/* ---- Header band ------------------------------------------------ */}
-    <div class="theme-dark bg-night relative -mt-[4.75rem] overflow-hidden pt-[4.75rem]">
-      <div aria-hidden="true" class="bg-aurora pointer-events-none absolute inset-0"></div>
-      <div
-        aria-hidden="true"
-        class="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_90%_at_100%_0%,#000,transparent)]"
-      ></div>
+    <div class="relative -mt-[4.75rem] overflow-hidden border-b border-[#2f2504]/10 bg-white pt-[4.75rem]">
 
       <header
         class:list={[

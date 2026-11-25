@@ -29,12 +29,8 @@ const logoWidth = Math.round((BRAND_LOGO.src.width / BRAND_LOGO.src.height) * 32
   footer against the dark palette, so nothing below needs a dark variant of its
   own — see "Dark palette" in global.css.
 */}
-<footer class="theme-dark bg-night relative mt-auto overflow-hidden">
-  <div aria-hidden="true" class="h-[3px] bg-[image:var(--gradient-brand)]"></div>
-  <div
-    aria-hidden="true"
-    class="bg-grid-inverse pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,#000,transparent_55%)]"
-  ></div>
+<footer class="relative mt-auto overflow-hidden border-t border-[#2f2504]/15 bg-white">
+  <div aria-hidden="true" class="h-[3px] bg-[#ff7733]"></div>
 
   <div class="relative mx-auto max-w-7xl px-4 pt-14 pb-14 sm:px-6 sm:pt-16 sm:pb-16">
     {/*
