@@ -8,3 +8,9 @@
 # that already fetched it, instead of turning it into a 404.
 /sitemap-index.xml  /sitemap.xml  301
 /sitemap-0.xml      /sitemap.xml  301
+
+# The 8-slide brand presentation PDF was removed on 2026-10-29. GSC still shows
+# its old URL ranking at position 7, so send that path to the About page, which
+# covers the same territory (who built the site, what it is for).
+/downloads/saayesh-ai-flow-presentation.pdf  /about/  301
+/downloads/*  /  301
