@@ -1,0 +1,72 @@
+---
+pageId: ai-detector
+title: "AI Detector: Free Pattern Check for AI-Written Text"
+heading: Check Text for AI-Writing Patterns
+description: Free in-browser tool that flags patterns common in AI-generated text. Transparent signals, no sign-up, no uploads — and an honest warning about limits.
+publishedDate: 2026-11-28
+updatedDate: 2026-11-28
+testingStatus: research-based
+hasAffiliateLinks: false
+faq:
+  - question: Can this tool prove whether text was written by AI?
+    answer: No. No AI detector — ours or anyone else's — can prove authorship. Research from OpenAI, Stanford, Maryland and others has repeatedly shown that AI-detection accuracy sits well below what you would need to accuse anyone. Our tool is explicit about this. It measures surface patterns that often appear in default LLM output and reports what it found, so you can judge the text yourself.
+  - question: How is this different from ZeroGPT, GPTZero, or Turnitin's AI check?
+    answer: Those tools wrap proprietary classifiers and return a confidence percentage without showing their work. Ours runs five transparent signals in your browser — sentence-length uniformity, LLM-overused phrases, transitional-word density, vocabulary variety, and contractions — and shows which specific markers triggered each score. You can see the logic, and you can verify or disagree with every signal.
+  - question: What text does it work on?
+    answer: English prose of at least 40 words. Very short samples (under 80 words) produce unreliable scores because the signals need enough sentences to compute meaningful variance. Tables, code, bullet lists and translated text are all weak inputs for any heuristic detector, including this one.
+  - question: Is my text uploaded or stored anywhere?
+    answer: No. The entire analysis runs in your browser's JavaScript engine. Nothing is sent to our servers, nothing is saved in localStorage, and nothing is logged. Close the tab and the text is gone.
+  - question: Why does the tool refuse to give a straight yes/no answer?
+    answer: Because a straight yes/no on AI authorship would be dishonest. The same patterns that score "AI" can come from careful human writers, academic prose, non-native English, or heavy editing. And a motivated AI user can strip those patterns in minutes. A yes/no verdict would be marketing dressed as a tool.
+  - question: Can I use this for schoolwork or legal evidence?
+    answer: Please do not. Treat the output as a conversation starter, not evidence. False positives in AI detection have cost students grades and jobs. If you are a teacher or employer, the honest alternative is to talk to the writer, ask them to explain or expand on their work, and judge the process rather than scanning the output.
+---
+
+import { AiDetector } from "@/components/tools";
+
+Paste any English text below and this tool will flag patterns that commonly appear in AI-written prose. It is a heuristic, not a verdict — the whole analysis runs in your browser and nothing you paste leaves your device.
+
+<AiDetector />
+
+## What the five signals measure
+
+The score is the sum of five transparent checks. Each one measures something real about the text and contributes a capped number of points.
+
+- **Sentence-length variety (25 pts).** Human writing bounces between short and long sentences. Default LLM output is more uniform. We compute the coefficient of variation across sentence lengths — a lower value means more AI-like rhythm.
+- **LLM-overused phrases (30 pts).** A dictionary of ~40 phrases that appear far more often in LLM output than in human writing: _delve into_, _navigate the complexities_, _it's important to note_, _ever-evolving landscape_, and so on. The tool counts how many appear and shows them.
+- **Transitional-word density (20 pts).** Sentences that open with _However,_, _Additionally,_, _Furthermore,_, _Moreover,_ — in that order, one after another — are a common LLM habit. We count the ratio of transition-opened sentences.
+- **Vocabulary variety (15 pts).** The type-token ratio: unique words divided by total words. LLM prose often sits in a middle band; both repetitive and highly varied text score lower on the AI-pattern axis.
+- **Contractions and informal voice (10 pts).** Default LLM output avoids contractions (_don't_, _can't_, _it's_). Casual human writing uses them liberally. Fewer contractions per 100 words is a mild formality signal.
+
+Every score is shown with the specific matches that produced it, so you can agree or disagree with any individual signal.
+
+## Why AI detection does not work the way people want
+
+The short, honest answer: there is no classifier — commercial or academic — that reliably distinguishes AI-written text from human-written text. [OpenAI pulled its own AI classifier in 2023](https://openai.com/index/new-ai-classifier-for-indicating-ai-written-text/) because it was wrong too often. Academic studies have repeatedly shown that:
+
+1. **False positives are common**, especially for non-native English speakers whose writing style can resemble some LLM patterns. In one 2023 study published in _Patterns_, GPT detectors misclassified 61% of TOEFL essays as AI-written.
+2. **Countermeasures are trivial.** A short paraphrase pass, light manual editing, or a "humanizer" tool defeats most detectors in seconds.
+3. **The underlying task is adversarial.** As models improve, their output moves further from the patterns detectors were trained on. Detection accuracy on a one-year-old model tells you nothing about current output.
+
+Anyone selling AI detection as a high-confidence verdict is overselling. We built this tool to make the patterns visible, not to hand you a judgement.
+
+## When this tool is useful
+
+- **Self-review.** You wrote something, you suspect it sounds generic, and you want to know what pattern-match tools will flag so you can change it before publishing.
+- **Spot-checking your own LLM output.** You asked an AI to draft something, and you want to see which markers survived your edit.
+- **Understanding the limits.** Paste a passage you wrote yourself and see how it scores. If your own writing comes back as "AI patterns", that tells you something useful about every tool like this one.
+
+## When it is not useful
+
+- **Judging someone else.** A score on their text is not evidence of anything.
+- **Short paragraphs.** Under 80 words the signals are too noisy.
+- **Translated text, poetry, lists, code, or technical reference material.** These do not match either the "human" or "AI" pattern profiles cleanly.
+- **Deciding on grades, pay, or promotions.** If you are using AI detection to make a decision about a person, the right answer is to talk to them instead.
+
+## Related free tools on this site
+
+- [AI Tool Finder Quiz](/free-ai-tools/ai-tool-finder-quiz/) — pick the right AI tool for your use case in four questions.
+- [Small Business AI Cost Calculator](/ai-business-tools/small-business-ai-cost-calculator/) — total what AI costs across your whole stack.
+- [AI Email Time Savings Calculator](/ai-automation/ai-email-time-savings-calculator/) — what AI actually saves on your inbox.
+
+If you want to make your own writing sound less AI-flavoured in the first place, [Make AI writing sound human](/ai-writing-tools/make-ai-writing-sound-human/) covers the editing habits that remove most of the patterns this tool flags.

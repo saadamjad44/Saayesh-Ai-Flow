@@ -888,6 +888,22 @@ export const PAGE_SNIPPETS: Partial<Record<PageId, PageSnippet>> = {
     intent: "Commercial",
     note: "Hub for the interactive utilities that sit outside any single content cluster. Title leads with 'Free' because every searcher on this query filters by price first.",
   },
+  "ai-detector": {
+    title: "AI Detector: Free Pattern Check for AI-Written Text",
+    brand: "omit",
+    description:
+      "Free in-browser AI detector. 5 transparent signals, shows which markers triggered the score, no sign-up, no uploads. Honest about limits — not a verdict.",
+    primaryKeyword: "AI detector",
+    supportingKeywords: [
+      "AI content detector",
+      "ChatGPT detector",
+      "AI writing detector",
+      "free AI detector",
+      "check if text is AI",
+    ],
+    intent: "Commercial investigation",
+    note: "The head term 'AI detector' is extremely competitive and dominated by tools that overclaim accuracy. Title leads with 'Free' (price filter) and 'Pattern Check' rather than 'detector', which signals the editorial stance: a transparent heuristic, not a verdict. Description names the five-signal breakdown and privacy stance because those are the two real differentiators from ZeroGPT/GPTZero-style classifiers that return a single confidence percentage.",
+  },
   "ai-tool-finder-quiz": {
     title: "AI Tool Finder Quiz: Which AI Tool Is Right for You?",
     brand: "omit",

@@ -92,6 +92,17 @@ export async function getStaticPaths() {
       "how-to-use-ai-tools",
       "claude-vs-chatgpt-for-small-business",
     ],
+    /**
+     * The AI Detector's shortlist pairs it with guides that explain what the
+     * tool is really telling you: how to edit AI writing so it stops matching
+     * these patterns, the broader AI writing landscape, and the honest pricing
+     * picture for the same tools people run detectors on.
+     */
+    "ai-detector": [
+      "make-ai-writing-sound-human",
+      "best-ai-writing-tools",
+      "how-much-does-ai-cost-small-business",
+    ],
   };
 
   const [pillars, articles, tools] = await Promise.all([

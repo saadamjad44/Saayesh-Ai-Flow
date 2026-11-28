@@ -93,7 +93,7 @@ export interface SitePage {
 export const PAGE_COUNTS: Readonly<Record<SitePhase, number>> = {
   1: 17,
   2: 24,
-  3: 43,
+  3: 44,
 };
 
 export const PAGES = [
@@ -472,6 +472,20 @@ export const PAGES = [
     path: "/free-ai-tools/ai-weekly-radar/",
     type: "tool",
     phase: 2,
+    pillar: "free-ai-tools",
+  },
+
+  // Phase 3 — AI Detector: a client-side heuristic that flags five patterns
+  // common in LLM output (sentence-length uniformity, overused phrases,
+  // transition density, lexical variety, contractions). Deliberately not sold
+  // as a verdict; the page is as much about why AI detection does not work
+  // reliably as it is about the tool itself.
+  {
+    id: "ai-detector",
+    title: "AI Detector: Free Pattern Check for AI-Written Text",
+    path: "/free-ai-tools/ai-detector/",
+    type: "tool",
+    phase: 3,
     pillar: "free-ai-tools",
   },
 
